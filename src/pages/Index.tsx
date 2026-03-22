@@ -1,16 +1,53 @@
-// Update this page (the content is just a fallback if you fail to update the page)
+import { useEffect } from 'react';
+import Navbar from '@/components/Navbar';
+import Hero from '@/components/sections/Hero';
+import CredentialsBar from '@/components/sections/CredentialsBar';
+import ProblemStatement from '@/components/sections/ProblemStatement';
+import Stats from '@/components/sections/Stats';
+import Services from '@/components/sections/Services';
+import Testimonials from '@/components/sections/Testimonials';
+import Resources from '@/components/sections/Resources';
+import BlogPreview from '@/components/sections/BlogPreview';
+import NewsletterCTA from '@/components/sections/NewsletterCTA';
+import Footer from '@/components/sections/Footer';
 
-// IMPORTANT: Fully REPLACE this with your own code
-const PlaceholderIndex = () => {
-  // PLACEHOLDER: Replace this entire return statement with the user's app.
-  // The inline background color is intentionally not part of the design system.
-  return (
-    <div className="flex min-h-screen items-center justify-center" style={{ backgroundColor: '#fcfbf8' }}>
-      <img data-lovable-blank-page-placeholder="REMOVE_THIS" src="/placeholder.svg" alt="Your app will live here!" />
-    </div>
-  );
+const useScrollReveal = () => {
+  useEffect(() => {
+    const elements = document.querySelectorAll('[data-reveal]');
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('revealed');
+            observer.unobserve(entry.target);
+          }
+        });
+      },
+      { threshold: 0.08, rootMargin: '0px 0px -30px 0px' }
+    );
+    elements.forEach((el) => observer.observe(el));
+    return () => observer.disconnect();
+  }, []);
 };
 
-const Index = PlaceholderIndex;
+const Index = () => {
+  useScrollReveal();
+
+  return (
+    <main className="bg-[hsl(var(--bg-primary))]">
+      <Navbar />
+      <Hero />
+      <CredentialsBar />
+      <ProblemStatement />
+      <Stats />
+      <Services />
+      <Testimonials />
+      <Resources />
+      <BlogPreview />
+      <NewsletterCTA />
+      <Footer />
+    </main>
+  );
+};
 
 export default Index;
