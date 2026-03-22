@@ -1,13 +1,6 @@
 import { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import { Menu, X } from 'lucide-react';
-
-const navLinks = [
-  { label: 'HOME', href: '#inicio' },
-  { label: 'SOBRE MÍ', href: '#sobre-mi' },
-  { label: 'TRABAJA CONMIGO', href: '#servicios' },
-  { label: 'BLOG', href: '#blog' },
-  { label: 'CONTACTO', href: '#contacto' },
-];
 
 const Navbar = () => {
   const [scrolled, setScrolled] = useState(false);
@@ -19,11 +12,10 @@ const Navbar = () => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  const handleNavClick = (href: string) => {
-    setMenuOpen(false);
-    const el = document.querySelector(href);
-    if (el) el.scrollIntoView({ behavior: 'smooth' });
-  };
+  const linkClass =
+    'font-montserrat font-medium text-[13px] uppercase tracking-[1px] text-[hsl(var(--text-secondary))] hover:text-[hsl(var(--ember))] transition-colors duration-300';
+  const mobileLinkClass =
+    'font-montserrat font-medium text-2xl uppercase tracking-[2px] text-[hsl(var(--text-primary))] hover:text-[hsl(var(--ember))] transition-colors duration-300';
 
   return (
     <>
@@ -36,36 +28,32 @@ const Navbar = () => {
       >
         <div className="max-w-[1200px] mx-auto px-6 lg:px-8 flex items-center justify-between h-16 lg:h-20">
           {/* Logo */}
-          <a
-            href="#inicio"
-            onClick={(e) => { e.preventDefault(); handleNavClick('#inicio'); }}
-            className="flex items-baseline gap-0 select-none"
-          >
-            <span
-              className="font-montserrat font-light tracking-[0.15em] text-[hsl(var(--text-primary))] text-base"
-            >
+          <Link to="/" className="flex items-baseline gap-0 select-none">
+            <span className="font-montserrat font-light tracking-[0.15em] text-[hsl(var(--text-primary))] text-base">
               FRANCISCO&nbsp;
             </span>
-            <span
-              className="font-montserrat font-extrabold tracking-[0.05em] text-[hsl(var(--text-primary))] text-base"
-            >
+            <span className="font-montserrat font-extrabold tracking-[0.05em] text-[hsl(var(--text-primary))] text-base">
               ABAD
             </span>
-          </a>
+          </Link>
 
           {/* Desktop nav */}
           <ul className="hidden lg:flex items-center gap-8">
-            {navLinks.map((link) => (
-              <li key={link.label}>
-                <a
-                  href={link.href}
-                  onClick={(e) => { e.preventDefault(); handleNavClick(link.href); }}
-                  className="font-montserrat font-medium text-[13px] uppercase tracking-[1px] text-[hsl(var(--text-secondary))] hover:text-[hsl(var(--ember))] transition-colors duration-300"
-                >
-                  {link.label}
-                </a>
-              </li>
-            ))}
+            <li>
+              <Link to="/" className={linkClass}>HOME</Link>
+            </li>
+            <li>
+              <Link to="/sobre-mi" className={linkClass}>SOBRE MÍ</Link>
+            </li>
+            <li>
+              <Link to="/trabaja-conmigo" className={linkClass}>TRABAJA CONMIGO</Link>
+            </li>
+            <li>
+              <Link to="/blog" className={linkClass}>BLOG</Link>
+            </li>
+            <li>
+              <Link to="/contacto" className={linkClass}>CONTACTO</Link>
+            </li>
           </ul>
 
           {/* Mobile hamburger */}
@@ -94,17 +82,31 @@ const Navbar = () => {
         </button>
 
         <ul className="flex flex-col items-center gap-10">
-          {navLinks.map((link) => (
-            <li key={link.label}>
-              <a
-                href={link.href}
-                onClick={(e) => { e.preventDefault(); handleNavClick(link.href); }}
-                className="font-montserrat font-medium text-2xl uppercase tracking-[2px] text-[hsl(var(--text-primary))] hover:text-[hsl(var(--ember))] transition-colors duration-300"
-              >
-                {link.label}
-              </a>
-            </li>
-          ))}
+          <li>
+            <Link to="/" className={mobileLinkClass} onClick={() => setMenuOpen(false)}>
+              HOME
+            </Link>
+          </li>
+          <li>
+            <Link to="/sobre-mi" className={mobileLinkClass} onClick={() => setMenuOpen(false)}>
+              SOBRE MÍ
+            </Link>
+          </li>
+          <li>
+            <Link to="/trabaja-conmigo" className={mobileLinkClass} onClick={() => setMenuOpen(false)}>
+              TRABAJA CONMIGO
+            </Link>
+          </li>
+          <li>
+            <Link to="/blog" className={mobileLinkClass} onClick={() => setMenuOpen(false)}>
+              BLOG
+            </Link>
+          </li>
+          <li>
+            <Link to="/contacto" className={mobileLinkClass} onClick={() => setMenuOpen(false)}>
+              CONTACTO
+            </Link>
+          </li>
         </ul>
       </div>
     </>

@@ -45,15 +45,13 @@ const Hero = () => {
             </div>
           </div>
 
-          {/* Right column — Photo placeholder */}
+          {/* Right column — Photo */}
           <div className="flex justify-center lg:justify-end" data-reveal data-reveal-delay="3">
-            <div
-              className="w-full max-w-[340px] aspect-[3/4] bg-[hsl(var(--bg-elevated))] rounded-2xl border border-[hsl(var(--border-subtle))] flex items-center justify-center"
-            >
-              <span className="font-inter text-[hsl(var(--text-muted))] text-sm tracking-wide">
-                Tu foto aquí
-              </span>
-            </div>
+            <img
+              src="/francisco-abad.jpeg"
+              alt="Francisco Abad — Founder, Operator, Strategist"
+              className="w-full max-w-[340px] aspect-[3/4] object-cover rounded-2xl shadow-2xl"
+            />
           </div>
         </div>
       </div>
