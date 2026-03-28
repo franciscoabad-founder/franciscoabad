@@ -1,5 +1,6 @@
 import { NavLink, Outlet, useNavigate } from 'react-router-dom';
 import { supabase } from '@/lib/supabase';
+import logoSrc from '@/assets/logos/fa_horizontal_clean_dark.svg';
 import {
   LayoutDashboard,
   Instagram,
@@ -40,18 +41,7 @@ export default function AdminLayout() {
       >
         {/* Logo */}
         <div className="px-6 pt-8 pb-6 select-none">
-          <p
-            className="text-sm tracking-[0.2em] uppercase leading-none"
-            style={{ fontFamily: 'Montserrat, sans-serif', fontWeight: 200, color: 'rgba(244,237,230,0.5)' }}
-          >
-            Francisco
-          </p>
-          <p
-            className="text-sm tracking-[0.2em] uppercase leading-tight"
-            style={{ fontFamily: 'Montserrat, sans-serif', fontWeight: 900, color: '#C2654A' }}
-          >
-            Abad
-          </p>
+          <img src={logoSrc} style={{ height: '28px', width: 'auto' }} alt="Francisco Abad" />
         </div>
 
         <div style={{ borderTop: '1px solid #2A2A2A' }} className="mx-4 mb-4" />

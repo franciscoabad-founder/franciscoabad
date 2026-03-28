@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Menu, X } from 'lucide-react';
+import logoSrc from '@/assets/logos/fa_horizontal_clean_dark.svg';
 
 const Navbar = () => {
   const [scrolled, setScrolled] = useState(false);
@@ -28,13 +29,8 @@ const Navbar = () => {
       >
         <div className="max-w-[1200px] mx-auto px-6 lg:px-8 flex items-center justify-between h-16 lg:h-20">
           {/* Logo */}
-          <Link to="/" className="flex items-baseline gap-0 select-none">
-            <span className="font-montserrat font-light tracking-[0.15em] text-[hsl(var(--text-primary))] text-base">
-              FRANCISCO&nbsp;
-            </span>
-            <span className="font-montserrat font-extrabold tracking-[0.05em] text-[hsl(var(--text-primary))] text-base">
-              ABAD
-            </span>
+          <Link to="/" className="flex items-center select-none">
+            <img src={logoSrc} height={32} style={{ height: '32px', width: 'auto' }} alt="Francisco Abad" />
           </Link>
 
           {/* Desktop nav */}

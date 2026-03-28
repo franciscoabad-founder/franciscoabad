@@ -1,4 +1,5 @@
 import { Linkedin, Instagram, Youtube, Mail } from 'lucide-react';
+import logoSrc from '@/assets/logos/fa_reduced_white.svg';
 
 const socials = [
   { label: 'LinkedIn', icon: Linkedin, href: 'https://linkedin.com' },
@@ -10,6 +11,9 @@ const socials = [
 const Footer = () => (
   <footer className="bg-[hsl(var(--bg-primary))] border-t border-[hsl(var(--border-subtle))] py-20">
     <div className="max-w-[1200px] mx-auto px-6 lg:px-8 flex flex-col items-center gap-10">
+      {/* Logo */}
+      <img src={logoSrc} style={{ height: '24px', width: 'auto' }} alt="Francisco Abad" />
+
       {/* Bio */}
       <p className="font-inter text-[hsl(var(--text-secondary))] text-[14px] leading-[1.8] text-center max-w-[700px]">
         Francisco Abad ha construido, dirigido y transformado sistemas reales. Fundó CODEIS hace 9 años,
