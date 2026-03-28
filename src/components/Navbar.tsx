@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Menu, X } from 'lucide-react';
-import logoSrc from '@/assets/logos/fa_horizontal_clean_dark.svg';
+import LogoSVG from '@/assets/logos/fa_horizontal_clean_dark.svg?react';
 
 const Navbar = () => {
   const [scrolled, setScrolled] = useState(false);
@@ -30,7 +30,7 @@ const Navbar = () => {
         <div className="max-w-[1200px] mx-auto px-6 lg:px-8 flex items-center justify-between h-16 lg:h-20">
           {/* Logo */}
           <Link to="/" className="flex items-center select-none">
-            <img src={logoSrc} height={32} style={{ height: '32px', width: 'auto' }} alt="Francisco Abad" />
+            <LogoSVG style={{ height: '32px', width: 'auto' }} />
           </Link>
 
           {/* Desktop nav */}
