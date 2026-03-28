@@ -30,7 +30,7 @@ const Navbar = () => {
         <div className="max-w-[1200px] mx-auto px-6 lg:px-8 flex items-center justify-between h-16 lg:h-20">
           {/* Logo */}
           <Link to="/" className="flex items-center select-none">
-            <LogoSVG style={{ height: '32px', width: 'auto' }} />
+            <LogoSVG style={{ height: '40px', width: 'auto', display: 'block' }} />
           </Link>
 
           {/* Desktop nav */}

@@ -64,7 +64,7 @@ const SobreMi = () => (
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-start">
           {/* Photo */}
           <img
-            src="/francisco-abad.jpeg"
+            src="/francisco-abad.png"
             alt="Francisco Abad — Founder, Operator, Strategist"
             className="w-full max-w-[480px] aspect-[3/4] object-cover rounded-lg shadow-2xl"
           />
