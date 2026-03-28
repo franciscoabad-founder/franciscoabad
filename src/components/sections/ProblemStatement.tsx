@@ -10,10 +10,13 @@ const ProblemStatement = () => (
       {/* Text block */}
       <div className="max-w-[800px] mx-auto text-center space-y-6" data-reveal>
         <h2 className="font-montserrat font-bold text-[hsl(var(--text-primary))] text-[36px] md:text-[40px] leading-[1.2]">
-          El problema no es disciplina.<br />El problema es un sistema roto.
+          El problema que nadie nombra
         </h2>
         <p className="font-inter text-[hsl(var(--text-secondary))] text-[17px] md:text-lg leading-[1.75]">
-          Las personas más ambiciosas — founders, executives, operators — son excelentes en su dominio. Pero luchan con el meta-problema: operar a sí mismas, a sus equipos y a sus organizaciones como sistemas coherentes. El resultado es caos operacional, energía dispersa y crecimiento más lento de lo que su potencial permite.
+          Las personas más ambiciosas (founders, executives, operators) son excelentes en su trabajo y mediocres en diseñar cómo trabajan. No porque les falte disciplina. Porque nadie les enseñó a construir el sistema detrás del resultado.
+        </p>
+        <p className="font-inter text-[hsl(var(--text-secondary))] text-[17px] md:text-lg leading-[1.75]">
+          Operar sin un sistema claro tiene un costo directo: decisiones lentas, energía dispersa, y equipos que funcionan a medias porque el diseño del trabajo es deficiente. No requiere más esfuerzo: requiere mejor diseño.
         </p>
       </div>
 
@@ -31,11 +34,6 @@ const ProblemStatement = () => (
           </div>
         ))}
       </div>
-
-      {/* Transition text */}
-      <p className="font-inter italic text-[hsl(var(--text-muted))] text-[16px] text-center mt-14" data-reveal>
-        Hay una salida. Y no requiere más esfuerzo — requiere mejor diseño.
-      </p>
     </div>
   </section>
 );

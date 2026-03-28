@@ -65,7 +65,7 @@ const Blog = () => {
               Desde el campo
             </h1>
             <p className="font-inter text-[hsl(var(--text-secondary))] text-[16px] max-w-[560px] leading-relaxed">
-              Ideas sobre sistemas, crecimiento y ejecución — basadas en experiencia real, no en teoría.
+              Ideas sobre sistemas, crecimiento y ejecución. Basadas en experiencia real, no en teoría.
             </p>
           </div>
 

@@ -1,5 +1,4 @@
 import { Linkedin, Instagram, Youtube, Mail } from 'lucide-react';
-import logoSrc from '@/assets/logos/fa_reduced_white.svg';
 
 const socials = [
   { label: 'LinkedIn', icon: Linkedin, href: 'https://linkedin.com' },
@@ -12,7 +11,36 @@ const Footer = () => (
   <footer className="bg-[hsl(var(--bg-primary))] border-t border-[hsl(var(--border-subtle))] py-20">
     <div className="max-w-[1200px] mx-auto px-6 lg:px-8 flex flex-col items-center gap-10">
       {/* Logo */}
-      <img src={logoSrc} style={{ height: '24px', width: 'auto' }} alt="Francisco Abad" />
+      <svg
+        viewBox="0 0 260 32"
+        height="28"
+        width="auto"
+        style={{ display: 'block' }}
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <text
+          x="0"
+          y="24"
+          fontFamily="Montserrat, Arial, sans-serif"
+          fontWeight="200"
+          fontSize="18"
+          letterSpacing="3"
+          fill="rgba(244,237,230,0.4)"
+        >
+          FRANCISCO
+        </text>
+        <text
+          x="152"
+          y="24"
+          fontFamily="Montserrat, Arial, sans-serif"
+          fontWeight="900"
+          fontSize="22"
+          letterSpacing="1"
+          fill="#C2654A"
+        >
+          ABAD
+        </text>
+      </svg>
 
       {/* Bio */}
       <p className="font-inter text-[hsl(var(--text-secondary))] text-[14px] leading-[1.8] text-center max-w-[700px]">

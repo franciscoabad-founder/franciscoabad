@@ -26,31 +26,34 @@ const values = [
 
 const timeline = [
   {
-    year: '2016',
-    event: 'Fundó CODEIS',
-    detail: 'Empresa de tecnología y diseño de sistemas con presencia en múltiples países.',
-  },
-  {
-    year: '2018',
-    event: 'Expansión a 15 países',
-    detail: 'Lideró iniciativas de tech, educación y consultoría en toda la región.',
-  },
-  {
-    year: '2022',
-    event: 'Director General del IESS',
-    detail: 'Asumió la dirección de la institución pública más grande del Ecuador.',
-  },
-  {
-    year: '2023',
-    event: 'Transformación institucional',
+    year: '2026',
+    event: 'Fundador y CEO, Fulcra · Partner, Kronek · Presidente del Directorio, CODEIS',
     detail:
-      'Elevó la ejecución presupuestaria del 36% al 78% en 6 meses. Gestionó más de $10B en activos y 32,000 colaboradores.',
+      'Construyo Fulcra, una startup de workertech que diagnostica cómo trabajan realmente las organizaciones antes de que automaticer cualquier cosa. Paralelamente, dirijo estrategia de crecimiento y revenue en Kronek junto a mi socio Robinson, y presido el directorio de CODEIS.',
   },
   {
     year: '2025',
-    event: 'Francisco Abad — Systems for Growth',
+    event: 'Director General, IESS',
     detail:
-      'Lanzó su plataforma personal de consultoría, contenido y productos para founders y executives.',
+      'Lideré la institución pública más grande del Ecuador: $10 billones en fondos administrados, 32.000 colaboradores, 13 millones de beneficiarios. Elevé la ejecución presupuestaria del 36% al 78% en menos de seis meses. Implementé tableros de inteligencia de negocios y lideré la transformación digital de servicios clave.',
+  },
+  {
+    year: '2016',
+    event: 'Fundador y Director Ejecutivo, CODEIS',
+    detail:
+      'Construí desde cero una organización de innovación social presente en 15 países. 12.000 emprendedores capacitados. Alianzas con BID Lab, USAID, GIZ, Banco Mundial, Georgetown. El programa World Change Makers ganó el desafío internacional Better Together del BID Lab y fue reconocido por Naciones Unidas entre los 50 mejores proyectos jóvenes globales.',
+  },
+  {
+    year: '2019',
+    event: 'Global Competitiveness Leadership Program, Georgetown University',
+    detail:
+      'Beca completa. Top 10 proyectos del programa. Materias de liderazgo adaptativo, finanzas, innovación abierta y negociación ejecutiva.',
+  },
+  {
+    year: '2014',
+    event: 'MPA Desarrollo Internacional, London School of Economics',
+    detail:
+      'Méritos académicos. Econometría aplicada, evaluación de impacto, políticas públicas, finanzas del desarrollo. Fundador de la Sociedad de Innovación Social en LSE.',
   },
 ];
 
@@ -65,7 +68,7 @@ const SobreMi = () => (
           {/* Photo */}
           <img
             src="/francisco-abad.png"
-            alt="Francisco Abad — Founder, Operator, Strategist"
+            alt="Francisco Abad, Founder, Operator, Strategist"
             className="w-full max-w-[480px] aspect-[3/4] object-cover rounded-lg shadow-2xl"
           />
 
@@ -85,8 +88,8 @@ const SobreMi = () => (
                 </p>
                 <p>
                   Esa convicción me llevó a liderar el{' '}
-                  <strong className="text-[hsl(var(--text-primary))]">IESS</strong> — la
-                  institución pública más grande del Ecuador — gestionando más de{' '}
+                  <strong className="text-[hsl(var(--text-primary))]">IESS</strong>{' '}
+                  (la institución pública más grande del Ecuador), gestionando más de{' '}
                   <strong className="text-[hsl(var(--text-primary))]">$10 billones en activos</strong>{' '}
                   y un equipo de{' '}
                   <strong className="text-[hsl(var(--text-primary))]">32,000 personas</strong>.
@@ -126,21 +129,7 @@ const SobreMi = () => (
               </div>
             </div>
 
-            {/* Fuera del trabajo */}
-            <div>
-              <h2 className="font-montserrat font-bold text-[hsl(var(--text-primary))] text-[28px] mb-4">
-                Fuera del trabajo
-              </h2>
-              <p className="font-inter text-[hsl(var(--text-secondary))] text-[16px] leading-relaxed">
-                Toco la{' '}
-                <strong className="text-[hsl(var(--text-primary))]">batería</strong>. Compito en{' '}
-                <strong className="text-[hsl(var(--text-primary))]">sim racing</strong>. Me pierdo
-                en mundos abiertos — los videojuegos de mundo abierto son mi forma de desconectar y
-                reconectar. Y comparto todo esto con{' '}
-                <strong className="text-[hsl(var(--text-primary))]">Priscila</strong>, mi compañera
-                de vida.
-              </p>
-            </div>
+
           </div>
         </div>
       </div>

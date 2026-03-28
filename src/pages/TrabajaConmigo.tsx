@@ -27,13 +27,16 @@ const TrabajaConmigo = () => (
     <Navbar />
 
     {/* Hero */}
-    <section className="bg-[hsl(var(--bg-primary))] pt-40 pb-24 text-center">
+    <section className="bg-[hsl(var(--bg-primary))] pt-40 pb-24">
       <div className="max-w-[760px] mx-auto px-6 lg:px-8">
         <h1 className="font-montserrat font-bold text-[hsl(var(--text-primary))] text-[40px] md:text-[56px] leading-tight mb-5">
-          ¿En qué puedo ayudarte?
+          Trabajemos juntos.
         </h1>
-        <p className="font-inter text-[hsl(var(--text-secondary))] text-[17px] leading-relaxed">
-          Tres formas de trabajar conmigo, según dónde estés y qué necesites.
+        <p className="font-inter text-[hsl(var(--text-secondary))] text-[17px] leading-relaxed mb-5">
+          Tres formas de trabajar conmigo, según lo que necesitas resolver ahora.
+        </p>
+        <p className="font-inter text-[hsl(var(--text-secondary))] text-[16px] leading-relaxed">
+          He liderado organizaciones con 32.000 personas y $10 billones en activos. He construido programas en 15 países con presupuesto casi cero. La diferencia entre los dos contextos no fue el recurso: fue el sistema. Si estás construyendo algo y el crecimiento se siente trabado, probablemente el problema no está donde crees. Eso es lo que diagnostico y lo que diseño.
         </p>
       </div>
     </section>
@@ -100,7 +103,7 @@ const TrabajaConmigo = () => (
             </h2>
             <p className="font-inter text-[hsl(var(--text-secondary))] text-[16px] leading-relaxed mb-10 max-w-[480px]">
               Acompañamiento estratégico 1:1 para líderes que operan en entornos de alta
-              complejidad. No es coaching genérico — es trabajo real con alguien que ha construido,
+              complejidad. No es coaching genérico: es trabajo real con alguien que ha construido,
               dirigido y transformado organizaciones desde adentro.
             </p>
             <div className="space-y-3">
@@ -157,7 +160,7 @@ const TrabajaConmigo = () => (
             </h2>
             <p className="font-inter text-[hsl(var(--text-secondary))] text-[16px] leading-relaxed mb-8 max-w-[480px]">
               Keynotes y workshops diseñados para equipos directivos, conferencias y programas
-              corporativos. No son presentaciones genéricas — son sesiones construidas desde la
+              corporativos. No son presentaciones genéricas: son sesiones construidas desde la
               experiencia real de haber transformado instituciones y organizaciones.
             </p>
             <a

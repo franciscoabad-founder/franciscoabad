@@ -42,11 +42,11 @@ const Contacto = () => {
             <div className="space-y-12">
               <div>
                 <h1 className="font-montserrat font-bold text-[hsl(var(--text-primary))] text-[40px] md:text-[52px] leading-tight mb-6">
-                  Let's Work<br />Together
+                  Hablemos.
                 </h1>
                 <p className="font-inter text-[hsl(var(--text-secondary))] text-[16px] leading-relaxed max-w-[420px]">
-                  Si estás construyendo algo que importa y necesitas claridad, sistemas, o alguien
-                  que ya haya estado en el campo — hablemos.
+                  Si estás construyendo algo serio y necesitas claridad, estrategia, o alguien que
+                  ya haya estado en el campo, escríbeme. Respondo en 48 horas.
                 </p>
               </div>
 

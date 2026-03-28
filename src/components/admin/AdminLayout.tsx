@@ -1,6 +1,5 @@
 import { NavLink, Outlet, useNavigate } from 'react-router-dom';
 import { supabase } from '@/lib/supabase';
-import LogoSVG from '@/assets/logos/fa_horizontal_clean_dark.svg?react';
 import {
   LayoutDashboard,
   Instagram,
@@ -41,7 +40,36 @@ export default function AdminLayout() {
       >
         {/* Logo */}
         <div className="px-6 pt-8 pb-6 select-none">
-          <LogoSVG style={{ height: '28px', width: 'auto' }} />
+          <svg
+            viewBox="0 0 320 36"
+            height="36"
+            width="auto"
+            style={{ display: 'block' }}
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <text
+              x="0"
+              y="27"
+              fontFamily="Montserrat, Arial, sans-serif"
+              fontWeight="200"
+              fontSize="24"
+              letterSpacing="4"
+              fill="rgba(244,237,230,0.55)"
+            >
+              FRANCISCO
+            </text>
+            <text
+              x="184"
+              y="27"
+              fontFamily="Montserrat, Arial, sans-serif"
+              fontWeight="900"
+              fontSize="28"
+              letterSpacing="1"
+              fill="#C2654A"
+            >
+              ABAD
+            </text>
+          </svg>
         </div>
 
         <div style={{ borderTop: '1px solid #2A2A2A' }} className="mx-4 mb-4" />
