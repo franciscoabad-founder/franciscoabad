@@ -90,7 +90,7 @@ const SobreMi = () => (
       <div className="max-w-[1200px] mx-auto px-6 lg:px-8">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-start">
           <img
-            src="/francisco-abad.png"
+            src="/francisco-abad-about.jpg"
             alt="Francisco Abad, Founder, Operator, Strategist"
             className="w-full max-w-[360px] aspect-[3/4] object-cover rounded-lg shadow-2xl"
           />
