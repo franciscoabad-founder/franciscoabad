@@ -27,7 +27,7 @@ const testimonials = [
     company: 'CODEIS',
     linkedIn: 'https://www.linkedin.com/in/gabrielatulcanazo/',
     quote:
-      'Estamos transformando CODEIS de una ONG dependiente de grants a una empresa social sostenible. Ese trabajo se hace desde el sistema: rediseñar cómo opera la organización, cómo genera valor, cómo se financia. Francisco construyó CODEIS durante 9 años y ahora me apoya desde la presidencia del directorio con la misma visión sistémica con la que lo fundó. La diferencia entre antes y ahora es que el sistema trabaja, no solo las personas.',
+      'Estamos transformando CODEIS de una ONG dependiente de grants a una empresa social sostenible. Ese trabajo se hace desde el sistema: rediseñar cómo opera la organización, cómo genera valor, cómo se financia. Francisco construyó CODEIS durante 10 años y ahora me apoya desde la presidencia del directorio con la misma visión sistémica con la que lo fundó. La diferencia entre antes y ahora es que el sistema trabaja, no solo las personas.',
   },
   {
     photo: '/testimonials/alvaro-maldonado.jpg.jpeg',

@@ -33,7 +33,7 @@ const Footer = () => (
 
       {/* Bio */}
       <p className="font-inter text-[hsl(var(--text-secondary))] text-[14px] leading-[1.8] text-center max-w-[700px]">
-        Francisco Abad ha construido, dirigido y transformado sistemas reales. Fundó CODEIS hace 9 años,
+        Francisco Abad ha construido, dirigido y transformado sistemas reales. Fundó CODEIS hace 10 años,
         dirigió el IESS (la institución pública más grande del Ecuador), y ha construido múltiples iniciativas
         en tech, educación y consultoría. Hoy diseña sistemas para que founders, executives y organizaciones
         operen con más claridad, ejecución y resultados.

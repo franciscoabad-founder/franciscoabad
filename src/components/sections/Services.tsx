@@ -1,20 +1,23 @@
+import { Link } from 'react-router-dom';
+
 const services = [
   {
     eyebrow: 'Empieza aquí',
-    title: 'Productos Digitales',
-    description: 'Herramientas y sistemas que puedes aplicar desde hoy.',
+    title: 'Growth OS',
+    description: 'El sistema operativo personal de 90 días. Reemplaza motivación con estructura. Un trimestre completo, tres objetivos, un sistema que decide por ti cuando no tienes ganas.',
     items: [
-      '90-Day Reset System',
-      'Purpose & Serendipity OS',
-      'Network Strategy Dashboard',
-      'Founder Execution Dashboard',
+      'Excel con 567 fórmulas',
+      'Manual de 10 capítulos',
+      'Brief de onboarding',
+      '3 Prompts de IA',
     ],
-    cta: 'Ver todos los productos →',
-    href: '#productos',
+    cta: 'Ver el Growth OS →',
+    href: '/growth-os',
+    external: false,
   },
   {
     eyebrow: 'Para founders y executives',
-    title: 'Advisory & Consultoría',
+    title: 'Advisory y Consultoría',
     description: 'Acompañamiento estratégico 1:1 para líderes que quieren operar con más claridad y mejores resultados.',
     items: [
       'Diagnóstico Estratégico',
@@ -22,19 +25,21 @@ const services = [
       'Growth Partner trimestral',
     ],
     cta: 'Aplicar a una sesión →',
-    href: '#advisory',
+    href: '/trabaja-conmigo',
+    external: false,
   },
   {
     eyebrow: 'Para empresas y eventos',
-    title: 'Speaking & Talleres',
-    description: 'Keynotes y workshops sobre systems thinking, transformación institucional, liderazgo y ejecución.',
+    title: 'Speaking y Talleres',
+    description: 'Keynotes y workshops sobre systems thinking, transformación institucional, liderazgo y ejecución aplicada.',
     items: [
       'Keynotes para conferencias',
       'Workshops para equipos directivos',
       'Programas corporativos',
     ],
     cta: 'Cotizar una charla →',
-    href: '#speaking',
+    href: '/trabaja-conmigo',
+    external: false,
   },
 ];
 
@@ -42,7 +47,7 @@ const Services = () => (
   <section id="servicios" className="bg-[hsl(var(--bg-primary))] py-12 md:py-20">
     <div className="max-w-[1200px] mx-auto px-6 lg:px-8">
       <h2 className="font-montserrat font-bold text-[hsl(var(--text-primary))] text-[32px] md:text-[36px] text-center mb-16" data-reveal>
-        ¿En qué puedo ayudarte?
+        Quiero ayudarte a crecer
       </h2>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -70,12 +75,12 @@ const Services = () => (
                 </li>
               ))}
             </ul>
-            <a
-              href={s.href}
+            <Link
+              to={s.href}
               className="font-inter font-medium text-[hsl(var(--ember))] text-[14px] hover:underline mt-auto"
             >
               {s.cta}
-            </a>
+            </Link>
           </div>
         ))}
       </div>

@@ -2,10 +2,10 @@ import { useRef, useState, useEffect } from 'react';
 import useCountUp from '@/hooks/useCountUp';
 
 const stats = [
-  { value: 10, suffix: 'B+', prefix: '$', label: 'Fondos administrados liderados' },
-  { value: 32000, suffix: '', prefix: '', label: 'Personas bajo liderazgo directo e indirecto' },
-  { value: 15, suffix: '', prefix: '', label: 'Países con presencia de programas' },
-  { value: 12000, suffix: '+', prefix: '', label: 'Emprendedores impactados directamente' },
+  { value: 10, suffix: 'B+', prefix: '$', label: 'Fondos administrados' },
+  { value: 32000, suffix: '', prefix: '', label: 'Personas bajo liderazgo' },
+  { value: 15, suffix: '', prefix: '', label: 'Países con presencia' },
+  { value: 12000, suffix: '+', prefix: '', label: 'Emprendedores impactados' },
 ];
 
 const StatItem = ({

@@ -65,7 +65,7 @@ const timeline = [
   },
   {
     period: '2011',
-    event: 'One Young World Ambassador, Zurich',
+    event: 'One Young World · Delegate Speaker y Ambassador, Zurich',
     detail:
       'Primer ecuatoriano en representar al país en One Young World, el encuentro anual de los jóvenes líderes más destacados del mundo. El Summit de Zurich 2011 reunió delegados de 190 países bajo la tutoría de figuras como Desmond Tutu, Bob Geldof y Kofi Annan. El proceso de selección recibe más de 50.000 aplicaciones por año.',
   },
@@ -115,7 +115,7 @@ const SobreMi = () => {
             <div className="space-y-4 font-inter text-[hsl(var(--text-secondary))] text-[16px] leading-relaxed">
               <p>
                 Fundé{' '}
-                <strong className="text-[hsl(var(--text-primary))]">CODEIS</strong> hace 9 años
+                <strong className="text-[hsl(var(--text-primary))]">CODEIS</strong> hace 10 años
                 con una convicción: la tecnología bien aplicada puede transformar cualquier
                 organización, no solo las grandes corporaciones.
               </p>

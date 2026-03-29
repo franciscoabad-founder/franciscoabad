@@ -28,6 +28,13 @@ function toDisplayPost(p: SupabaseBlogPost): DisplayPost {
   };
 }
 
+const TABS = [
+  { label: 'Todos', value: '' },
+  { label: 'Systems Thinking', value: 'Systems Thinking' },
+  { label: 'Founder Systems', value: 'Founder Systems' },
+  { label: 'Liderazgo', value: 'Liderazgo' },
+];
+
 const Blog = () => {
   const [posts, setPosts] = useState<DisplayPost[]>(
     fallbackPosts.map((p) => ({
@@ -40,6 +47,7 @@ const Blog = () => {
     }))
   );
   const [loading, setLoading] = useState(true);
+  const [activeTab, setActiveTab] = useState('');
 
   useEffect(() => {
     supabase
@@ -55,6 +63,8 @@ const Blog = () => {
       });
   }, []);
 
+  const filtered = activeTab ? posts.filter((p) => p.category === activeTab) : posts;
+
   return (
     <div className="bg-[hsl(var(--bg-primary))] min-h-screen">
       <Helmet>
@@ -65,13 +75,31 @@ const Blog = () => {
 
       <section className="pt-32 pb-24">
         <div className="max-w-[1200px] mx-auto px-6 lg:px-8">
-          <div className="mb-14">
+          <div className="mb-10">
             <h1 className="font-montserrat font-bold text-[hsl(var(--text-primary))] text-[36px] md:text-[44px] mb-3">
-              Desde el campo
+              Dentro del Systema
             </h1>
             <p className="font-inter text-[hsl(var(--text-secondary))] text-[16px] max-w-[560px] leading-relaxed">
               Ideas sobre sistemas, crecimiento y ejecución. Basadas en experiencia real, no en teoría.
             </p>
+          </div>
+
+          {/* Category tabs */}
+          <div className="flex flex-wrap gap-2 mb-10">
+            {TABS.map((tab) => (
+              <button
+                key={tab.value}
+                onClick={() => setActiveTab(tab.value)}
+                className="font-montserrat font-medium text-[12px] uppercase tracking-[1px] px-4 py-2 rounded-full border transition-colors duration-200"
+                style={{
+                  backgroundColor: activeTab === tab.value ? '#C2654A' : 'transparent',
+                  borderColor: activeTab === tab.value ? '#C2654A' : 'rgba(138,130,121,0.3)',
+                  color: activeTab === tab.value ? '#fff' : '#8A8279',
+                }}
+              >
+                {tab.label}
+              </button>
+            ))}
           </div>
 
           {loading ? (
@@ -93,7 +121,7 @@ const Blog = () => {
             </div>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {posts.map((post) => (
+              {filtered.map((post) => (
                 <Link key={post.slug} to={`/blog/${post.slug}`} className="block group">
                   <article className="bg-[hsl(var(--bg-elevated))] rounded-lg overflow-hidden border border-[hsl(var(--border-subtle))] hover:border-[hsl(var(--ember))] transition-colors duration-300 h-full">
                     {post.coverImageUrl ? (
@@ -122,6 +150,11 @@ const Blog = () => {
                   </article>
                 </Link>
               ))}
+              {filtered.length === 0 && (
+                <p className="font-inter text-[hsl(var(--text-muted))] text-[14px] col-span-2 py-8">
+                  No hay posts en esta categoría todavía.
+                </p>
+              )}
             </div>
           )}
         </div>

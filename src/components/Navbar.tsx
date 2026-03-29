@@ -29,36 +29,11 @@ const Navbar = () => {
         <div className="max-w-[1200px] mx-auto px-6 lg:px-8 flex items-center justify-between h-16 lg:h-20">
           {/* Logo */}
           <Link to="/" className="flex items-center select-none">
-            <svg
-              viewBox="0 0 320 40"
-              height="40"
-              width="auto"
-              style={{ display: 'block', flexShrink: 0 }}
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <text
-                x="0"
-                y="30"
-                fontFamily="Montserrat, Arial, sans-serif"
-                fontWeight="200"
-                fontSize="26"
-                letterSpacing="4"
-                fill="rgba(244,237,230,0.55)"
-              >
-                FRANCISCO
-              </text>
-              <text
-                x="192"
-                y="30"
-                fontFamily="Montserrat, Arial, sans-serif"
-                fontWeight="900"
-                fontSize="30"
-                letterSpacing="1"
-                fill="#C2654A"
-              >
-                ABAD
-              </text>
-            </svg>
+            <img
+              src="/fa_horizontal_tagline_dark_3x.png"
+              alt="Francisco Abad - Systems for Growth"
+              style={{ height: '52px', width: 'auto' }}
+            />
           </Link>
 
           {/* Desktop nav */}

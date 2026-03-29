@@ -3,17 +3,42 @@ import { Helmet } from 'react-helmet-async';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/sections/Footer';
 
-const products = [
-  { name: '90-Day Reset System', desc: 'Sistema para resetear y clarificar tu próximos 90 días' },
-  { name: 'Purpose & Serendipity OS', desc: 'Framework de propósito e intención estratégica' },
-  { name: 'Network Strategy Dashboard', desc: 'Sistema para construir y activar tu red de forma intencional' },
-  { name: 'Founder Execution Dashboard', desc: 'Dashboard de ejecución para founders y operadores' },
-];
-
-const advisoryItems = [
-  'Diagnóstico Estratégico (vía Kronek)',
-  'Sesiones de advisory ejecutivo',
-  'Growth Partner trimestral',
+const sessions = [
+  {
+    title: 'Sesión de Diagnóstico',
+    price: '$297',
+    duration: '90 min · Zoom',
+    includes: [
+      'Diagnóstico estructurado',
+      'Plan de 90 días',
+      'Excel configurado',
+      'Resumen ejecutivo',
+    ],
+    cta: 'Aplicar a esta sesión →',
+    href: '/contacto?tipo=advisory',
+  },
+  {
+    title: 'Sesión + Seguimiento',
+    price: '$497',
+    duration: '90 min + 2 check-ins de 30 min',
+    includes: [
+      'Todo lo de la Sesión de Diagnóstico',
+      '2 check-ins de seguimiento',
+      'Ajustes en tiempo real',
+    ],
+    cta: 'Aplicar a esta sesión →',
+    href: '/contacto?tipo=advisory',
+  },
+  {
+    title: 'Sistema Completo',
+    price: 'Desde $997',
+    duration: 'Done-For-You',
+    includes: [
+      'Para founders que quieren que el sistema esté instalado, no solo explicado',
+    ],
+    cta: 'Solicitar información →',
+    href: '/contacto?tipo=advisory',
+  },
 ];
 
 const speakingTopics = [
@@ -50,7 +75,7 @@ const TrabajaConmigo = () => (
     <div className="relative w-full overflow-hidden" style={{ maxHeight: 480 }}>
       <img
         src="/Speaking/speaking-banner.jpg.png"
-        alt="Francisco Abad, Hult Prize Regional Finals, Quito"
+        alt="Francisco Abad hablando en Innovaxion 2024"
         style={{
           width: '100%',
           height: 480,
@@ -84,139 +109,117 @@ const TrabajaConmigo = () => (
       </p>
     </div>
 
-    {/* Block 1 — Productos Digitales */}
+    {/* Sección A — Productos Digitales */}
     <section className="bg-[hsl(var(--bg-primary))] py-12 md:py-20 border-t border-[hsl(var(--border-subtle))]">
       <div className="max-w-[1200px] mx-auto px-6 lg:px-8">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-start">
-          {/* Left */}
-          <div>
-            <p className="font-montserrat text-[11px] uppercase tracking-[2px] text-[hsl(var(--ember))] mb-3">
-              Empieza aquí
-            </p>
-            <h2 className="font-montserrat font-bold text-[hsl(var(--text-primary))] text-[36px] md:text-[42px] leading-tight mb-6">
-              Productos Digitales
-            </h2>
-            <p className="font-inter text-[hsl(var(--text-secondary))] text-[16px] leading-relaxed mb-8 max-w-[480px]">
-              Herramientas y sistemas listos para usar — sin calls, sin procesos. Si necesitas
-              claridad o estructura ahora mismo, empieza aquí. Cada producto es un sistema probado
-              que puedes implementar desde hoy.
-            </p>
-            <a
-              href="#productos"
-              className="inline-block font-montserrat font-semibold text-[13px] uppercase tracking-[1.5px] text-[hsl(var(--ember))] border border-[hsl(var(--ember))] px-7 py-3.5 rounded-md hover:bg-[hsl(var(--ember))] hover:text-white transition-all duration-300"
-            >
-              Ver todos los productos →
-            </a>
-          </div>
+        <p className="font-montserrat text-[11px] uppercase tracking-[2px] text-[hsl(var(--ember))] mb-3">
+          Empieza aquí
+        </p>
+        <h2 className="font-montserrat font-bold text-[hsl(var(--text-primary))] text-[32px] md:text-[38px] leading-tight mb-10">
+          Herramientas que puedes implementar hoy
+        </h2>
 
-          {/* Right */}
-          <div className="space-y-4">
-            {products.map((p) => (
-              <div
-                key={p.name}
-                className="bg-[hsl(var(--bg-elevated))] border border-[hsl(var(--border-subtle))] rounded-md px-6 py-4 hover:border-[hsl(var(--ember))] transition-colors duration-300"
-              >
-                <div className="flex items-start gap-3">
-                  <span className="text-[hsl(var(--ember))] mt-0.5 flex-shrink-0">—</span>
-                  <div>
-                    <p className="font-inter font-medium text-[hsl(var(--text-primary))] text-[15px]">
-                      {p.name}
-                    </p>
-                    <p className="font-inter text-[hsl(var(--text-muted))] text-[13px] leading-snug mt-0.5">
-                      {p.desc}
-                    </p>
-                  </div>
-                </div>
-              </div>
-            ))}
+        {/* Growth OS card */}
+        <div className="max-w-[560px] bg-[hsl(var(--bg-elevated))] border border-[hsl(var(--ember))] rounded-lg p-8">
+          <div className="flex items-start justify-between gap-4 mb-4">
+            <div>
+              <p className="font-montserrat font-bold text-[hsl(var(--text-primary))] text-[22px]">
+                Growth OS
+              </p>
+              <p className="font-inter text-[hsl(var(--text-secondary))] text-[14px] mt-1 leading-relaxed">
+                El sistema operativo personal de 90 días. Excel, manual, brief y prompts de IA incluidos.
+              </p>
+            </div>
+            <span className="font-montserrat font-bold text-[hsl(var(--ember))] text-[22px] flex-shrink-0">
+              $47
+            </span>
           </div>
+          <Link
+            to="/growth-os"
+            className="inline-block font-montserrat font-semibold text-[13px] uppercase tracking-[1.5px] text-white bg-[hsl(var(--ember))] px-7 py-3.5 rounded-md hover:opacity-90 transition-opacity duration-300"
+          >
+            Ver el Growth OS →
+          </Link>
         </div>
       </div>
     </section>
 
-    {/* Block 2 — Advisory & Consultoría */}
+    {/* Sección B — Sesiones 1:1 */}
     <section className="bg-[hsl(var(--bg-elevated))] py-12 md:py-20 border-t border-[hsl(var(--border-subtle))]">
       <div className="max-w-[1200px] mx-auto px-6 lg:px-8">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-start">
-          {/* Left */}
-          <div>
-            <p className="font-montserrat text-[11px] uppercase tracking-[2px] text-[hsl(var(--ember))] mb-3">
-              Para founders y executives
-            </p>
-            <h2 className="font-montserrat font-bold text-[hsl(var(--text-primary))] text-[36px] md:text-[42px] leading-tight mb-6">
-              Advisory &<br />Consultoría
-            </h2>
-            <p className="font-inter text-[hsl(var(--text-secondary))] text-[16px] leading-relaxed mb-10 max-w-[480px]">
-              Acompañamiento estratégico 1:1 para líderes que operan en entornos de alta
-              complejidad. No es coaching genérico: es trabajo real con alguien que ha construido,
-              dirigido y transformado organizaciones desde adentro.
-            </p>
-            <div className="space-y-3">
-              <a
-                href="#advisory"
-                className="block w-fit font-montserrat font-semibold text-[13px] uppercase tracking-[1.5px] text-white bg-[hsl(var(--ember))] px-8 py-4 rounded-md hover:opacity-90 transition-opacity duration-300"
-              >
-                Aplicar a una sesión →
-              </a>
-              <p className="font-inter text-[hsl(var(--text-muted))] text-[12px] leading-relaxed max-w-[340px]">
-                Proceso de aplicación con preguntas de calificación. No es Calendly directo.
-              </p>
-            </div>
-          </div>
+        <p className="font-montserrat text-[11px] uppercase tracking-[2px] text-[hsl(var(--ember))] mb-3">
+          Para founders y executives
+        </p>
+        <h2 className="font-montserrat font-bold text-[hsl(var(--text-primary))] text-[32px] md:text-[38px] leading-tight mb-3">
+          Trabajemos directamente
+        </h2>
+        <p className="font-inter text-[hsl(var(--text-secondary))] text-[15px] mb-12">
+          Aplica primero. Si hay fit, agendamos.
+        </p>
 
-          {/* Right */}
-          <div>
-            <p className="font-montserrat font-semibold text-[hsl(var(--text-muted))] text-[11px] uppercase tracking-[2px] mb-6">
-              Qué incluye
-            </p>
-            <div className="space-y-6">
-              {advisoryItems.map((item) => (
-                <div key={item} className="flex gap-4 items-start">
-                  <div className="mt-2 w-1.5 h-1.5 rounded-full bg-[hsl(var(--ember))] flex-shrink-0" />
-                  <p className="font-inter text-[hsl(var(--text-primary))] text-[16px] leading-relaxed">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          {sessions.map((s) => (
+            <div
+              key={s.title}
+              className="bg-[hsl(var(--bg-primary))] border border-[hsl(var(--border-subtle))] hover:border-[hsl(var(--ember))] rounded-lg p-8 flex flex-col transition-colors duration-300"
+            >
+              <p className="font-montserrat font-bold text-[hsl(var(--ember))] text-[28px] mb-1">
+                {s.price}
+              </p>
+              <p className="font-montserrat font-semibold text-[hsl(var(--text-primary))] text-[18px] mb-1">
+                {s.title}
+              </p>
+              <p className="font-inter text-[hsl(var(--text-muted))] text-[12px] mb-6">
+                {s.duration}
+              </p>
+              <ul className="space-y-2 mb-8 flex-1">
+                {s.includes.map((item) => (
+                  <li key={item} className="font-inter text-[hsl(var(--text-secondary))] text-[14px] flex items-start gap-2 leading-snug">
+                    <span className="text-[hsl(var(--ember))] flex-shrink-0 mt-[2px]">—</span>
                     {item}
-                  </p>
-                </div>
-              ))}
+                  </li>
+                ))}
+              </ul>
+              <Link
+                to={s.href}
+                className="font-montserrat font-semibold text-[13px] uppercase tracking-[1.5px] text-[hsl(var(--ember))] border border-[hsl(var(--ember))] px-5 py-3 rounded-md text-center hover:bg-[hsl(var(--ember))] hover:text-white transition-all duration-300"
+              >
+                {s.cta}
+              </Link>
             </div>
+          ))}
+        </div>
 
-            <div className="mt-10 pt-10 border-t border-[hsl(var(--border-subtle))]">
-              <p className="font-montserrat font-light italic text-[hsl(var(--text-secondary))] text-[15px] leading-relaxed">
-                "El trabajo que hacemos juntos no es solo resolver el problema de hoy — es
-                construir la arquitectura para que no vuelva a aparecer."
-              </p>
-            </div>
-          </div>
+        <div className="mt-10 pt-10 border-t border-[hsl(var(--border-subtle))] max-w-[480px]">
+          <p className="font-montserrat font-light italic text-[hsl(var(--text-secondary))] text-[15px] leading-relaxed">
+            "El trabajo que hacemos juntos no es solo resolver el problema de hoy — es construir la arquitectura para que no vuelva a aparecer."
+          </p>
         </div>
       </div>
     </section>
 
-    {/* Block 3 — Speaking & Talleres */}
+    {/* Sección C — Speaking & Talleres */}
     <section className="bg-[hsl(var(--bg-primary))] py-12 md:py-20 border-t border-[hsl(var(--border-subtle))]">
       <div className="max-w-[1200px] mx-auto px-6 lg:px-8">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-start">
-          {/* Left */}
           <div>
             <p className="font-montserrat text-[11px] uppercase tracking-[2px] text-[hsl(var(--ember))] mb-3">
               Para empresas y eventos
             </p>
-            <h2 className="font-montserrat font-bold text-[hsl(var(--text-primary))] text-[36px] md:text-[42px] leading-tight mb-6">
-              Speaking &<br />Talleres
+            <h2 className="font-montserrat font-bold text-[hsl(var(--text-primary))] text-[32px] md:text-[38px] leading-tight mb-6">
+              ¿Quieres que hable en tu evento?
             </h2>
             <p className="font-inter text-[hsl(var(--text-secondary))] text-[16px] leading-relaxed mb-8 max-w-[480px]">
-              Keynotes y workshops diseñados para equipos directivos, conferencias y programas
-              corporativos. No son presentaciones genéricas: son sesiones construidas desde la
-              experiencia real de haber transformado instituciones y organizaciones.
+              Keynotes y workshops diseñados para equipos directivos, conferencias y programas corporativos. Sesiones construidas desde la experiencia real de haber transformado instituciones y organizaciones.
             </p>
-            <a
-              href="#speaking"
+            <Link
+              to="/contacto?tipo=speaking"
               className="inline-block font-montserrat font-semibold text-[13px] uppercase tracking-[1.5px] text-[hsl(var(--ember))] border border-[hsl(var(--ember))] px-7 py-3.5 rounded-md hover:bg-[hsl(var(--ember))] hover:text-white transition-all duration-300"
             >
               Cotizar una charla →
-            </a>
+            </Link>
           </div>
 
-          {/* Right */}
           <div>
             <p className="font-montserrat font-semibold text-[hsl(var(--text-muted))] text-[11px] uppercase tracking-[2px] mb-6">
               Temas

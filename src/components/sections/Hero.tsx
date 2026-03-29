@@ -19,13 +19,13 @@ const Hero = () => {
             </p>
 
             {/* Headline */}
-            <h1 className="font-montserrat font-bold text-[hsl(var(--text-primary))] text-[42px] sm:text-[52px] leading-[1.12] tracking-[-0.5px]">
+            <h1 className="font-montserrat font-bold text-[hsl(var(--text-primary))] text-[clamp(2rem,8vw,4rem)] leading-[1.12] tracking-[-0.5px]">
               Diseño sistemas para que personas y organizaciones funcionen mejor.
             </h1>
 
             {/* Subheadline */}
             <p className="font-inter text-[hsl(var(--text-secondary))] text-lg tracking-[2px]">
-              Founder · Operator · Strategist
+              Founder · Strategist · Innovator
             </p>
 
             {/* CTAs */}
@@ -34,13 +34,13 @@ const Hero = () => {
                 onClick={() => scrollTo('#servicios')}
                 className="font-inter font-medium text-[hsl(var(--text-primary))] bg-[hsl(var(--ember))] hover:bg-[hsl(14,45%,46%)] px-8 py-3 rounded-md transition-colors duration-300"
               >
-                Trabaja conmigo
+                Trabajemos juntos
               </button>
               <button
                 onClick={() => scrollTo('#recursos')}
                 className="font-inter font-medium text-[hsl(var(--ember))] border border-[hsl(var(--ember))] hover:bg-[hsl(var(--ember))] hover:text-[hsl(var(--text-primary))] px-8 py-3 rounded-md transition-all duration-300"
               >
-                Explora recursos gratuitos
+                Explora recursos
               </button>
             </div>
           </div>
