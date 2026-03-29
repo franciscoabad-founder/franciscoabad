@@ -35,7 +35,7 @@ const divider = (
 );
 
 const LogosInstitucionales = () => (
-  <section style={{ backgroundColor: '#F4EDE6', padding: '64px 0' }}>
+  <section style={{ backgroundColor: '#F4EDE6' }} className="py-12 md:py-20">
     <div className="max-w-[1200px] mx-auto px-6 lg:px-8">
       <div className="mb-10" data-reveal>
         <p

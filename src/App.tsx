@@ -20,6 +20,7 @@ import Blog from "./pages/Blog.tsx";
 import BlogPost from "./pages/BlogPost.tsx";
 import Contacto from "./pages/Contacto.tsx";
 import TrabajaConmigo from "./pages/TrabajaConmigo.tsx";
+import GrowthLab from "./pages/GrowthLab.tsx";
 import NotFound from "./pages/NotFound.tsx";
 
 // Admin auth & layout
@@ -54,6 +55,7 @@ const App = () => (
           <Route path="/blog/:slug" element={<BlogPost />} />
           <Route path="/contacto" element={<Contacto />} />
           <Route path="/trabaja-conmigo" element={<TrabajaConmigo />} />
+          <Route path="/growth-lab" element={<GrowthLab />} />
 
           {/* ── Admin login (unprotected) ──────────────────── */}
           <Route path="/admin/login" element={<Login />} />

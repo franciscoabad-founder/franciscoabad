@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { Helmet } from 'react-helmet-async';
 import { Link } from 'react-router-dom';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/sections/Footer';
@@ -56,6 +57,10 @@ const Blog = () => {
 
   return (
     <div className="bg-[hsl(var(--bg-primary))] min-h-screen">
+      <Helmet>
+        <title>Blog | Francisco Abad</title>
+        <meta name="description" content="Ideas sobre sistemas, crecimiento y ejecución aplicada para founders y operators." />
+      </Helmet>
       <Navbar />
 
       <section className="pt-32 pb-24">

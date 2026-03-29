@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { Helmet } from 'react-helmet-async';
 import { Linkedin, Instagram, Youtube, Mail } from 'lucide-react';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/sections/Footer';
@@ -33,6 +34,10 @@ const Contacto = () => {
 
   return (
     <div className="bg-[hsl(var(--bg-primary))] min-h-screen">
+      <Helmet>
+        <title>Contacto | Francisco Abad</title>
+        <meta name="description" content="Agenda una llamada o escríbeme. Trabajo con founders, executives y organizaciones que quieren sistemas para crecer mejor." />
+      </Helmet>
       <Navbar />
 
       <section className="pt-32 pb-24">

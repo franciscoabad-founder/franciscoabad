@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom';
+import { Helmet } from 'react-helmet-async';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/sections/Footer';
 
@@ -24,6 +25,10 @@ const speakingTopics = [
 
 const TrabajaConmigo = () => (
   <div className="bg-[hsl(var(--bg-primary))] min-h-screen">
+    <Helmet>
+      <title>Trabaja Conmigo | Francisco Abad</title>
+      <meta name="description" content="Advisory, consultoría estratégica y productos digitales. Sistemas de crecimiento para founders y organizaciones en LATAM." />
+    </Helmet>
     <Navbar />
 
     {/* Hero */}

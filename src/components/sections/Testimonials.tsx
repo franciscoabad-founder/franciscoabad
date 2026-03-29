@@ -7,7 +7,7 @@ const testimonials = [
     company: 'AWANA · Ex Viceministro de Inclusión Económica',
     linkedIn: 'https://www.linkedin.com/in/julioclavijo/',
     quote:
-      'Trabajé con Francisco como su asesor durante su gestión en el IESS. Lo que distingue su forma de trabajar es que antes de cambiar cualquier cosa, entiende cómo funciona el sistema completo. Eso es raro en posiciones de liderazgo ejecutivo. Los resultados que obtuvimos en ejecución presupuestaria en seis meses no fueron casualidad: fueron consecuencia de un diagnóstico honesto y un rediseño sistemático.',
+      'Acompañé a Francisco como su asesor durante su gestión en el IESS. Su principal fortaleza es que no improvisa cambios: primero entiende el sistema completo y luego interviene con criterio. Eso es poco frecuente en cargos ejecutivos. Los resultados en ejecución presupuestaria que alcanzamos en seis meses no fueron fortuitos; respondieron a un diagnóstico claro y a un rediseño estructural bien encaminado.',
   },
   {
     photo: '/testimonials/enrique-crespo.jpg.jpeg',
@@ -17,7 +17,7 @@ const testimonials = [
     company: 'PNUD - Programa de Naciones Unidas para el Desarrollo',
     linkedIn: 'https://www.linkedin.com/in/enrique-crespo-ec/',
     quote:
-      'Trabajamos juntos diseñando el programa nacional de Hult Prize en Ecuador. En dos años llegamos a más de 70 universidades y 12.000 estudiantes, construyendo uno de los movimientos de emprendimiento e innovación social universitaria más grandes del país. Lo que Francisco hace bien es diseñar sistemas que escalan sin perder calidad. El framework es sólido porque está construido en principios, no en suposiciones.',
+      'Trabajamos juntos diseñando el programa nacional de Hult Prize en Ecuador. En dos años llegamos a más de 70 universidades y 12.000 estudiantes, construyendo uno de los movimientos de emprendimiento e innovación social universitaria más grandes del país. Lo que Francisco hace bien es diseñar sistemas que escalan sin perder calidad. El modelo es sólido porque está construido en principios, no en suposiciones.',
   },
   {
     photo: '/testimonials/gabriela-tulcanazo.jpg.png',

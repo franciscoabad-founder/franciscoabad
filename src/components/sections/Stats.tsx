@@ -18,7 +18,7 @@ const StatItem = ({
 
   return (
     <div className="text-center space-y-2">
-      <p className="font-montserrat font-bold text-[hsl(var(--ember))] text-[clamp(2rem,8vw,4rem)] md:text-[64px] leading-none tabular-nums">
+      <p className="font-montserrat font-bold text-[hsl(var(--ember))] text-[clamp(1.8rem,7vw,3.5rem)] md:text-[64px] leading-none tabular-nums">
         {prefix}{display}{suffix}
       </p>
       <p className="font-inter text-[hsl(var(--text-secondary))] text-[13px] leading-snug max-w-[180px] mx-auto">

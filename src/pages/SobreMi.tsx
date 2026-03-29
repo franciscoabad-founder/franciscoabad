@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { Helmet } from 'react-helmet-async';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/sections/Footer';
 
@@ -91,6 +92,10 @@ const SobreMi = () => {
 
   return (
   <div className="bg-[hsl(var(--bg-primary))] min-h-screen">
+    <Helmet>
+      <title>Sobre Mí | Francisco Abad</title>
+      <meta name="description" content="Mi historia: de fundar CODEIS en 15 países a dirigir el IESS. Diseño sistemas para que founders y organizaciones operen mejor." />
+    </Helmet>
     <Navbar />
 
     {/* Photo + Bio */}

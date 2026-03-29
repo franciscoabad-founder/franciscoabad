@@ -1,4 +1,5 @@
 import { useEffect } from 'react';
+import { Helmet } from 'react-helmet-async';
 import Navbar from '@/components/Navbar';
 import Hero from '@/components/sections/Hero';
 import LogosInstitucionales from '@/components/sections/LogosInstitucionales';
@@ -35,6 +36,10 @@ const Index = () => {
 
   return (
     <main className="bg-[hsl(var(--bg-primary))]">
+      <Helmet>
+        <title>Francisco Abad | Systems for Growth</title>
+        <meta name="description" content="Founder, operator y estratega. Diseño sistemas para que personas y organizaciones crezcan con claridad y ejecución. Ex Director General del IESS. Fundador de CODEIS." />
+      </Helmet>
       <Navbar />
       <Hero />
       <LogosInstitucionales />
