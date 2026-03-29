@@ -77,7 +77,7 @@ const Blog = () => {
         <div className="max-w-[1200px] mx-auto px-6 lg:px-8">
           <div className="mb-10">
             <h1 className="font-montserrat font-bold text-[hsl(var(--text-primary))] text-[36px] md:text-[44px] mb-3">
-              Dentro del Systema
+              Dentro del Sistema
             </h1>
             <p className="font-inter text-[hsl(var(--text-secondary))] text-[16px] max-w-[560px] leading-relaxed">
               Ideas sobre sistemas, crecimiento y ejecución. Basadas en experiencia real, no en teoría.
