@@ -33,19 +33,19 @@ const groups = [
 const divider = (
   <div
     style={{
-      borderTop: '1px solid rgba(138,130,121,0.12)',
+      borderTop: '1px solid rgba(74,69,65,0.15)',
       margin: '48px 0',
     }}
   />
 );
 
 const LogosInstitucionales = () => (
-  <section style={{ backgroundColor: '#141414', padding: '80px 0' }}>
+  <section style={{ backgroundColor: '#F4EDE6', padding: '80px 0' }}>
     <div className="max-w-[1200px] mx-auto px-6 lg:px-8">
       <div className="mb-12" data-reveal>
         <p
           className="font-montserrat font-semibold uppercase tracking-[3px] text-[11px] mb-4"
-          style={{ color: '#C2654A' }}
+          style={{ color: '#A3503A' }}
         >
           TRAYECTORIA
         </p>
@@ -59,7 +59,7 @@ const LogosInstitucionales = () => (
             style={{
               fontFamily: 'Montserrat, Arial, sans-serif',
               fontSize: 11,
-              color: '#8A8279',
+              color: '#4A4541',
               textTransform: 'uppercase',
               letterSpacing: '0.12em',
               marginBottom: 24,
@@ -89,14 +89,14 @@ const LogosInstitucionales = () => (
                 <img
                   src={item.src}
                   alt={item.alt}
-                  className="grayscale opacity-50 hover:grayscale-0 hover:opacity-100 transition-all duration-300"
+                  className="transition-all duration-300 opacity-[0.85] hover:opacity-100 hover:scale-105"
                   style={{ height: 36, width: 'auto' }}
                 />
                 <span
                   style={{
                     fontFamily: 'Inter, Arial, sans-serif',
                     fontSize: 11,
-                    color: '#8A8279',
+                    color: '#4A4541',
                     textAlign: 'center',
                     maxWidth: 120,
                     lineHeight: 1.4,

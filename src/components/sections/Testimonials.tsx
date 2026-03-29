@@ -1,16 +1,14 @@
 const testimonials = [
   {
-    // Posición 1: impacto institucional más grande
-    photo: '/testimonials/carlos-rivas.jpg.jpeg',
-    initials: 'CR',
-    name: 'Carlos Rivas',
-    role: 'Director Nacional de Tecnologías de Información jun-dic 2025',
-    company: 'IESS - Instituto Ecuatoriano de Seguridad Social',
+    photo: '/testimonials/julio-clavijo.png',
+    initials: 'JC',
+    name: 'Julio Clavijo',
+    role: 'Chief Operations Officer',
+    company: 'AWANA · Ex Viceministro de Inclusión Económica',
     quote:
-      'Cuando Francisco llegó, vimos los mismos procesos que habíamos tenido durante años. Lo primero que hizo fue mapearlos todos, entender cómo funcionaba la institución de verdad antes de tocar nada. Después diseñamos juntos un plan de transformación digital basado en rediseñar la estructura orgánica funcional desde los procesos, no desde la tecnología. La tecnología fue el habilitador. Entender qué estaba pasando fue la base. Los números reflejan ese trabajo: pasamos del 36% al 78% de ejecución presupuestaria en seis meses.',
+      'Trabajé con Francisco como su asesor durante su gestión en el IESS. Lo que distingue su forma de trabajar es que antes de cambiar cualquier cosa, entiende cómo funciona el sistema completo. Eso es raro en posiciones de liderazgo ejecutivo. Los resultados que obtuvimos en ejecución presupuestaria en seis meses no fueron casualidad: fueron consecuencia de un diagnóstico honesto y un rediseño sistemático.',
   },
   {
-    // Posición 2: aliado internacional
     photo: '/testimonials/enrique-crespo.jpg.jpeg',
     initials: 'EC',
     name: 'Enrique Crespo',
@@ -20,7 +18,6 @@ const testimonials = [
       'Trabajamos juntos diseñando el programa nacional de Hult Prize en Ecuador. En dos años llegamos a más de 70 universidades y 12.000 estudiantes, construyendo uno de los movimientos de emprendimiento e innovación social universitaria más grandes del país. Lo que Francisco hace bien es diseñar sistemas que escalan sin perder calidad. El framework es sólido porque está construido en principios, no en suposiciones.',
   },
   {
-    // Posición 3: mujer, fila 1
     photo: '/testimonials/gabriela-tulcanazo.jpg.png',
     initials: 'GT',
     name: 'Gabriela Tulcanazo',
@@ -30,7 +27,6 @@ const testimonials = [
       'Estamos transformando CODEIS de una ONG dependiente de grants a una empresa social sostenible. Ese trabajo se hace desde el sistema: rediseñar cómo opera la organización, cómo genera valor, cómo se financia. Francisco construyó CODEIS durante 9 años y ahora me apoya desde la presidencia del directorio con la misma visión sistémica con la que lo fundó. La diferencia entre antes y ahora es que el sistema trabaja, no solo las personas.',
   },
   {
-    // Posición 4: sector público
     photo: '/testimonials/alvaro-maldonado.jpg.jpeg',
     initials: 'AM',
     name: 'Álvaro Maldonado',
@@ -40,17 +36,6 @@ const testimonials = [
       'Trabajamos juntos desde el sector público en la activación del ecosistema de innovación social de Quito, cuando lanzamos Hult Prize Ecuador y recibimos la primera Final Regional de Sudamérica. Francisco sabe cómo conectar el estado, la academia y los emprendedores en un sistema funcional. Lo que construimos entonces fue un movimiento, no un evento.',
   },
   {
-    // Posición 5: cliente directo
-    photo: '/testimonials/carlos-cardenas.jpg.jpg',
-    initials: 'CC',
-    name: 'Carlos Cárdenas',
-    role: 'Gerente General',
-    company: 'Grupo CAVE',
-    quote:
-      'Hemos trabajado juntos en varios proyectos, incluyendo un evento con más de 18.000 personas en tres días. Ahora Francisco está trabajando conmigo en algo más profundo: organizar la empresa, diagnosticar qué está estancado, automatizar procesos, y potenciar mi marca personal para generar ingresos que no dependan solo de mi tiempo. Es la primera vez que trabajo con alguien que entiende tanto el sistema operativo de un negocio como el de una persona.',
-  },
-  {
-    // Posición 6: mujer, fila 2
     photo: '/testimonials/sofia-fernandez.jpeg',
     initials: 'SF',
     name: 'Sofía Fernández',
@@ -60,7 +45,24 @@ const testimonials = [
       'Trabajé con Francisco en la expansión internacional de CODEIS durante la pandemia. Diseñamos programas virtuales que nos permitieron llegar a 15 países cuando otros cerraban. La capacidad de Francisco para rediseñar el sistema de entrega completo en semanas, sin perder calidad ni impacto, fue lo que hizo posible esa expansión. No fue suerte. Fue diseño.',
   },
   {
-    // Posición 7: impacto educativo
+    photo: '/testimonials/carlos-cardenas.jpg.jpg',
+    initials: 'CC',
+    name: 'Carlos Cárdenas',
+    role: 'Gerente General',
+    company: 'Grupo CAVE',
+    quote:
+      'Hemos trabajado juntos en varios proyectos, incluyendo un evento con más de 18.000 personas en tres días. Ahora Francisco está trabajando conmigo en algo más profundo: organizar la empresa, diagnosticar qué está estancado, automatizar procesos, y potenciar mi marca personal para generar ingresos que no dependan solo de mi tiempo. Es la primera vez que trabajo con alguien que entiende tanto el sistema operativo de un negocio como el de una persona.',
+  },
+  {
+    photo: '/testimonials/lili-yepes.jpg.jpeg',
+    initials: 'LY',
+    name: 'Lilyán Yepez',
+    role: 'Fundadora y CEO',
+    company: 'NoTrace',
+    quote:
+      'Empezamos trabajando el posicionamiento de NoTrace a nivel internacional y terminamos repensando la estrategia completa de la empresa. Francisco diagnosticó dónde estábamos estancados, diseñó el sistema para desbloquearlo, y trabaja con nosotros en todo, desde el Biodiversity Summit hasta la estructura comercial. Confío en su criterio porque parte siempre de entender primero, no de prescribir.',
+  },
+  {
     photo: '/testimonials/brandon-penerrera.jpg.png',
     initials: 'BP',
     name: 'Brandon Peñaherrera',
@@ -70,7 +72,6 @@ const testimonials = [
       'Mis profesores me dijeron que no iba a ser nadie. Cuando conocí a Francisco y aprendí que podía emprender, descubrí lo que quería hacer con mi vida. Hoy Yami Dog da empleo a mi familia y a doce personas en la comunidad. He ganado el premio Soy Empresario de la Cámara de Industrias y reconocimientos nacionales en concursos de emprendimiento. Lo que Francisco enseña no son teorías. Son herramientas que se aplican.',
   },
   {
-    // Posición 8: ejecución de eventos
     photo: '/testimonials/jaime-guzman.jpg.png',
     initials: 'JG',
     name: 'Jaime Guzmán',
@@ -78,16 +79,6 @@ const testimonials = [
     company: 'Innovaxion 2024',
     quote:
       'Materializamos juntos Innovaxion: 50 speakers de más de 10 países, 3.000 asistentes, impacto real en el ecosistema de innovación pública, social y ambiental de Ecuador. Francisco no solo diseña el sistema. Lo ejecuta. Y cuando algo no funciona durante la ejecución, lo resuelve sin drama.',
-  },
-  {
-    // Posición 9: mujer, fila 3, cliente Kronek
-    photo: '/testimonials/lili-yepes.jpg.jpeg',
-    initials: 'LY',
-    name: 'Lilyán Yepez',
-    role: 'Fundadora y CEO',
-    company: 'NoTrace',
-    quote:
-      'Empezamos trabajando el posicionamiento de NoTrace a nivel internacional y terminamos repensando la estrategia completa de la empresa. Francisco diagnosticó dónde estábamos estancados, diseñó el sistema para desbloquearlo, y trabaja con nosotros en todo, desde el Biodiversity Summit hasta la estructura comercial. Confío en su criterio porque parte siempre de entender primero, no de prescribir.',
   },
 ];
 
