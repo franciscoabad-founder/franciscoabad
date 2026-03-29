@@ -44,14 +44,15 @@ const TrabajaConmigo = () => (
     {/* Speaking hero image */}
     <div className="relative w-full overflow-hidden" style={{ maxHeight: 480 }}>
       <img
-        src="/Speaking/speaking-1.jpg.jpg"
+        src="/Speaking/speaking-banner.jpg.png"
         alt="Francisco Abad, Hult Prize Regional Finals, Quito"
         style={{
           width: '100%',
           height: 480,
           objectFit: 'cover',
-          objectPosition: 'center 20%',
+          objectPosition: 'center 30%',
           display: 'block',
+          filter: 'brightness(0.85) contrast(1.1) saturate(0.9)',
         }}
       />
       <div

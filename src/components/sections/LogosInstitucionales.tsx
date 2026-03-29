@@ -2,8 +2,8 @@ const groups = [
   {
     label: 'FORMACIÓN',
     items: [
-      { src: '/logos-institucionales/lse-logo.png',            alt: 'London School of Economics', legend: 'MPA · London School of Economics',   blend: false, height: 40 },
-      { src: '/logos-institucionales/georgetown-logo.png.png', alt: 'Georgetown University',       legend: 'Global Competitiveness Leadership', blend: false, height: 44 },
+      { src: '/logos-institucionales/lse-logo.png',            alt: 'London School of Economics', legend: 'MPA · London School of Economics',   blend: false, height: 52 },
+      { src: '/logos-institucionales/georgetown-logo.png.png', alt: 'Georgetown University',       legend: 'Global Competitiveness Leadership', blend: false, height: 52 },
       { src: '/logos-institucionales/upenn-logo.png',          alt: 'Wharton / UPenn',             legend: 'Social Impact House · Wharton',     blend: false, height: 40 },
     ],
   },
