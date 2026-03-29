@@ -30,9 +30,9 @@ const Navbar = () => {
           {/* Logo */}
           <Link to="/" className="flex items-center select-none">
             <img
-              src="/fa_stacked_tagline_ember_3x.png"
+              src="/fa_horizontal_clean_dark.svg"
               alt="Francisco Abad - Systems for Growth"
-              style={{ height: '48px', width: 'auto' }}
+              style={{ height: '36px', width: 'auto' }}
             />
           </Link>
 

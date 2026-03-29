@@ -4,7 +4,7 @@ const socials = [
   { label: 'LinkedIn', icon: Linkedin, href: 'https://linkedin.com' },
   { label: 'Instagram', icon: Instagram, href: 'https://instagram.com' },
   { label: 'YouTube', icon: Youtube, href: 'https://youtube.com' },
-  { label: 'Email', icon: Mail, href: 'mailto:hola@franciscoabad.com' },
+  { label: 'Email', icon: Mail, href: 'mailto:francisco@franciscoabad.com' },
 ];
 
 const Footer = () => (
@@ -14,7 +14,7 @@ const Footer = () => (
       <img
         src="/fa_stacked_tagline_ember_3x.png"
         alt="Francisco Abad - Systems for Growth"
-        style={{ height: '64px', width: 'auto', opacity: 0.95 }}
+        style={{ height: '80px', width: 'auto', opacity: 0.95 }}
       />
 
       {/* Bio */}
