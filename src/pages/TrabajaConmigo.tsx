@@ -3,10 +3,10 @@ import Navbar from '@/components/Navbar';
 import Footer from '@/components/sections/Footer';
 
 const products = [
-  { name: '90-Day Reset System', price: '$37' },
-  { name: 'Purpose & Serendipity OS', price: '$47' },
-  { name: 'Network Strategy Dashboard', price: '$67' },
-  { name: 'Founder Execution Dashboard', price: '$97' },
+  { name: '90-Day Reset System', desc: 'Sistema para resetear y clarificar tu próximos 90 días' },
+  { name: 'Purpose & Serendipity OS', desc: 'Framework de propósito e intención estratégica' },
+  { name: 'Network Strategy Dashboard', desc: 'Sistema para construir y activar tu red de forma intencional' },
+  { name: 'Founder Execution Dashboard', desc: 'Dashboard de ejecución para founders y operadores' },
 ];
 
 const advisoryItems = [
@@ -27,7 +27,7 @@ const TrabajaConmigo = () => (
     <Navbar />
 
     {/* Hero */}
-    <section className="bg-[hsl(var(--bg-primary))] pt-40 pb-24">
+    <section className="bg-[hsl(var(--bg-primary))] pt-32 pb-12 md:pt-40 md:pb-24">
       <div className="max-w-[760px] mx-auto px-6 lg:px-8">
         <h1 className="font-montserrat font-bold text-[hsl(var(--text-primary))] text-[40px] md:text-[56px] leading-tight mb-5">
           Trabajemos juntos.
@@ -75,18 +75,18 @@ const TrabajaConmigo = () => (
           margin: 0,
         }}
       >
-        Hult Prize Regional Finals, Quito, Ecuador
+        PONENCIA DE APERTURA, INNOVAXION 2024
       </p>
     </div>
 
     {/* Block 1 — Productos Digitales */}
-    <section className="bg-[hsl(var(--bg-primary))] py-24 border-t border-[hsl(var(--border-subtle))]">
+    <section className="bg-[hsl(var(--bg-primary))] py-12 md:py-20 border-t border-[hsl(var(--border-subtle))]">
       <div className="max-w-[1200px] mx-auto px-6 lg:px-8">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-start">
           {/* Left */}
           <div>
             <p className="font-montserrat text-[11px] uppercase tracking-[2px] text-[hsl(var(--ember))] mb-3">
-              Empieza aquí · Desde $37
+              Empieza aquí
             </p>
             <h2 className="font-montserrat font-bold text-[hsl(var(--text-primary))] text-[36px] md:text-[42px] leading-tight mb-6">
               Productos Digitales
@@ -109,17 +109,19 @@ const TrabajaConmigo = () => (
             {products.map((p) => (
               <div
                 key={p.name}
-                className="flex items-center justify-between bg-[hsl(var(--bg-elevated))] border border-[hsl(var(--border-subtle))] rounded-md px-6 py-4 hover:border-[hsl(var(--ember))] transition-colors duration-300"
+                className="bg-[hsl(var(--bg-elevated))] border border-[hsl(var(--border-subtle))] rounded-md px-6 py-4 hover:border-[hsl(var(--ember))] transition-colors duration-300"
               >
-                <div className="flex items-center gap-3">
-                  <span className="text-[hsl(var(--ember))]">—</span>
-                  <span className="font-inter text-[hsl(var(--text-primary))] text-[15px]">
-                    {p.name}
-                  </span>
+                <div className="flex items-start gap-3">
+                  <span className="text-[hsl(var(--ember))] mt-0.5 flex-shrink-0">—</span>
+                  <div>
+                    <p className="font-inter font-medium text-[hsl(var(--text-primary))] text-[15px]">
+                      {p.name}
+                    </p>
+                    <p className="font-inter text-[hsl(var(--text-muted))] text-[13px] leading-snug mt-0.5">
+                      {p.desc}
+                    </p>
+                  </div>
                 </div>
-                <span className="font-montserrat font-bold text-[hsl(var(--ember))] text-[15px] flex-shrink-0 ml-4">
-                  {p.price}
-                </span>
               </div>
             ))}
           </div>
@@ -128,7 +130,7 @@ const TrabajaConmigo = () => (
     </section>
 
     {/* Block 2 — Advisory & Consultoría */}
-    <section className="bg-[hsl(var(--bg-elevated))] py-24 border-t border-[hsl(var(--border-subtle))]">
+    <section className="bg-[hsl(var(--bg-elevated))] py-12 md:py-20 border-t border-[hsl(var(--border-subtle))]">
       <div className="max-w-[1200px] mx-auto px-6 lg:px-8">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-start">
           {/* Left */}
@@ -185,7 +187,7 @@ const TrabajaConmigo = () => (
     </section>
 
     {/* Block 3 — Speaking & Talleres */}
-    <section className="bg-[hsl(var(--bg-primary))] py-24 border-t border-[hsl(var(--border-subtle))]">
+    <section className="bg-[hsl(var(--bg-primary))] py-12 md:py-20 border-t border-[hsl(var(--border-subtle))]">
       <div className="max-w-[1200px] mx-auto px-6 lg:px-8">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-start">
           {/* Left */}
@@ -235,7 +237,7 @@ const TrabajaConmigo = () => (
     </section>
 
     {/* Bottom CTA */}
-    <section className="bg-[hsl(var(--bg-elevated))] border-t border-[hsl(var(--border-subtle))] py-20">
+    <section className="bg-[hsl(var(--bg-elevated))] border-t border-[hsl(var(--border-subtle))] py-12 md:py-20">
       <div className="max-w-[760px] mx-auto px-6 lg:px-8 text-center">
         <h3 className="font-montserrat font-bold text-[hsl(var(--text-primary))] text-[28px] md:text-[34px] mb-4">
           ¿No sabes por dónde empezar?

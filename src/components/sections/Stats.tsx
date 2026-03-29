@@ -18,7 +18,7 @@ const StatItem = ({
 
   return (
     <div className="text-center space-y-2">
-      <p className="font-montserrat font-bold text-[hsl(var(--ember))] text-[58px] md:text-[64px] leading-none tabular-nums">
+      <p className="font-montserrat font-bold text-[hsl(var(--ember))] text-[clamp(2rem,8vw,4rem)] md:text-[64px] leading-none tabular-nums">
         {prefix}{display}{suffix}
       </p>
       <p className="font-inter text-[hsl(var(--text-secondary))] text-[13px] leading-snug max-w-[180px] mx-auto">
@@ -44,7 +44,7 @@ const Stats = () => {
   }, []);
 
   return (
-    <section ref={ref} className="bg-[hsl(var(--bg-elevated))] py-24 md:py-28" data-reveal>
+    <section ref={ref} className="bg-[hsl(var(--bg-elevated))] py-12 md:py-20" data-reveal>
       <div className="max-w-[1200px] mx-auto px-6 lg:px-8">
         <div className="grid grid-cols-2 md:grid-cols-4 gap-10 md:gap-8">
           {stats.map((s) => (

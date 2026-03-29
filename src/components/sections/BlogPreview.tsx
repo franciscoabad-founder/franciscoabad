@@ -20,7 +20,7 @@ const posts = [
 ];
 
 const BlogPreview = () => (
-  <section id="blog" className="bg-[hsl(var(--bg-primary))] py-32">
+  <section id="blog" className="bg-[hsl(var(--bg-primary))] py-12 md:py-20">
     <div className="max-w-[1200px] mx-auto px-6 lg:px-8">
       <div className="mb-14" data-reveal>
         <h2 className="font-montserrat font-bold text-[hsl(var(--text-primary))] text-[32px] md:text-[36px] mb-3">

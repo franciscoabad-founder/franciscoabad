@@ -1,7 +1,7 @@
 import { Play } from 'lucide-react';
 
 const Resources = () => (
-  <section id="recursos" className="bg-[hsl(var(--bg-elevated))] py-24">
+  <section id="recursos" className="bg-[hsl(var(--bg-elevated))] py-12 md:py-20">
     <div className="max-w-[1200px] mx-auto px-6 lg:px-8">
       <h2
         className="font-montserrat font-bold text-[hsl(var(--text-primary))] text-[32px] md:text-[36px] mb-14"

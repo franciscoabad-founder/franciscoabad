@@ -39,7 +39,7 @@ const services = [
 ];
 
 const Services = () => (
-  <section id="servicios" className="bg-[hsl(var(--bg-primary))] py-32">
+  <section id="servicios" className="bg-[hsl(var(--bg-primary))] py-12 md:py-20">
     <div className="max-w-[1200px] mx-auto px-6 lg:px-8">
       <h2 className="font-montserrat font-bold text-[hsl(var(--text-primary))] text-[32px] md:text-[36px] text-center mb-16" data-reveal>
         ¿En qué puedo ayudarte?

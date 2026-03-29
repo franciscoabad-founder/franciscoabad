@@ -40,7 +40,7 @@ const Footer = () => (
       </p>
 
       {/* Social links */}
-      <div className="flex items-center gap-8">
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-8">
         {socials.map(({ label, icon: Icon, href }) => (
           <a
             key={label}

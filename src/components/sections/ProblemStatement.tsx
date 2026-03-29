@@ -5,7 +5,7 @@ const painPoints = [
 ];
 
 const ProblemStatement = () => (
-  <section className="bg-[hsl(var(--bg-primary))] py-32" id="problema">
+  <section className="bg-[hsl(var(--bg-primary))] py-12 md:py-20" id="problema">
     <div className="max-w-[1200px] mx-auto px-6 lg:px-8">
       {/* Text block */}
       <div className="max-w-[800px] mx-auto text-center space-y-6" data-reveal>

@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/sections/Footer';
 
@@ -81,7 +82,14 @@ const timeline = [
   },
 ];
 
-const SobreMi = () => (
+const SobreMi = () => {
+  const [openIndex, setOpenIndex] = useState<number>(0);
+
+  const toggleItem = (i: number) => {
+    setOpenIndex((prev) => (prev === i ? -1 : i));
+  };
+
+  return (
   <div className="bg-[hsl(var(--bg-primary))] min-h-screen">
     <Navbar />
 
@@ -131,7 +139,7 @@ const SobreMi = () => (
     </section>
 
     {/* Lo que creo — full width, 2-column grid */}
-    <section className="py-16 border-t border-[hsl(var(--border-subtle))]">
+    <section className="py-12 md:py-16 border-t border-[hsl(var(--border-subtle))]">
       <div className="max-w-[1200px] mx-auto px-6 lg:px-8">
         <h2 className="font-montserrat font-bold text-[hsl(var(--text-primary))] text-[28px] mb-10">
           Lo que creo
@@ -155,27 +163,55 @@ const SobreMi = () => (
     </section>
 
     {/* Timeline */}
-    <section className="py-20 border-t border-[hsl(var(--border-subtle))]">
+    <section className="py-12 md:py-20 border-t border-[hsl(var(--border-subtle))]">
       <div className="max-w-[1200px] mx-auto px-6 lg:px-8">
         <h2 className="font-montserrat font-bold text-[hsl(var(--text-primary))] text-[32px] mb-14">
           Trayectoria
         </h2>
         <div className="relative">
-          <div className="absolute left-[7px] top-2 bottom-2 w-px bg-[hsl(var(--border-subtle))]" />
-          <div className="space-y-10">
+          <div className="absolute left-[7px] top-2 bottom-2 w-px bg-[hsl(var(--border-subtle))] hidden md:block" />
+          <div className="space-y-0 md:space-y-10">
             {timeline.map((item, i) => (
-              <div key={i} className="flex gap-8 pl-8 relative">
-                <div className="absolute left-0 top-1.5 w-3.5 h-3.5 rounded-full bg-[hsl(var(--ember))] border-2 border-[hsl(var(--bg-primary))]" />
-                <div className="flex-shrink-0 font-montserrat font-bold text-[hsl(var(--ember))] text-[13px] w-36 pt-0.5 leading-snug">
-                  {item.period}
+              <div key={i} className="relative">
+                {/* Mobile: accordion */}
+                <div className="md:hidden border-b border-[hsl(var(--border-subtle))]">
+                  <button
+                    className="w-full flex items-center justify-between py-3 text-left"
+                    onClick={() => toggleItem(i)}
+                  >
+                    <div className="pr-4">
+                      <span className="font-montserrat font-bold text-[hsl(var(--ember))] text-[11px] block mb-0.5">
+                        {item.period}
+                      </span>
+                      <span className="font-montserrat font-semibold text-[hsl(var(--text-primary))] text-[14px] leading-snug">
+                        {item.event}
+                      </span>
+                    </div>
+                    <span className="text-[hsl(var(--ember))] flex-shrink-0 text-[10px]">
+                      {openIndex === i ? '▲' : '▼'}
+                    </span>
+                  </button>
+                  {openIndex === i && (
+                    <p className="font-inter text-[hsl(var(--text-secondary))] text-[14px] leading-relaxed pb-4 pr-4">
+                      {item.detail}
+                    </p>
+                  )}
                 </div>
-                <div>
-                  <p className="font-montserrat font-semibold text-[hsl(var(--text-primary))] text-[16px] mb-1">
-                    {item.event}
-                  </p>
-                  <p className="font-inter text-[hsl(var(--text-secondary))] text-[14px] leading-relaxed">
-                    {item.detail}
-                  </p>
+
+                {/* Desktop: full timeline row */}
+                <div className="hidden md:flex gap-8 pl-8">
+                  <div className="absolute left-0 top-1.5 w-3.5 h-3.5 rounded-full bg-[hsl(var(--ember))] border-2 border-[hsl(var(--bg-primary))]" />
+                  <div className="flex-shrink-0 font-montserrat font-bold text-[hsl(var(--ember))] text-[13px] w-36 pt-0.5 leading-snug">
+                    {item.period}
+                  </div>
+                  <div>
+                    <p className="font-montserrat font-semibold text-[hsl(var(--text-primary))] text-[16px] mb-1">
+                      {item.event}
+                    </p>
+                    <p className="font-inter text-[hsl(var(--text-secondary))] text-[14px] leading-relaxed">
+                      {item.detail}
+                    </p>
+                  </div>
                 </div>
               </div>
             ))}
@@ -186,6 +222,7 @@ const SobreMi = () => (
 
     <Footer />
   </div>
-);
+  );
+};
 
 export default SobreMi;

@@ -149,7 +149,7 @@ const Avatar = ({
 };
 
 const Testimonials = () => (
-  <section className="py-24 bg-[hsl(var(--bg-primary))]">
+  <section className="py-12 md:py-20 bg-[hsl(var(--bg-primary))]">
     <div className="max-w-[1200px] mx-auto px-6 lg:px-8">
       <div className="mb-14" data-reveal>
         <p
