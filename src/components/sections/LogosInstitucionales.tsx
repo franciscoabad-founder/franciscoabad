@@ -1,0 +1,116 @@
+const groups = [
+  {
+    label: 'FORMACIÓN',
+    items: [
+      { src: '/logos-institucionales/lse-logo.png',                alt: 'London School of Economics', legend: 'MPA · London School of Economics' },
+      { src: '/logos-institucionales/georgetown-logo.png.png',     alt: 'Georgetown University',       legend: 'Global Competitiveness Leadership' },
+      { src: '/logos-institucionales/upenn-logo.png',              alt: 'Wharton / UPenn',             legend: 'Social Impact House · Wharton' },
+    ],
+  },
+  {
+    label: 'ALIADOS Y PROGRAMAS',
+    items: [
+      { src: '/logos-institucionales/bidlab-logo.png',             alt: 'BID Lab',         legend: 'Grant · World Change Makers' },
+      { src: '/logos-institucionales/PNUD_logo.png',               alt: 'PNUD',            legend: 'Programa de Naciones Unidas' },
+      { src: '/logos-institucionales/giz-logo.png',                alt: 'GIZ',             legend: 'Cooperación Alemana GIZ' },
+      { src: '/logos-institucionales/iess-logo.png',               alt: 'IESS',            legend: 'Director General 2025' },
+      { src: '/logos-institucionales/codeis-logo.png',             alt: 'CODEIS',          legend: 'Fundador · 15 países' },
+      { src: '/logos-institucionales/hult-prize-logo.png',         alt: 'Hult Prize',      legend: 'Director Nacional Ecuador' },
+    ],
+  },
+  {
+    label: 'SPEAKER Y DOCENTE',
+    items: [
+      { src: '/logos-institucionales/oyw-logo.png',                alt: 'One Young World',  legend: 'One Young World · Ambassador' },
+      { src: '/logos-institucionales/sg-logo.avif',                alt: 'Startup Grind',    legend: 'Startup Grind · Speaker' },
+      { src: '/logos-institucionales/udla-logo.png',               alt: 'UDLA',             legend: 'Profesor de Maestría' },
+      { src: '/logos-institucionales/usfq-logo.png',               alt: 'USFQ',             legend: 'Profesor de Emprendimiento' },
+      { src: '/logos-institucionales/yachay-logo.png',             alt: 'Yachay Tech',      legend: 'Speaker' },
+    ],
+  },
+];
+
+const divider = (
+  <div
+    style={{
+      borderTop: '1px solid rgba(138,130,121,0.12)',
+      margin: '48px 0',
+    }}
+  />
+);
+
+const LogosInstitucionales = () => (
+  <section style={{ backgroundColor: '#141414', padding: '80px 0' }}>
+    <div className="max-w-[1200px] mx-auto px-6 lg:px-8">
+      <div className="mb-12" data-reveal>
+        <p
+          className="font-montserrat font-semibold uppercase tracking-[3px] text-[11px] mb-4"
+          style={{ color: '#C2654A' }}
+        >
+          TRAYECTORIA
+        </p>
+      </div>
+
+      {groups.map((group, gi) => (
+        <div key={group.label} data-reveal>
+          {gi > 0 && divider}
+
+          <p
+            style={{
+              fontFamily: 'Montserrat, Arial, sans-serif',
+              fontSize: 11,
+              color: '#8A8279',
+              textTransform: 'uppercase',
+              letterSpacing: '0.12em',
+              marginBottom: 24,
+            }}
+          >
+            {group.label}
+          </p>
+
+          <div
+            style={{
+              display: 'flex',
+              flexWrap: 'wrap',
+              justifyContent: 'center',
+              gap: 40,
+            }}
+          >
+            {group.items.map((item) => (
+              <div
+                key={item.alt}
+                style={{
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: 'center',
+                  gap: 8,
+                }}
+              >
+                <img
+                  src={item.src}
+                  alt={item.alt}
+                  className="grayscale opacity-50 hover:grayscale-0 hover:opacity-100 transition-all duration-300"
+                  style={{ height: 36, width: 'auto' }}
+                />
+                <span
+                  style={{
+                    fontFamily: 'Inter, Arial, sans-serif',
+                    fontSize: 11,
+                    color: '#8A8279',
+                    textAlign: 'center',
+                    maxWidth: 120,
+                    lineHeight: 1.4,
+                  }}
+                >
+                  {item.legend}
+                </span>
+              </div>
+            ))}
+          </div>
+        </div>
+      ))}
+    </div>
+  </section>
+);
+
+export default LogosInstitucionales;
