@@ -1,136 +1,65 @@
-# Francisco Abad — Estado del Proyecto
-Última actualización: 29 de marzo de 2026
+# franciscoabad.com — Estado del Proyecto
+Última actualización: 29 marzo 2026
 
 ---
 
-## Completado (sesión 29 de marzo)
+## SITIO PÚBLICO — Estado: EN PRODUCCIÓN
 
-- 9 testimonios reales con fotos y links a LinkedIn (Julio Clavijo, Enrique Crespo, Gabriela Tulcanazo, Álvaro Maldonado, Sofía Fernández, Carlos Cárdenas, Lilyán Yepez, Brandon Peñaherrera, Jaime Guzmán)
-- Sección de logos institucionales con 3 grupos (Formación, Aliados y Programas, Speaker y Docente), fondo Linen #F4EDE6, logos en color completo, links activos, alineación flex-end por base inferior, heights individuales por logo
-- Timeline en Sobre Mí con 9 entradas y contexto real (IESS, YLAI, CODEIS, Georgetown, LSE, OYW, ETBU, Youth Ambassador)
-- Footer con solo "ABAD" centrado, blanco, peso 900
-- Newsletter renombrada a "The Growth Lab"
-- CredentialsBar duplicada eliminada de Index.tsx
-- Foto de Sobre Mí diferente a la del hero (francisco-abad-about.jpg)
-- Banner de speaking cinematográfico en Trabaja Conmigo con overlay y filtro
-- Corrección de paths con dobles extensiones en Windows (ej. speaking-banner.jpg.png)
-- Sitio funcionando en franciscoabad.vercel.app
-- vercel.json con rewrite SPA para routing correcto
-- Supabase init defensivo (no crashea si faltan env vars)
-- lovable-tagger eliminado del build de producción
+URL: franciscoabad.vercel.app
+Dominio propio franciscoabad.com: DNS configurado en Namecheap, apuntar a Vercel pendiente.
 
----
+### Páginas activas:
+- `/` (Home)
+- `/sobre-mi`
+- `/trabaja-conmigo`
+- `/blog` ("Dentro del Sistema")
+- `/contacto`
+- `/growth-lab` (quiz funnel de diagnóstico)
 
-## Pendiente inmediato (próxima sesión)
-
-- Conectar formulario de contacto con Resend
-- Configurar newsletter The Growth Lab con Beehiiv o similar
-- Producto digital en Lemon Squeezy (nombre y descripción pendiente de Pancho)
-- Dominio franciscoabad.com apuntar a Vercel
-- Logo LSE: conseguir versión sin fondo blanco (archivo actual tiene fondo, mix-blend-mode es workaround)
-
----
-
-## Pendiente Dashboard
-
-- Secciones Instagram, LinkedIn, YouTube: UI lista como placeholder, sin datos hasta conectar n8n
-- Webhooks Lemon Squeezy y Cal.com
-- Morning Briefing con Claude API
-- n8n self-hosted en VPS (Hetzner pendiente)
-
----
-
-## Stack técnico
-
-| Capa | Tecnología | Versión |
-|---|---|---|
-| UI framework | React | ^18.3.1 |
-| Lenguaje | TypeScript | ^5.8.3 |
-| Build tool | Vite | ^5.4.19 |
-| Estilos | Tailwind CSS | ^3.4.17 |
-| Componentes UI | shadcn/ui (Radix UI) | varios |
-| Routing | react-router-dom | ^6.30.1 |
-| Backend / DB | Supabase (@supabase/supabase-js) | ^2.99.3 |
-| Data fetching | @tanstack/react-query | ^5.83.0 |
-| Editor de texto | Tiptap (@tiptap/react + starter-kit) | ^3.21.0 |
-| Gráficas | Recharts | ^2.15.4 |
-| Formularios | react-hook-form + zod | ^7.61.1 / ^3.25.76 |
-| Iconos | lucide-react | ^0.462.0 |
-| Package manager | Bun | — |
-| Hosting | Vercel (deploy automático desde main) | — |
-| Automatización | n8n | pendiente de configurar |
-
-**Puerto local:** 8080 (`bun run dev`)
-
----
-
-## Variables de entorno
-
-| Variable | Descripción | Estado |
-|---|---|---|
-| `VITE_SUPABASE_URL` | URL del proyecto Supabase | Configurada en Vercel y .env.local |
-| `VITE_SUPABASE_ANON_KEY` | Clave pública (respeta RLS) | Configurada en Vercel y .env.local |
-| `VITE_SUPABASE_SERVICE_ROLE_KEY` | Clave de servicio (admin, bypasa RLS) | Configurada en Vercel y .env.local |
-| `VITE_IG_ACCESS_TOKEN` | Instagram Graph API | Pendiente |
-| `VITE_LI_ACCESS_TOKEN` | LinkedIn API | Pendiente |
-| `VITE_YT_API_KEY` | YouTube Data API v3 | Pendiente |
-| `VITE_LS_WEBHOOK_SECRET` | Lemon Squeezy webhook | Pendiente |
-| `VITE_CAL_WEBHOOK_SECRET` | Cal.com webhook | Pendiente |
-| `ANTHROPIC_API_KEY` | Claude API para Morning Briefing (usar en n8n, no en browser) | Pendiente |
-
----
-
-## Nota Windows
-
-- Activar "Extensiones de nombre de archivo" en el Explorador para evitar dobles extensiones (ej. foto.jpg guardada como foto.jpg.jpeg)
-- Los archivos en `public/` son case-sensitive en Vercel (Linux): respetar mayúsculas exactas en los paths del código (ej. `/Speaking/` con S mayúscula)
-
----
-
-## Sitio público — Páginas
-
-| Página | Ruta | Archivo | Estado |
-|---|---|---|---|
-| Home | `/` | `src/pages/Index.tsx` | Completa |
-| Sobre mí | `/sobre-mi` | `src/pages/SobreMi.tsx` | Completa |
-| Blog (listado) | `/blog` | `src/pages/Blog.tsx` | Completa |
-| Blog (post) | `/blog/:slug` | `src/pages/BlogPost.tsx` | Completa |
-| Trabaja conmigo | `/trabaja-conmigo` | `src/pages/TrabajaConmigo.tsx` | Completa |
-| Contacto | `/contacto` | `src/pages/Contacto.tsx` | Completa (formulario sin backend) |
-| 404 | `*` | `src/pages/NotFound.tsx` | Completa |
-
-**Secciones del home (en orden):**
-1. Navbar
-2. Hero
-3. LogosInstitucionales (fondo Linen)
-4. ProblemStatement
-5. Stats
-6. Services
-7. Testimonials (9 reales)
-8. Resources
+### Secciones completas (Home):
+1. Navbar con logo `fa_stacked_tagline_ember_3x.png`
+2. Hero: "Diseño sistemas para que personas y organizaciones funcionen mejor"
+3. Logos institucionales (Trayectoria) en fondo Linen con 3 grupos, logos en color, links activos
+4. Problem Statement con emojis y pain points rediseñados
+5. Stats: $10B+, 32,000, 15 países, 12,000+
+6. Services: Growth OS, Advisory, Speaking
+7. 9 Testimonios con fotos reales y links a LinkedIn
+8. Resources: Tu Semana de Reset (gratis), Growth OS ($47)
 9. BlogPreview
-10. NewsletterCTA (The Growth Lab)
-11. Footer
+10. Newsletter "The Growth Lab"
+11. Footer con logo ember y links sociales
 
 ---
 
-## Admin Dashboard — Páginas
+## PRODUCTO DIGITAL — Estado: DEFINIDO, NO PUBLICADO
 
-| Sección | Ruta | Estado |
-|---|---|---|
-| Login | `/admin/login` | Completo — Supabase Auth |
-| Overview | `/admin` | Completo — Morning Briefing + stat cards |
-| Oportunidades | `/admin/oportunidades` | Completo — pipeline, pagos |
-| Blog Editor | `/admin/blog` | Completo — Tiptap, auto-save |
-| Instagram | `/admin/instagram` | Placeholder |
-| LinkedIn | `/admin/linkedin` | Placeholder |
-| YouTube | `/admin/youtube` | Placeholder |
-| Lemon Squeezy | `/admin/ventas` | Placeholder |
-| Cal.com | `/admin/sesiones` | Placeholder |
+Nombre: Growth OS
+Precio: $47 (Core), $67 (+ Claude Skill)
+Lead magnet: "Tu Semana de Reset" (gratis)
+Landing page `/growth-os`: PENDIENTE DE CONSTRUIR
+Archivos del producto: terminados en otro chat
+Lemon Squeezy: cuenta creada, sin productos configurados
 
 ---
 
-## Base de datos Supabase
+## BLOG "Dentro del Sistema" — Estado: LISTO
+
+Primer artículo: 14 de abril 2026
+6 artículos planificados (abril-junio 2026)
+Categorías: Systems Thinking, Founder Systems, Liderazgo
+CMS: Supabase con editor Tiptap en `/admin`
+
+---
+
+## ADMIN DASHBOARD — Estado: FUNCIONAL
+
+Ruta: `/admin` (protegida con Supabase Auth)
+Secciones activas: Overview, Oportunidades (pipeline + pagos), Blog Editor (Tiptap completo)
+Placeholders: Instagram, LinkedIn, YouTube, Lemon Squeezy, Cal.com
+
+---
+
+## SUPABASE SCHEMA — 15 TABLAS
 
 | Tabla | Descripción |
 |---|---|
@@ -148,6 +77,76 @@
 | `cal_bookings` | Reservas Cal.com (webhooks) |
 | `blog_posts` | Posts con Tiptap JSON, status enum, RLS doble |
 | `morning_briefings` | Briefings diarios generados por Claude API |
+| `quiz_leads` | Leads del quiz /growth-lab (email + diagnosis + answers) |
 
 Migración: `supabase/migrations/20260328000000_initial_schema.sql`
 RLS activo en todas las tablas.
+
+---
+
+## SERVICIOS EXTERNOS — Estado actual
+
+| Servicio | Estado |
+|---|---|
+| **Zoho Mail** | SUSCRITO (plan Mail Lite $1.25/mes). MX records en Namecheap activos. SPF: necesita valor fusionado (conflicto con SPF existente). DKIM: pendiente. En proceso de verificación. |
+| **Resend** | Cuenta creada, dominio sin verificar, API key sin generar |
+| **Beehiiv** | Cuenta creada "The Growth Lab", trial Max activo (14 días), dominio sin verificar, PUBLICATION_ID pendiente en GrowthLab.tsx |
+| **Lemon Squeezy** | Cuenta creada, sin productos configurados |
+| **Cal.com** | Cuenta creada, sin eventos configurados |
+| **n8n** | Pendiente self-hosting en VPS |
+| **Hetzner VPS** | Pendiente de crear |
+
+---
+
+## STACK TÉCNICO
+
+| Capa | Tecnología |
+|---|---|
+| UI framework | React + TypeScript |
+| Build tool | Vite |
+| Estilos | Tailwind CSS |
+| Routing | react-router-dom |
+| Backend / DB | Supabase |
+| SEO | react-helmet-async |
+| Editor de texto | Tiptap |
+| Gráficas | Recharts |
+| Package manager | Bun (`bun run dev`, puerto 8080) |
+| Hosting | Vercel (deploy automático desde GitHub main) |
+| Automatización | n8n (pendiente) |
+
+### Variables de entorno
+
+| Variable | Estado |
+|---|---|
+| `VITE_SUPABASE_URL` | Configurada en Vercel y .env.local |
+| `VITE_SUPABASE_ANON_KEY` | Configurada en Vercel y .env.local |
+| `VITE_SUPABASE_SERVICE_ROLE_KEY` | Configurada en Vercel y .env.local |
+| `RESEND_API_KEY` | Pendiente |
+| `VITE_BEEHIIV_PUBLICATION_ID` | Pendiente (hardcoded vacío en GrowthLab.tsx) |
+| `VITE_IG_ACCESS_TOKEN` | Pendiente |
+| `VITE_LI_ACCESS_TOKEN` | Pendiente |
+| `VITE_YT_API_KEY` | Pendiente |
+| `VITE_LS_WEBHOOK_SECRET` | Pendiente |
+| `VITE_CAL_WEBHOOK_SECRET` | Pendiente |
+| `ANTHROPIC_API_KEY` | Pendiente (usar en n8n, no en browser) |
+
+---
+
+## PENDIENTES CRÍTICOS (orden de prioridad)
+
+1. Terminar DNS de Zoho (SPF fusionado + DKIM)
+2. Resend: verificar dominio + API key + conectar formulario de contacto
+3. Beehiiv: verificar dominio + Publication ID + conectar newsletter del sitio
+4. Landing `/growth-os` con copy completo del handoff
+5. Apuntar `franciscoabad.com` a Vercel en Namecheap
+6. Lemon Squeezy: configurar productos del Growth OS
+7. Cal.com: 3 tipos de evento con pago requerido
+8. Bilingüismo ES/EN con react-i18next
+
+---
+
+## NOTA CRÍTICA — ARCHIVOS EN WINDOWS/VERCEL
+
+- Activar "Extensiones de nombre de archivo" en Windows Explorer para evitar dobles extensiones.
+- Los archivos en `public/` son case-sensitive en Vercel (Linux). Respetar mayúsculas exactas en los paths del código (ej. `/Speaking/` con S mayúscula).
+- SIEMPRE verificar con `git ls-files public/[archivo]` antes de asumir que un archivo está en el repo. Si no aparece: `git add + commit + push` antes de continuar.
