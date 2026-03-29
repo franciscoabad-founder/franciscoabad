@@ -41,6 +41,43 @@ const TrabajaConmigo = () => (
       </div>
     </section>
 
+    {/* Speaking hero image */}
+    <div className="relative w-full overflow-hidden" style={{ maxHeight: 480 }}>
+      <img
+        src="/Speaking/speaking-1.jpg.jpg"
+        alt="Francisco Abad, Hult Prize Regional Finals, Quito"
+        style={{
+          width: '100%',
+          height: 480,
+          objectFit: 'cover',
+          objectPosition: 'center top',
+          display: 'block',
+        }}
+      />
+      <div
+        style={{
+          position: 'absolute',
+          inset: 0,
+          background: 'linear-gradient(to bottom, transparent 60%, rgba(20,20,20,0.8) 100%)',
+        }}
+      />
+      <p
+        style={{
+          position: 'absolute',
+          bottom: 20,
+          left: 24,
+          color: '#fff',
+          fontSize: 12,
+          fontFamily: 'Montserrat, Arial, sans-serif',
+          textTransform: 'uppercase',
+          letterSpacing: '0.12em',
+          margin: 0,
+        }}
+      >
+        Hult Prize Regional Finals, Quito, Ecuador
+      </p>
+    </div>
+
     {/* Block 1 — Productos Digitales */}
     <section className="bg-[hsl(var(--bg-primary))] py-24 border-t border-[hsl(var(--border-subtle))]">
       <div className="max-w-[1200px] mx-auto px-6 lg:px-8">
