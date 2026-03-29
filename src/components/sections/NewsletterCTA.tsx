@@ -2,10 +2,10 @@ const NewsletterCTA = () => (
   <section id="contacto" className="bg-[hsl(var(--bg-elevated))] py-24 md:py-28">
     <div className="max-w-[600px] mx-auto px-6 text-center" data-reveal>
       <h2 className="font-montserrat font-bold text-[hsl(var(--text-primary))] text-[40px] md:text-[44px] mb-4">
-        Operator Notes
+        The Growth Lab
       </h2>
       <p className="font-inter text-[hsl(var(--text-secondary))] text-[17px] leading-relaxed mb-8">
-        Ideas sobre sistemas, growth y ejecución. Sin ruido. Para founders y operators que quieren operar mejor.
+        Sistemas, estrategia y ejecución aplicada. Una vez por semana, sin relleno.
       </p>
 
       <div className="flex gap-2 max-w-[440px] mx-auto mb-3">
@@ -20,7 +20,7 @@ const NewsletterCTA = () => (
       </div>
 
       <p className="font-inter text-[hsl(var(--text-muted))] text-[12px]">
-        Quincenal. Puedes darte de baja cuando quieras.
+        Semanal. Puedes darte de baja cuando quieras.
       </p>
     </div>
   </section>

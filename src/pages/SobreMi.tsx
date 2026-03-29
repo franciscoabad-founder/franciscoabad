@@ -26,34 +26,52 @@ const values = [
 
 const timeline = [
   {
-    year: '2026',
-    event: 'Fundador y CEO, Fulcra · Partner, Kronek · Presidente del Directorio, CODEIS',
+    period: '2026 · Presente',
+    event: 'Fulcra (CEO) · Kronek (Partner) · CODEIS (Presidente del Directorio)',
     detail:
-      'Construyo Fulcra, una startup de workertech que diagnostica cómo trabajan realmente las organizaciones antes de que automaticer cualquier cosa. Paralelamente, dirijo estrategia de crecimiento y revenue en Kronek junto a mi socio Robinson, y presido el directorio de CODEIS.',
+      'Construcción simultánea de tres vehículos: Fulcra (workertech), Kronek (consultoría de crecimiento y revenue), y CODEIS en transición a empresa social sostenible.',
   },
   {
-    year: '2025',
+    period: 'Jun 2025 · Dic 2025',
     event: 'Director General, IESS',
     detail:
-      'Lideré la institución pública más grande del Ecuador: $10 billones en fondos administrados, 32.000 colaboradores, 13 millones de beneficiarios. Elevé la ejecución presupuestaria del 36% al 78% en menos de seis meses. Implementé tableros de inteligencia de negocios y lideré la transformación digital de servicios clave.',
+      'Máxima autoridad de la institución pública más grande del Ecuador. $10 billones en fondos gestionados, 32.000 colaboradores, 13 millones de beneficiarios. Ejecución presupuestaria: 36% a 78% en seis meses.',
   },
   {
-    year: '2016',
+    period: '2022',
+    event: 'Young Leader of the Americas Initiative Fellow',
+    detail:
+      'Programa de liderazgo del Departamento de Estado de Estados Unidos.',
+  },
+  {
+    period: 'Sep 2016 · Abr 2025',
     event: 'Fundador y Director Ejecutivo, CODEIS',
     detail:
-      'Construí desde cero una organización de innovación social presente en 15 países. 12.000 emprendedores capacitados. Alianzas con BID Lab, USAID, GIZ, Banco Mundial, Georgetown. El programa World Change Makers ganó el desafío internacional Better Together del BID Lab y fue reconocido por Naciones Unidas entre los 50 mejores proyectos jóvenes globales.',
+      'Construí desde cero una organización de innovación social en 15 países. 12.000 emprendedores, alianzas con BID Lab, USAID, GIZ, Banco Mundial, Georgetown.',
   },
   {
-    year: '2019',
+    period: 'Ene 2019 · Abr 2019',
     event: 'Global Competitiveness Leadership Program, Georgetown University',
     detail:
-      'Beca completa. Top 10 proyectos del programa. Materias de liderazgo adaptativo, finanzas, innovación abierta y negociación ejecutiva.',
+      'Beca completa. Top 10 proyectos del programa.',
   },
   {
-    year: '2014',
+    period: 'Sep 2014 · Jul 2016',
     event: 'MPA Desarrollo Internacional, London School of Economics',
     detail:
-      'Méritos académicos. Econometría aplicada, evaluación de impacto, políticas públicas, finanzas del desarrollo. Fundador de la Sociedad de Innovación Social en LSE.',
+      'Mérito académico. Fundador de la Sociedad de Innovación Social en LSE.',
+  },
+  {
+    period: '2012',
+    event: 'Graduación, East Texas Baptist University',
+    detail:
+      'Double major Political Science + International Studies. Minor en Liderazgo. Summa Cum Laude, 3.87/4.0, Distinción en Ciencias Políticas. Primer latino en presidir el Student Government Association. Top 5 Speakers en el Torneo de Debate Nacional. Starting Block Fellow.',
+  },
+  {
+    period: '2007',
+    event: 'Youth Ambassador Ecuador',
+    detail:
+      'Programa de intercambio del Departamento de Estado de Estados Unidos.',
   },
 ];
 
@@ -61,76 +79,71 @@ const SobreMi = () => (
   <div className="bg-[hsl(var(--bg-primary))] min-h-screen">
     <Navbar />
 
-    {/* Main content */}
-    <section className="pt-32 pb-20">
+    {/* Photo + Bio */}
+    <section className="pt-32 pb-16">
       <div className="max-w-[1200px] mx-auto px-6 lg:px-8">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-start">
-          {/* Photo */}
           <img
             src="/francisco-abad.png"
             alt="Francisco Abad, Founder, Operator, Strategist"
             className="w-full max-w-[480px] aspect-[3/4] object-cover rounded-lg shadow-2xl"
           />
 
-          {/* Right side */}
-          <div className="space-y-16 pt-4">
-            {/* Mi historia */}
-            <div>
-              <h1 className="font-montserrat font-bold text-[hsl(var(--text-primary))] text-[36px] md:text-[44px] mb-6">
-                Mi historia
-              </h1>
-              <div className="space-y-4 font-inter text-[hsl(var(--text-secondary))] text-[16px] leading-relaxed">
-                <p>
-                  Fundé{' '}
-                  <strong className="text-[hsl(var(--text-primary))]">CODEIS</strong> hace 9 años
-                  con una convicción: la tecnología bien aplicada puede transformar cualquier
-                  organización, no solo las grandes corporaciones.
-                </p>
-                <p>
-                  Esa convicción me llevó a liderar el{' '}
-                  <strong className="text-[hsl(var(--text-primary))]">IESS</strong>{' '}
-                  (la institución pública más grande del Ecuador), gestionando más de{' '}
-                  <strong className="text-[hsl(var(--text-primary))]">$10 billones en activos</strong>{' '}
-                  y un equipo de{' '}
-                  <strong className="text-[hsl(var(--text-primary))]">32,000 personas</strong>.
-                </p>
-                <p>
-                  A lo largo de mi carrera he construido iniciativas en{' '}
-                  <strong className="text-[hsl(var(--text-primary))]">15 países</strong>, en
-                  sectores tan distintos como fintech, educación, salud pública y consultoría
-                  estratégica.
-                </p>
-                <p>
-                  Hoy diseño sistemas para que founders, executives y organizaciones operen con más
-                  claridad, ejecución y resultados.
-                </p>
-              </div>
+          <div className="space-y-8 pt-4">
+            <h1 className="font-montserrat font-bold text-[hsl(var(--text-primary))] text-[36px] md:text-[44px]">
+              Mi historia
+            </h1>
+            <div className="space-y-4 font-inter text-[hsl(var(--text-secondary))] text-[16px] leading-relaxed">
+              <p>
+                Fundé{' '}
+                <strong className="text-[hsl(var(--text-primary))]">CODEIS</strong> hace 9 años
+                con una convicción: la tecnología bien aplicada puede transformar cualquier
+                organización, no solo las grandes corporaciones.
+              </p>
+              <p>
+                Esa convicción me llevó a liderar el{' '}
+                <strong className="text-[hsl(var(--text-primary))]">IESS</strong>{' '}
+                (la institución pública más grande del Ecuador), gestionando más de{' '}
+                <strong className="text-[hsl(var(--text-primary))]">$10 billones en activos</strong>{' '}
+                y un equipo de{' '}
+                <strong className="text-[hsl(var(--text-primary))]">32,000 personas</strong>.
+              </p>
+              <p>
+                A lo largo de mi carrera he construido iniciativas en{' '}
+                <strong className="text-[hsl(var(--text-primary))]">15 países</strong>, en
+                sectores tan distintos como fintech, educación, salud pública y consultoría
+                estratégica.
+              </p>
+              <p>
+                Hoy diseño sistemas para que founders, executives y organizaciones operen con más
+                claridad, ejecución y resultados.
+              </p>
             </div>
-
-            {/* Lo que creo */}
-            <div>
-              <h2 className="font-montserrat font-bold text-[hsl(var(--text-primary))] text-[28px] mb-8">
-                Lo que creo
-              </h2>
-              <div className="space-y-6">
-                {values.map((v, i) => (
-                  <div key={i} className="flex gap-4">
-                    <div className="mt-1.5 w-1.5 h-1.5 rounded-full bg-[hsl(var(--ember))] flex-shrink-0" />
-                    <div>
-                      <p className="font-montserrat font-semibold text-[hsl(var(--text-primary))] text-[15px] mb-1">
-                        {v.label}
-                      </p>
-                      <p className="font-inter text-[hsl(var(--text-secondary))] text-[14px] leading-relaxed">
-                        {v.desc}
-                      </p>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-
           </div>
+        </div>
+      </div>
+    </section>
+
+    {/* Lo que creo — full width, 2-column grid */}
+    <section className="py-16 border-t border-[hsl(var(--border-subtle))]">
+      <div className="max-w-[1200px] mx-auto px-6 lg:px-8">
+        <h2 className="font-montserrat font-bold text-[hsl(var(--text-primary))] text-[28px] mb-10">
+          Lo que creo
+        </h2>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {values.map((v, i) => (
+            <div key={i} className="flex gap-4">
+              <div className="mt-1.5 w-1.5 h-1.5 rounded-full bg-[hsl(var(--ember))] flex-shrink-0" />
+              <div>
+                <p className="font-montserrat font-semibold text-[hsl(var(--text-primary))] text-[15px] mb-1">
+                  {v.label}
+                </p>
+                <p className="font-inter text-[hsl(var(--text-secondary))] text-[14px] leading-relaxed">
+                  {v.desc}
+                </p>
+              </div>
+            </div>
+          ))}
         </div>
       </div>
     </section>
@@ -147,8 +160,8 @@ const SobreMi = () => (
             {timeline.map((item, i) => (
               <div key={i} className="flex gap-8 pl-8 relative">
                 <div className="absolute left-0 top-1.5 w-3.5 h-3.5 rounded-full bg-[hsl(var(--ember))] border-2 border-[hsl(var(--bg-primary))]" />
-                <div className="flex-shrink-0 font-montserrat font-bold text-[hsl(var(--ember))] text-[14px] w-12 pt-0.5">
-                  {item.year}
+                <div className="flex-shrink-0 font-montserrat font-bold text-[hsl(var(--ember))] text-[13px] w-36 pt-0.5 leading-snug">
+                  {item.period}
                 </div>
                 <div>
                   <p className="font-montserrat font-semibold text-[hsl(var(--text-primary))] text-[16px] mb-1">

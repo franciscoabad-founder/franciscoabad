@@ -5,6 +5,7 @@ const testimonials = [
     name: 'Julio Clavijo',
     role: 'Chief Operations Officer',
     company: 'AWANA · Ex Viceministro de Inclusión Económica',
+    linkedIn: 'https://www.linkedin.com/in/julioclavijo/',
     quote:
       'Trabajé con Francisco como su asesor durante su gestión en el IESS. Lo que distingue su forma de trabajar es que antes de cambiar cualquier cosa, entiende cómo funciona el sistema completo. Eso es raro en posiciones de liderazgo ejecutivo. Los resultados que obtuvimos en ejecución presupuestaria en seis meses no fueron casualidad: fueron consecuencia de un diagnóstico honesto y un rediseño sistemático.',
   },
@@ -14,6 +15,7 @@ const testimonials = [
     name: 'Enrique Crespo',
     role: 'Regional Digital Specialist LAC',
     company: 'PNUD - Programa de Naciones Unidas para el Desarrollo',
+    linkedIn: 'https://www.linkedin.com/in/enrique-crespo-ec/',
     quote:
       'Trabajamos juntos diseñando el programa nacional de Hult Prize en Ecuador. En dos años llegamos a más de 70 universidades y 12.000 estudiantes, construyendo uno de los movimientos de emprendimiento e innovación social universitaria más grandes del país. Lo que Francisco hace bien es diseñar sistemas que escalan sin perder calidad. El framework es sólido porque está construido en principios, no en suposiciones.',
   },
@@ -23,6 +25,7 @@ const testimonials = [
     name: 'Gabriela Tulcanazo',
     role: 'Directora Ejecutiva',
     company: 'CODEIS',
+    linkedIn: 'https://www.linkedin.com/in/gabrielatulcanazo/',
     quote:
       'Estamos transformando CODEIS de una ONG dependiente de grants a una empresa social sostenible. Ese trabajo se hace desde el sistema: rediseñar cómo opera la organización, cómo genera valor, cómo se financia. Francisco construyó CODEIS durante 9 años y ahora me apoya desde la presidencia del directorio con la misma visión sistémica con la que lo fundó. La diferencia entre antes y ahora es que el sistema trabaja, no solo las personas.',
   },
@@ -32,6 +35,7 @@ const testimonials = [
     name: 'Álvaro Maldonado',
     role: 'Actual Presidente de IFI Ecuador',
     company: 'Ex Secretario de Desarrollo Productivo, Quito',
+    linkedIn: 'https://www.linkedin.com/in/alvaro-maldonado-538190146/',
     quote:
       'Trabajamos juntos desde el sector público en la activación del ecosistema de innovación social de Quito, cuando lanzamos Hult Prize Ecuador y recibimos la primera Final Regional de Sudamérica. Francisco sabe cómo conectar el estado, la academia y los emprendedores en un sistema funcional. Lo que construimos entonces fue un movimiento, no un evento.',
   },
@@ -41,6 +45,7 @@ const testimonials = [
     name: 'Sofía Fernández',
     role: 'Project Coordinator',
     company: 'CODEIS',
+    linkedIn: 'https://www.linkedin.com/in/sofiafernandez98/',
     quote:
       'Trabajé con Francisco en la expansión internacional de CODEIS durante la pandemia. Diseñamos programas virtuales que nos permitieron llegar a 15 países cuando otros cerraban. La capacidad de Francisco para rediseñar el sistema de entrega completo en semanas, sin perder calidad ni impacto, fue lo que hizo posible esa expansión. No fue suerte. Fue diseño.',
   },
@@ -50,6 +55,7 @@ const testimonials = [
     name: 'Carlos Cárdenas',
     role: 'Gerente General',
     company: 'Grupo CAVE',
+    linkedIn: 'https://www.linkedin.com/in/carlos-c%C3%A1rdenas-30ab0bb6/',
     quote:
       'Hemos trabajado juntos en varios proyectos, incluyendo un evento con más de 18.000 personas en tres días. Ahora Francisco está trabajando conmigo en algo más profundo: organizar la empresa, diagnosticar qué está estancado, automatizar procesos, y potenciar mi marca personal para generar ingresos que no dependan solo de mi tiempo. Es la primera vez que trabajo con alguien que entiende tanto el sistema operativo de un negocio como el de una persona.',
   },
@@ -59,6 +65,7 @@ const testimonials = [
     name: 'Lilyán Yepez',
     role: 'Fundadora y CEO',
     company: 'NoTrace',
+    linkedIn: 'https://www.linkedin.com/in/lilyanyepezesg/',
     quote:
       'Empezamos trabajando el posicionamiento de NoTrace a nivel internacional y terminamos repensando la estrategia completa de la empresa. Francisco diagnosticó dónde estábamos estancados, diseñó el sistema para desbloquearlo, y trabaja con nosotros en todo, desde el Biodiversity Summit hasta la estructura comercial. Confío en su criterio porque parte siempre de entender primero, no de prescribir.',
   },
@@ -68,6 +75,7 @@ const testimonials = [
     name: 'Brandon Peñaherrera',
     role: 'Fundador',
     company: 'Yami Dog',
+    linkedIn: 'https://www.linkedin.com/in/brandonpe%C3%B1aherrera/',
     quote:
       'Mis profesores me dijeron que no iba a ser nadie. Cuando conocí a Francisco y aprendí que podía emprender, descubrí lo que quería hacer con mi vida. Hoy Yami Dog da empleo a mi familia y a doce personas en la comunidad. He ganado el premio Soy Empresario de la Cámara de Industrias y reconocimientos nacionales en concursos de emprendimiento. Lo que Francisco enseña no son teorías. Son herramientas que se aplican.',
   },
@@ -77,6 +85,7 @@ const testimonials = [
     name: 'Jaime Guzmán',
     role: 'Project Manager',
     company: 'Innovaxion 2024',
+    linkedIn: 'https://www.linkedin.com/in/jaime-andr%C3%A9s-guzm%C3%A1n-846893178/',
     quote:
       'Materializamos juntos Innovaxion: 50 speakers de más de 10 países, 3.000 asistentes, impacto real en el ecosistema de innovación pública, social y ambiental de Ecuador. Francisco no solo diseña el sistema. Lo ejecuta. Y cuando algo no funciona durante la ejecución, lo resuelve sin drama.',
   },
@@ -173,7 +182,12 @@ const Testimonials = () => (
               gap: 16,
             }}
           >
-            <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
+            <a
+              href={t.linkedIn}
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{ display: 'flex', alignItems: 'center', gap: 14, textDecoration: 'none' }}
+            >
               <Avatar photo={t.photo} initials={t.initials} name={t.name} />
               <div style={{ minWidth: 0 }}>
                 <p
@@ -211,7 +225,7 @@ const Testimonials = () => (
                   {t.company}
                 </p>
               </div>
-            </div>
+            </a>
 
             <p
               style={{

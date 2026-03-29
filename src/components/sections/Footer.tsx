@@ -12,31 +12,20 @@ const Footer = () => (
     <div className="max-w-[1200px] mx-auto px-6 lg:px-8 flex flex-col items-center gap-10">
       {/* Logo */}
       <svg
-        viewBox="0 0 260 32"
-        height="28"
+        viewBox="0 0 300 100"
         width="auto"
-        style={{ display: 'block' }}
+        style={{ display: 'block', maxWidth: '320px', width: '100%' }}
         xmlns="http://www.w3.org/2000/svg"
       >
         <text
-          x="0"
-          y="24"
-          fontFamily="Montserrat, Arial, sans-serif"
-          fontWeight="200"
-          fontSize="18"
-          letterSpacing="3"
-          fill="rgba(244,237,230,0.4)"
-        >
-          FRANCISCO
-        </text>
-        <text
-          x="152"
-          y="24"
+          x="150"
+          y="78"
+          textAnchor="middle"
           fontFamily="Montserrat, Arial, sans-serif"
           fontWeight="900"
-          fontSize="22"
-          letterSpacing="1"
-          fill="#C2654A"
+          fontSize="80"
+          letterSpacing="6"
+          fill="rgba(244,237,230,0.9)"
         >
           ABAD
         </text>
