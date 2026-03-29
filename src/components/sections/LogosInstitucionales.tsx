@@ -10,7 +10,7 @@ const groups = [
   {
     label: 'ALIADOS Y PROGRAMAS',
     items: [
-      { src: '/logos-institucionales/bidlab-logo.png',         alt: 'BID Lab',    legend: 'Grant · World Change Makers',  blend: false, height: 32 },
+      { src: '/logos-institucionales/bidlab-logo.png',         alt: 'BID Lab',    legend: 'Grant · World Change Makers',  blend: false, height: 44 },
       { src: '/logos-institucionales/PNUD_logo.png',           alt: 'PNUD',       legend: 'Programa de Naciones Unidas',  blend: false, height: 56 },
       { src: '/logos-institucionales/giz-logo.png',            alt: 'GIZ',        legend: 'Cooperación Alemana GIZ',      blend: false, height: 36 },
       { src: '/logos-institucionales/iess-logo.png',           alt: 'IESS',       legend: 'Director General 2025',        blend: false, height: 56 },
