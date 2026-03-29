@@ -2,30 +2,30 @@ const groups = [
   {
     label: 'FORMACIÓN',
     items: [
-      { src: '/logos-institucionales/lse-logo.png',            alt: 'London School of Economics', legend: 'MPA · London School of Economics', blend: false },
-      { src: '/logos-institucionales/georgetown-logo.png.png', alt: 'Georgetown University',       legend: 'Global Competitiveness Leadership', blend: false },
-      { src: '/logos-institucionales/upenn-logo.png',          alt: 'Wharton / UPenn',             legend: 'Social Impact House · Wharton', blend: false },
+      { src: '/logos-institucionales/lse-logo.png',            alt: 'London School of Economics', legend: 'MPA · London School of Economics',   blend: false, height: 40 },
+      { src: '/logos-institucionales/georgetown-logo.png.png', alt: 'Georgetown University',       legend: 'Global Competitiveness Leadership', blend: false, height: 44 },
+      { src: '/logos-institucionales/upenn-logo.png',          alt: 'Wharton / UPenn',             legend: 'Social Impact House · Wharton',     blend: false, height: 40 },
     ],
   },
   {
     label: 'ALIADOS Y PROGRAMAS',
     items: [
-      { src: '/logos-institucionales/bidlab-logo.png',         alt: 'BID Lab',    legend: 'Grant · World Change Makers', blend: false },
-      { src: '/logos-institucionales/PNUD_logo.png',           alt: 'PNUD',       legend: 'Programa de Naciones Unidas', blend: false },
-      { src: '/logos-institucionales/giz-logo.png',            alt: 'GIZ',        legend: 'Cooperación Alemana GIZ', blend: false },
-      { src: '/logos-institucionales/iess-logo.png',           alt: 'IESS',       legend: 'Director General 2025', blend: false },
-      { src: '/logos-institucionales/codeis-logo.png',         alt: 'CODEIS',     legend: 'Fundador · 15 países', blend: false },
-      { src: '/logos-institucionales/hult-prize-logo.png',     alt: 'Hult Prize', legend: 'Director Nacional Ecuador', blend: true },
+      { src: '/logos-institucionales/bidlab-logo.png',         alt: 'BID Lab',    legend: 'Grant · World Change Makers',  blend: false, height: 32 },
+      { src: '/logos-institucionales/PNUD_logo.png',           alt: 'PNUD',       legend: 'Programa de Naciones Unidas',  blend: false, height: 56 },
+      { src: '/logos-institucionales/giz-logo.png',            alt: 'GIZ',        legend: 'Cooperación Alemana GIZ',      blend: false, height: 36 },
+      { src: '/logos-institucionales/iess-logo.png',           alt: 'IESS',       legend: 'Director General 2025',        blend: false, height: 56 },
+      { src: '/logos-institucionales/codeis-logo.png',         alt: 'CODEIS',     legend: 'Fundador · 15 países',         blend: false, height: 40 },
+      { src: '/logos-institucionales/hult-prize-logo.png',     alt: 'Hult Prize', legend: 'Director Nacional Ecuador',    blend: true,  height: 44 },
     ],
   },
   {
     label: 'SPEAKER Y DOCENTE',
     items: [
-      { src: '/logos-institucionales/oyw-logo.png',  alt: 'One Young World', legend: 'One Young World · Ambassador', blend: false },
-      { src: '/logos-institucionales/sg-logo.avif',  alt: 'Startup Grind',   legend: 'Startup Grind · Speaker', blend: false },
-      { src: '/logos-institucionales/udla-logo.png', alt: 'UDLA',            legend: 'Profesor de Maestría', blend: true },
-      { src: '/logos-institucionales/usfq-logo.png', alt: 'USFQ',            legend: 'Profesor de Emprendimiento', blend: false },
-      { src: '/logos-institucionales/yachay-logo.png', alt: 'Yachay Tech',   legend: 'Speaker', blend: false },
+      { src: '/logos-institucionales/oyw-logo.png',   alt: 'One Young World', legend: 'One Young World · Ambassador',   blend: false, height: 48 },
+      { src: '/logos-institucionales/sg-logo.avif',   alt: 'Startup Grind',   legend: 'Startup Grind · Speaker',        blend: false, height: 36 },
+      { src: '/logos-institucionales/udla-logo.png',  alt: 'UDLA',            legend: 'Profesor de Maestría',           blend: true,  height: 40 },
+      { src: '/logos-institucionales/usfq-logo.png',  alt: 'USFQ',            legend: 'Profesor de Emprendimiento',     blend: false, height: 44 },
+      { src: '/logos-institucionales/yachay-logo.png', alt: 'Yachay Tech',    legend: 'Speaker',                        blend: false, height: 44 },
     ],
   },
 ];
@@ -63,7 +63,7 @@ const LogosInstitucionales = () => (
             {group.label}
           </p>
 
-          <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center', gap: 40 }}>
+          <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center', gap: 40, alignItems: 'center' }}>
             {group.items.map((item) => (
               <div
                 key={item.alt}
@@ -74,8 +74,9 @@ const LogosInstitucionales = () => (
                   alt={item.alt}
                   className="transition-all duration-300 opacity-[0.85] hover:opacity-100 hover:scale-105"
                   style={{
-                    height: 48,
+                    height: item.height,
                     width: 'auto',
+                    objectFit: 'contain',
                     ...(item.blend ? { mixBlendMode: 'multiply' } : {}),
                   }}
                 />

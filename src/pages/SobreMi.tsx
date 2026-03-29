@@ -27,51 +27,57 @@ const values = [
 const timeline = [
   {
     period: '2026 · Presente',
-    event: 'Fulcra (CEO) · Kronek (Partner) · CODEIS (Presidente del Directorio)',
+    event: 'Founder · Partner · Presidente del Directorio',
     detail:
-      'Construcción simultánea de tres vehículos: Fulcra (workertech), Kronek (consultoría de crecimiento y revenue), y CODEIS en transición a empresa social sostenible.',
+      'Construyo Fulcra (workertech startup), dirijo estrategia en Kronek (consultoría de crecimiento y revenue), y presido el directorio de CODEIS en su transición a empresa social sostenible.',
   },
   {
     period: 'Jun 2025 · Dic 2025',
     event: 'Director General, IESS',
     detail:
-      'Máxima autoridad de la institución pública más grande del Ecuador. $10 billones en fondos gestionados, 32.000 colaboradores, 13 millones de beneficiarios. Ejecución presupuestaria: 36% a 78% en seis meses.',
+      'Máxima autoridad de la institución pública más grande del Ecuador: $10 billones en fondos gestionados, 32.000 colaboradores, 13 millones de beneficiarios. Ejecución presupuestaria: 36% a 78% en seis meses.',
   },
   {
     period: '2022',
-    event: 'Young Leader of the Americas Initiative Fellow',
+    event: 'Young Leaders of the Americas Initiative Fellow',
     detail:
-      'Programa de liderazgo del Departamento de Estado de Estados Unidos.',
+      'Seleccionado por el Departamento de Estado de Estados Unidos entre emprendedores de 37 países de América Latina y el Caribe. El programa YLAI es el flagship del State Department para líderes empresariales y sociales emergentes del hemisferio occidental.',
   },
   {
-    period: 'Sep 2016 · Abr 2025',
+    period: '2016 · 2025',
     event: 'Fundador y Director Ejecutivo, CODEIS',
     detail:
-      'Construí desde cero una organización de innovación social en 15 países. 12.000 emprendedores, alianzas con BID Lab, USAID, GIZ, Banco Mundial, Georgetown.',
+      'Construí desde cero una organización de innovación social en 15 países. 12.000 emprendedores capacitados. Alianzas con BID Lab, USAID, GIZ, Banco Mundial. El programa World Change Makers ganó el desafío internacional Better Together del BID Lab y fue reconocido por Naciones Unidas entre los 50 mejores proyectos jóvenes del mundo.',
   },
   {
     period: 'Ene 2019 · Abr 2019',
     event: 'Global Competitiveness Leadership Program, Georgetown University',
     detail:
-      'Beca completa. Top 10 proyectos del programa.',
+      'Beca completa. Top 10 proyectos del programa entre participantes de más de 40 países. Materias de liderazgo adaptativo, finanzas, innovación abierta y negociación ejecutiva.',
   },
   {
-    period: 'Sep 2014 · Jul 2016',
+    period: '2014 · 2016',
     event: 'MPA Desarrollo Internacional, London School of Economics',
     detail:
-      'Mérito académico. Fundador de la Sociedad de Innovación Social en LSE.',
+      'Mérito académico. Econometría aplicada, evaluación de impacto, políticas públicas y finanzas del desarrollo. Fundador de la Sociedad de Innovación Social en LSE.',
+  },
+  {
+    period: '2011',
+    event: 'One Young World Ambassador, Zurich',
+    detail:
+      'Primer ecuatoriano en representar al país en One Young World, el encuentro anual de los jóvenes líderes más destacados del mundo. El Summit de Zurich 2011 reunió delegados de 190 países bajo la tutoría de figuras como Desmond Tutu, Bob Geldof y Kofi Annan. El proceso de selección recibe más de 50.000 aplicaciones por año.',
   },
   {
     period: '2012',
-    event: 'Graduación, East Texas Baptist University',
+    event: 'Egresado con Máximos Honores, East Texas Baptist University',
     detail:
-      'Double major Political Science + International Studies. Minor en Liderazgo. Summa Cum Laude, 3.87/4.0, Distinción en Ciencias Políticas. Primer latino en presidir el Student Government Association. Top 5 Speakers en el Torneo de Debate Nacional. Starting Block Fellow.',
+      'Double major: Ciencias Políticas y Estudios Internacionales. Minor en Liderazgo. Promedio 3.87/4.0 Summa Cum Laude con Distinción en Ciencias Políticas. Primer latino en presidir el Student Government Association. Top 5 Speakers en el Torneo de Debate Nacional. Starting Block Fellow.',
   },
   {
     period: '2007',
-    event: 'Youth Ambassador Ecuador',
+    event: 'Youth Ambassador, Programa del Departamento de Estado de EE.UU.',
     detail:
-      'Programa de intercambio del Departamento de Estado de Estados Unidos.',
+      'Seleccionado entre estudiantes de secundaria de Ecuador para el programa de intercambio de liderazgo del Bureau of Educational and Cultural Affairs del Departamento de Estado de EE.UU. El programa selecciona jóvenes de alto potencial de liderazgo en toda América Latina y el Caribe.',
   },
 ];
 
@@ -86,7 +92,7 @@ const SobreMi = () => (
           <img
             src="/francisco-abad.png"
             alt="Francisco Abad, Founder, Operator, Strategist"
-            className="w-full max-w-[480px] aspect-[3/4] object-cover rounded-lg shadow-2xl"
+            className="w-full max-w-[360px] aspect-[3/4] object-cover rounded-lg shadow-2xl"
           />
 
           <div className="space-y-8 pt-4">

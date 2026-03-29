@@ -50,7 +50,7 @@ const TrabajaConmigo = () => (
           width: '100%',
           height: 480,
           objectFit: 'cover',
-          objectPosition: 'center top',
+          objectPosition: 'center 20%',
           display: 'block',
         }}
       />
