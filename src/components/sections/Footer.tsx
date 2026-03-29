@@ -11,25 +11,11 @@ const Footer = () => (
   <footer className="bg-[hsl(var(--bg-primary))] border-t border-[hsl(var(--border-subtle))] py-20">
     <div className="max-w-[1200px] mx-auto px-6 lg:px-8 flex flex-col items-center gap-10">
       {/* Logo */}
-      <svg
-        viewBox="0 0 300 100"
-        width="auto"
-        style={{ display: 'block', maxWidth: '320px', width: '100%' }}
-        xmlns="http://www.w3.org/2000/svg"
-      >
-        <text
-          x="150"
-          y="78"
-          textAnchor="middle"
-          fontFamily="Montserrat, Arial, sans-serif"
-          fontWeight="900"
-          fontSize="80"
-          letterSpacing="6"
-          fill="rgba(244,237,230,0.9)"
-        >
-          ABAD
-        </text>
-      </svg>
+      <img
+        src="/fa_stacked_tagline_ember_3x.png"
+        alt="Francisco Abad - Systems for Growth"
+        style={{ height: '64px', width: 'auto', opacity: 0.95 }}
+      />
 
       {/* Bio */}
       <p className="font-inter text-[hsl(var(--text-secondary))] text-[14px] leading-[1.8] text-center max-w-[700px]">
