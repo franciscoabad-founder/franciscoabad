@@ -47,6 +47,7 @@ const Hero = () => {
 
           {/* Right column — Photo */}
           <div className="flex justify-center lg:justify-end" data-reveal data-reveal-delay="3">
+            {/* TODO: reemplazar /francisco-abad.png (18.8 MB) por versión WebP 1200px max, target <300KB. Pendiente de Pancho. */}
             <img
               src="/francisco-abad.png"
               alt="Francisco Abad — Founder, Operator, Strategist"

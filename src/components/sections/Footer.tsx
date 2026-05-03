@@ -1,8 +1,9 @@
 import { Linkedin, Instagram, Youtube, Mail } from 'lucide-react';
 
+// TODO: reemplazar URL de YouTube cuando Pancho confirme el canal real.
 const socials = [
-  { label: 'LinkedIn', icon: Linkedin, href: 'https://linkedin.com' },
-  { label: 'Instagram', icon: Instagram, href: 'https://instagram.com' },
+  { label: 'LinkedIn', icon: Linkedin, href: 'https://www.linkedin.com/in/franciscoabad/' },
+  { label: 'Instagram', icon: Instagram, href: 'https://www.instagram.com/abadfrancisco/' },
   { label: 'YouTube', icon: Youtube, href: 'https://youtube.com' },
   { label: 'Email', icon: Mail, href: 'mailto:francisco@franciscoabad.com' },
 ];

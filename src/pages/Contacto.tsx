@@ -4,9 +4,10 @@ import { Linkedin, Instagram, Youtube, Mail } from 'lucide-react';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/sections/Footer';
 
+// TODO: reemplazar URL de YouTube cuando Pancho confirme el canal real.
 const socials = [
-  { label: 'LinkedIn', icon: Linkedin, href: 'https://linkedin.com' },
-  { label: 'Instagram', icon: Instagram, href: 'https://instagram.com' },
+  { label: 'LinkedIn', icon: Linkedin, href: 'https://www.linkedin.com/in/franciscoabad/' },
+  { label: 'Instagram', icon: Instagram, href: 'https://www.instagram.com/abadfrancisco/' },
   { label: 'YouTube', icon: Youtube, href: 'https://youtube.com' },
 ];
 
@@ -57,11 +58,11 @@ const Contacto = () => {
 
               <div>
                 <a
-                  href="mailto:hola@franciscoabad.com"
+                  href="mailto:francisco@franciscoabad.com"
                   className="inline-flex items-center gap-3 font-inter text-[hsl(var(--text-primary))] text-[16px] hover:text-[hsl(var(--ember))] transition-colors duration-300"
                 >
                   <Mail size={18} className="text-[hsl(var(--ember))]" />
-                  hola@franciscoabad.com
+                  francisco@franciscoabad.com
                 </a>
               </div>
 
