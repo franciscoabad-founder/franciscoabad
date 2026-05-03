@@ -247,7 +247,7 @@ const GrowthLab = () => {
                   fontFamily: 'Montserrat, sans-serif',
                   fontWeight: 700,
                   fontSize: 'clamp(1.6rem, 5vw, 2.5rem)',
-                  color: '#C2654A',
+                  color: '#9B3D28',
                   lineHeight: 1.2,
                   marginBottom: 24,
                   transition: 'opacity 0.6s ease',
@@ -273,7 +273,7 @@ const GrowthLab = () => {
               <button
                 onClick={handleStart}
                 style={{
-                  backgroundColor: '#C2654A',
+                  backgroundColor: '#9B3D28',
                   color: '#fff',
                   border: 'none',
                   borderRadius: 6,
@@ -309,7 +309,7 @@ const GrowthLab = () => {
                     flex: 1,
                     height: 3,
                     borderRadius: 2,
-                    backgroundColor: i <= currentQ ? '#C2654A' : 'rgba(138,130,121,0.2)',
+                    backgroundColor: i <= currentQ ? '#9B3D28' : 'rgba(138,130,121,0.2)',
                     transition: 'background-color 0.3s ease',
                   }}
                 />
@@ -335,8 +335,8 @@ const GrowthLab = () => {
                   key={i}
                   onClick={() => handleOption(i, opt.category)}
                   style={{
-                    backgroundColor: selectedOption === i ? 'rgba(194,101,74,0.15)' : '#1A1A1A',
-                    border: `1px solid ${selectedOption === i ? '#C2654A' : 'rgba(138,130,121,0.2)'}`,
+                    backgroundColor: selectedOption === i ? 'rgba(155, 61, 40,0.15)' : '#1A1A1A',
+                    border: `1px solid ${selectedOption === i ? '#9B3D28' : 'rgba(138,130,121,0.2)'}`,
                     borderRadius: 6,
                     padding: '16px 20px',
                     textAlign: 'left',
@@ -349,7 +349,7 @@ const GrowthLab = () => {
                   }}
                   onMouseEnter={(e) => {
                     if (selectedOption === null) {
-                      e.currentTarget.style.borderColor = '#C2654A';
+                      e.currentTarget.style.borderColor = '#9B3D28';
                     }
                   }}
                   onMouseLeave={(e) => {
@@ -393,7 +393,7 @@ const GrowthLab = () => {
                   width: '100%',
                   boxSizing: 'border-box',
                   backgroundColor: '#1A1A1A',
-                  border: `1px solid ${emailError ? '#C2654A' : 'rgba(138,130,121,0.3)'}`,
+                  border: `1px solid ${emailError ? '#9B3D28' : 'rgba(138,130,121,0.3)'}`,
                   borderRadius: 6,
                   padding: '14px 16px',
                   fontFamily: 'Inter, sans-serif',
@@ -404,7 +404,7 @@ const GrowthLab = () => {
                 }}
               />
               {emailError && (
-                <p style={{ color: '#C2654A', fontSize: 13, marginBottom: 12, textAlign: 'left' }}>
+                <p style={{ color: '#9B3D28', fontSize: 13, marginBottom: 12, textAlign: 'left' }}>
                   {emailError}
                 </p>
               )}
@@ -414,7 +414,7 @@ const GrowthLab = () => {
                 style={{
                   width: '100%',
                   height: 52,
-                  backgroundColor: '#C2654A',
+                  backgroundColor: '#9B3D28',
                   color: '#fff',
                   border: 'none',
                   borderRadius: 6,
@@ -444,7 +444,7 @@ const GrowthLab = () => {
                 fontSize: 11,
                 letterSpacing: '0.15em',
                 textTransform: 'uppercase',
-                color: '#C2654A',
+                color: '#9B3D28',
                 marginBottom: 16,
               }}
             >
@@ -488,7 +488,7 @@ const GrowthLab = () => {
                   fontFamily: 'Montserrat, sans-serif',
                   fontWeight: 700,
                   fontSize: 16,
-                  color: '#C2654A',
+                  color: '#9B3D28',
                   marginBottom: 12,
                 }}
               >
@@ -510,7 +510,7 @@ const GrowthLab = () => {
                 to="/trabaja-conmigo"
                 style={{
                   display: 'block',
-                  backgroundColor: '#C2654A',
+                  backgroundColor: '#9B3D28',
                   color: '#fff',
                   textDecoration: 'none',
                   borderRadius: 6,

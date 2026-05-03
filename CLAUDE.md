@@ -68,8 +68,8 @@ Lo que NO está migrado (sigue en legacy o pendiente):
 
 | Token | Hex | Uso |
 |---|---|---|
-| Ember | `#C2654A` | Acento principal, CTAs, highlights |
-| Sienna | `#A3503A` | Variante más oscura del Ember |
+| Ember | `#9B3D28` | Acento principal, CTAs, highlights |
+| Sienna | `#7D2F1F` | Variante más oscura del Ember |
 | Ink | `#141414` | Fondo más oscuro (growth-lab) |
 | Onyx | `#1E1E1E` | Fondo de cards y elementos elevados |
 | Linen | `#F4EDE6` | Sección LogosInstitucionales (fondo claro) |

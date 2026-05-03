@@ -92,8 +92,8 @@ const Blog = () => {
                 onClick={() => setActiveTab(tab.value)}
                 className="font-montserrat font-medium text-[12px] uppercase tracking-[1px] px-4 py-2 rounded-full border transition-colors duration-200"
                 style={{
-                  backgroundColor: activeTab === tab.value ? '#C2654A' : 'transparent',
-                  borderColor: activeTab === tab.value ? '#C2654A' : 'rgba(138,130,121,0.3)',
+                  backgroundColor: activeTab === tab.value ? '#9B3D28' : 'transparent',
+                  borderColor: activeTab === tab.value ? '#9B3D28' : 'rgba(138,130,121,0.3)',
                   color: activeTab === tab.value ? '#fff' : '#8A8279',
                 }}
               >

@@ -118,7 +118,7 @@ const Avatar = ({
           height: 72,
           borderRadius: '50%',
           objectFit: 'cover',
-          border: '2px solid #C2654A',
+          border: '2px solid #9B3D28',
           display: 'block',
         }}
       />
@@ -128,8 +128,8 @@ const Avatar = ({
           width: 72,
           height: 72,
           borderRadius: '50%',
-          backgroundColor: '#C2654A',
-          border: '2px solid #C2654A',
+          backgroundColor: '#9B3D28',
+          border: '2px solid #9B3D28',
           alignItems: 'center',
           justifyContent: 'center',
           position: 'absolute',
@@ -154,7 +154,7 @@ const Testimonials = () => (
       <div className="mb-14" data-reveal>
         <p
           className="font-montserrat font-semibold uppercase tracking-[3px] text-[11px] mb-4"
-          style={{ color: '#C2654A' }}
+          style={{ color: '#9B3D28' }}
         >
           TESTIMONIOS
         </p>
@@ -174,7 +174,7 @@ const Testimonials = () => (
             style={{
               backgroundColor: '#1E1E1E',
               border: '1px solid rgba(138,130,121,0.15)',
-              borderLeft: '2px solid #C2654A',
+              borderLeft: '2px solid #9B3D28',
               borderRadius: 8,
               padding: 24,
               display: 'flex',
@@ -206,7 +206,7 @@ const Testimonials = () => (
                   style={{
                     fontFamily: 'Inter, Arial, sans-serif',
                     fontSize: 12,
-                    color: '#C2654A',
+                    color: '#9B3D28',
                     margin: '3px 0 2px',
                     lineHeight: 1.4,
                   }}
@@ -238,7 +238,7 @@ const Testimonials = () => (
             >
               <span
                 style={{
-                  color: '#C2654A',
+                  color: '#9B3D28',
                   fontWeight: 700,
                   fontSize: 20,
                   lineHeight: 1,

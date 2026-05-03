@@ -47,7 +47,7 @@ const STATUS_BADGE_COLORS: Record<OpportunityStatus, { bg: string; text: string 
   prospecting:   { bg: 'rgba(138,130,121,0.15)', text: '#8A8279' },
   in_talks:      { bg: 'rgba(90,122,154,0.2)',   text: '#5A7A9A' },
   proposal_sent: { bg: 'rgba(176,154,123,0.2)',  text: '#B09A7B' },
-  negotiating:   { bg: 'rgba(194,101,74,0.15)',  text: '#C2654A' },
+  negotiating:   { bg: 'rgba(155, 61, 40,0.15)',  text: '#9B3D28' },
   closed_won:    { bg: 'rgba(74,138,90,0.2)',    text: '#4A8A5A' },
   closed_lost:   { bg: 'rgba(107,107,107,0.15)', text: '#6B6B6B' },
 };
@@ -55,7 +55,7 @@ const STATUS_BADGE_COLORS: Record<OpportunityStatus, { bg: string; text: string 
 const PAYMENT_COLORS: Record<PaymentStatus, string> = {
   pending:  '#B09A7B',
   received: '#4A8A5A',
-  overdue:  '#C2654A',
+  overdue:  '#9B3D28',
 };
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
@@ -307,7 +307,7 @@ export default function Oportunidades() {
         <button
           onClick={openCreate}
           className="flex items-center gap-2 px-4 py-2 rounded-md text-sm font-semibold transition-opacity hover:opacity-80"
-          style={{ backgroundColor: '#C2654A', color: '#F4EDE6', fontFamily: 'Inter, sans-serif' }}
+          style={{ backgroundColor: '#9B3D28', color: '#F4EDE6', fontFamily: 'Inter, sans-serif' }}
         >
           <Plus size={15} />
           Nueva oportunidad
@@ -323,7 +323,7 @@ export default function Oportunidades() {
             style={{
               backgroundColor: '#1E1E1E',
               border: stage.value === 'closed_won'
-                ? '1px solid rgba(194,101,74,0.3)'
+                ? '1px solid rgba(155, 61, 40,0.3)'
                 : '1px solid #2A2A2A',
             }}
           >
@@ -335,7 +335,7 @@ export default function Oportunidades() {
             </p>
             <p style={{
               fontSize: '18px', fontWeight: 700, fontFamily: 'Montserrat, sans-serif',
-              color: stage.value === 'closed_won' ? '#C2654A' : '#B09A7B',
+              color: stage.value === 'closed_won' ? '#9B3D28' : '#B09A7B',
               lineHeight: 1,
             }}>
               {fmt(stage.total)}
@@ -357,7 +357,7 @@ export default function Oportunidades() {
 
         {loading ? (
           <div className="flex items-center justify-center py-16">
-            <div className="w-5 h-5 rounded-full border-2 border-[#C2654A] border-t-transparent animate-spin" />
+            <div className="w-5 h-5 rounded-full border-2 border-[#9B3D28] border-t-transparent animate-spin" />
           </div>
         ) : activeOpps.length === 0 ? (
           <div className="flex items-center justify-center py-16">
@@ -414,7 +414,7 @@ export default function Oportunidades() {
                   <TableCell>
                     {opp.next_action_date ? (
                       <span style={{
-                        color: isUrgent(opp.next_action_date) ? '#C2654A' : '#8A8279',
+                        color: isUrgent(opp.next_action_date) ? '#9B3D28' : '#8A8279',
                         fontFamily: 'Inter, sans-serif', fontSize: '13px',
                         fontWeight: isUrgent(opp.next_action_date) ? 600 : 400,
                         whiteSpace: 'nowrap',
@@ -581,7 +581,7 @@ export default function Oportunidades() {
               onClick={saveOpportunity}
               disabled={saving}
               className="w-full py-2.5 rounded-md text-sm font-semibold tracking-wide transition-opacity disabled:opacity-50 hover:opacity-80"
-              style={{ backgroundColor: '#C2654A', color: '#F4EDE6', fontFamily: 'Montserrat, sans-serif' }}
+              style={{ backgroundColor: '#9B3D28', color: '#F4EDE6', fontFamily: 'Montserrat, sans-serif' }}
             >
               {saving ? 'Guardando...' : 'Guardar'}
             </button>
@@ -610,7 +610,7 @@ export default function Oportunidades() {
           {/* Existing payments list */}
           {paymentsLoading ? (
             <div className="flex justify-center py-8">
-              <div className="w-5 h-5 rounded-full border-2 border-[#C2654A] border-t-transparent animate-spin" />
+              <div className="w-5 h-5 rounded-full border-2 border-[#9B3D28] border-t-transparent animate-spin" />
             </div>
           ) : (
             <div className="flex flex-col gap-2 mb-4">
@@ -728,7 +728,7 @@ export default function Oportunidades() {
                   onClick={savePayment}
                   disabled={savingPayment || !paymentForm.amount}
                   className="flex-1 py-2 rounded-md text-sm font-semibold transition-opacity disabled:opacity-50 hover:opacity-80"
-                  style={{ backgroundColor: '#C2654A', color: '#F4EDE6', fontFamily: 'Montserrat, sans-serif' }}
+                  style={{ backgroundColor: '#9B3D28', color: '#F4EDE6', fontFamily: 'Montserrat, sans-serif' }}
                 >
                   {savingPayment ? 'Guardando...' : 'Guardar pago'}
                 </button>

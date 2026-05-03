@@ -98,7 +98,7 @@ function StatCard({
       style={{
         backgroundColor: '#1E1E1E',
         border: '1px solid #2A2A2A',
-        borderTop: '2px solid #C2654A',
+        borderTop: '2px solid #9B3D28',
       }}
     >
       <p style={{
@@ -116,7 +116,7 @@ function StatCard({
         <>
           <p style={{
             fontSize: '2rem', fontWeight: 700, fontFamily: 'Montserrat, sans-serif',
-            color: '#C2654A', lineHeight: 1.1,
+            color: '#9B3D28', lineHeight: 1.1,
           }}>
             {value}
           </p>
@@ -142,7 +142,7 @@ function BriefingContent({ content }: { content: string }) {
           {s.label && (
             <p style={{
               fontSize: '11px', letterSpacing: '0.12em', textTransform: 'uppercase',
-              fontFamily: 'Montserrat, sans-serif', color: '#C2654A', fontWeight: 600,
+              fontFamily: 'Montserrat, sans-serif', color: '#9B3D28', fontWeight: 600,
               marginBottom: '6px',
             }}>
               {s.label}
