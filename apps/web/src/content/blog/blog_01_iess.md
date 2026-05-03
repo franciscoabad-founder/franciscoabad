@@ -7,6 +7,8 @@ readTime: 9
 slug: "iess-as400-78-porciento"
 draft: false
 author: "Francisco Abad"
+heroImage: "./iess-hero.webp"
+heroAlt: "Servidor IBM AS400 con monitor amber-green en sala de servidores hospitalaria, tecnología de los 1980 todavía en uso en 2025"
 ---
 
 # El AS400, los 102 sistemas y por qué el 78% no cuenta toda la historia
@@ -51,6 +53,8 @@ No es metáfora. Es una descripción técnica. Una tienda de barrio funciona por
 
 Y todavía no había llegado al AS400.
 
+![Escritorio con múltiples spreadsheets impresos en formatos distintos, folders manila superpuestos, anotaciones a mano en diferentes tintas, luz cálida cenital con sombras largas](./iess-fragmentos.webp)
+
 ## Lo que sí se hizo en seis meses
 
 La ejecución presupuestaria pasó del 36% al 78%. La cifra es real y está documentada en los reportes oficiales. Pero quiero ser honesto sobre cómo se compone ese número antes de hablar de las decisiones que sí tomamos.
@@ -80,6 +84,8 @@ Cubría tres frentes. La modernización del modelo de atención médica completa
 Ese plan, aprobado y ejecutado, era la diferencia entre seguir parchando o empezar a construir. Quedó en la mesa. Y mientras quedó en la mesa, lo que avanzaba en paralelo era la modernización cosmética. Pantallas táctiles. Kioscos K2. Aplicaciones nuevas montadas sobre la misma infraestructura sin actualizar.
 
 Para mucha gente dentro y fuera de la institución, modernizar el IESS era exactamente eso. Comprar aparatos K2 bonitos. Esa es la modernización que se inaugura, la que sale en fotos, la que se anuncia en ruedas de prensa. La que de verdad cambia una institución es la que no se ve y lleva años, y por lo tanto rinde poco políticamente.
+
+![Portafolio de cuero cerrado con documentos sobre mesa de conferencias de madera oscura, lámpara de escritorio iluminando con luz ámbar, silla vacía empujada hacia atrás, sombras profundas](./iess-decision-pendiente.webp)
 
 ## Sobre la resistencia interna, en general
 
