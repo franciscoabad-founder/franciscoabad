@@ -1,0 +1,64 @@
+import { useEffect, useRef, useState } from "react";
+import useCountUp from "../../hooks/useCountUp";
+
+const stats = [
+  { value: 10,    suffix: "B+", prefix: "$", label: "Fondos administrados" },
+  { value: 32000, suffix: "",   prefix: "",  label: "Personas bajo liderazgo" },
+  { value: 15,    suffix: "",   prefix: "",  label: "Países con presencia" },
+  { value: 12000, suffix: "+",  prefix: "",  label: "Emprendedores impactados" },
+];
+
+interface StatItemProps {
+  value: number;
+  suffix: string;
+  prefix: string;
+  label: string;
+  start: boolean;
+}
+
+function StatItem({ value, suffix, prefix, label, start }: StatItemProps) {
+  const count = useCountUp(value, 2000, start);
+  const display = count >= 1000 ? count.toLocaleString() : count;
+
+  return (
+    <div className="text-center space-y-2">
+      <p className="font-montserrat font-bold text-ember text-[clamp(1.8rem,7vw,3.5rem)] md:text-[64px] leading-none tabular-nums">
+        {prefix}
+        {display}
+        {suffix}
+      </p>
+      <p className="font-inter text-text-secondary text-[13px] leading-snug max-w-[180px] mx-auto">
+        {label}
+      </p>
+    </div>
+  );
+}
+
+export default function StatsIsland() {
+  const ref = useRef<HTMLDivElement>(null);
+  const [started, setStarted] = useState(false);
+
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setStarted(true);
+          observer.disconnect();
+        }
+      },
+      { threshold: 0.3 }
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
+
+  return (
+    <div ref={ref} className="grid grid-cols-2 md:grid-cols-4 gap-10 md:gap-8">
+      {stats.map((s) => (
+        <StatItem key={s.label} {...s} start={started} />
+      ))}
+    </div>
+  );
+}
