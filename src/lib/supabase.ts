@@ -2,7 +2,6 @@ import { createClient } from '@supabase/supabase-js';
 
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL ?? 'https://placeholder.supabase.co';
 const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY ?? 'placeholder-anon-key';
-const supabaseServiceRoleKey = import.meta.env.VITE_SUPABASE_SERVICE_ROLE_KEY ?? 'placeholder-service-role-key';
 
 if (!import.meta.env.VITE_SUPABASE_URL) {
   console.warn('VITE_SUPABASE_URL not configured');
@@ -10,10 +9,6 @@ if (!import.meta.env.VITE_SUPABASE_URL) {
 
 // Public client — uses anon key, respects RLS
 export const supabase = createClient(supabaseUrl, supabaseAnonKey);
-
-// Admin client — uses service role key, bypasses RLS
-// Only use server-side or in admin-authenticated contexts
-export const supabaseAdmin = createClient(supabaseUrl, supabaseServiceRoleKey);
 
 // ─── Database types ────────────────────────────────────────────────────────
 

@@ -16,6 +16,9 @@ dist-ssr
 # Claude Code local config
 .claude/
 
+# Imágenes originales pre-optimización (no versionadas, demasiado pesadas)
+_archive/
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json

@@ -1,6 +1,6 @@
 const testimonials = [
   {
-    photo: '/testimonials/julio-clavijo.png',
+    photo: '/testimonials/julio-clavijo.webp',
     initials: 'JC',
     name: 'Julio Clavijo',
     role: 'Chief Operations Officer',
@@ -20,7 +20,7 @@ const testimonials = [
       'Trabajamos juntos diseñando el programa nacional de Hult Prize en Ecuador. En dos años llegamos a más de 70 universidades y 12.000 estudiantes, construyendo uno de los movimientos de emprendimiento e innovación social universitaria más grandes del país. Lo que Francisco hace bien es diseñar sistemas que escalan sin perder calidad. El modelo es sólido porque está construido en principios, no en suposiciones.',
   },
   {
-    photo: '/testimonials/gabriela-tulcanazo.jpg.png',
+    photo: '/testimonials/gabriela-tulcanazo.webp',
     initials: 'GT',
     name: 'Gabriela Tulcanazo',
     role: 'Directora Ejecutiva',
@@ -70,7 +70,7 @@ const testimonials = [
       'Empezamos trabajando el posicionamiento de NoTrace a nivel internacional y terminamos repensando la estrategia completa de la empresa. Francisco diagnosticó dónde estábamos estancados, diseñó el sistema para desbloquearlo, y trabaja con nosotros en todo, desde el Biodiversity Summit hasta la estructura comercial. Confío en su criterio porque parte siempre de entender primero, no de prescribir.',
   },
   {
-    photo: '/testimonials/brandon-penerrera.jpg.png',
+    photo: '/testimonials/brandon-penerrera.webp',
     initials: 'BP',
     name: 'Brandon Peñaherrera',
     role: 'Fundador',
@@ -80,7 +80,7 @@ const testimonials = [
       'Mis profesores me dijeron que no iba a ser nadie. Cuando conocí a Francisco y aprendí que podía emprender, descubrí lo que quería hacer con mi vida. Hoy Yami Dog da empleo a mi familia y a doce personas en la comunidad. He ganado el premio Soy Empresario de la Cámara de Industrias y reconocimientos nacionales en concursos de emprendimiento. Lo que Francisco enseña no son teorías. Son herramientas que se aplican.',
   },
   {
-    photo: '/testimonials/jaime-guzman.jpg.png',
+    photo: '/testimonials/jaime-guzman.webp',
     initials: 'JG',
     name: 'Jaime Guzmán',
     role: 'Project Manager',

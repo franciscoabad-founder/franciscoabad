@@ -48,8 +48,13 @@ const Hero = () => {
           {/* Right column — Photo */}
           <div className="flex justify-center lg:justify-end" data-reveal data-reveal-delay="3">
             <img
-              src="/francisco-abad.png"
+              src="/francisco-abad.webp"
+              srcSet="/francisco-abad.webp 1x, /francisco-abad@2x.webp 2x"
               alt="Francisco Abad — Founder, Operator, Strategist"
+              width={1200}
+              height={1600}
+              loading="eager"
+              fetchPriority="high"
               className="w-full max-w-[340px] aspect-[3/4] object-cover rounded-2xl shadow-2xl"
             />
           </div>
