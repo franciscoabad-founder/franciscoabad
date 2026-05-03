@@ -1,0 +1,27 @@
+---
+// Override del <img> que emite el renderer de Markdown para imágenes
+// procesadas por content collections. Recibe `src` (ImageMetadata
+// resuelto por el helper image() del schema) y `alt`.
+//
+// Genera srcset multi-width (AVIF + WebP) para que el browser elija
+// la mejor variante según el viewport.
+import { Picture } from "astro:assets";
+
+interface Props {
+  src: ImageMetadata;
+  alt: string;
+}
+
+const { src, alt } = Astro.props;
+---
+
+<Picture
+  src={src}
+  alt={alt}
+  widths={[400, 800, 1200]}
+  sizes="(max-width: 768px) 100vw, 800px"
+  formats={["avif", "webp"]}
+  fallbackFormat="webp"
+  loading="lazy"
+  class="w-full rounded-md my-8"
+/>
