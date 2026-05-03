@@ -1,4 +1,6 @@
 ---
+import Isotype from "./Isotype.astro";
+
 const socials = [
   { label: "LinkedIn", href: "https://www.linkedin.com/in/franciscoabadec/" },
   { label: "Instagram", href: "https://www.instagram.com/abadfrancisco/" },
@@ -9,11 +11,7 @@ const socials = [
 
 <footer class="bg-bg-primary border-t border-border-subtle py-20">
   <div class="max-w-[1200px] mx-auto px-6 lg:px-8 flex flex-col items-center gap-10">
-    <img
-      src="/fa_stacked_tagline_ember_3x.png"
-      alt="Francisco Abad - Systems for Growth"
-      style="height: 80px; width: auto; opacity: 0.95;"
-    />
+    <Isotype height={64} />
 
     <p class="font-inter text-text-secondary text-[14px] leading-[1.8] text-center max-w-[700px]">
       Francisco Abad ha construido, dirigido y transformado sistemas reales. Fundó CODEIS hace 10 años,
