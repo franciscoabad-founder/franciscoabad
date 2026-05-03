@@ -1,4 +1,3 @@
-import { useEffect } from 'react';
 import { Helmet } from 'react-helmet-async';
 import Navbar from '@/components/Navbar';
 import Hero from '@/components/sections/Hero';
@@ -11,25 +10,7 @@ import Resources from '@/components/sections/Resources';
 import BlogPreview from '@/components/sections/BlogPreview';
 import NewsletterCTA from '@/components/sections/NewsletterCTA';
 import Footer from '@/components/sections/Footer';
-
-const useScrollReveal = () => {
-  useEffect(() => {
-    const elements = document.querySelectorAll('[data-reveal]');
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            entry.target.classList.add('revealed');
-            observer.unobserve(entry.target);
-          }
-        });
-      },
-      { threshold: 0.08, rootMargin: '0px 0px -30px 0px' }
-    );
-    elements.forEach((el) => observer.observe(el));
-    return () => observer.disconnect();
-  }, []);
-};
+import useScrollReveal from '@/hooks/useScrollReveal';
 
 const Index = () => {
   useScrollReveal();
