@@ -1,0 +1,75 @@
+---
+import { getCollection } from "astro:content";
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import Navbar from "../../components/Navbar.astro";
+import Footer from "../../components/Footer.astro";
+
+const posts = (await getCollection("blog", ({ data }) => !data.draft)).sort(
+  (a, b) => b.data.pubDate.getTime() - a.data.pubDate.getTime(),
+);
+
+const fmtDate = (d: Date) =>
+  d.toLocaleDateString("es-ES", { month: "short", year: "numeric" });
+---
+
+<BaseLayout
+  title="Dentro del Sistema | Francisco Abad"
+  description="Sistemas, ejecución y liderazgo desde adentro."
+>
+  <Navbar />
+
+  <div class="bg-bg-primary min-h-screen">
+    <section class="pt-32 pb-12">
+      <div class="max-w-[1200px] mx-auto px-6 lg:px-8">
+        <p class="font-montserrat font-semibold uppercase tracking-[3px] text-ember text-[11px] mb-4">
+          BLOG
+        </p>
+        <h1 class="font-montserrat font-bold text-text-primary text-[40px] md:text-[56px] leading-tight mb-5">
+          Dentro del Sistema
+        </h1>
+        <p class="font-inter text-text-secondary text-[17px] leading-relaxed max-w-[640px]">
+          Sistemas, ejecución y liderazgo desde adentro. Lo que aprendí construyendo, dirigiendo y a veces fallando.
+        </p>
+      </div>
+    </section>
+
+    <section class="pb-24">
+      <div class="max-w-[1200px] mx-auto px-6 lg:px-8">
+        {posts.length === 0 ? (
+          <p class="font-inter text-text-secondary text-[16px]">
+            Próximamente.
+          </p>
+        ) : (
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {posts.map((post, i) => (
+              <a
+                href={`/blog/${post.data.slug}`}
+                class="bg-bg-elevated rounded-lg overflow-hidden border border-border-subtle hover:border-ember transition-colors duration-300 group flex flex-col"
+                data-reveal
+                data-reveal-delay={String((i % 3) + 1)}
+              >
+                <div class="aspect-video bg-bg-primary border-b border-border-subtle"></div>
+                <div class="p-6 space-y-3 flex flex-col flex-1">
+                  <span class="inline-block self-start bg-ember text-text-primary font-montserrat font-semibold text-[10px] uppercase tracking-[1.5px] px-3 py-1 rounded-full">
+                    {post.data.category}
+                  </span>
+                  <h2 class="font-montserrat font-semibold text-text-primary text-[18px] leading-snug group-hover:text-ember transition-colors duration-300">
+                    {post.data.title}
+                  </h2>
+                  <p class="font-inter text-text-secondary text-[14px] leading-relaxed flex-1">
+                    {post.data.description}
+                  </p>
+                  <p class="font-inter text-text-muted-brand text-[12px] tracking-wide">
+                    {fmtDate(post.data.pubDate)} · {post.data.readTime} min de lectura
+                  </p>
+                </div>
+              </a>
+            ))}
+          </div>
+        )}
+      </div>
+    </section>
+  </div>
+
+  <Footer />
+</BaseLayout>
