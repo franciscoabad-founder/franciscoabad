@@ -1,0 +1,35 @@
+---
+// NewsletterCTA — input/button decorativos por ahora. Conexión a Beehiiv en Fase 3 server-side.
+---
+
+<section id="contacto" class="bg-bg-elevated py-12 md:py-20">
+  <div class="max-w-[600px] mx-auto px-6 text-center" data-reveal>
+    <h2 class="font-montserrat font-bold text-text-primary text-[40px] md:text-[44px] mb-4">
+      The Growth Lab
+    </h2>
+    <p class="font-inter text-text-secondary text-[17px] leading-relaxed mb-8">
+      Sistemas, estrategia y ejecución aplicada. Una vez por semana, sin relleno.
+    </p>
+
+    <form
+      class="flex flex-col sm:flex-row gap-2 w-full max-w-[440px] mx-auto mb-3"
+      onsubmit="event.preventDefault();"
+    >
+      <input
+        type="email"
+        placeholder="tu@email.com"
+        class="w-full flex-1 bg-bg-primary border border-border-subtle rounded-md px-4 py-3 font-inter text-text-primary text-[14px] placeholder:text-text-muted-brand focus:outline-none focus:border-ember transition-colors"
+      />
+      <button
+        type="submit"
+        class="w-full sm:w-auto bg-ember text-text-primary font-inter font-medium text-[14px] px-6 py-3 rounded-md hover:bg-[hsl(14,45%,46%)] transition-colors"
+      >
+        Suscribirme
+      </button>
+    </form>
+
+    <p class="font-inter text-text-muted-brand text-[12px]">
+      Semanal. Puedes darte de baja cuando quieras.
+    </p>
+  </div>
+</section>
