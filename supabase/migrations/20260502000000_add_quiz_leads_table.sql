@@ -6,6 +6,13 @@
 -- pero nunca se incluyó en la migración inicial. Esta migración la
 -- agrega al schema con RLS para que anónimos puedan insertar (quiz)
 -- y solo authenticated pueda leer (admin).
+--
+-- VERIFICACIÓN 2026-05-02: chequeo automático con anon key contra prod
+-- devolvió PGRST205 ("Could not find the table 'public.quiz_leads' in
+-- the schema cache") → la tabla NO existe en producción. Esta migración
+-- está pendiente de aplicar. Pancho la corre manualmente en Supabase
+-- Dashboard SQL Editor o vía `supabase db push` cuando el CLI esté
+-- linked al proyecto.
 -- ============================================================
 
 CREATE TABLE quiz_leads (
