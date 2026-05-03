@@ -1,0 +1,90 @@
+---
+const services = [
+  {
+    eyebrow: "Empieza aquí",
+    title: "Growth OS",
+    description:
+      "El sistema operativo personal de 90 días. Reemplaza motivación con estructura. Un trimestre completo, tres objetivos, un sistema que decide por ti cuando no tienes ganas.",
+    items: [
+      "Excel con 567 fórmulas",
+      "Manual de 10 capítulos",
+      "Brief de onboarding",
+      "3 Prompts de IA",
+    ],
+    // TODO: cuando exista la página /growth-os, restaurar cta "Ver el Growth OS →" y href "/growth-os".
+    cta: "Próximamente",
+    href: "/contacto",
+  },
+  {
+    eyebrow: "Para founders y executives",
+    title: "Advisory y Consultoría",
+    description:
+      "Acompañamiento estratégico 1:1 para líderes que quieren operar con más claridad y mejores resultados.",
+    items: [
+      "Diagnóstico Estratégico",
+      "Sesiones de advisory ejecutivo",
+      "Growth Partner trimestral",
+    ],
+    cta: "Aplicar a una sesión →",
+    href: "/trabaja-conmigo",
+  },
+  {
+    eyebrow: "Para empresas y eventos",
+    title: "Speaking y Talleres",
+    description:
+      "Keynotes y workshops sobre systems thinking, transformación institucional, liderazgo y ejecución aplicada.",
+    items: [
+      "Keynotes para conferencias",
+      "Workshops para equipos directivos",
+      "Programas corporativos",
+    ],
+    cta: "Cotizar una charla →",
+    href: "/trabaja-conmigo",
+  },
+];
+---
+
+<section id="servicios" class="bg-bg-primary py-12 md:py-20">
+  <div class="max-w-[1200px] mx-auto px-6 lg:px-8">
+    <h2
+      class="font-montserrat font-bold text-text-primary text-[32px] md:text-[36px] text-center mb-16"
+      data-reveal
+    >
+      Quiero ayudarte a crecer
+    </h2>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+      {services.map((s, i) => (
+        <div
+          class="bg-bg-elevated rounded-lg p-10 border border-border-subtle hover:border-ember transition-colors duration-300 flex flex-col"
+          data-reveal
+          data-reveal-delay={String(i + 1)}
+        >
+          <p class="font-montserrat text-[11px] uppercase tracking-[1.5px] text-ember mb-3">
+            {s.eyebrow}
+          </p>
+          <h3 class="font-montserrat font-semibold text-text-primary text-[22px] mb-3">
+            {s.title}
+          </h3>
+          <p class="font-inter text-text-secondary text-[15px] leading-relaxed mb-6">
+            {s.description}
+          </p>
+          <ul class="space-y-2 mb-8 flex-1">
+            {s.items.map((item) => (
+              <li class="font-inter text-text-muted-brand text-[13px] flex items-start gap-2">
+                <span class="text-ember mt-[2px] flex-shrink-0">—</span>
+                {item}
+              </li>
+            ))}
+          </ul>
+          <a
+            href={s.href}
+            class="font-inter font-medium text-ember text-[14px] hover:underline mt-auto"
+          >
+            {s.cta}
+          </a>
+        </div>
+      ))}
+    </div>
+  </div>
+</section>
