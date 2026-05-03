@@ -1,0 +1,71 @@
+---
+interface Props {
+  variant?: "full" | "compact" | "monogram" | "signature";
+  size?: "sm" | "md" | "lg";
+  color?: string;
+}
+const { variant = "full", size = "md", color = "currentColor" } = Astro.props;
+
+const sizes = {
+  sm: { wordmark: "0.875rem", monogram: 28 },
+  md: { wordmark: "1rem",     monogram: 36 },
+  lg: { wordmark: "1.5rem",   monogram: 48 },
+};
+---
+
+{variant === "full" && (
+  <div style="display: flex; flex-direction: column; gap: 2px; line-height: 1;">
+    <div style={`font-family: Inter, -apple-system, sans-serif; font-weight: 300; font-size: ${sizes[size].wordmark}; letter-spacing: 0.18em; color: ${color}; line-height: 1;`}>
+      FRANCISCO
+    </div>
+    <div style={`font-family: Inter, -apple-system, sans-serif; font-weight: 700; font-size: calc(${sizes[size].wordmark} * 1.4); letter-spacing: 0.05em; color: ${color}; line-height: 1;`}>
+      ABAD
+    </div>
+    <div style={`font-family: Inter, -apple-system, sans-serif; font-style: italic; font-weight: 400; font-size: calc(${sizes[size].wordmark} * 0.6); color: hsl(var(--ember)); margin-top: 5px;`}>
+      Systems for Growth.
+    </div>
+  </div>
+)}
+
+{variant === "compact" && (
+  <div style={`font-family: Inter, -apple-system, sans-serif; font-weight: 700; font-size: ${sizes[size].wordmark}; letter-spacing: 0.05em; color: ${color}; line-height: 1;`}>
+    ABAD
+  </div>
+)}
+
+{variant === "monogram" && (
+  <svg
+    width={sizes[size].monogram}
+    height={sizes[size].monogram}
+    viewBox="0 0 100 100"
+    fill="none"
+    aria-label="Francisco Abad"
+    xmlns="http://www.w3.org/2000/svg"
+  >
+    <path
+      d="M 22 80 L 50 18 L 78 80"
+      stroke={color}
+      stroke-width="6"
+      stroke-linecap="square"
+      fill="none"
+    />
+    <path
+      d="M 36 60 L 64 60"
+      stroke={color}
+      stroke-width="6"
+      stroke-linecap="square"
+    />
+    <path
+      d="M 70 75 L 84 89"
+      style="stroke: hsl(var(--accent-cobalt-mid));"
+      stroke-width="5"
+      stroke-linecap="square"
+    />
+  </svg>
+)}
+
+{variant === "signature" && (
+  <div style={`font-family: 'Caveat', cursive; font-weight: 500; font-size: calc(${sizes[size].wordmark} * 1.2); color: ${color}; line-height: 1;`}>
+    F. Abad
+  </div>
+)}

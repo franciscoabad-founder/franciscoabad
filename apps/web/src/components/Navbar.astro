@@ -1,5 +1,6 @@
 ---
 import NavbarIsland from "./NavbarIsland.tsx";
+import Logo from "./Logo.astro";
 
 const links = [
   { href: "/", label: "HOME" },
@@ -15,12 +16,13 @@ const links = [
   class="fixed top-0 left-0 right-0 z-50 transition-all duration-300 bg-transparent [&.is-scrolled]:bg-bg-elevated [&.is-scrolled]:backdrop-blur-md [&.is-scrolled]:shadow-lg"
 >
   <div class="max-w-[1200px] mx-auto px-6 lg:px-8 flex items-center justify-between h-16 lg:h-20">
-    <a href="/" class="flex items-center select-none">
-      <img
-        src="/fa_horizontal_clean_dark.svg"
-        alt="Francisco Abad - Systems for Growth"
-        style="height: 36px; width: auto;"
-      />
+    <a href="/" class="flex items-center select-none" aria-label="Francisco Abad — Inicio">
+      <span class="hidden lg:block">
+        <Logo variant="full" size="sm" />
+      </span>
+      <span class="lg:hidden">
+        <Logo variant="monogram" size="md" />
+      </span>
     </a>
 
     <ul class="hidden lg:flex items-center gap-8">
