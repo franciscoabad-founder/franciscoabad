@@ -1,0 +1,26 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import Navbar from "../components/Navbar.astro";
+import Footer from "../components/Footer.astro";
+---
+
+<BaseLayout
+  title="Francisco Abad — Sistemas para crecimiento"
+  description="Diseño sistemas para que personas y organizaciones funcionen mejor."
+>
+  <Navbar />
+  <main class="min-h-screen flex items-center justify-center bg-bg-primary">
+    <div class="text-center">
+      <h1 class="text-4xl font-montserrat text-text-primary mb-4">
+        Astro setup completo
+      </h1>
+      <p class="text-text-secondary">
+        Próximo paso: migrar Home, Sobre Mí, Trabaja Conmigo
+      </p>
+      <div class="mt-8 inline-block px-6 py-3 bg-ember text-white rounded">
+        Test: este botón debe ser color Ember (#C2654A o similar)
+      </div>
+    </div>
+  </main>
+  <Footer />
+</BaseLayout>

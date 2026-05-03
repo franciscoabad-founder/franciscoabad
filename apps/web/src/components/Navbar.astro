@@ -1,0 +1,84 @@
+---
+import NavbarIsland from "./NavbarIsland.tsx";
+
+const links = [
+  { href: "/", label: "HOME" },
+  { href: "/sobre-mi", label: "SOBRE MÍ" },
+  { href: "/trabaja-conmigo", label: "TRABAJA CONMIGO" },
+  { href: "/blog", label: "BLOG" },
+  { href: "/contacto", label: "CONTACTO" },
+];
+---
+
+<nav
+  data-navbar
+  class="fixed top-0 left-0 right-0 z-50 transition-all duration-300 bg-transparent [&.is-scrolled]:bg-bg-elevated [&.is-scrolled]:backdrop-blur-md [&.is-scrolled]:shadow-lg"
+>
+  <div class="max-w-[1200px] mx-auto px-6 lg:px-8 flex items-center justify-between h-16 lg:h-20">
+    <a href="/" class="flex items-center select-none">
+      <img
+        src="/fa_horizontal_clean_dark.svg"
+        alt="Francisco Abad - Systems for Growth"
+        style="height: 36px; width: auto;"
+      />
+    </a>
+
+    <ul class="hidden lg:flex items-center gap-8">
+      {links.map(({ href, label }) => (
+        <li>
+          <a
+            href={href}
+            class="font-montserrat font-medium text-[13px] uppercase tracking-[1px] text-text-secondary hover:text-ember transition-colors duration-300"
+          >
+            {label}
+          </a>
+        </li>
+      ))}
+    </ul>
+
+    <button
+      data-navbar-open
+      type="button"
+      aria-label="Abrir menú"
+      class="lg:hidden text-text-primary p-2"
+    >
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <line x1="3" y1="6"  x2="21" y2="6" />
+        <line x1="3" y1="12" x2="21" y2="12" />
+        <line x1="3" y1="18" x2="21" y2="18" />
+      </svg>
+    </button>
+  </div>
+</nav>
+
+<div
+  data-navbar-mobile
+  class="fixed inset-0 z-[100] bg-bg-primary flex flex-col items-center justify-center transition-all duration-300 opacity-0 pointer-events-none [&.is-open]:opacity-100 [&.is-open]:pointer-events-auto"
+>
+  <button
+    data-navbar-close
+    type="button"
+    aria-label="Cerrar menú"
+    class="absolute top-5 right-6 text-text-primary p-2"
+  >
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <line x1="18" y1="6" x2="6"  y2="18" />
+      <line x1="6"  y1="6" x2="18" y2="18" />
+    </svg>
+  </button>
+
+  <ul class="flex flex-col items-center gap-10">
+    {links.map(({ href, label }) => (
+      <li>
+        <a
+          href={href}
+          class="font-montserrat font-medium text-2xl uppercase tracking-[2px] text-text-primary hover:text-ember transition-colors duration-300"
+        >
+          {label}
+        </a>
+      </li>
+    ))}
+  </ul>
+</div>
+
+<NavbarIsland client:load />
