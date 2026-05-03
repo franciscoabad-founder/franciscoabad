@@ -1,0 +1,60 @@
+---
+// BlogPreview — datos hardcoded (mismos 3 posts del legacy).
+// En Sprint 2 se conecta a Supabase con getStaticPaths.
+const posts = [
+  {
+    category: "Systems Thinking",
+    title: "Cómo elevé la ejecución presupuestaria del IESS del 36% al 78% en 6 meses",
+    date: "Mar 2026",
+    readTime: "8 min",
+  },
+  {
+    category: "Founder Systems",
+    title: "El problema no es disciplina: por qué los buenos sistemas te dan libertad",
+    date: "Mar 2026",
+    readTime: "5 min",
+  },
+  {
+    category: "Liderazgo",
+    title: "Lo que aprendí dirigiendo 32,000 personas sobre tomar decisiones bajo presión",
+    date: "Feb 2026",
+    readTime: "7 min",
+  },
+];
+---
+
+<section id="blog" class="bg-bg-primary py-12 md:py-20">
+  <div class="max-w-[1200px] mx-auto px-6 lg:px-8">
+    <div class="mb-14" data-reveal>
+      <h2 class="font-montserrat font-bold text-text-primary text-[32px] md:text-[36px] mb-3">
+        Desde el campo
+      </h2>
+      <p class="font-inter text-text-secondary text-[16px] max-w-[560px] leading-relaxed">
+        Ideas sobre sistemas, crecimiento y ejecución. Basadas en experiencia real, no en teoría.
+      </p>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+      {posts.map((post, i) => (
+        <article
+          class="bg-bg-elevated rounded-lg overflow-hidden border border-border-subtle hover:border-ember transition-colors duration-300 group cursor-pointer"
+          data-reveal
+          data-reveal-delay={String(i + 1)}
+        >
+          <div class="aspect-video bg-bg-primary border-b border-border-subtle"></div>
+          <div class="p-6 space-y-3">
+            <span class="inline-block bg-ember text-text-primary font-montserrat font-semibold text-[10px] uppercase tracking-[1.5px] px-3 py-1 rounded-full">
+              {post.category}
+            </span>
+            <h3 class="font-montserrat font-semibold text-text-primary text-[16px] leading-snug group-hover:text-ember transition-colors duration-300">
+              {post.title}
+            </h3>
+            <p class="font-inter text-text-muted-brand text-[12px] tracking-wide">
+              {post.date} · {post.readTime} de lectura
+            </p>
+          </div>
+        </article>
+      ))}
+    </div>
+  </div>
+</section>
