@@ -17,8 +17,52 @@ Sitio: franciscoabad.com
 
 ## Stack
 
-React + TypeScript + Tailwind + Vite + Supabase + Vercel
-Bun como gestor de paquetes. Puerto local: 8080.
+- Legacy (raíz): React + TypeScript + Tailwind + Vite + Supabase + Vercel
+- Nuevo (apps/web/): Astro 6 + Tailwind v4 + React islands + Markdown content collections + Vercel
+- Bun como gestor de paquetes en raíz, npm en apps/web (porque el sistema de Claude Code no tiene bun)
+- Puerto local raíz: 8080. Puerto local Astro: 4321.
+
+## Estado de migración a Astro
+
+La marca personal está migrando del sitio legacy Vite/React a Astro
+por SEO. El sitio Astro vive en apps/web/. El legacy sigue intacto
+en raíz hasta que el deploy nuevo esté listo.
+
+Lo que ya está migrado (apps/web/):
+
+- Páginas: Home, Sobre Mí, Trabaja Conmigo, Contacto
+- Componentes: Navbar (island), Footer, todas las secciones del Home
+  incluido Testimonials con 9 fotos optimizadas
+- Blog: content collections con schema, listado /blog, post dinámico
+  /blog/[slug], BlogPreview en home conectado a posts reales
+- SEO: sitemap, robots, RSS, Open Graph, Twitter Cards, Schema.org
+  Person + Article, JSON-LD
+- Assets: francisco-abad.webp + 13 imágenes más optimizadas en
+  Sprint 0 (96% reducción promedio)
+
+Lo que NO está migrado (sigue en legacy o pendiente):
+
+- Admin (/admin): apagado en main, queda como código intacto en
+  src/pages/admin/ del legacy. No accesible en producción.
+- Formulario de contacto: UI lista, sin backend conectado a Resend
+- Newsletter Beehiiv: UI lista, sin backend
+- Quiz /growth-lab: pendiente migrar como island con endpoint server
+- Páginas dinámicas de productos digitales: /growth-os pendiente
+
+## Decisiones editoriales del blog
+
+- Voz: ejecutiva, directa, sin guru, sin académico
+- Sin em dashes en ningún copy
+- Primera persona activa
+- Sin nombres específicos en blogs sobre el IESS (no mencionar
+  Lama, Cordovez, Gellibert, Healthbird)
+- Sin atacar al gobierno actual
+- Datos honestos: cuando algo no se logró, decirlo
+- Frase ancla del blog 01 IESS: "una de las instituciones más
+  grandes del Ecuador operando como una tienda de barrio"
+- Cierre de bio estándar: "Francisco Abad fue Director General del
+  IESS de junio a diciembre de 2025. Hoy es founder de Fulcra,
+  partner en Kronek y board president de CODEIS."
 
 ## Paleta de colores
 
@@ -46,9 +90,15 @@ Si no aparece: `git add + commit + push` antes de continuar.
 
 ## Rutas del proyecto
 
-```
-C:\Users\Francisco\OneDrive\Profesional\FRANCISCO ABAD\02_Web\franciscoabad
-```
+Repo: `C:\Users\Francisco\OneDrive\Profesional\FRANCISCO ABAD\02_Web\franciscoabad`
+
+Estructura:
+
+- `/` (raíz) — código legacy Vite/React, todavía operativo
+- `/apps/web/` — sitio Astro nuevo, target de producción
+- `/apps/web/src/content/blog/` — blogs en Markdown con frontmatter
+- `/apps/web/public/` — assets del Astro
+- `/supabase/migrations/` — migraciones SQL (compartidas)
 
 ## Commits
 
