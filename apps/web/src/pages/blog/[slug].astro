@@ -1,6 +1,6 @@
 ---
 import { getCollection, render, type CollectionEntry } from "astro:content";
-import { Image } from "astro:assets";
+import { Picture } from "astro:assets";
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import Navbar from "../../components/Navbar.astro";
 import Footer from "../../components/Footer.astro";
@@ -95,11 +95,13 @@ const articleSchema = {
     <section class="py-12 md:py-16">
       <div class="max-w-[720px] mx-auto px-6 lg:px-8">
         {heroImage && (
-          <Image
+          <Picture
             src={heroImage}
             alt={heroAlt ?? title}
-            width={1600}
-            height={900}
+            widths={[400, 800, 1200, 1600]}
+            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 90vw, 1200px"
+            formats={["avif", "webp"]}
+            fallbackFormat="webp"
             loading="eager"
             fetchpriority="high"
             class="w-full rounded-md mb-12"
