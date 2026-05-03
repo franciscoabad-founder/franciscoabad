@@ -15,7 +15,7 @@ const groups = [
       { src: '/logos-institucionales/giz-logo.png',            alt: 'GIZ',        legend: 'Cooperación Alemana GIZ',      blend: false, height: 36, url: 'https://www.giz.de' },
       { src: '/logos-institucionales/iess-logo.png',           alt: 'IESS',       legend: 'Director General 2025',        blend: false, height: 56, url: 'https://www.iess.gob.ec' },
       { src: '/logos-institucionales/codeis-logo.png',         alt: 'CODEIS',     legend: 'Fundador · 10 años · 15 países', blend: false, height: 40, url: 'https://codeis.org' },
-      { src: '/logos-institucionales/hult-prize-logo.png',     alt: 'Hult Prize', legend: 'Director Nacional Ecuador',    blend: true,  height: 44, url: 'https://www.hultprize.org' },
+      { src: '/logos-institucionales/hult-prize-logo.webp',    alt: 'Hult Prize', legend: 'Director Nacional Ecuador',    blend: true,  height: 44, url: 'https://www.hultprize.org' },
     ],
   },
   {

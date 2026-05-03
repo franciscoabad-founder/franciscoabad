@@ -74,7 +74,7 @@ const TrabajaConmigo = () => (
     {/* Speaking hero image */}
     <div className="relative w-full overflow-hidden" style={{ maxHeight: 480 }}>
       <img
-        src="/Speaking/speaking-banner.jpg.png"
+        src="/Speaking/speaking-banner.webp"
         alt="Francisco Abad hablando en Innovaxion 2024"
         style={{
           width: '100%',
