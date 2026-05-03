@@ -47,5 +47,28 @@ const ogImageURL = new URL(ogImage, Astro.site ?? "https://franciscoabad.com").t
   </head>
   <body>
     <slot />
+
+    <script>
+      // Scroll reveal: revela elementos con [data-reveal] al entrar al viewport.
+      // Vanilla JS deferred (no React island, no costo de hidratación).
+      const elements = document.querySelectorAll<HTMLElement>("[data-reveal]");
+      if (elements.length > 0 && "IntersectionObserver" in window) {
+        const observer = new IntersectionObserver(
+          (entries) => {
+            entries.forEach((entry) => {
+              if (entry.isIntersecting) {
+                entry.target.classList.add("revealed");
+                observer.unobserve(entry.target);
+              }
+            });
+          },
+          { threshold: 0.08, rootMargin: "0px 0px -30px 0px" }
+        );
+        elements.forEach((el) => observer.observe(el));
+      } else {
+        // Fallback: si no hay IntersectionObserver, mostramos todo de una.
+        elements.forEach((el) => el.classList.add("revealed"));
+      }
+    </script>
   </body>
 </html>
