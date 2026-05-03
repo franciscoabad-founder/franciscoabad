@@ -34,12 +34,23 @@ const ogImage = heroImage
   ? new URL(heroImage.src, siteOrigin).toString()
   : new URL("/fa_horizontal_clean_dark.svg", siteOrigin).toString();
 
+// Word count del body raw del MDX. Si por algún motivo body es undefined
+// (Astro v6 a veces no expone body en algunos loaders), caemos a una
+// estimación basada en readTime (200 palabras/min).
+const bodyText = (post.body ?? "").replace(/[#*`>\-_!\[\]\(\)]/g, " ");
+const wordCount =
+  bodyText.trim().length > 0
+    ? bodyText.split(/\s+/).filter((w) => w.length > 0).length
+    : readTime * 200;
+
 const articleSchema = {
   "@context": "https://schema.org",
   "@type": "Article",
   headline: title,
   description,
+  image: ogImage,
   datePublished: pubDate.toISOString(),
+  dateModified: pubDate.toISOString(),
   author: {
     "@type": "Person",
     name: author,
@@ -52,6 +63,8 @@ const articleSchema = {
   },
   mainEntityOfPage: { "@type": "WebPage", "@id": canonical },
   articleSection: category,
+  wordCount,
+  inLanguage: "es-EC",
 };
 ---
 
@@ -60,6 +73,8 @@ const articleSchema = {
   description={description}
   ogType="article"
   ogImage={ogImage}
+  pubDate={pubDate}
+  author={author}
 >
   <Navbar />
 
