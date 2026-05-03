@@ -1,5 +1,6 @@
 ---
 import { getCollection } from "astro:content";
+import { Image } from "astro:assets";
 
 const posts = (await getCollection("blog", ({ data }) => !data.draft))
   .sort((a, b) => b.data.pubDate.getTime() - a.data.pubDate.getTime())
@@ -31,7 +32,18 @@ const fmtDate = (d: Date) =>
             data-reveal
             data-reveal-delay={String(i + 1)}
           >
-            <div class="aspect-video bg-bg-primary border-b border-border-subtle"></div>
+            {post.data.heroImage ? (
+              <Image
+                src={post.data.heroImage}
+                alt={post.data.heroAlt ?? post.data.title}
+                widths={[400, 600, 800]}
+                sizes="(max-width: 768px) 100vw, 400px"
+                loading="lazy"
+                class="w-full aspect-video object-cover border-b border-border-subtle"
+              />
+            ) : (
+              <div class="aspect-video bg-bg-primary border-b border-border-subtle"></div>
+            )}
             <div class="p-6 space-y-3">
               <span class="inline-block bg-ember text-text-primary font-montserrat font-semibold text-[10px] uppercase tracking-[1.5px] px-3 py-1 rounded-full">
                 {post.data.category}
