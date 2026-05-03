@@ -3,14 +3,17 @@ import BaseLayout from "../layouts/BaseLayout.astro";
 import Navbar from "../components/Navbar.astro";
 import Footer from "../components/Footer.astro";
 import Hero from "../components/sections/Hero.astro";
+import KpiStrip from "../components/sections/KpiStrip.astro";
+import TaglineSection from "../components/sections/TaglineSection.astro";
 import LogosInstitucionales from "../components/sections/LogosInstitucionales.astro";
 import ProblemStatement from "../components/sections/ProblemStatement.astro";
-import Stats from "../components/sections/Stats.astro";
+import Manifiesto from "../components/sections/Manifiesto.astro";
 import Services from "../components/sections/Services.astro";
 import Testimonials from "../components/sections/Testimonials.astro";
 import Resources from "../components/sections/Resources.astro";
 import BlogPreview from "../components/sections/BlogPreview.astro";
 import NewsletterCTA from "../components/sections/NewsletterCTA.astro";
+import CitaSection from "../components/sections/CitaSection.astro";
 ---
 
 <BaseLayout
@@ -20,14 +23,17 @@ import NewsletterCTA from "../components/sections/NewsletterCTA.astro";
   <Navbar />
   <main>
     <Hero />
+    <KpiStrip />
+    <TaglineSection />
     <LogosInstitucionales />
     <ProblemStatement />
-    <Stats />
+    <Manifiesto />
     <Services />
     <Testimonials />
     <Resources />
     <BlogPreview />
     <NewsletterCTA />
+    <CitaSection />
   </main>
   <Footer />
 </BaseLayout>

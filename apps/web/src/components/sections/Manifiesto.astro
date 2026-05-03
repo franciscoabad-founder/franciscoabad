@@ -1,0 +1,88 @@
+---
+const principles = [
+  {
+    title: "Diagnóstico antes de automatizar.",
+    body: "Entender el sistema antes de intervenir.",
+    icon: `<circle cx="12" cy="12" r="7"/>
+           <line x1="12" y1="3" x2="12" y2="5"/>
+           <line x1="12" y1="19" x2="12" y2="21"/>
+           <line x1="3" y1="12" x2="5" y2="12"/>
+           <line x1="19" y1="12" x2="21" y2="12"/>
+           <circle cx="12" cy="12" r="2" fill="currentColor"/>`,
+  },
+  {
+    title: "El sistema vence al hack.",
+    body: "Lo sostenible supera lo rápido.",
+    icon: `<rect x="3" y="3" width="8" height="8" rx="1"/>
+           <rect x="13" y="3" width="8" height="8" rx="1"/>
+           <rect x="3" y="13" width="8" height="8" rx="1"/>
+           <rect x="13" y="13" width="8" height="8" rx="1"/>`,
+  },
+  {
+    title: "Diseñar antes de escalar.",
+    body: "La arquitectura define el resultado.",
+    icon: `<path d="M12 2L2 7l10 5 10-5-10-5z"/>
+           <path d="M2 17l10 5 10-5"/>
+           <path d="M2 12l10 5 10-5"/>`,
+  },
+  {
+    title: "Menos espectáculo. Más claridad.",
+    body: "La claridad genera confianza.",
+    icon: `<polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/>
+           <polyline points="16 7 22 7 22 13"/>`,
+  },
+  {
+    title: "Responsabilidad sobre velocidad.",
+    body: "Decisiones correctas, no solo rápidas.",
+    icon: `<path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>`,
+  },
+];
+---
+
+<section id="manifiesto" class="bg-bg-primary py-16 md:py-24">
+  <div class="max-w-[1200px] mx-auto px-6 lg:px-8">
+
+    <p class="font-inter font-medium text-text-muted-brand text-[11px] uppercase tracking-[3px] mb-10">
+      08 Notas Operativas &middot; Manifiesto
+    </p>
+
+    <div class="grid grid-cols-1 md:grid-cols-5 gap-0" data-reveal>
+      {principles.map((p, i) => (
+        <div
+          class={`manifiesto-card flex flex-col gap-4 p-6 ${i < principles.length - 1 ? "md:border-r-0" : ""}`}
+        >
+          <svg
+            width="28"
+            height="28"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.5"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            class="text-ember"
+            aria-hidden="true"
+          >
+            <Fragment set:html={p.icon} />
+          </svg>
+          <p class="font-inter font-semibold text-text-primary text-[14px] leading-snug">
+            {p.title}
+          </p>
+          <p class="font-inter text-text-secondary text-[13px] leading-relaxed">
+            {p.body}
+          </p>
+        </div>
+      ))}
+    </div>
+  </div>
+</section>
+
+<style>
+  .manifiesto-card {
+    border: 0.5px solid hsl(var(--border-subtle));
+    transition: border-color 0.2s ease;
+  }
+  .manifiesto-card:hover {
+    border-color: hsl(var(--accent-cobalt));
+  }
+</style>
