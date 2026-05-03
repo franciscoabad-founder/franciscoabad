@@ -1,40 +1,54 @@
 ---
-// Hero — sección 1 de la Home. Estática, sin estado.
-// El scroll suave a #servicios usa anclas HTML nativas + scroll-behavior:smooth (ya está en html del global.css).
 ---
 
 <section
   id="inicio"
-  class="min-h-screen bg-bg-primary flex items-center pt-20"
+  class="relative min-h-screen bg-bg-primary flex items-center pt-20 overflow-hidden"
 >
-  <div class="max-w-[1200px] mx-auto px-6 lg:px-8 py-20 lg:py-32 w-full">
+  {/* SVG de fondo — estela de curvas, cobalt mid opacity 0.15 */}
+  <svg
+    class="absolute inset-0 w-full h-full pointer-events-none"
+    viewBox="0 0 1200 700"
+    preserveAspectRatio="xMidYMid slice"
+    fill="none"
+    aria-hidden="true"
+    xmlns="http://www.w3.org/2000/svg"
+  >
+    <path d="M 600 -50 C 700 150 900 200 1100 100 S 1400 350 1300 500" stroke="hsl(var(--accent-cobalt-mid))" stroke-width="1" opacity="0.15"/>
+    <path d="M 650 -20 C 780 180 950 220 1150 130 S 1450 380 1350 530" stroke="hsl(var(--accent-cobalt-mid))" stroke-width="1" opacity="0.12"/>
+    <path d="M 550 0 C 680 200 880 260 1080 160 S 1380 420 1250 580" stroke="hsl(var(--accent-cobalt-mid))" stroke-width="0.75" opacity="0.10"/>
+    <path d="M 800 -80 C 950 80 1050 300 1100 450 S 1200 620 1000 700" stroke="hsl(var(--accent-cobalt-mid))" stroke-width="0.75" opacity="0.08"/>
+  </svg>
+
+  <div class="relative max-w-[1200px] mx-auto px-6 lg:px-8 py-20 lg:py-32 w-full">
     <div class="grid grid-cols-1 lg:grid-cols-[3fr_2fr] gap-12 lg:gap-20 items-center">
-      <div class="space-y-7" data-reveal>
-        <p class="font-montserrat font-light italic text-ember text-[15px] tracking-wide">
-          Systems for Growth.
+
+      <div class="space-y-8" data-reveal>
+        {/* Wordmark */}
+        <div class="space-y-0">
+          <div class="font-inter font-light text-text-primary leading-[1] tracking-[0.18em] text-[clamp(1.5rem,4vw,2.5rem)] uppercase">
+            Francisco
+          </div>
+          <div class="font-inter font-bold text-text-primary leading-[1.05] tracking-[0.05em] text-[clamp(2.5rem,7vw,5rem)] uppercase">
+            Abad
+          </div>
+          <div class="font-inter italic font-light text-ember text-[clamp(0.875rem,1.5vw,1rem)] tracking-wide mt-2">
+            Systems for Growth.
+          </div>
+        </div>
+
+        {/* Body */}
+        <p class="font-inter text-text-secondary text-[18px] leading-relaxed max-w-[520px]">
+          Diseño sistemas que convierten complejidad en crecimiento real y sostenible.
         </p>
 
-        <h1 class="font-montserrat font-bold text-text-primary text-[clamp(2rem,8vw,4rem)] leading-[1.12] tracking-[-0.5px]">
-          Diseño sistemas para que personas y organizaciones funcionen mejor.
-        </h1>
-
-        <p class="font-inter text-text-secondary text-lg tracking-[2px]">
-          Founder · Strategist · Innovator
-        </p>
-
-        <div class="flex flex-wrap gap-4 pt-2">
-          <a
-            href="#servicios"
-            class="font-inter font-medium text-text-primary bg-ember hover:brightness-110 px-8 py-3 rounded-md transition-colors duration-300"
-          >
-            Trabajemos juntos
-          </a>
-          <a
-            href="#recursos"
-            class="font-inter font-medium text-ember border border-ember hover:bg-ember hover:text-text-primary px-8 py-3 rounded-md transition-all duration-300"
-          >
-            Explora recursos
-          </a>
+        {/* Pills con separadores verticales */}
+        <div class="flex items-center gap-4 font-inter font-medium text-text-secondary text-[11px] uppercase tracking-[3px]">
+          <span>ESTRATEGA</span>
+          <span class="text-border opacity-60">|</span>
+          <span>OPERADOR</span>
+          <span class="text-border opacity-60">|</span>
+          <span>CONSTRUCTOR</span>
         </div>
       </div>
 
@@ -50,6 +64,7 @@
           class="w-full max-w-[340px] aspect-[3/4] object-cover rounded-2xl shadow-2xl"
         />
       </div>
+
     </div>
   </div>
 </section>
