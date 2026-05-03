@@ -1,0 +1,110 @@
+---
+import { getCollection, render, type CollectionEntry } from "astro:content";
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import Navbar from "../../components/Navbar.astro";
+import Footer from "../../components/Footer.astro";
+
+export async function getStaticPaths() {
+  const posts = await getCollection("blog", ({ data }) => !data.draft);
+  return posts.map((post) => ({
+    params: { slug: post.data.slug },
+    props: { post },
+  }));
+}
+
+interface Props {
+  post: CollectionEntry<"blog">;
+}
+
+const { post } = Astro.props;
+const { Content } = await render(post);
+const { title, description, pubDate, category, readTime, author } = post.data;
+
+const fmtDate = (d: Date) =>
+  d.toLocaleDateString("es-ES", { day: "numeric", month: "long", year: "numeric" });
+
+const canonical = new URL(
+  `/blog/${post.data.slug}`,
+  Astro.site ?? "https://franciscoabad.com",
+).toString();
+
+const articleSchema = {
+  "@context": "https://schema.org",
+  "@type": "Article",
+  headline: title,
+  description,
+  datePublished: pubDate.toISOString(),
+  author: {
+    "@type": "Person",
+    name: author,
+    url: "https://franciscoabad.com",
+  },
+  publisher: {
+    "@type": "Person",
+    name: "Francisco Abad",
+    url: "https://franciscoabad.com",
+  },
+  mainEntityOfPage: { "@type": "WebPage", "@id": canonical },
+  articleSection: category,
+};
+---
+
+<BaseLayout title={`${title} | Francisco Abad`} description={description} ogType="article">
+  <Navbar />
+
+  <article class="bg-bg-primary min-h-screen">
+    {/* Header */}
+    <header class="pt-32 pb-10 border-b border-border-subtle">
+      <div class="max-w-[760px] mx-auto px-6 lg:px-8">
+        <a
+          href="/blog"
+          class="inline-block font-montserrat text-[11px] uppercase tracking-[2px] text-ember mb-8 hover:opacity-80 transition-opacity"
+        >
+          ← Blog
+        </a>
+        <span class="inline-block bg-ember text-text-primary font-montserrat font-semibold text-[10px] uppercase tracking-[1.5px] px-3 py-1 rounded-full mb-6">
+          {category}
+        </span>
+        <h1 class="font-montserrat font-bold text-text-primary text-[36px] md:text-[48px] leading-[1.15] mb-6">
+          {title}
+        </h1>
+        <p class="font-inter text-text-secondary text-[18px] leading-relaxed mb-8 max-w-[640px]">
+          {description}
+        </p>
+        <div class="flex flex-wrap items-center gap-3 font-inter text-text-muted-brand text-[13px]">
+          <span>{fmtDate(pubDate)}</span>
+          <span class="text-border-subtle">·</span>
+          <span>{readTime} min de lectura</span>
+          <span class="text-border-subtle">·</span>
+          <span>Por {author}</span>
+        </div>
+      </div>
+    </header>
+
+    {/* Body */}
+    <section class="py-12 md:py-16">
+      <div class="max-w-[720px] mx-auto px-6 lg:px-8">
+        <div
+          class="prose prose-invert prose-lg max-w-none
+                 prose-headings:font-montserrat prose-headings:text-text-primary
+                 prose-h1:hidden
+                 prose-h2:text-[28px] prose-h2:mt-12 prose-h2:mb-4
+                 prose-h3:text-[20px] prose-h3:mt-8 prose-h3:mb-3
+                 prose-p:font-inter prose-p:text-text-secondary prose-p:leading-[1.8]
+                 prose-strong:text-text-primary
+                 prose-a:text-ember prose-a:no-underline hover:prose-a:underline
+                 prose-blockquote:border-l-ember prose-blockquote:text-text-secondary
+                 prose-blockquote:not-italic
+                 prose-hr:border-border-subtle
+                 prose-li:font-inter prose-li:text-text-secondary"
+        >
+          <Content />
+        </div>
+      </div>
+    </section>
+  </article>
+
+  <Footer />
+</BaseLayout>
+
+<script type="application/ld+json" set:html={JSON.stringify(articleSchema)} />

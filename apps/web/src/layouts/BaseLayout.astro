@@ -5,9 +5,15 @@ interface Props {
   title: string;
   description: string;
   ogImage?: string;
+  ogType?: "website" | "article";
 }
 
-const { title, description, ogImage = "/fa_stacked_tagline_ember_3x.png" } = Astro.props;
+const {
+  title,
+  description,
+  ogImage = "/fa_stacked_tagline_ember_3x.png",
+  ogType = "website",
+} = Astro.props;
 const canonicalURL = new URL(Astro.url.pathname, Astro.site ?? "https://franciscoabad.com").toString();
 const ogImageURL = new URL(ogImage, Astro.site ?? "https://franciscoabad.com").toString();
 ---
@@ -26,7 +32,7 @@ const ogImageURL = new URL(ogImage, Astro.site ?? "https://franciscoabad.com").t
     <meta name="author" content="Francisco Abad" />
 
     <meta property="og:site_name" content="Francisco Abad" />
-    <meta property="og:type" content="website" />
+    <meta property="og:type" content={ogType} />
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
     <meta property="og:image" content={ogImageURL} />
