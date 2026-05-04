@@ -17,22 +17,89 @@ Sitio: franciscoabad.com
 
 ## Stack
 
-React + TypeScript + Tailwind + Vite + Supabase + Vercel
-Bun como gestor de paquetes. Puerto local: 8080.
+- Legacy (raíz): React + TypeScript + Tailwind + Vite + Supabase + Vercel
+- Nuevo (apps/web/): Astro 6 + Tailwind v4 + React islands + Markdown content collections + Vercel
+- Bun como gestor de paquetes en raíz, npm en apps/web (porque el sistema de Claude Code no tiene bun)
+- Puerto local raíz: 8080. Puerto local Astro: 4321.
 
-## Paleta de colores
+## Estado de migración a Astro
+
+La marca personal está migrando del sitio legacy Vite/React a Astro
+por SEO. El sitio Astro vive en apps/web/. El legacy sigue intacto
+en raíz hasta que el deploy nuevo esté listo.
+
+Lo que ya está migrado (apps/web/):
+
+- Páginas: Home, Sobre Mí, Trabaja Conmigo, Contacto
+- Componentes: Navbar (island), Footer, todas las secciones del Home
+  incluido Testimonials con 9 fotos optimizadas
+- Blog: content collections con schema, listado /blog, post dinámico
+  /blog/[slug], BlogPreview en home conectado a posts reales
+- SEO: sitemap, robots, RSS, Open Graph, Twitter Cards, Schema.org
+  Person + Article, JSON-LD
+- Assets: francisco-abad.webp + 13 imágenes más optimizadas en
+  Sprint 0 (96% reducción promedio)
+
+Lo que NO está migrado (sigue en legacy o pendiente):
+
+- Admin (/admin): apagado en main, queda como código intacto en
+  src/pages/admin/ del legacy. No accesible en producción.
+- Formulario de contacto: UI lista, sin backend conectado a Resend
+- Newsletter Beehiiv: UI lista, sin backend
+- Quiz /growth-lab: pendiente migrar como island con endpoint server
+- Páginas dinámicas de productos digitales: /growth-os pendiente
+
+## Decisiones editoriales del blog
+
+- Voz: ejecutiva, directa, sin guru, sin académico
+- Sin em dashes en ningún copy
+- Primera persona activa
+- Sin nombres específicos en blogs sobre el IESS (no mencionar
+  Lama, Cordovez, Gellibert, Healthbird)
+- Sin atacar al gobierno actual
+- Datos honestos: cuando algo no se logró, decirlo
+- Frase ancla del blog 01 IESS: "una de las instituciones más
+  grandes del Ecuador operando como una tienda de barrio"
+- Cierre de bio estándar: "Francisco Abad fue Director General del
+  IESS de junio a diciembre de 2025. Hoy es founder de Fulcra,
+  partner en Kronek y board president de CODEIS."
+
+## Paleta de colores — Ultramarine v5
+
+Sistema dual dark/light mode. Primitivos en `:root`, semánticos en `[data-theme]`.
+
+### Tokens primitivos
 
 | Token | Hex | Uso |
 |---|---|---|
-| Ember | `#C2654A` | Acento principal, CTAs, highlights |
-| Sienna | `#A3503A` | Variante más oscura del Ember |
-| Ink | `#141414` | Fondo más oscuro (growth-lab) |
-| Onyx | `#1E1E1E` | Fondo de cards y elementos elevados |
-| Linen | `#F4EDE6` | Sección LogosInstitucionales (fondo claro) |
-| Stone | `#8A8279` | Texto secundario, labels, notas |
-| Warm Slate | `#4A4541` | Texto de apoyo sobre fondos claros |
+| Ink | `#0E1738` | Fondo dark primario |
+| Royal | `#1A2B6B` | Cards dark, texto sobre claro |
+| Ultramarine | `#3B4ED9` | Acento principal, CTAs, links |
+| Ultra-light | `#6B7AE8` | Hover de Ultramarine |
+| Champagne | `#B5985A` | Metricas, KPIs, credenciales (SOLO) |
+| Bronze | `#8A6F3D` | Hover de Champagne |
+| Linen | `#FAFAF7` | Fondo light mode |
+| Slate-light | `#E8EAF0` | Bordes y divisores claros |
+| Slate-mid | `#6B7280` | Texto secundario, captions |
+| Slate-dark | `#2D3748` | Texto primario sobre fondos claros |
+| Charcoal | `#1A1A1A` | Footer oscuro |
 
-CSS vars: `--ember`, `--bg-primary`, `--bg-elevated`, `--text-primary`, `--text-secondary`, `--text-muted`, `--border-subtle`
+### Aliases legacy (backward compat, NO cambiar)
+
+- `--ember` apunta a `--ultramarine`
+- `--sienna` apunta a `--royal`
+- `--bg-primary` apunta a `--background` (cambia con el tema)
+- `--bg-elevated` cambia con el tema (dark: `#131F4A`, light: `#FFFFFF`)
+
+### CSS vars clave
+
+`--ember`, `--bg-primary`, `--bg-elevated`, `--text-primary`, `--text-secondary`, `--text-muted`, `--border-subtle`, `--ultramarine`, `--champagne`, `--charcoal`
+
+### Regla de uso del champagne
+
+El token `--champagne` / `text-champagne` se usa EXCLUSIVAMENTE para:
+metricas numericas, KPIs, credenciales academicas/institucionales.
+NO usar como acento general ni en CTAs (eso es `--ember`/`--ultramarine`).
 
 ## Regla de oro de archivos
 
@@ -46,9 +113,15 @@ Si no aparece: `git add + commit + push` antes de continuar.
 
 ## Rutas del proyecto
 
-```
-C:\Users\Francisco\OneDrive\Profesional\FRANCISCO ABAD\02_Web\franciscoabad
-```
+Repo: `C:\DEV\franciscoabad`
+
+Estructura:
+
+- `/` (raíz) — código legacy Vite/React, todavía operativo
+- `/apps/web/` — sitio Astro nuevo, target de producción
+- `/apps/web/src/content/blog/` — blogs en Markdown con frontmatter
+- `/apps/web/public/` — assets del Astro
+- `/supabase/migrations/` — migraciones SQL (compartidas)
 
 ## Commits
 

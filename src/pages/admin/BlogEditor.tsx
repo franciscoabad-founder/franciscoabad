@@ -29,7 +29,7 @@ const STATUS_OPTIONS: { value: BlogPostStatus; label: string }[] = [
 
 const STATUS_BADGE: Record<BlogPostStatus, { color: string; bg: string; label: string }> = {
   draft:     { color: '#8A8279', bg: 'rgba(138,130,121,0.15)', label: 'Borrador' },
-  published: { color: '#C2654A', bg: 'rgba(194,101,74,0.12)',  label: 'Publicado' },
+  published: { color: '#9B3D28', bg: 'rgba(155, 61, 40,0.12)',  label: 'Publicado' },
   archived:  { color: '#4A4541', bg: 'rgba(74,69,65,0.3)',     label: 'Archivado' },
 };
 
@@ -97,8 +97,8 @@ function ToolbarBtn({
       style={{
         display: 'flex', alignItems: 'center', justifyContent: 'center',
         padding: '5px 7px', borderRadius: '4px', cursor: 'pointer',
-        color: active ? '#C2654A' : '#8A8279',
-        backgroundColor: active ? 'rgba(194,101,74,0.12)' : 'transparent',
+        color: active ? '#9B3D28' : '#8A8279',
+        backgroundColor: active ? 'rgba(155, 61, 40,0.12)' : 'transparent',
         border: 'none',
       }}
     >
@@ -348,7 +348,7 @@ export default function BlogEditor() {
           <button
             onClick={openCreate}
             className="flex items-center gap-2 px-4 py-2 rounded-md text-sm font-semibold transition-opacity hover:opacity-80"
-            style={{ backgroundColor: '#C2654A', color: '#F4EDE6', fontFamily: 'Inter, sans-serif' }}
+            style={{ backgroundColor: '#9B3D28', color: '#F4EDE6', fontFamily: 'Inter, sans-serif' }}
           >
             <Plus size={15} />
             Nuevo post
@@ -358,7 +358,7 @@ export default function BlogEditor() {
         <div className="rounded-lg overflow-hidden" style={{ border: '1px solid #2A2A2A', backgroundColor: '#1E1E1E' }}>
           {loading ? (
             <div className="flex items-center justify-center py-16">
-              <div className="w-5 h-5 rounded-full border-2 border-[#C2654A] border-t-transparent animate-spin" />
+              <div className="w-5 h-5 rounded-full border-2 border-[#9B3D28] border-t-transparent animate-spin" />
             </div>
           ) : posts.length === 0 ? (
             <div className="flex items-center justify-center py-16">
@@ -423,8 +423,8 @@ export default function BlogEditor() {
                             onClick={() => quickChangeStatus(post)}
                             className="px-3 py-1.5 rounded text-xs font-semibold transition-opacity hover:opacity-80"
                             style={{
-                              backgroundColor: post.status === 'draft' ? 'rgba(194,101,74,0.15)' : 'rgba(74,69,65,0.3)',
-                              color: post.status === 'draft' ? '#C2654A' : '#6B6B6B',
+                              backgroundColor: post.status === 'draft' ? 'rgba(155, 61, 40,0.15)' : 'rgba(74,69,65,0.3)',
+                              color: post.status === 'draft' ? '#9B3D28' : '#6B6B6B',
                               fontFamily: 'Inter, sans-serif',
                             }}
                           >
@@ -475,7 +475,7 @@ export default function BlogEditor() {
             <button
               onClick={() => savePost({ publish: true })}
               className="px-4 py-1.5 rounded text-sm font-semibold transition-opacity hover:opacity-80"
-              style={{ backgroundColor: 'rgba(194,101,74,0.15)', color: '#C2654A', fontFamily: 'Inter, sans-serif' }}
+              style={{ backgroundColor: 'rgba(155, 61, 40,0.15)', color: '#9B3D28', fontFamily: 'Inter, sans-serif' }}
             >
               Publicar
             </button>
@@ -483,7 +483,7 @@ export default function BlogEditor() {
           <button
             onClick={() => savePost()}
             className="px-4 py-1.5 rounded text-sm font-semibold transition-opacity hover:opacity-80"
-            style={{ backgroundColor: '#C2654A', color: '#F4EDE6', fontFamily: 'Inter, sans-serif' }}
+            style={{ backgroundColor: '#9B3D28', color: '#F4EDE6', fontFamily: 'Inter, sans-serif' }}
           >
             Guardar
           </button>

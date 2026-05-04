@@ -1,0 +1,54 @@
+---
+import { useTranslations } from "../i18n/utils";
+
+interface Props { lang?: string; }
+const { lang = "es" } = Astro.props;
+const t = useTranslations(lang);
+
+const socials = [
+  { label: "LinkedIn",  href: "https://www.linkedin.com/in/franciscoabadec/" },
+  { label: "Instagram", href: "https://www.instagram.com/abadfrancisco/" },
+  { label: "YouTube",   href: "https://www.youtube.com/@franciscoabad7621" },
+  { label: "Email",     href: "mailto:francisco@franciscoabad.com" },
+];
+---
+
+<footer style="background-color: var(--charcoal);" class="border-t border-border-subtle py-20">
+  <div class="max-w-[1200px] mx-auto px-6 lg:px-8 flex flex-col items-center gap-10">
+    <img
+      src="/fa_horizontal_clean_dark.svg"
+      alt="Francisco Abad - Systems for Growth"
+      class="footer-logo"
+      style="height: 32px; width: auto; opacity: 0.90;"
+    />
+
+    <p
+      class="font-inter text-[14px] leading-[1.8] text-center max-w-[700px]"
+      style="color: var(--slate-light);"
+    >
+      {t("footer.bio")}
+    </p>
+
+    <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-8">
+      {socials.map(({ label, href }) => (
+        <a
+          href={href}
+          target="_blank"
+          rel="noopener noreferrer"
+          class="font-montserrat text-[12px] uppercase tracking-[1px] text-ultra-light hover:text-ultramarine transition-colors duration-300"
+        >
+          {label}
+        </a>
+      ))}
+    </div>
+
+    <div class="text-center space-y-1">
+      <p class="font-inter text-[12px]" style="color: var(--slate-mid);">
+        {t("footer.copyright")}
+      </p>
+      <p class="font-montserrat font-light italic text-champagne text-[13px]">
+        {t("footer.tagline")}
+      </p>
+    </div>
+  </div>
+</footer>

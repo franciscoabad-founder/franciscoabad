@@ -27,7 +27,7 @@ const ProblemStatement = () => (
             key={point.text}
             style={{
               backgroundColor: '#1A1A1A',
-              borderLeft: '3px solid #C2654A',
+              borderLeft: '3px solid #9B3D28',
               borderTop: 'none',
               borderRight: 'none',
               borderBottom: 'none',
@@ -42,7 +42,7 @@ const ProblemStatement = () => (
               (e.currentTarget as HTMLElement).style.transform = 'translateY(-2px)';
             }}
             onMouseLeave={(e) => {
-              (e.currentTarget as HTMLElement).style.borderColor = '#C2654A';
+              (e.currentTarget as HTMLElement).style.borderColor = '#9B3D28';
               (e.currentTarget as HTMLElement).style.transform = 'translateY(0)';
             }}
           >

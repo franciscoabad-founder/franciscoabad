@@ -1,0 +1,151 @@
+---
+import { getCollection, render, type CollectionEntry } from "astro:content";
+import { Picture } from "astro:assets";
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import Navbar from "../../components/Navbar.astro";
+import Footer from "../../components/Footer.astro";
+import MarkdownImage from "../../components/MarkdownImage.astro";
+
+export async function getStaticPaths() {
+  const posts = await getCollection("blog", ({ data }) => !data.draft);
+  return posts.map((post) => ({
+    params: { slug: post.data.slug },
+    props: { post },
+  }));
+}
+
+interface Props {
+  post: CollectionEntry<"blog">;
+}
+
+const { post } = Astro.props;
+const { Content } = await render(post);
+const { title, description, pubDate, category, readTime, author, heroImage, heroAlt } = post.data;
+
+const fmtDate = (d: Date) =>
+  d.toLocaleDateString("es-ES", { day: "numeric", month: "long", year: "numeric" });
+
+const siteOrigin = Astro.site ?? new URL("https://franciscoabad.com");
+const canonical = new URL(`/blog/${post.data.slug}`, siteOrigin).toString();
+
+// og:image absolute. Si el post tiene heroImage la usamos (después del
+// build será /_astro/<hash>.webp); si no, fallback al logo horizontal.
+const ogImage = heroImage
+  ? new URL(heroImage.src, siteOrigin).toString()
+  : new URL("/fa_horizontal_clean_dark.svg", siteOrigin).toString();
+
+// Word count del body raw del MDX. Si por algún motivo body es undefined
+// (Astro v6 a veces no expone body en algunos loaders), caemos a una
+// estimación basada en readTime (200 palabras/min).
+const bodyText = (post.body ?? "").replace(/[#*`>\-_!\[\]\(\)]/g, " ");
+const wordCount =
+  bodyText.trim().length > 0
+    ? bodyText.split(/\s+/).filter((w) => w.length > 0).length
+    : readTime * 200;
+
+const articleSchema = {
+  "@context": "https://schema.org",
+  "@type": "Article",
+  headline: title,
+  description,
+  image: ogImage,
+  datePublished: pubDate.toISOString(),
+  dateModified: pubDate.toISOString(),
+  author: {
+    "@type": "Person",
+    name: author,
+    url: "https://franciscoabad.com",
+  },
+  publisher: {
+    "@type": "Person",
+    name: "Francisco Abad",
+    url: "https://franciscoabad.com",
+  },
+  mainEntityOfPage: { "@type": "WebPage", "@id": canonical },
+  articleSection: category,
+  wordCount,
+  inLanguage: "es-EC",
+};
+---
+
+<BaseLayout
+  title={`${title} | Francisco Abad`}
+  description={description}
+  ogType="article"
+  ogImage={ogImage}
+  pubDate={pubDate}
+  author={author}
+>
+  <Navbar />
+
+  <article class="bg-bg-primary min-h-screen">
+    {/* Header */}
+    <header class="pt-32 pb-10 border-b border-border-subtle">
+      <div class="max-w-[760px] mx-auto px-6 lg:px-8">
+        <a
+          href="/blog"
+          class="inline-block font-montserrat text-[11px] uppercase tracking-[2px] text-ember mb-8 hover:opacity-80 transition-opacity"
+        >
+          ← Blog
+        </a>
+        <span class="inline-block bg-ember text-text-primary font-montserrat font-semibold text-[10px] uppercase tracking-[1.5px] px-3 py-1 rounded-full mb-6">
+          {category}
+        </span>
+        <h1 class="font-montserrat font-bold text-text-primary text-[36px] md:text-[48px] leading-[1.15] mb-6">
+          {title}
+        </h1>
+        <p class="font-inter text-text-secondary text-[18px] leading-relaxed mb-8 max-w-[640px]">
+          {description}
+        </p>
+        <div class="flex flex-wrap items-center gap-3 font-inter text-text-muted-brand text-[13px]">
+          <span>{fmtDate(pubDate)}</span>
+          <span class="text-border-subtle">·</span>
+          <span>{readTime} min de lectura</span>
+          <span class="text-border-subtle">·</span>
+          <span>Por {author}</span>
+        </div>
+      </div>
+    </header>
+
+    {/* Body */}
+    <section class="py-12 md:py-16">
+      <div class="max-w-[720px] mx-auto px-6 lg:px-8">
+        {heroImage && (
+          <Picture
+            src={heroImage}
+            alt={heroAlt ?? title}
+            widths={[400, 800, 1200, 1600]}
+            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 90vw, 1200px"
+            formats={["avif", "webp"]}
+            fallbackFormat="webp"
+            loading="eager"
+            fetchpriority="high"
+            class="w-full rounded-md mb-12"
+          />
+        )}
+        <div
+          class="prose prose-invert prose-lg max-w-none
+                 prose-headings:font-montserrat prose-headings:text-text-primary
+                 prose-headings:mt-12 prose-headings:mb-4
+                 prose-h1:hidden
+                 prose-h2:text-[28px] prose-h2:mt-16 prose-h2:mb-6
+                 prose-h3:text-[20px] prose-h3:mt-10 prose-h3:mb-4
+                 prose-p:font-inter prose-p:text-text-secondary prose-p:leading-relaxed prose-p:my-4
+                 prose-img:my-8 prose-img:rounded-md
+                 prose-strong:text-text-primary
+                 prose-a:text-ember prose-a:no-underline hover:prose-a:underline
+                 prose-blockquote:border-l-ember prose-blockquote:pl-4 prose-blockquote:text-text-secondary
+                 prose-blockquote:not-italic
+                 prose-hr:border-border-subtle
+                 prose-li:font-inter prose-li:text-text-secondary"
+        >
+          <Content components={{ img: MarkdownImage }} />
+        </div>
+      </div>
+    </section>
+  </article>
+
+  <Footer />
+</BaseLayout>
+
+<script type="application/ld+json" set:html={JSON.stringify(articleSchema)} />

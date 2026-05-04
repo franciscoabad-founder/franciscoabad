@@ -40,7 +40,7 @@ const LogosInstitucionales = () => (
       <div className="mb-10" data-reveal>
         <p
           className="font-montserrat font-semibold uppercase tracking-[3px] mb-4"
-          style={{ color: '#A3503A', fontSize: '1.5rem' }}
+          style={{ color: '#7D2F1F', fontSize: '1.5rem' }}
         >
           TRAYECTORIA
         </p>

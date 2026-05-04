@@ -1,0 +1,16 @@
+---
+import { getLocalePath } from "../i18n/utils";
+
+const locale = Astro.currentLocale ?? "es";
+const targetLocale = locale === "en" ? "es" : "en";
+const targetPath = getLocalePath(Astro.url.pathname, targetLocale);
+const label = locale === "en" ? "ES" : "EN";
+---
+
+<a
+  href={targetPath}
+  class="font-montserrat font-medium text-[12px] uppercase tracking-[1px] text-text-secondary hover:text-ember transition-colors duration-200"
+  aria-label={`Switch to ${targetLocale.toUpperCase()}`}
+>
+  {label}
+</a>

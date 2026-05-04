@@ -65,7 +65,7 @@ export default function AdminLayout() {
               fontWeight="900"
               fontSize="28"
               letterSpacing="1"
-              fill="#C2654A"
+              fill="#9B3D28"
             >
               ABAD
             </text>
@@ -85,8 +85,8 @@ export default function AdminLayout() {
               style={({ isActive }) => ({
                 fontFamily: 'Inter, sans-serif',
                 color: isActive ? '#F4EDE6' : '#8A8279',
-                backgroundColor: isActive ? 'rgba(194,101,74,0.1)' : 'transparent',
-                borderLeft: isActive ? '2px solid #C2654A' : '2px solid transparent',
+                backgroundColor: isActive ? 'rgba(155, 61, 40,0.1)' : 'transparent',
+                borderLeft: isActive ? '2px solid #9B3D28' : '2px solid transparent',
               })}
             >
               <Icon size={16} strokeWidth={1.75} />

@@ -1,0 +1,63 @@
+---
+import { getCollection } from "astro:content";
+import { Image } from "astro:assets";
+
+const posts = (await getCollection("blog", ({ data }) => !data.draft))
+  .sort((a, b) => b.data.pubDate.getTime() - a.data.pubDate.getTime())
+  .slice(0, 3);
+
+const fmtDate = (d: Date) =>
+  d.toLocaleDateString("es-ES", { month: "short", year: "numeric" });
+---
+
+<section id="blog" class="bg-bg-primary py-12 md:py-20">
+  <div class="max-w-[1200px] mx-auto px-6 lg:px-8">
+    <div class="mb-14" data-reveal>
+      <h2 class="font-montserrat font-bold text-text-primary text-[32px] md:text-[36px] mb-3">
+        Desde el campo
+      </h2>
+      <p class="font-inter text-text-secondary text-[16px] max-w-[560px] leading-relaxed">
+        Ideas sobre sistemas, crecimiento y ejecución. Basadas en experiencia real, no en teoría.
+      </p>
+    </div>
+
+    {posts.length === 0 ? (
+      <p class="font-inter text-text-muted-brand text-[14px]">Próximamente.</p>
+    ) : (
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        {posts.map((post, i) => (
+          <a
+            href={`/blog/${post.data.slug}`}
+            class="bg-bg-elevated rounded-lg overflow-hidden border border-border-subtle hover:border-ember transition-colors duration-300 group flex flex-col"
+            data-reveal
+            data-reveal-delay={String(i + 1)}
+          >
+            {post.data.heroImage ? (
+              <Image
+                src={post.data.heroImage}
+                alt={post.data.heroAlt ?? post.data.title}
+                widths={[400, 600, 800]}
+                sizes="(max-width: 768px) 100vw, 400px"
+                loading="lazy"
+                class="w-full aspect-video object-cover border-b border-border-subtle"
+              />
+            ) : (
+              <div class="aspect-video bg-bg-primary border-b border-border-subtle"></div>
+            )}
+            <div class="p-6 space-y-3">
+              <span class="inline-block bg-ember text-text-primary font-montserrat font-semibold text-[10px] uppercase tracking-[1.5px] px-3 py-1 rounded-full">
+                {post.data.category}
+              </span>
+              <h3 class="font-montserrat font-semibold text-text-primary text-[16px] leading-snug group-hover:text-ember transition-colors duration-300">
+                {post.data.title}
+              </h3>
+              <p class="font-inter text-text-muted-brand text-[12px] tracking-wide">
+                {fmtDate(post.data.pubDate)} · {post.data.readTime} min de lectura
+              </p>
+            </div>
+          </a>
+        ))}
+      </div>
+    )}
+  </div>
+</section>

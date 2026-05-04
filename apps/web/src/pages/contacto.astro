@@ -1,0 +1,112 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import Navbar from "../components/Navbar.astro";
+import Footer from "../components/Footer.astro";
+
+const socials = [
+  { label: "LinkedIn", href: "https://www.linkedin.com/in/franciscoabadec/" },
+  { label: "Instagram", href: "https://www.instagram.com/abadfrancisco/" },
+  { label: "YouTube", href: "https://www.youtube.com/@franciscoabad7621" },
+];
+
+const subjects = ["Consultoría", "Speaking", "Productos", "Otro"];
+
+const inputClass =
+  "w-full bg-bg-primary border border-border-subtle rounded-md px-4 py-3 font-inter text-text-primary text-[14px] placeholder:text-text-muted-brand focus:outline-none focus:border-ember transition-colors duration-300";
+
+const labelClass =
+  "block font-montserrat font-semibold text-text-secondary text-[11px] uppercase tracking-[1.5px] mb-2";
+---
+
+<BaseLayout
+  title="Contacto — Francisco Abad"
+  description="Escríbeme para advisory, sesiones uno a uno, charlas o cualquier conversación sobre sistemas y crecimiento."
+>
+  <Navbar />
+
+  <div class="bg-bg-primary min-h-screen">
+    <section class="pt-32 pb-24">
+      <div class="max-w-[1200px] mx-auto px-6 lg:px-8">
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-16 items-start">
+          <div class="space-y-12">
+            <div>
+              <h1 class="font-montserrat font-bold text-text-primary text-[40px] md:text-[52px] leading-tight mb-6">
+                Hablemos.
+              </h1>
+              <p class="font-inter text-text-secondary text-[16px] leading-relaxed max-w-[420px]">
+                Si estás construyendo algo serio y necesitas claridad, estrategia, o alguien que ya haya estado en el campo, escríbeme. Respondo en 48 horas.
+              </p>
+            </div>
+
+            <div>
+              <a
+                href="mailto:francisco@franciscoabad.com"
+                class="inline-flex items-center gap-3 font-inter text-text-primary text-[16px] hover:text-ember transition-colors duration-300"
+              >
+                <span class="text-ember">✉</span>
+                francisco@franciscoabad.com
+              </a>
+            </div>
+
+            <div>
+              <p class="font-montserrat font-semibold text-text-muted-brand text-[11px] uppercase tracking-[2px] mb-5">
+                Sígueme
+              </p>
+              <div class="flex flex-col gap-4">
+                {socials.map(({ label, href }) => (
+                  <a
+                    href={href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="inline-flex items-center gap-3 font-montserrat text-[13px] uppercase tracking-[1px] text-text-secondary hover:text-ember transition-colors duration-300"
+                  >
+                    {label}
+                  </a>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          {/* Form decorativo. Sprint 3 lo conecta a Resend server-side. */}
+          <div class="bg-bg-elevated rounded-lg border border-border-subtle p-8 md:p-10">
+            <form class="space-y-6" onsubmit="event.preventDefault();">
+              <div>
+                <label class={labelClass} for="name">Nombre</label>
+                <input id="name" name="name" type="text" required placeholder="Tu nombre" class={inputClass} />
+              </div>
+
+              <div>
+                <label class={labelClass} for="email">Email</label>
+                <input id="email" name="email" type="email" required placeholder="tu@email.com" class={inputClass} />
+              </div>
+
+              <div>
+                <label class={labelClass} for="subject">Asunto</label>
+                <select id="subject" name="subject" required class={inputClass + " appearance-none cursor-pointer"}>
+                  <option value="" disabled selected>Selecciona un asunto</option>
+                  {subjects.map((s) => (
+                    <option value={s} class="bg-bg-elevated">{s}</option>
+                  ))}
+                </select>
+              </div>
+
+              <div>
+                <label class={labelClass} for="message">Mensaje</label>
+                <textarea id="message" name="message" required rows={5} placeholder="Cuéntame sobre tu proyecto o lo que necesitas..." class={inputClass + " resize-none"}></textarea>
+              </div>
+
+              <button
+                type="submit"
+                class="w-full bg-ember text-white font-montserrat font-semibold text-[13px] uppercase tracking-[1.5px] py-4 rounded-md hover:opacity-90 transition-opacity duration-300"
+              >
+                Enviar
+              </button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <Footer lang="es" />
+</BaseLayout>

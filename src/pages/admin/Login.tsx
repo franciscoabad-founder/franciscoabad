@@ -39,7 +39,7 @@ export default function Login() {
         </p>
         <p
           className="text-2xl tracking-[0.25em] uppercase leading-none mt-0.5"
-          style={{ fontFamily: 'Montserrat, sans-serif', fontWeight: 900, color: '#C2654A' }}
+          style={{ fontFamily: 'Montserrat, sans-serif', fontWeight: 900, color: '#9B3D28' }}
         >
           Abad
         </p>
@@ -72,7 +72,7 @@ export default function Login() {
               color: '#F4EDE6',
               fontFamily: 'Inter, sans-serif',
             }}
-            onFocus={e => (e.currentTarget.style.borderColor = '#C2654A')}
+            onFocus={e => (e.currentTarget.style.borderColor = '#9B3D28')}
             onBlur={e => (e.currentTarget.style.borderColor = '#2E2E2E')}
           />
         </div>
@@ -99,7 +99,7 @@ export default function Login() {
               color: '#F4EDE6',
               fontFamily: 'Inter, sans-serif',
             }}
-            onFocus={e => (e.currentTarget.style.borderColor = '#C2654A')}
+            onFocus={e => (e.currentTarget.style.borderColor = '#9B3D28')}
             onBlur={e => (e.currentTarget.style.borderColor = '#2E2E2E')}
           />
         </div>
@@ -115,7 +115,7 @@ export default function Login() {
           disabled={loading}
           className="mt-2 w-full py-3 rounded-md text-sm font-semibold tracking-widest uppercase transition-opacity disabled:opacity-50"
           style={{
-            backgroundColor: '#C2654A',
+            backgroundColor: '#9B3D28',
             color: '#F4EDE6',
             fontFamily: 'Montserrat, sans-serif',
           }}

@@ -1,33 +1,29 @@
 # franciscoabad.com — Estado del Proyecto
-Última actualización: 29 marzo 2026
+Última actualización: 3 mayo 2026
 
 ---
 
-## SITIO PÚBLICO — Estado: EN PRODUCCIÓN
+## SITIO PÚBLICO — Estado: MIGRACIÓN A ASTRO EN CURSO
 
-URL: franciscoabad.vercel.app
-Dominio propio franciscoabad.com: DNS configurado en Namecheap, apuntar a Vercel pendiente.
+URL legacy: franciscoabad.vercel.app (deploy bloqueado por team plan, ver `MIGRATION_LOG.md`)
+URL Astro: localhost:4321 (no deployado todavía)
+Dominio franciscoabad.com: DNS configurado, sin apuntar todavía.
 
-### Páginas activas:
-- `/` (Home)
-- `/sobre-mi`
-- `/trabaja-conmigo`
-- `/blog` ("Dentro del Sistema")
-- `/contacto`
-- `/growth-lab` (quiz funnel de diagnóstico)
+Páginas migradas a Astro: `/`, `/sobre-mi`, `/trabaja-conmigo`, `/contacto`, `/blog`, `/blog/[slug]`
+Páginas pendientes: `/growth-lab` (quiz), `/growth-os` (producto)
 
-### Secciones completas (Home):
-1. Navbar con logo `fa_stacked_tagline_ember_3x.png`
-2. Hero: "Diseño sistemas para que personas y organizaciones funcionen mejor"
-3. Logos institucionales (Trayectoria) en fondo Linen con 3 grupos, logos en color, links activos
-4. Problem Statement con emojis y pain points rediseñados
-5. Stats: $10B+, 32,000, 15 países, 12,000+
-6. Services: Growth OS, Advisory, Speaking
-7. 9 Testimonios con fotos reales y links a LinkedIn
+### Secciones completas (Home Astro):
+1. Navbar con logo `fa_stacked_tagline_ember_3x.png` (island)
+2. Hero: "Diseño sistemas para que personas y organizaciones funcionen mejor" (WebP optimizada)
+3. Logos institucionales (Trayectoria) en fondo Linen con 3 grupos, links activos
+4. Problem Statement con emojis y pain points
+5. Stats island con countup: $10B+, 32,000, 15 países, 12,000+
+6. Services: Growth OS, Advisory, Speaking (CTAs "Próximamente" en productos digitales)
+7. 9 Testimonios con fotos optimizadas y links a LinkedIn
 8. Resources: Tu Semana de Reset (gratis), Growth OS ($47)
-9. BlogPreview
-10. Newsletter "The Growth Lab"
-11. Footer con logo ember y links sociales
+9. BlogPreview conectado a posts reales del content collection
+10. Newsletter "The Growth Lab" (UI lista, sin backend)
+11. Footer con logo ember y links sociales reales
 
 ---
 
@@ -42,20 +38,22 @@ Lemon Squeezy: cuenta creada, sin productos configurados
 
 ---
 
-## BLOG "Dentro del Sistema" — Estado: LISTO
+## BLOG "Dentro del Sistema" — Estado: 1 ARTÍCULO PUBLICADO EN LOCAL
 
-Primer artículo: 14 de abril 2026
-6 artículos planificados (abril-junio 2026)
-Categorías: Systems Thinking, Founder Systems, Liderazgo
-CMS: Supabase con editor Tiptap en `/admin`
+Primer artículo: `blog_01_iess.mdx` ("El AS400, los 102 sistemas y por qué el 78% no cuenta toda la historia") — 2,326 palabras, 3 imágenes optimizadas, listo para deploy.
+Categorías activas: Systems Thinking, Founder Systems, Liderazgo
+CMS: Markdown content collections en `apps/web/src/content/blog/` (reemplaza el setup Supabase + Tiptap del legacy admin)
+
+Pendientes:
+- Blog 02 (CODEIS) — Pancho dictando
+- Blog 04 (Antes de IA) — Pancho dictando
+- Blogs 03, 05, 06 — más adelante
 
 ---
 
-## ADMIN DASHBOARD — Estado: FUNCIONAL
+## ADMIN DASHBOARD — Estado: APAGADO (Sprint 0)
 
-Ruta: `/admin` (protegida con Supabase Auth)
-Secciones activas: Overview, Oportunidades (pipeline + pagos), Blog Editor (Tiptap completo)
-Placeholders: Instagram, LinkedIn, YouTube, Lemon Squeezy, Cal.com
+Código preservado en `src/pages/admin/` del legacy. Rutas comentadas en `src/App.tsx`. Reconstrucción futura post-migración con SSR.
 
 ---
 
@@ -134,14 +132,13 @@ RLS activo en todas las tablas.
 
 ## PENDIENTES CRÍTICOS (orden de prioridad)
 
-1. Terminar DNS de Zoho (SPF fusionado + DKIM)
-2. Resend: verificar dominio + API key + conectar formulario de contacto
-3. Beehiiv: verificar dominio + Publication ID + conectar newsletter del sitio
-4. Landing `/growth-os` con copy completo del handoff
-5. Apuntar `franciscoabad.com` a Vercel en Namecheap
-6. Lemon Squeezy: configurar productos del Growth OS
-7. Cal.com: 3 tipos de evento con pago requerido
-8. Bilingüismo ES/EN con react-i18next
+1. Rotar service role key de Supabase (esta semana)
+2. Resolver bloqueo Vercel (transferir proyecto o crear nuevo)
+3. Sprint 3: Resend + Beehiiv + quiz endpoints
+4. Pancho: dictar respuestas blogs 02 y 04
+5. Imágenes hero para blogs 02 y 04
+6. Apuntar `franciscoabad.com` al deploy nuevo
+7. Bilingüismo ES/EN (sesión dedicada futura)
 
 ---
 

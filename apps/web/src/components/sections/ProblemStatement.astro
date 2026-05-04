@@ -1,0 +1,43 @@
+---
+import { useTranslations } from "../../i18n/utils";
+
+interface Props { lang?: string; }
+const { lang = "es" } = Astro.props;
+const t = useTranslations(lang);
+
+const painPoints = [
+  { emoji: "⏱", key: "problem.pain1" as const },
+  { emoji: "⚡", key: "problem.pain2" as const },
+  { emoji: "🧭", key: "problem.pain3" as const },
+];
+---
+
+<section id="problema" class="bg-bg-primary py-12 md:py-20">
+  <div class="max-w-[1200px] mx-auto px-6 lg:px-8">
+    <div class="max-w-[800px] mx-auto text-center space-y-6" data-reveal>
+      <h2 class="font-montserrat font-bold text-text-primary text-[36px] md:text-[40px] leading-[1.2]">
+        {t("problem.heading")}
+      </h2>
+      <p class="font-inter text-text-secondary text-[17px] md:text-lg leading-[1.75]">
+        {t("problem.body1")}
+      </p>
+      <p class="font-inter text-text-secondary text-[17px] md:text-lg leading-[1.75]">
+        {t("problem.body2")}
+      </p>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mt-16" data-reveal>
+      {painPoints.map((point) => (
+        <div
+          class="rounded-lg p-7 transition-all duration-200 hover:-translate-y-0.5"
+          style="background-color: var(--bg-primary); border-left: 3px solid var(--ember); box-shadow: 0 2px 12px rgba(0,0,0,0.3);"
+        >
+          <div class="text-[28px] leading-none mb-3">{point.emoji}</div>
+          <p class="font-montserrat font-semibold text-text-primary text-[16px] leading-snug">
+            {t(point.key)}
+          </p>
+        </div>
+      ))}
+    </div>
+  </div>
+</section>

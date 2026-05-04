@@ -19,7 +19,7 @@ export default function ProtectedRoute({ children }: { children: React.ReactNode
   if (session === undefined) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-[#141414]">
-        <div className="w-5 h-5 rounded-full border-2 border-[#C2654A] border-t-transparent animate-spin" />
+        <div className="w-5 h-5 rounded-full border-2 border-[#9B3D28] border-t-transparent animate-spin" />
       </div>
     );
   }

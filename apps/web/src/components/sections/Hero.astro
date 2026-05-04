@@ -1,0 +1,58 @@
+---
+import { useTranslations } from "../../i18n/utils";
+
+interface Props { lang?: string; }
+const { lang = "es" } = Astro.props;
+const t = useTranslations(lang);
+---
+
+<section
+  id="inicio"
+  class="min-h-screen bg-bg-primary flex items-center pt-20"
+>
+  <div class="max-w-[1200px] mx-auto px-6 lg:px-8 py-20 lg:py-32 w-full">
+    <div class="grid grid-cols-1 lg:grid-cols-[3fr_2fr] gap-12 lg:gap-20 items-center">
+      <div class="space-y-7" data-reveal>
+        <p class="font-montserrat font-light italic text-ember text-[15px] tracking-wide">
+          {t("hero.tagline")}
+        </p>
+
+        <h1 class="font-montserrat font-bold text-text-primary text-[clamp(2rem,8vw,4rem)] leading-[1.12] tracking-[-0.5px]">
+          {t("hero.h1")}
+        </h1>
+
+        <p class="font-inter text-text-secondary text-lg tracking-[2px]">
+          {t("hero.pills")}
+        </p>
+
+        <div class="flex flex-wrap gap-4 pt-2">
+          <a
+            href="#servicios"
+            class="font-inter font-medium text-white bg-ember hover:brightness-110 px-8 py-3 rounded-md transition-colors duration-300"
+          >
+            {t("hero.cta_primary")}
+          </a>
+          <a
+            href="#recursos"
+            class="font-inter font-medium text-ember border border-ember hover:bg-ember hover:text-white px-8 py-3 rounded-md transition-all duration-300"
+          >
+            {t("hero.cta_secondary")}
+          </a>
+        </div>
+      </div>
+
+      <div class="flex justify-center lg:justify-end" data-reveal data-reveal-delay="3">
+        <img
+          src="/francisco-abad.webp"
+          srcset="/francisco-abad.webp 1x, /francisco-abad@2x.webp 2x"
+          alt="Francisco Abad — Founder, Operator, Strategist"
+          width="1200"
+          height="1600"
+          loading="eager"
+          fetchpriority="high"
+          class="w-full max-w-[340px] aspect-[3/4] object-cover rounded-2xl shadow-2xl"
+        />
+      </div>
+    </div>
+  </div>
+</section>

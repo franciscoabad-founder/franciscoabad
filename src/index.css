@@ -15,12 +15,12 @@
     --bg-primary: 0 0% 10%;           /* #1A1A1A */
     --bg-elevated: 0 0% 14%;          /* #242424 */
     --bg-contrast: 38 52% 93%;        /* #F6EFE3 */
-    --ember: 14 50% 53%;              /* #C2654A terracotta */
+    --ember: 13 59% 38%;              /* #9B3D28 terracotta */
     --text-primary: 0 0% 100%;        /* #FFFFFF */
     --text-secondary: 0 0% 64%;       /* #A3A3A3 */
     --text-muted: 0 0% 42%;           /* #6B6B6B */
     --border-subtle: 0 0% 18%;        /* #2E2E2E */
-    --border-accent: 14 50% 53%;      /* #C2654A */
+    --border-accent: 13 59% 38%;      /* #9B3D28 */
 
     /* Shadcn compatibility tokens */
     --background: 0 0% 10%;
@@ -29,29 +29,29 @@
     --card-foreground: 0 0% 100%;
     --popover: 0 0% 14%;
     --popover-foreground: 0 0% 100%;
-    --primary: 14 50% 53%;
+    --primary: 13 59% 38%;
     --primary-foreground: 0 0% 100%;
     --secondary: 0 0% 14%;
     --secondary-foreground: 0 0% 64%;
     --muted: 0 0% 18%;
     --muted-foreground: 0 0% 42%;
-    --accent: 14 50% 53%;
+    --accent: 13 59% 38%;
     --accent-foreground: 0 0% 100%;
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 0 0% 100%;
     --border: 0 0% 18%;
     --input: 0 0% 18%;
-    --ring: 14 50% 53%;
+    --ring: 13 59% 38%;
     --radius: 0.5rem;
 
     --sidebar-background: 0 0% 10%;
     --sidebar-foreground: 0 0% 64%;
-    --sidebar-primary: 14 50% 53%;
+    --sidebar-primary: 13 59% 38%;
     --sidebar-primary-foreground: 0 0% 100%;
     --sidebar-accent: 0 0% 14%;
     --sidebar-accent-foreground: 0 0% 100%;
     --sidebar-border: 0 0% 18%;
-    --sidebar-ring: 14 50% 53%;
+    --sidebar-ring: 13 59% 38%;
   }
 }
 
@@ -123,7 +123,7 @@
 .tiptap-content .ProseMirror {
   outline: none;
   min-height: 60vh;
-  caret-color: #C2654A;
+  caret-color: #9B3D28;
   color: #F4EDE6;
   font-family: 'Inter', sans-serif;
   font-size: 15px;
@@ -153,7 +153,7 @@
 .tiptap-content .ProseMirror p { margin-bottom: 0; }
 
 .tiptap-content .ProseMirror blockquote {
-  border-left: 2px solid #C2654A;
+  border-left: 2px solid #9B3D28;
   padding-left: 1rem;
   color: #8A8279;
   font-style: italic;
@@ -194,7 +194,7 @@
 }
 
 .tiptap-content .ProseMirror a {
-  color: #C2654A;
+  color: #9B3D28;
   text-decoration: underline;
 }
 
