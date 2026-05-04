@@ -6,6 +6,86 @@ import { useTranslations } from "../../i18n/utils";
 
 const lang = "en";
 const t = useTranslations(lang);
+
+const values = [
+  {
+    label: "Clarity over complexity",
+    desc: "Simple, clear systems always outperform complex ones. If you can't explain it in one sentence, it's not ready.",
+  },
+  {
+    label: "Experience over theory",
+    desc: "I build from what I've lived, not from what I've read. Experience leaves marks that theory cannot replicate.",
+  },
+  {
+    label: "Systems over hacks",
+    desc: "Hacks solve today's problem. Systems prevent tomorrow's.",
+  },
+  {
+    label: "Candor with warmth",
+    desc: "Truth delivered with respect is the most valuable gift you can give someone.",
+  },
+  {
+    label: "Building in public",
+    desc: "Building visibly accelerates learning and builds real trust.",
+  },
+];
+
+const timeline = [
+  {
+    period: "2026 · Present",
+    event: "Founder · Partner · Board President",
+    detail:
+      "Building Fulcra (workertech startup), leading strategy at Kronek (growth and revenue consulting), and chairing the board of CODEIS through its transition to a sustainable social enterprise.",
+  },
+  {
+    period: "Jun 2025 · Dec 2025",
+    event: "Director General, IESS",
+    detail:
+      "Top authority at Ecuador's largest public institution: $10 billion in managed funds, 32,000 staff, 13 million beneficiaries. Budget execution: 36% to 78% in six months.",
+  },
+  {
+    period: "2022",
+    event: "Young Leaders of the Americas Initiative Fellow",
+    detail:
+      "Selected by the U.S. Department of State from entrepreneurs across 37 countries in Latin America and the Caribbean. YLAI is the State Department's flagship program for emerging business and social leaders in the Western Hemisphere.",
+  },
+  {
+    period: "2016 · 2025",
+    event: "Founder and Executive Director, CODEIS",
+    detail:
+      "Built a social innovation organization from scratch across 15 countries. 12,000 entrepreneurs trained. Partnerships with IDB Lab, USAID, GIZ, World Bank. The World Change Makers program won the international Better Together challenge from IDB Lab and was recognized by the United Nations among the 50 best youth projects in the world.",
+  },
+  {
+    period: "Jan 2019 · Apr 2019",
+    event: "Global Competitiveness Leadership Program, Georgetown University",
+    detail:
+      "Full scholarship. Top 10 projects in the program among participants from over 40 countries. Coursework in adaptive leadership, finance, open innovation and executive negotiation.",
+  },
+  {
+    period: "2014 · 2016",
+    event: "MPA International Development, London School of Economics",
+    detail:
+      "Academic merit. Applied econometrics, impact evaluation, public policy and development finance. Founded the Social Innovation Society at LSE.",
+  },
+  {
+    period: "2011",
+    event: "One Young World · Delegate Speaker and Ambassador, Zurich",
+    detail:
+      "First Ecuadorian to represent the country at One Young World, the annual gathering of the world's most outstanding young leaders. The 2011 Zurich Summit brought together delegates from 190 countries under mentors including Desmond Tutu, Bob Geldof and Kofi Annan. The selection process receives over 50,000 applications per year.",
+  },
+  {
+    period: "2012",
+    event: "Graduated with Highest Honors, East Texas Baptist University",
+    detail:
+      "Double major: Political Science and International Studies. Minor in Leadership. GPA 3.87/4.0 Summa Cum Laude with Distinction in Political Science. First Latino to chair the Student Government Association. Top 5 Speakers at the National Debate Tournament. Starting Block Fellow.",
+  },
+  {
+    period: "2007",
+    event: "Youth Ambassador, U.S. Department of State Program",
+    detail:
+      "Selected from secondary school students in Ecuador for the leadership exchange program of the Bureau of Educational and Cultural Affairs, U.S. Department of State. The program selects high-potential young leaders throughout Latin America and the Caribbean.",
+  },
+];
 ---
 
 <BaseLayout
@@ -13,22 +93,133 @@ const t = useTranslations(lang);
   description={t("page.sobre_mi.desc")}
 >
   <Navbar />
-  <div class="bg-bg-primary min-h-screen pt-32 pb-24">
-    <div class="max-w-[1200px] mx-auto px-6 lg:px-8 text-center">
-      <p class="font-montserrat text-ember text-[11px] uppercase tracking-[3px] mb-4">About</p>
-      <h1 class="font-montserrat font-bold text-text-primary text-[40px] md:text-[52px] leading-tight mb-6">
-        Francisco Abad
-      </h1>
-      <p class="font-inter text-text-secondary text-[17px] leading-relaxed max-w-[680px] mx-auto mb-12">
-        {t("page.sobre_mi.desc")}
-      </p>
-      <a
-        href="/sobre-mi"
-        class="font-montserrat font-medium text-[13px] uppercase tracking-[1.5px] text-text-secondary hover:text-ember transition-colors"
-      >
-        Ver en español →
-      </a>
-    </div>
+
+  <div class="bg-bg-primary min-h-screen">
+    <section class="pt-32 pb-16 bg-bg-primary">
+      <div class="max-w-[1200px] mx-auto px-6 lg:px-8">
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-16 items-start">
+          <img
+            src="/francisco-abad-about.jpg"
+            alt="Francisco Abad, Founder, Operator, Strategist"
+            width="720"
+            height="960"
+            loading="eager"
+            class="w-full max-w-[360px] aspect-[3/4] object-cover rounded-lg shadow-2xl"
+          />
+
+          <div class="space-y-8 pt-4">
+            <h1 class="font-montserrat font-bold text-text-primary text-[36px] md:text-[44px]">
+              My story
+            </h1>
+            <div class="space-y-4 font-inter text-text-secondary text-[16px] leading-relaxed">
+              <p>
+                I founded{" "}
+                <strong class="text-text-primary">CODEIS</strong> 10 years ago with a conviction: technology well applied can transform any organization, not just large corporations.
+              </p>
+              <p>
+                That conviction led me to lead the{" "}
+                <strong class="text-text-primary">IESS</strong> (Ecuador's largest public institution), managing over{" "}
+                <strong class="text-text-primary">$10 billion in assets</strong> and a team of{" "}
+                <strong class="text-text-primary">32,000 people</strong>.
+              </p>
+              <p>
+                Throughout my career I have built initiatives in{" "}
+                <strong class="text-text-primary">15 countries</strong>, across sectors as different as fintech, education, public health and strategic consulting.
+              </p>
+              <p>
+                Today I design systems for founders, executives and organizations to operate with more clarity, execution and results.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="py-12 md:py-16 border-t border-border-subtle bg-bg-primary">
+      <div class="max-w-[1200px] mx-auto px-6 lg:px-8">
+        <h2 class="font-montserrat font-bold text-text-primary text-[28px] mb-10">
+          What I believe
+        </h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {values.map((v) => (
+            <div class="flex gap-4">
+              <div class="mt-1.5 w-1.5 h-1.5 rounded-full bg-ember flex-shrink-0"></div>
+              <div>
+                <p class="font-montserrat font-semibold text-text-primary text-[15px] mb-1">
+                  {v.label}
+                </p>
+                <p class="font-inter text-text-secondary text-[14px] leading-relaxed">
+                  {v.desc}
+                </p>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <section class="py-12 md:py-20 border-t border-border-subtle bg-bg-primary">
+      <div class="max-w-[1200px] mx-auto px-6 lg:px-8">
+        <h2 class="font-montserrat font-bold text-text-primary text-[32px] mb-14">
+          Timeline
+        </h2>
+        <div class="relative">
+          <div class="absolute left-[7px] top-2 bottom-2 w-px bg-border-subtle hidden md:block"></div>
+          <div class="space-y-0 md:space-y-10">
+            {timeline.map((item, i) => (
+              <div class="relative">
+                <details
+                  class="md:hidden border-b border-border-subtle group"
+                  open={i === 0}
+                >
+                  <summary class="w-full flex items-center justify-between py-3 text-left list-none cursor-pointer">
+                    <div class="pr-4">
+                      <span class="font-montserrat font-bold text-ember text-[11px] block mb-0.5">
+                        {item.period}
+                      </span>
+                      <span class="font-montserrat font-semibold text-text-primary text-[14px] leading-snug">
+                        {item.event}
+                      </span>
+                    </div>
+                    <span class="text-ember flex-shrink-0 text-[10px] transition-transform duration-200 group-open:rotate-180">
+                      ▼
+                    </span>
+                  </summary>
+                  <p class="font-inter text-text-secondary text-[14px] leading-relaxed pb-4 pr-4">
+                    {item.detail}
+                  </p>
+                </details>
+
+                <div class="hidden md:flex gap-8 pl-8">
+                  <div class="absolute left-0 top-1.5 w-3.5 h-3.5 rounded-full bg-ember border-2 border-bg-primary"></div>
+                  <div class="flex-shrink-0 font-montserrat font-bold text-ember text-[13px] w-36 pt-0.5 leading-snug">
+                    {item.period}
+                  </div>
+                  <div>
+                    <p class="font-montserrat font-semibold text-text-primary text-[16px] mb-1">
+                      {item.event}
+                    </p>
+                    <p class="font-inter text-text-secondary text-[14px] leading-relaxed">
+                      {item.detail}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </section>
   </div>
+
   <Footer lang={lang} />
 </BaseLayout>
+
+<style>
+  details > summary::-webkit-details-marker {
+    display: none;
+  }
+  details > summary {
+    list-style: none;
+  }
+</style>
