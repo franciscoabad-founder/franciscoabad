@@ -1,0 +1,31 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import Navbar from "../../components/Navbar.astro";
+import Footer from "../../components/Footer.astro";
+import Services from "../../components/sections/Services.astro";
+import { useTranslations } from "../../i18n/utils";
+
+const lang = "en";
+const t = useTranslations(lang);
+---
+
+<BaseLayout
+  title={t("page.trabaja.title")}
+  description={t("page.trabaja.desc")}
+>
+  <Navbar />
+  <div class="bg-bg-primary min-h-screen">
+    <div class="pt-32 pb-16">
+      <div class="max-w-[1200px] mx-auto px-6 lg:px-8 text-center mb-4">
+        <p class="font-montserrat text-ember text-[11px] uppercase tracking-[3px] mb-4">
+          Work with me
+        </p>
+        <h1 class="font-montserrat font-bold text-text-primary text-[40px] md:text-[52px] leading-tight">
+          {t("page.trabaja.desc")}
+        </h1>
+      </div>
+    </div>
+    <Services lang={lang} />
+  </div>
+  <Footer lang={lang} />
+</BaseLayout>

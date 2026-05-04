@@ -1,6 +1,9 @@
 ---
-// Hero — sección 1 de la Home. Estática, sin estado.
-// El scroll suave a #servicios usa anclas HTML nativas + scroll-behavior:smooth (ya está en html del global.css).
+import { useTranslations } from "../../i18n/utils";
+
+interface Props { lang?: string; }
+const { lang = "es" } = Astro.props;
+const t = useTranslations(lang);
 ---
 
 <section
@@ -11,29 +14,29 @@
     <div class="grid grid-cols-1 lg:grid-cols-[3fr_2fr] gap-12 lg:gap-20 items-center">
       <div class="space-y-7" data-reveal>
         <p class="font-montserrat font-light italic text-ember text-[15px] tracking-wide">
-          Systems for Growth.
+          {t("hero.tagline")}
         </p>
 
         <h1 class="font-montserrat font-bold text-text-primary text-[clamp(2rem,8vw,4rem)] leading-[1.12] tracking-[-0.5px]">
-          Diseño sistemas para que personas y organizaciones funcionen mejor.
+          {t("hero.h1")}
         </h1>
 
         <p class="font-inter text-text-secondary text-lg tracking-[2px]">
-          Founder · Strategist · Innovator
+          {t("hero.pills")}
         </p>
 
         <div class="flex flex-wrap gap-4 pt-2">
           <a
             href="#servicios"
-            class="font-inter font-medium text-text-primary bg-ember hover:brightness-110 px-8 py-3 rounded-md transition-colors duration-300"
+            class="font-inter font-medium text-white bg-ember hover:brightness-110 px-8 py-3 rounded-md transition-colors duration-300"
           >
-            Trabajemos juntos
+            {t("hero.cta_primary")}
           </a>
           <a
             href="#recursos"
-            class="font-inter font-medium text-ember border border-ember hover:bg-ember hover:text-text-primary px-8 py-3 rounded-md transition-all duration-300"
+            class="font-inter font-medium text-ember border border-ember hover:bg-ember hover:text-white px-8 py-3 rounded-md transition-all duration-300"
           >
-            Explora recursos
+            {t("hero.cta_secondary")}
           </a>
         </div>
       </div>

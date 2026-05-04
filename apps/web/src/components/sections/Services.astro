@@ -1,44 +1,33 @@
 ---
+import { useTranslations } from "../../i18n/utils";
+
+interface Props { lang?: string; }
+const { lang = "es" } = Astro.props;
+const t = useTranslations(lang);
+
 const services = [
   {
-    eyebrow: "Empieza aquí",
-    title: "Growth OS",
-    description:
-      "El sistema operativo personal de 90 días. Reemplaza motivación con estructura. Un trimestre completo, tres objetivos, un sistema que decide por ti cuando no tienes ganas.",
-    items: [
-      "Excel con 567 fórmulas",
-      "Manual de 10 capítulos",
-      "Brief de onboarding",
-      "3 Prompts de IA",
-    ],
-    // TODO: cuando exista la página /growth-os, restaurar cta "Ver el Growth OS →" y href "/growth-os".
-    cta: "Próximamente",
+    eyebrowKey: "services.growth_os.eyebrow" as const,
+    titleKey:   "services.growth_os.title" as const,
+    descKey:    "services.growth_os.desc" as const,
+    itemKeys:   ["services.growth_os.item1", "services.growth_os.item2", "services.growth_os.item3", "services.growth_os.item4"] as const,
+    ctaKey:     "services.growth_os.cta" as const,
     href: "/contacto",
   },
   {
-    eyebrow: "Para founders y executives",
-    title: "Advisory y Consultoría",
-    description:
-      "Acompañamiento estratégico 1:1 para líderes que quieren operar con más claridad y mejores resultados.",
-    items: [
-      "Diagnóstico Estratégico",
-      "Sesiones de advisory ejecutivo",
-      "Growth Partner trimestral",
-    ],
-    cta: "Aplicar a una sesión →",
+    eyebrowKey: "services.advisory.eyebrow" as const,
+    titleKey:   "services.advisory.title" as const,
+    descKey:    "services.advisory.desc" as const,
+    itemKeys:   ["services.advisory.item1", "services.advisory.item2", "services.advisory.item3"] as const,
+    ctaKey:     "services.advisory.cta" as const,
     href: "/trabaja-conmigo",
   },
   {
-    eyebrow: "Para empresas y eventos",
-    title: "Speaking y Talleres",
-    description:
-      "Keynotes y workshops sobre systems thinking, transformación institucional, liderazgo y ejecución aplicada.",
-    items: [
-      "Keynotes para conferencias",
-      "Workshops para equipos directivos",
-      "Programas corporativos",
-    ],
-    cta: "Cotizar una charla →",
+    eyebrowKey: "services.speaking.eyebrow" as const,
+    titleKey:   "services.speaking.title" as const,
+    descKey:    "services.speaking.desc" as const,
+    itemKeys:   ["services.speaking.item1", "services.speaking.item2", "services.speaking.item3"] as const,
+    ctaKey:     "services.speaking.cta" as const,
     href: "/trabaja-conmigo",
   },
 ];
@@ -50,7 +39,7 @@ const services = [
       class="font-montserrat font-bold text-text-primary text-[32px] md:text-[36px] text-center mb-16"
       data-reveal
     >
-      Quiero ayudarte a crecer
+      {t("services.heading")}
     </h2>
 
     <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -61,19 +50,19 @@ const services = [
           data-reveal-delay={String(i + 1)}
         >
           <p class="font-montserrat text-[11px] uppercase tracking-[1.5px] text-ember mb-3">
-            {s.eyebrow}
+            {t(s.eyebrowKey)}
           </p>
           <h3 class="font-montserrat font-semibold text-text-primary text-[22px] mb-3">
-            {s.title}
+            {t(s.titleKey)}
           </h3>
           <p class="font-inter text-text-secondary text-[15px] leading-relaxed mb-6">
-            {s.description}
+            {t(s.descKey)}
           </p>
           <ul class="space-y-2 mb-8 flex-1">
-            {s.items.map((item) => (
+            {s.itemKeys.map((key) => (
               <li class="font-inter text-text-muted-brand text-[13px] flex items-start gap-2">
-                <span class="text-ember mt-[2px] flex-shrink-0">—</span>
-                {item}
+                <span class="text-ember mt-[2px] flex-shrink-0 select-none">·</span>
+                {t(key)}
               </li>
             ))}
           </ul>
@@ -81,7 +70,7 @@ const services = [
             href={s.href}
             class="font-inter font-medium text-ember text-[14px] hover:underline mt-auto"
           >
-            {s.cta}
+            {t(s.ctaKey)}
           </a>
         </div>
       ))}

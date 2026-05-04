@@ -64,19 +64,42 @@ Lo que NO está migrado (sigue en legacy o pendiente):
   IESS de junio a diciembre de 2025. Hoy es founder de Fulcra,
   partner en Kronek y board president de CODEIS."
 
-## Paleta de colores
+## Paleta de colores — Ultramarine v5
+
+Sistema dual dark/light mode. Primitivos en `:root`, semánticos en `[data-theme]`.
+
+### Tokens primitivos
 
 | Token | Hex | Uso |
 |---|---|---|
-| Ember | `#9B3D28` | Acento principal, CTAs, highlights |
-| Sienna | `#7D2F1F` | Variante más oscura del Ember |
-| Ink | `#141414` | Fondo más oscuro (growth-lab) |
-| Onyx | `#1E1E1E` | Fondo de cards y elementos elevados |
-| Linen | `#F4EDE6` | Sección LogosInstitucionales (fondo claro) |
-| Stone | `#8A8279` | Texto secundario, labels, notas |
-| Warm Slate | `#4A4541` | Texto de apoyo sobre fondos claros |
+| Ink | `#0E1738` | Fondo dark primario |
+| Royal | `#1A2B6B` | Cards dark, texto sobre claro |
+| Ultramarine | `#3B4ED9` | Acento principal, CTAs, links |
+| Ultra-light | `#6B7AE8` | Hover de Ultramarine |
+| Champagne | `#B5985A` | Metricas, KPIs, credenciales (SOLO) |
+| Bronze | `#8A6F3D` | Hover de Champagne |
+| Linen | `#FAFAF7` | Fondo light mode |
+| Slate-light | `#E8EAF0` | Bordes y divisores claros |
+| Slate-mid | `#6B7280` | Texto secundario, captions |
+| Slate-dark | `#2D3748` | Texto primario sobre fondos claros |
+| Charcoal | `#1A1A1A` | Footer oscuro |
 
-CSS vars: `--ember`, `--bg-primary`, `--bg-elevated`, `--text-primary`, `--text-secondary`, `--text-muted`, `--border-subtle`
+### Aliases legacy (backward compat, NO cambiar)
+
+- `--ember` apunta a `--ultramarine`
+- `--sienna` apunta a `--royal`
+- `--bg-primary` apunta a `--background` (cambia con el tema)
+- `--bg-elevated` cambia con el tema (dark: `#131F4A`, light: `#FFFFFF`)
+
+### CSS vars clave
+
+`--ember`, `--bg-primary`, `--bg-elevated`, `--text-primary`, `--text-secondary`, `--text-muted`, `--border-subtle`, `--ultramarine`, `--champagne`, `--charcoal`
+
+### Regla de uso del champagne
+
+El token `--champagne` / `text-champagne` se usa EXCLUSIVAMENTE para:
+metricas numericas, KPIs, credenciales academicas/institucionales.
+NO usar como acento general ni en CTAs (eso es `--ember`/`--ultramarine`).
 
 ## Regla de oro de archivos
 
@@ -90,7 +113,7 @@ Si no aparece: `git add + commit + push` antes de continuar.
 
 ## Rutas del proyecto
 
-Repo: `C:\Users\Francisco\OneDrive\Profesional\FRANCISCO ABAD\02_Web\franciscoabad`
+Repo: `C:\DEV\franciscoabad`
 
 Estructura:
 

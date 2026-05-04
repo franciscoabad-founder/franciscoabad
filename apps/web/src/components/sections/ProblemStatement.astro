@@ -1,8 +1,14 @@
 ---
+import { useTranslations } from "../../i18n/utils";
+
+interface Props { lang?: string; }
+const { lang = "es" } = Astro.props;
+const t = useTranslations(lang);
+
 const painPoints = [
-  { emoji: "⏱", text: "Ocupado siempre pero sin resultados" },
-  { emoji: "⚡", text: "Energía dispersa mal enfocada" },
-  { emoji: "🧭", text: "Ejecución improvisada, estrategia insuficiente" },
+  { emoji: "⏱", key: "problem.pain1" as const },
+  { emoji: "⚡", key: "problem.pain2" as const },
+  { emoji: "🧭", key: "problem.pain3" as const },
 ];
 ---
 
@@ -10,13 +16,13 @@ const painPoints = [
   <div class="max-w-[1200px] mx-auto px-6 lg:px-8">
     <div class="max-w-[800px] mx-auto text-center space-y-6" data-reveal>
       <h2 class="font-montserrat font-bold text-text-primary text-[36px] md:text-[40px] leading-[1.2]">
-        El problema que nadie nombra
+        {t("problem.heading")}
       </h2>
       <p class="font-inter text-text-secondary text-[17px] md:text-lg leading-[1.75]">
-        Las personas más ambiciosas (fundadores, ejecutivos, innovadores, emprendedores, directivos) son excelentes en su trabajo y mediocres en diseñar cómo trabajan. No porque les falte disciplina. Porque nadie les enseñó a construir el sistema detrás del resultado.
+        {t("problem.body1")}
       </p>
       <p class="font-inter text-text-secondary text-[17px] md:text-lg leading-[1.75]">
-        Operar sin un sistema claro tiene un costo directo: decisiones lentas, energía dispersa, y equipos que funcionan a medias porque el diseño del trabajo es deficiente. No necesitamos más esfuerzo. Necesitamos mejor diseño.
+        {t("problem.body2")}
       </p>
     </div>
 
@@ -24,11 +30,11 @@ const painPoints = [
       {painPoints.map((point) => (
         <div
           class="rounded-lg p-7 transition-all duration-200 hover:-translate-y-0.5"
-          style="background-color: hsl(var(--bg-primary)); border-left: 3px solid hsl(var(--ember)); box-shadow: 0 2px 12px rgba(0,0,0,0.3);"
+          style="background-color: var(--bg-primary); border-left: 3px solid var(--ember); box-shadow: 0 2px 12px rgba(0,0,0,0.3);"
         >
           <div class="text-[28px] leading-none mb-3">{point.emoji}</div>
           <p class="font-montserrat font-semibold text-text-primary text-[16px] leading-snug">
-            {point.text}
+            {t(point.key)}
           </p>
         </div>
       ))}
