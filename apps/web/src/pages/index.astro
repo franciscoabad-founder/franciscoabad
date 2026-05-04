@@ -11,23 +11,27 @@ import Testimonials from "../components/sections/Testimonials.astro";
 import Resources from "../components/sections/Resources.astro";
 import BlogPreview from "../components/sections/BlogPreview.astro";
 import NewsletterCTA from "../components/sections/NewsletterCTA.astro";
+import { useTranslations } from "../i18n/utils";
+
+const lang = Astro.currentLocale ?? "es";
+const t = useTranslations(lang);
 ---
 
 <BaseLayout
-  title="Francisco Abad — Sistemas para crecimiento"
-  description="Diseño sistemas para que personas y organizaciones funcionen mejor."
+  title={t("page.index.title")}
+  description={t("page.index.desc")}
 >
   <Navbar />
   <main>
-    <Hero />
+    <Hero lang={lang} />
     <LogosInstitucionales />
-    <ProblemStatement />
+    <ProblemStatement lang={lang} />
     <Stats />
-    <Services />
-    <Testimonials />
+    <Services lang={lang} />
+    <Testimonials lang={lang} />
     <Resources />
     <BlogPreview />
     <NewsletterCTA />
   </main>
-  <Footer />
+  <Footer lang={lang} />
 </BaseLayout>
