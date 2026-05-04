@@ -93,6 +93,19 @@
   }
 }
 
+/* ── Logo treatment ──────────────────────────────── */
+/* fa_horizontal_clean_dark.svg has dark-colored elements.
+   Invert to white on dark backgrounds; keep natural on light. */
+.navbar-logo {
+  filter: brightness(0) invert(1);
+}
+[data-theme="light"] .navbar-logo {
+  filter: none;
+}
+.footer-logo {
+  filter: brightness(0) invert(1); /* footer is always charcoal */
+}
+
 /* ── Reveal animation ─────────────────────────────── */
 @keyframes fadeInUp {
   from { opacity: 0; transform: translateY(30px); }
