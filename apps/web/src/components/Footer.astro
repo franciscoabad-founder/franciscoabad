@@ -1,25 +1,28 @@
 ---
+import { useTranslations } from "../i18n/utils";
+
+interface Props { lang?: string; }
+const { lang = "es" } = Astro.props;
+const t = useTranslations(lang);
+
 const socials = [
-  { label: "LinkedIn", href: "https://www.linkedin.com/in/franciscoabadec/" },
+  { label: "LinkedIn",  href: "https://www.linkedin.com/in/franciscoabadec/" },
   { label: "Instagram", href: "https://www.instagram.com/abadfrancisco/" },
-  { label: "YouTube", href: "https://www.youtube.com/@franciscoabad7621" },
-  { label: "Email", href: "mailto:francisco@franciscoabad.com" },
+  { label: "YouTube",   href: "https://www.youtube.com/@franciscoabad7621" },
+  { label: "Email",     href: "mailto:francisco@franciscoabad.com" },
 ];
 ---
 
-<footer class="bg-bg-primary border-t border-border-subtle py-20">
+<footer style="background-color: var(--charcoal);" class="border-t border-border-subtle py-20">
   <div class="max-w-[1200px] mx-auto px-6 lg:px-8 flex flex-col items-center gap-10">
     <img
-      src="/fa_stacked_tagline_ember_3x.png"
+      src="/fa_horizontal_clean_dark.svg"
       alt="Francisco Abad - Systems for Growth"
-      style="height: 80px; width: auto; opacity: 0.95;"
+      style="height: 32px; width: auto; opacity: 0.90;"
     />
 
     <p class="font-inter text-text-secondary text-[14px] leading-[1.8] text-center max-w-[700px]">
-      Francisco Abad ha construido, dirigido y transformado sistemas reales. Fundó CODEIS hace 10 años,
-      dirigió el IESS (la institución pública más grande del Ecuador), y ha construido múltiples iniciativas
-      en tech, educación y consultoría. Hoy diseña sistemas para que founders, executives y organizaciones
-      operen con más claridad, ejecución y resultados.
+      {t("footer.bio")}
     </p>
 
     <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-8">
@@ -37,10 +40,10 @@ const socials = [
 
     <div class="text-center space-y-1">
       <p class="font-inter text-text-muted-brand text-[12px]">
-        © 2026 Francisco Abad. Todos los derechos reservados.
+        {t("footer.copyright")}
       </p>
-      <p class="font-montserrat font-light italic text-text-muted-brand text-[13px]">
-        Systems for Growth.
+      <p class="font-montserrat font-light italic text-champagne text-[13px]">
+        {t("footer.tagline")}
       </p>
     </div>
   </div>
