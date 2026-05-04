@@ -5,12 +5,18 @@ const locale = Astro.currentLocale ?? "es";
 const targetLocale = locale === "en" ? "es" : "en";
 const targetPath = getLocalePath(Astro.url.pathname, targetLocale);
 const label = locale === "en" ? "ES" : "EN";
+
+const path = Astro.url.pathname;
+const isBlogRoute = path.startsWith("/blog") || path.startsWith("/en/blog");
+const noEquivalent = isBlogRoute && targetLocale === "en";
 ---
 
-<a
-  href={targetPath}
-  class="font-montserrat font-medium text-[12px] uppercase tracking-[1px] text-text-secondary hover:text-ember transition-colors duration-200"
-  aria-label={`Switch to ${targetLocale.toUpperCase()}`}
->
-  {label}
-</a>
+{!noEquivalent && (
+  <a
+    href={targetPath}
+    class="font-montserrat font-medium text-[12px] uppercase tracking-[1px] text-text-secondary hover:text-ember transition-colors duration-200"
+    aria-label={`Switch to ${targetLocale.toUpperCase()}`}
+  >
+    {label}
+  </a>
+)}
