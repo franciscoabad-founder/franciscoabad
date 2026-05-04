@@ -17,6 +17,9 @@ export default defineConfig({
     locales: ["es", "en"],
     routing: { prefixDefaultLocale: false },
   },
+  redirects: {
+    "/en/about": "/en/sobre-mi",
+  },
   integrations: [
     react(),
     mdx(),

@@ -11,7 +11,7 @@ const links = [
   { href: locale === "en" ? "/en/" : "/",                    label: t("nav.home") },
   { href: locale === "en" ? "/en/sobre-mi" : "/sobre-mi",    label: t("nav.sobre_mi") },
   { href: locale === "en" ? "/en/trabaja-conmigo" : "/trabaja-conmigo", label: t("nav.trabaja_conmigo") },
-  { href: "/blog",                                            label: t("nav.blog") },
+  ...(locale === "es" ? [{ href: "/blog", label: t("nav.blog") }] : []),
   { href: locale === "en" ? "/en/contacto" : "/contacto",    label: t("nav.contacto") },
 ];
 ---
