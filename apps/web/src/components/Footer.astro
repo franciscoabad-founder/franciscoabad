@@ -22,7 +22,10 @@ const socials = [
       style="height: 32px; width: auto; opacity: 0.90;"
     />
 
-    <p class="font-inter text-text-secondary text-[14px] leading-[1.8] text-center max-w-[700px]">
+    <p
+      class="font-inter text-[14px] leading-[1.8] text-center max-w-[700px]"
+      style="color: var(--slate-light);"
+    >
       {t("footer.bio")}
     </p>
 
@@ -32,7 +35,7 @@ const socials = [
           href={href}
           target="_blank"
           rel="noopener noreferrer"
-          class="font-montserrat text-[12px] uppercase tracking-[1px] text-text-muted-brand hover:text-ember transition-colors duration-300"
+          class="font-montserrat text-[12px] uppercase tracking-[1px] text-ultra-light hover:text-ultramarine transition-colors duration-300"
         >
           {label}
         </a>
@@ -40,7 +43,7 @@ const socials = [
     </div>
 
     <div class="text-center space-y-1">
-      <p class="font-inter text-text-muted-brand text-[12px]">
+      <p class="font-inter text-[12px]" style="color: var(--slate-mid);">
         {t("footer.copyright")}
       </p>
       <p class="font-montserrat font-light italic text-champagne text-[13px]">
