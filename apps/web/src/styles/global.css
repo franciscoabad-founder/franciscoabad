@@ -106,6 +106,14 @@
   filter: brightness(0) invert(1); /* footer is always charcoal */
 }
 
+/* ── Timeline date color — champagne on dark, royal on light ── */
+.timeline-date {
+  color: var(--champagne);
+}
+[data-theme="light"] .timeline-date {
+  color: var(--royal);
+}
+
 /* ── Reveal animation ─────────────────────────────── */
 @keyframes fadeInUp {
   from { opacity: 0; transform: translateY(30px); }
