@@ -19,6 +19,8 @@ export default defineConfig({
   },
   redirects: {
     "/en/about": "/en/sobre-mi",
+    "/en/kit/gracias": "/kit/gracias",
+    "/en/kit": "/kit",
   },
   integrations: [
     react(),
