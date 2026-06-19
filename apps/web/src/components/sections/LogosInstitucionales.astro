@@ -1,39 +1,107 @@
 ---
-const groups = [
+const formacion = [
   {
-    label: "FORMACIÓN",
-    items: [
-      { src: "/logos-institucionales/lse-logo.png",            alt: "London School of Economics", legend: "MPA · London School of Economics",   blend: false, height: 52, url: "https://www.lse.ac.uk" },
-      { src: "/logos-institucionales/georgetown-logo.png.png", alt: "Georgetown University",       legend: "Global Competitiveness Leadership", blend: false, height: 52, url: "https://www.georgetown.edu" },
-      { src: "/logos-institucionales/upenn-logo.png",          alt: "Wharton / UPenn",             legend: "Social Impact House · Wharton",     blend: false, height: 40, url: "https://www.upenn.edu" },
-    ],
+    src: "/logos-institucionales/lse-logo.png",
+    alt: "London School of Economics",
+    name: "London School of Economics",
+    program: "MPA in International Development",
+    blend: false,
+    height: 52,
+    url: "https://www.lse.ac.uk",
   },
   {
-    label: "ALIADOS Y PROGRAMAS",
-    items: [
-      { src: "/logos-institucionales/bidlab-logo.png",         alt: "BID Lab",    legend: "Grant · World Change Makers",  blend: false, height: 44, url: "https://bidlab.org" },
-      { src: "/logos-institucionales/PNUD_logo.png",           alt: "PNUD",       legend: "Programa de Naciones Unidas",  blend: false, height: 56, url: "https://www.undp.org" },
-      { src: "/logos-institucionales/giz-logo.png",            alt: "GIZ",        legend: "Cooperación Alemana GIZ",      blend: false, height: 36, url: "https://www.giz.de" },
-      { src: "/logos-institucionales/iess-logo.png",           alt: "IESS",       legend: "Director General 2025",        blend: false, height: 56, url: "https://www.iess.gob.ec" },
-      { src: "/logos-institucionales/codeis-logo.png",         alt: "CODEIS",     legend: "Fundador · 10 años · 15 países", blend: false, height: 40, url: "https://codeis.org" },
-      { src: "/logos-institucionales/hult-prize-logo.webp",    alt: "Hult Prize", legend: "Director Nacional Ecuador",    blend: true,  height: 44, url: "https://www.hultprize.org" },
-    ],
+    src: "/logos-institucionales/georgetown-logo.png.png",
+    alt: "Georgetown University",
+    name: "Georgetown University",
+    program: "Global Competitiveness Leadership Program",
+    blend: false,
+    height: 52,
+    url: "https://www.georgetown.edu",
   },
   {
-    label: "SPEAKER Y DOCENTE",
-    items: [
-      { src: "/logos-institucionales/oyw-logo.png",    alt: "One Young World", legend: "One Young World · Delegate Speaker", blend: false, height: 48, url: "https://www.oneyoungworld.com" },
-      { src: "/logos-institucionales/sg-logo.avif",    alt: "Startup Grind",   legend: "Startup Grind · Speaker",      blend: false, height: 36, url: "https://www.startupgrind.com" },
-      { src: "/logos-institucionales/udla-logo.png",   alt: "UDLA",            legend: "Profesor de Maestría",         blend: true,  height: 40, url: "https://www.udla.edu.ec" },
-      { src: "/logos-institucionales/usfq-logo.png",   alt: "USFQ",            legend: "Profesor de Emprendimiento",   blend: false, height: 44, url: "https://www.usfq.edu.ec" },
-      { src: "/logos-institucionales/yachay-logo.png", alt: "Yachay Tech",     legend: "Speaker",                      blend: false, height: 44, url: "https://www.yachaytech.edu.ec" },
-    ],
+    src: "/logos-institucionales/upenn-logo.png",
+    alt: "University of Pennsylvania",
+    name: "University of Pennsylvania",
+    program: "Global Social Impact House",
+    blend: false,
+    height: 40,
+    url: "https://www.upenn.edu",
   },
+];
+
+const aliadosRow1 = [
+  {
+    src: "/logos-institucionales/hult-prize-logo.webp",
+    alt: "Hult Prize",
+    name: "Hult Prize",
+    role: "Director Nacional Ecuador",
+    blend: true,
+    height: 44,
+    url: "https://www.hultprize.org",
+  },
+  {
+    src: "/logos-institucionales/codeis-logo.png",
+    alt: "CODEIS",
+    name: "CODEIS",
+    role: "Fundador · 10 años · 15 países",
+    blend: false,
+    height: 40,
+    url: "https://codeis.org",
+  },
+  {
+    src: "/logos-institucionales/iess-logo.png",
+    alt: "IESS",
+    name: "IESS",
+    role: "Director General, 2025",
+    blend: false,
+    height: 56,
+    url: "https://www.iess.gob.ec",
+  },
+];
+
+const aliadosRow2 = [
+  {
+    src: "/logos-institucionales/bidlab-logo.png",
+    alt: "BID Lab",
+    name: "BID Lab",
+    role: "Grant · World Change Makers",
+    blend: false,
+    height: 44,
+    url: "https://bidlab.org",
+  },
+  {
+    src: "/logos-institucionales/PNUD_logo.png",
+    alt: "PNUD",
+    name: "PNUD",
+    role: "Programa de Naciones Unidas",
+    blend: false,
+    height: 56,
+    url: "https://www.undp.org",
+  },
+  {
+    src: "/logos-institucionales/giz-logo.png",
+    alt: "GIZ",
+    name: "GIZ",
+    role: "Cooperación Alemana GIZ",
+    blend: false,
+    height: 36,
+    url: "https://www.giz.de",
+  },
+];
+
+const speaker = [
+  { src: "/logos-institucionales/oyw-logo.png",    alt: "One Young World", legend: "One Young World · Delegate Speaker", blend: false, height: 48, url: "https://www.oneyoungworld.com" },
+  { src: "/logos-institucionales/sg-logo.avif",    alt: "Startup Grind",   legend: "Startup Grind · Speaker",           blend: false, height: 36, url: "https://www.startupgrind.com" },
+  { src: "/logos-institucionales/udla-logo.png",   alt: "UDLA",            legend: "Profesor de Maestría",              blend: true,  height: 40, url: "https://www.udla.edu.ec" },
+  { src: "/logos-institucionales/usfq-logo.png",   alt: "USFQ",            legend: "Profesor de Emprendimiento",        blend: false, height: 44, url: "https://www.usfq.edu.ec" },
+  { src: "/logos-institucionales/yachay-logo.png", alt: "Yachay Tech",     legend: "Speaker",                           blend: false, height: 44, url: "https://www.yachaytech.edu.ec" },
 ];
 ---
 
 <section class="py-16 md:py-24" style="background-color: var(--white-pure);">
   <div class="max-w-[1200px] mx-auto px-6 lg:px-8">
+
+    {/* Header */}
     <div class="mb-10" data-reveal>
       <p
         class="font-montserrat font-semibold uppercase tracking-[3px] mb-4 text-[1.5rem]"
@@ -43,47 +111,169 @@ const groups = [
       </p>
     </div>
 
-    {groups.map((group, gi) => (
-      <div data-reveal>
-        {gi > 0 && (
-          <div class="my-8" style="border-top: 1px solid rgba(26,43,107,0.12);" />
-        )}
-
-        <p
-          class="font-montserrat uppercase tracking-[0.12em] mb-5 text-[0.85rem]"
-          style="color: var(--royal);"
-        >
-          {group.label}
-        </p>
-
-        <div class="flex flex-wrap justify-center items-end gap-10">
-          {group.items.map((item) => (
-            <div class="flex flex-col items-center gap-2">
-              <a
-                href={item.url}
-                target="_blank"
-                rel="noopener noreferrer"
-                class="block leading-none"
-              >
-                <img
-                  src={item.src}
-                  alt={item.alt}
-                  width="auto"
-                  height={item.height}
-                  style={`height: ${item.height}px; width: auto; object-fit: contain;`}
-                  class={`opacity-[0.85] hover:opacity-100 transition-opacity duration-200 cursor-pointer ${item.blend ? "mix-blend-multiply" : ""}`}
-                />
-              </a>
+    {/* FORMACIÓN */}
+    <div data-reveal>
+      <p
+        class="font-montserrat uppercase tracking-[0.12em] mb-8 text-[0.85rem]"
+        style="color: var(--royal);"
+      >
+        FORMACIÓN
+      </p>
+      <div class="flex flex-wrap justify-center items-center gap-10 md:gap-16">
+        {formacion.map((item) => (
+          <div class="flex flex-col items-center gap-3">
+            <a
+              href={item.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              class="block leading-none flex items-center justify-center"
+              style={`height: ${item.height}px;`}
+            >
+              <img
+                src={item.src}
+                alt={item.alt}
+                style={`height: ${item.height}px; width: auto; object-fit: contain;`}
+                class={`opacity-[0.85] hover:opacity-100 transition-opacity duration-200 cursor-pointer ${item.blend ? "mix-blend-multiply" : ""}`}
+              />
+            </a>
+            <div class="flex flex-col items-center gap-0.5 text-center max-w-[140px]">
               <span
-                class="font-inter text-[11px] text-center max-w-[120px] leading-[1.4]"
+                class="font-montserrat font-semibold text-[12px] leading-[1.3]"
                 style="color: var(--slate-dark);"
               >
-                {item.legend}
+                {item.name}
+              </span>
+              <span
+                class="font-inter text-[11px] leading-[1.4]"
+                style="color: var(--slate-mid);"
+              >
+                {item.program}
               </span>
             </div>
-          ))}
-        </div>
+          </div>
+        ))}
       </div>
-    ))}
+    </div>
+
+    {/* ALIADOS Y PROGRAMAS */}
+    <div data-reveal>
+      <div class="my-8" style="border-top: 1px solid rgba(26,43,107,0.12);" />
+      <p
+        class="font-montserrat uppercase tracking-[0.12em] mb-8 text-[0.85rem]"
+        style="color: var(--royal);"
+      >
+        ALIADOS Y PROGRAMAS
+      </p>
+
+      {/* Row 1: Hult Prize · CODEIS · IESS */}
+      <div class="flex flex-wrap justify-center items-center gap-10 md:gap-20 mb-10">
+        {aliadosRow1.map((item) => (
+          <div class="flex flex-col items-center gap-3">
+            <a
+              href={item.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              class="block leading-none flex items-center justify-center"
+              style={`height: ${item.height}px;`}
+            >
+              <img
+                src={item.src}
+                alt={item.alt}
+                style={`height: ${item.height}px; width: auto; object-fit: contain;`}
+                class={`opacity-[0.85] hover:opacity-100 transition-opacity duration-200 cursor-pointer ${item.blend ? "mix-blend-multiply" : ""}`}
+              />
+            </a>
+            <div class="flex flex-col items-center gap-0.5 text-center max-w-[140px]">
+              <span
+                class="font-montserrat font-semibold text-[12px] leading-[1.3]"
+                style="color: var(--slate-dark);"
+              >
+                {item.name}
+              </span>
+              <span
+                class="font-inter text-[11px] leading-[1.4]"
+                style="color: var(--slate-mid);"
+              >
+                {item.role}
+              </span>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {/* Row 2: BID Lab · PNUD · GIZ */}
+      <div class="flex flex-wrap justify-center items-center gap-10 md:gap-16">
+        {aliadosRow2.map((item) => (
+          <div class="flex flex-col items-center gap-3">
+            <a
+              href={item.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              class="block leading-none flex items-center justify-center"
+              style={`height: ${item.height}px;`}
+            >
+              <img
+                src={item.src}
+                alt={item.alt}
+                style={`height: ${item.height}px; width: auto; object-fit: contain;`}
+                class={`opacity-[0.85] hover:opacity-100 transition-opacity duration-200 cursor-pointer ${item.blend ? "mix-blend-multiply" : ""}`}
+              />
+            </a>
+            <div class="flex flex-col items-center gap-0.5 text-center max-w-[140px]">
+              <span
+                class="font-montserrat font-semibold text-[12px] leading-[1.3]"
+                style="color: var(--slate-dark);"
+              >
+                {item.name}
+              </span>
+              <span
+                class="font-inter text-[11px] leading-[1.4]"
+                style="color: var(--slate-mid);"
+              >
+                {item.role}
+              </span>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+
+    {/* SPEAKER Y DOCENTE */}
+    <div data-reveal>
+      <div class="my-8" style="border-top: 1px solid rgba(26,43,107,0.12);" />
+      <p
+        class="font-montserrat uppercase tracking-[0.12em] mb-8 text-[0.85rem]"
+        style="color: var(--royal);"
+      >
+        SPEAKER Y DOCENTE
+      </p>
+      <div class="flex flex-wrap justify-center items-center gap-10">
+        {speaker.map((item) => (
+          <div class="flex flex-col items-center gap-2">
+            <a
+              href={item.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              class="block leading-none flex items-center justify-center"
+              style={`height: ${item.height}px;`}
+            >
+              <img
+                src={item.src}
+                alt={item.alt}
+                style={`height: ${item.height}px; width: auto; object-fit: contain;`}
+                class={`opacity-[0.85] hover:opacity-100 transition-opacity duration-200 cursor-pointer ${item.blend ? "mix-blend-multiply" : ""}`}
+              />
+            </a>
+            <span
+              class="font-inter text-[11px] text-center max-w-[120px] leading-[1.4]"
+              style="color: var(--slate-dark);"
+            >
+              {item.legend}
+            </span>
+          </div>
+        ))}
+      </div>
+    </div>
+
   </div>
 </section>
