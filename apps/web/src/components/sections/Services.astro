@@ -7,12 +7,12 @@ const t = useTranslations(lang);
 
 const services = [
   {
-    eyebrowKey: "services.growth_os.eyebrow" as const,
-    titleKey:   "services.growth_os.title" as const,
-    descKey:    "services.growth_os.desc" as const,
-    itemKeys:   ["services.growth_os.item1", "services.growth_os.item2", "services.growth_os.item3", "services.growth_os.item4"] as const,
-    ctaKey:     "services.growth_os.cta" as const,
-    href: "/contacto",
+    eyebrowKey: "services.kit.eyebrow" as const,
+    titleKey:   "services.kit.title" as const,
+    descKey:    "services.kit.desc" as const,
+    itemKeys:   ["services.kit.item1", "services.kit.item2", "services.kit.item3", "services.kit.item4"] as const,
+    ctaKey:     "services.kit.cta" as const,
+    href: "/kit",
   },
   {
     eyebrowKey: "services.advisory.eyebrow" as const,
@@ -49,7 +49,7 @@ const services = [
           data-reveal
           data-reveal-delay={String(i + 1)}
         >
-          <p class="font-montserrat text-[11px] uppercase tracking-[1.5px] text-ember mb-3">
+          <p class="font-montserrat text-[11px] uppercase tracking-[1.5px] text-ultra-light mb-3">
             {t(s.eyebrowKey)}
           </p>
           <h3 class="font-montserrat font-semibold text-text-primary text-[22px] mb-3">
@@ -68,7 +68,7 @@ const services = [
           </ul>
           <a
             href={s.href}
-            class="font-inter font-medium text-ember text-[14px] hover:underline mt-auto"
+            class="font-inter font-medium text-ultra-light text-[14px] hover:underline mt-auto"
           >
             {t(s.ctaKey)}
           </a>

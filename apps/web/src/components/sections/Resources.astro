@@ -1,6 +1,5 @@
 ---
-// Resources — sección de la Home con 3 tarjetas: lead magnet, Growth OS, videos.
-// Inputs/buttons sin handler (decorativos). En Fase 3 se conectan a Beehiiv server-side.
+// Resources — sección del Home. Único recurso activo: Kit IA para tus finanzas.
 ---
 
 <section id="recursos" class="bg-bg-elevated py-12 md:py-20">
@@ -9,52 +8,27 @@
       class="font-montserrat font-bold text-text-primary text-[32px] md:text-[36px] mb-14"
       data-reveal
     >
-      Recursos para founders y gente ambiciosa
+      Recursos
     </h2>
 
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-      {/* Col 1 — Lead magnet */}
-      <div class="bg-bg-primary rounded-lg p-8 border border-ember flex flex-col" data-reveal>
-        <span class="inline-block bg-ember text-white font-montserrat text-[10px] uppercase tracking-[1.5px] px-3 py-1 rounded-full mb-5 self-start">
+    <div class="max-w-[600px]" data-reveal>
+      <div class="bg-bg-primary rounded-lg p-8 border border-ember flex flex-col gap-5">
+        <span class="inline-block bg-ember text-white font-montserrat text-[10px] uppercase tracking-[1.5px] px-3 py-1 rounded-full self-start">
           Gratis
         </span>
-        <h3 class="font-montserrat font-semibold text-text-primary text-[20px] mb-3">
-          Tu Semana de Reset
-        </h3>
-        <p class="font-inter text-text-secondary text-[14px] leading-relaxed mb-6 flex-1">
-          7 días. Una micro-acción por día. 10 minutos o menos. Instala las bases de un sistema operativo personal.
-        </p>
-        <form class="flex flex-col gap-2" onsubmit="event.preventDefault();">
-          <input
-            type="email"
-            placeholder="tu@email.com"
-            class="w-full bg-bg-elevated border border-border-subtle rounded-md px-3 py-2.5 font-inter text-text-primary text-[13px] placeholder:text-text-muted-brand focus:outline-none focus:border-ember transition-colors"
-          />
-          <button
-            type="submit"
-            class="w-full bg-ember text-white font-inter font-medium text-[13px] px-4 py-2.5 rounded-md hover:brightness-110 transition-colors"
-          >
-            Quiero la guía
-          </button>
-        </form>
-      </div>
-
-      {/* Col 2 — Growth OS */}
-      <div class="bg-bg-primary rounded-lg p-8 border border-border-subtle flex flex-col" data-reveal>
-        <span class="inline-block bg-ember text-white font-montserrat text-[10px] uppercase tracking-[1.5px] px-3 py-1 rounded-full mb-5 self-start">
-          Próximamente
-        </span>
-        <h3 class="font-montserrat font-semibold text-text-primary text-[20px] mb-3">
-          Growth OS
-        </h3>
-        <p class="font-inter text-text-secondary text-[14px] leading-relaxed mb-6 flex-1">
-          El sistema operativo de 90 días. Excel, manual, brief y prompts de IA incluidos.
-        </p>
+        <div>
+          <h3 class="font-montserrat font-semibold text-text-primary text-[22px] mb-2">
+            Kit IA para tus finanzas
+          </h3>
+          <p class="font-inter text-text-secondary text-[15px] leading-relaxed">
+            Prompts, plantillas y metodología para ordenar tus finanzas personales o de negocio con inteligencia artificial. Workbook Excel, biblioteca de prompts, skills para Claude y checklists de cierre.
+          </p>
+        </div>
         <a
-          href="mailto:francisco@franciscoabad.com?subject=Lista%20de%20espera%20Growth%20OS&body=Hola%20Pancho%2C%20quiero%20entrar%20a%20la%20lista%20de%20espera%20de%20Growth%20OS."
-          class="w-full text-center bg-ember text-white font-inter font-medium text-[13px] px-4 py-2.5 rounded-md hover:brightness-110 transition-colors"
+          href="/kit"
+          class="inline-block self-start font-inter font-medium text-[14px] text-white bg-ember px-6 py-3 rounded-md hover:brightness-110 transition-colors"
         >
-          Únete a la lista de espera
+          Descarga gratis →
         </a>
       </div>
     </div>
