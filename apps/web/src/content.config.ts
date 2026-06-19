@@ -12,7 +12,7 @@ const blog = defineCollection({
       title: z.string(),
       description: z.string(),
       pubDate: z.coerce.date(),
-      category: z.enum(["Systems Thinking", "Founder Systems", "Liderazgo"]),
+      category: z.enum(["Systems Thinking", "Founder Systems", "Liderazgo", "Finanzas"]),
       readTime: z.number(),
       slug: z.string(),
       draft: z.boolean().default(false),
