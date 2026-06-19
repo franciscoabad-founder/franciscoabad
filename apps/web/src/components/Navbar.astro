@@ -23,10 +23,16 @@ const links = [
   <div class="max-w-[1200px] mx-auto px-6 lg:px-8 flex items-center justify-between h-16 lg:h-20">
     <a href={locale === "en" ? "/en/" : "/"} class="flex items-center select-none">
       <img
-        src="/fa_horizontal_clean_dark.svg"
+        src="/fa_logo_dark.svg"
         alt="Francisco Abad"
-        class="navbar-logo"
+        class="navbar-logo logo-dark"
         style="height: 36px; width: auto;"
+      />
+      <img
+        src="/fa_logo_light.svg"
+        alt="Francisco Abad"
+        class="navbar-logo logo-light"
+        style="height: 36px; width: auto; display: none;"
       />
     </a>
 
@@ -99,3 +105,8 @@ const links = [
 </div>
 
 <NavbarIsland client:load />
+
+<style>
+  :global([data-theme="light"]) .logo-dark  { display: none !important; }
+  :global([data-theme="light"]) .logo-light { display: inline-block !important; }
+</style>
