@@ -1,8 +1,4 @@
 ---
-// PENDIENTE: Crea cuenta en formspree.io → New Form → copia el endpoint y pégalo aquí.
-// Ejemplo: "https://formspree.io/f/xabc1234"
-const FORM_ENDPOINT = "https://formspree.io/f/PENDIENTE";
-
 import BaseLayout from "../layouts/BaseLayout.astro";
 import Navbar from "../components/Navbar.astro";
 import Footer from "../components/Footer.astro";
@@ -98,14 +94,7 @@ import Footer from "../components/Footer.astro";
           30 segundos. Sin tarjeta. Sin compromisos.
         </p>
 
-        <form
-          action={FORM_ENDPOINT}
-          method="POST"
-          class="space-y-5"
-        >
-          {/* Redirect a la página de gracias */}
-          <input type="hidden" name="_next" value="https://franciscoabad.com/kit/gracias" />
-          <input type="hidden" name="_subject" value="Nuevo registro: Kit IA + Finanzas" />
+        <form id="kit-form" novalidate class="space-y-5">
 
           <div>
             <label for="nombre" class="kit-label">Nombre</label>
@@ -167,10 +156,67 @@ import Footer from "../components/Footer.astro";
             </label>
           </div>
 
-          <button type="submit" class="kit-cta w-full mt-2">
+          <!-- Mensaje de error (oculto por defecto) -->
+          <p id="kit-error" class="font-inter text-[13px] leading-relaxed hidden" style="color: #C2453B;"></p>
+
+          <button id="kit-submit" type="submit" class="kit-cta w-full mt-2">
             Quiero el kit gratuito
           </button>
         </form>
+
+        <script>
+          const form = document.getElementById("kit-form") as HTMLFormElement;
+          const btn = document.getElementById("kit-submit") as HTMLButtonElement;
+          const errorEl = document.getElementById("kit-error") as HTMLParagraphElement;
+
+          form.addEventListener("submit", async (e) => {
+            e.preventDefault();
+
+            const nombre = (form.querySelector<HTMLInputElement>("#nombre")?.value ?? "").trim();
+            const email = (form.querySelector<HTMLInputElement>("#email")?.value ?? "").trim();
+            const consentimiento = form.querySelector<HTMLInputElement>("#consentimiento")?.checked;
+
+            // Validación básica en cliente
+            if (!nombre || !email) {
+              errorEl.textContent = "Completa tu nombre y correo para continuar.";
+              errorEl.classList.remove("hidden");
+              return;
+            }
+            if (!consentimiento) {
+              errorEl.textContent = "Debes aceptar los términos para recibir el kit.";
+              errorEl.classList.remove("hidden");
+              return;
+            }
+
+            errorEl.classList.add("hidden");
+            btn.disabled = true;
+            btn.textContent = "Enviando...";
+
+            try {
+              const res = await fetch("/api/kit-signup", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ nombre, email }),
+              });
+
+              const data = await res.json();
+
+              if (data.ok) {
+                window.location.href = "/kit/gracias";
+              } else {
+                errorEl.textContent = data.error ?? "Algo salió mal. Intenta de nuevo.";
+                errorEl.classList.remove("hidden");
+                btn.disabled = false;
+                btn.textContent = "Quiero el kit gratuito";
+              }
+            } catch {
+              errorEl.textContent = "Error de conexión. Verifica tu internet e intenta de nuevo.";
+              errorEl.classList.remove("hidden");
+              btn.disabled = false;
+              btn.textContent = "Quiero el kit gratuito";
+            }
+          });
+        </script>
       </div>
     </section>
 
