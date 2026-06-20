@@ -27,43 +27,43 @@ Tipos: `feat`, `fix`, `docs`, `refactor`, `chore`
 
 ## Stack
 
-- Legacy (raíz): React + TypeScript + Tailwind + Vite + Supabase + Vercel
+- Legacy (raíz): React + TypeScript + Tailwind + Vite + Supabase + Vercel (no tocar)
 - Nuevo (apps/web/): Astro 6 + Tailwind v4 + React islands + Content Collections + Vercel
-- npm en apps/web/. Puerto local Astro: 4321.
+- npm en apps/web/. Puerto local Astro: 4321 (puede escalar a 4325+ si hay conflicto).
 - Supabase proyecto: `yfrrfmankgodpepbgyvu` (franciscoabad)
 
 ## Vercel — estado actual (junio 2026)
 
-Proyecto `franciscoabad` en Vercel está bajo el equipo
-`franciscoabad-founders-projects`. El plan Hobby bloquea deploys de repos
-privados en equipos. La producción en franciscoabad.com está congelada en
-el commit de mayo 3 (`b8d4ef5`).
-
-Para desbloquear (pendiente de acción de Francisco):
-- Opción A (recomendada): hacer el repo GitHub público
-- Opción B: transferir el proyecto Vercel a la cuenta personal
-- Opción C: upgrade a Vercel Pro ($20/mes)
+- Repo GitHub: público (`franciscoabad-founder/franciscoabad`)
+- Proyecto en Vercel bajo equipo `franciscoabad-founders-projects`
+- Deploy activo y funcionando en franciscoabad.com
+- Root Directory en Vercel: `apps/web` (crítico: si se pierde, el deploy da 404)
+- `vercel.json` en raíz: solo contiene `{ "$schema": "..." }` — no agregar config aquí,
+  el adaptador `@astrojs/vercel` maneja todo desde `astro.config.mjs`
+- Output mode: `"static"` con adaptador Vercel (Astro 6 eliminó `"hybrid"`;
+  `"static"` + `prerender = false` en endpoints = Vercel Functions)
 
 ## Estado del sitio Astro (apps/web/) — junio 2026
 
 ### Páginas activas
 
-- `/` Home: Hero, Problem, Services, Testimonials, Resources, LogosInstitucionales, NewsletterCTA, BlogPreview
+- `/` Home: Hero (DS v2), ProblemStatement, Services, Testimonials, Resources, LogosInstitucionales, NewsletterCTA, BlogPreview
 - `/sobre-mi` Sobre Mí
-- `/trabaja-conmigo` Trabaja Conmigo (sin Growth OS, tiene Kit IA)
+- `/trabaja-conmigo` Trabaja Conmigo (3 áreas sin precio, 5 temas de speaking)
 - `/contacto` Contacto
 - `/blog` Listado de posts
 - `/blog/[slug]` Post dinámico
-- `/kit` Landing lead magnet Kit IA para tus finanzas
+- `/kit` Landing lead magnet Kit IA para tus finanzas (formulario conectado a /api/kit-signup)
 - `/kit/gracias` Thank-you page post-formulario
+- `/api/kit-signup` Endpoint POST (Vercel Function): recibe nombre+email, envía kit por Resend
 
-### Blog — posts publicados
+### Blog — posts
 
-- `blog_01_iess.mdx` — "El AS400 y por qué el 78% no cuenta toda la historia" (draft: true)
-- `blog_02_kit_finanzas.mdx` — "Cómo organizar tus finanzas con IA sin perder el control" (draft: false)
-  - heroImage: grupo de participantes del taller CCQ (`blog02-grupo-v2.jpg`)
-  - Foto de Francisco en el medio del cuerpo (`blog02-hero.jpg`)
-  - Category: "Finanzas" (agregada al enum en content.config.ts)
+- `blog_01_iess.mdx` — "El AS400 y por qué el 78% no cuenta toda la historia" (`draft: true`, no publicar aún)
+- `blog_02_kit_finanzas.mdx` — "Cómo organizar tus finanzas con IA sin perder el control" (`draft: false`, publicado)
+  - heroImage: `blog02-grupo-v2.jpg` (grupo taller CCQ)
+  - Foto inline en cuerpo: `blog02-hero.jpg`
+  - Category: "Finanzas"
 
 ### Categorías de blog válidas (content.config.ts enum)
 
@@ -71,15 +71,17 @@ Para desbloquear (pendiente de acción de Francisco):
 
 ### Producto digital activo
 
-- Kit IA para tus finanzas (único recurso público)
-- Formulario en /kit usa Formspree: endpoint PENDIENTE (reemplazar `PENDIENTE` en kit.astro)
-- Redirect `/kit/gracias` configurado en astro.config.mjs
+- **Kit IA para tus finanzas** (publicado, lanzado en redes)
+- Formulario en `/kit` llama a `POST /api/kit-signup` con fetch (nombre + email)
+- El endpoint envía el ZIP por Resend desde `francisco@franciscoabad.com`
+- ZIP en Supabase Storage: bucket `kit-descargable-finanzas`, objeto `Kit_IA_para_tus_finanzas_v1.1.zip` (bucket público)
+- URL de descarga en `KIT_DOWNLOAD_URL` (variable de entorno en Vercel y en apps/web/.env)
+- `TODO`: conectar Beehiiv en el endpoint para suscribir al newsletter en el mismo paso
 
-### Pendiente de backend
+### Variables de entorno necesarias (en Vercel Production)
 
-- Formspree endpoint real en `apps/web/src/pages/kit.astro` (línea del action)
-- Resend + Beehiiv para entrega automática del kit por email
-- Supabase Storage bucket para ZIP del kit + URL de descarga
+- `RESEND_API_KEY` — API key de Resend
+- `KIT_DOWNLOAD_URL` — URL pública del ZIP en Supabase Storage
 
 ## Logos y brand — Ultramarine v5
 
@@ -92,12 +94,13 @@ Archivos en `apps/web/public/`:
 Lógica en Navbar.astro: CSS `[data-theme="light"]` muestra `logo-light`, oculta `logo-dark`.
 Footer siempre usa `fa_logo_whitemono.svg` (fondo charcoal #1A1A1A siempre oscuro).
 
-Lee siempre _design-system/SKILL.md y _design-system/readme.md 
+Lee siempre _design-system/SKILL.md y _design-system/readme.md
 antes de diseñar o escribir cualquier cosa para esta marca.
 
 ## Fonts Gotham
 
-Los fonts Gotham están en `_design-system/assets/fonts/` localmente pero no están en el repo (licencia comercial, .gitignore). En producción se cargan vía `@font-face` desde los archivos locales o desde el servidor privado. El fallback en producción es Montserrat (Google Fonts).
+Los fonts Gotham están en `_design-system/assets/fonts/` localmente pero no están en el
+repo (licencia comercial, en .gitignore). En producción el fallback es Montserrat (Google Fonts).
 
 ## Redes sociales (Footer.astro)
 
@@ -167,4 +170,6 @@ Repo: `C:\DEV\franciscoabad`
 - `/apps/web/src/content.config.ts` — schema de content collections
 - `/apps/web/public/` — assets estáticos
 - `/apps/web/src/i18n/` — traducciones es.json + en.json
+- `/apps/web/src/pages/api/` — endpoints serverless (Vercel Functions)
+- `/_design-system/` — design system Ultramarine v5 (no deployar, solo referencia local)
 - `/supabase/migrations/` — migraciones SQL
