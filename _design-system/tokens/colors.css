@@ -1,0 +1,112 @@
+/* ============================================================
+   Ultramarine v5 · Color System
+   Two-accent rule (REGLA DE ORO):
+  · Ultramarine = every general accent (CTAs, links, titles, highlights)
+  · Champagne   = numbers ONLY (metrics, KPIs, credentials). Never CTAs.
+   Ember palette is derogated. Never use terracotta.
+   ============================================================ */
+
+:root {
+  /* ---- Base palette ---- */
+  --ink: #0E1738;          /* darkest background, hero, slides (dark default) */
+  --royal: #1A2B6B;        /* elevated surfaces / cards in dark */
+  --ultramarine: #3B4ED9;  /* PRIMARY ACCENT · CTAs, links, accent titles */
+  --ultra-light: #6B7AE8;  /* Ultramarine hover */
+  --champagne: #B5985A;    /* WARM ACCENT · numbers/KPIs/credentials ONLY */
+  --bronze: #8A6F3D;       /* Champagne hover */
+  --linen: #FAFAF7;        /* light backgrounds, documents */
+  --slate-light: #E8EAF0;  /* light borders & dividers */
+  --slate-mid: #6B7280;    /* secondary text, captions */
+  --slate-dark: #2D3748;   /* primary text on light */
+  --charcoal: #1A1A1A;     /* dark footer */
+  --white: #FFFFFF;
+
+  /* Translucent ultramarine · for tints, focus rings, borders on dark */
+  --ultramarine-12: rgba(59, 78, 217, 0.12);
+  --ultramarine-24: rgba(59, 78, 217, 0.24);
+  --ultramarine-40: rgba(59, 78, 217, 0.40);
+  --champagne-16: rgba(181, 152, 90, 0.16);
+  --ink-60: rgba(14, 23, 56, 0.60);
+  --white-08: rgba(255, 255, 255, 0.08);
+  --white-12: rgba(255, 255, 255, 0.12);
+  --white-64: rgba(255, 255, 255, 0.64);
+
+  /* Status (sparing · keep brand-aligned, cool-leaning) */
+  --success: #1F8A5B;
+  --warning: #B5985A;      /* reuses champagne tone */
+  --danger: #C2453B;
+
+  /* ============================================================
+     SEMANTIC ALIASES · Dark mode (DEFAULT for all public/premium)
+     ============================================================ */
+  --bg-base: var(--ink);
+  --bg-elevated: var(--royal);
+  --bg-sunken: #0A1029;
+
+  --surface-card: var(--royal);
+  --surface-card-hover: #21357E;
+
+  --text-primary: var(--white);
+  --text-secondary: var(--white-64);
+  --text-muted: rgba(255, 255, 255, 0.40);
+  --text-on-accent: var(--white);
+
+  --accent: var(--ultramarine);
+  --accent-hover: var(--ultra-light);
+  --accent-contrast: var(--white);
+
+  --metric: var(--champagne);   /* numbers only */
+  --metric-hover: var(--bronze);
+
+  --border-subtle: var(--white-12);
+  --border-strong: rgba(255, 255, 255, 0.24);
+  --border-accent: var(--ultramarine);
+
+  --link: var(--ultra-light);
+  --link-hover: var(--white);
+
+  --focus-ring: var(--ultramarine);
+}
+
+/* ============================================================
+   Light mode · documents, proposals, web/data pages.
+   Apply with class="theme-light" or [data-theme="light"].
+   Accent stays Ultramarine; champagne still numbers-only.
+   ============================================================ */
+.theme-light,
+[data-theme="light"] {
+  --bg-base: var(--linen);
+  --bg-elevated: var(--white);
+  --bg-sunken: #F1F2F6;
+
+  --surface-card: var(--white);
+  --surface-card-hover: #F6F7FB;
+
+  --text-primary: var(--slate-dark);
+  --text-secondary: var(--slate-mid);
+  --text-muted: #9AA1AD;
+  --text-on-accent: var(--white);
+
+  --accent: var(--ultramarine);
+  --accent-hover: #2D3FB8;
+  --accent-contrast: var(--white);
+
+  --metric: var(--bronze);     /* deeper champagne reads better on light */
+  --metric-hover: var(--champagne);
+
+  --border-subtle: var(--slate-light);
+  --border-strong: #D2D6E0;
+  --border-accent: var(--ultramarine);
+
+  --link: var(--ultramarine);
+  --link-hover: #2D3FB8;
+
+  --focus-ring: var(--ultramarine);
+}
+
+/* Pure white mode · email, web, data pages */
+.theme-white,
+[data-theme="white"] {
+  --bg-base: var(--white);
+  --bg-elevated: var(--linen);
+}

@@ -1,0 +1,72 @@
+/* ============================================================
+   Ultramarine v5 · Typography System
+   Gotham (Montserrat fallback). Never serifs.
+   Hierarchy: Black 900 impact/hero numbers · Bold 700 H1 ·
+   Medium 500 labels · Book 400 body · Light 300 captions ·
+   XLight 200 / Thin 100 reserved for the "FRANCISCO" whisper.
+   ============================================================ */
+
+:root {
+  --font-sans: "Gotham", "Montserrat", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --font-display: var(--font-sans);  /* never serif */
+  --font-mono: ui-monospace, "SFMono-Regular", Menlo, monospace;
+
+  /* Weights */
+  --fw-thin: 100; /* @kind font */
+  --fw-xlight: 200; /* @kind font */
+  --fw-light: 300; /* @kind font */
+  --fw-book: 400; /* @kind font */
+  --fw-medium: 500; /* @kind font */
+  --fw-bold: 700; /* @kind font */
+  --fw-black: 900; /* @kind font */
+
+  /* Type scale (display-down). Public/premium runs large. */
+  --fs-hero: clamp(2.75rem, 7vw, 5rem);     /* @kind font */
+  --fs-display: clamp(2.25rem, 5vw, 3.5rem);/* @kind font */
+  --fs-h1: clamp(2rem, 4vw, 3rem);          /* @kind font */
+  --fs-h2: clamp(1.5rem, 3vw, 2.25rem);     /* @kind font */
+  --fs-h3: 1.5rem;                          /* @kind font */
+  --fs-title: 1.25rem;                      /* @kind font */
+  --fs-body-lg: 1.125rem;                   /* @kind font */
+  --fs-body: 1rem;                          /* @kind font */
+  --fs-caption: 0.875rem;                   /* @kind font */
+  --fs-micro: 0.75rem;                      /* @kind font */
+
+  /* Metric / KPI display sizes (champagne, Black weight, tabular) */
+  --fs-metric-hero: clamp(3rem, 8vw, 4.5rem); /* @kind font */
+  --fs-metric: 2.5rem;                        /* @kind font */
+
+  /* Line heights */
+  --lh-tight: 1.08; /* @kind font */
+  --lh-snug: 1.2; /* @kind font */
+  --lh-heading: 1.15; /* @kind font */
+  --lh-body: 1.6; /* @kind font */
+  --lh-relaxed: 1.8; /* @kind font */
+
+  /* Letter spacing */
+  --ls-tight: -0.02em;   /* @kind font */
+  --ls-normal: 0; /* @kind font */
+  --ls-label: 0.12em;    /* @kind font */
+  --ls-wide: 0.2em;      /* @kind font */
+}
+
+/* ---- Base element defaults ---- */
+.ds-type-base {
+  font-family: var(--font-sans);
+  font-weight: var(--fw-book);
+  font-size: var(--fs-body);
+  line-height: var(--lh-body);
+  color: var(--text-primary);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* ---- Eyebrow / label ---- */
+.ds-eyebrow {
+  font-family: var(--font-sans);
+  font-weight: var(--fw-medium);
+  font-size: var(--fs-micro);
+  text-transform: uppercase;
+  letter-spacing: var(--ls-label);
+  color: var(--accent);
+}

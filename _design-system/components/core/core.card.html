@@ -1,0 +1,63 @@
+<!-- @dsCard group="Components" viewport="700x460" name="Core · Button, Badge, Card, Logo" subtitle="Buttons, badges, cards, wordmark, section heading" -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<link rel="stylesheet" href="../../styles.css">
+<style>
+  body { margin: 0; background: var(--bg-base); font-family: var(--font-sans); padding: 28px; }
+  .group { margin-bottom: 26px; }
+  .glabel { font-size: 10px; text-transform: uppercase; letter-spacing: 0.12em; color: var(--text-muted); margin-bottom: 12px; }
+  .row { display: flex; gap: 14px; align-items: center; flex-wrap: wrap; }
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<script src="../../_ds_bundle.js"></script>
+<script type="text/babel">
+  const { Button, Badge, Card, Logo, SectionHeading } = window.FranciscoAbadUltramarineDesignSystem_a2998e;
+  function Demo() {
+    return (
+      <React.Fragment>
+        <div className="group">
+          <div className="glabel">Buttons</div>
+          <div className="row">
+            <Button variant="primary">Trabajemos juntos</Button>
+            <Button variant="secondary">Explora recursos</Button>
+            <Button variant="ghost">Saber más</Button>
+            <Button variant="primary" size="sm">Small</Button>
+            <Button variant="primary" disabled>Disabled</Button>
+          </div>
+        </div>
+        <div className="group">
+          <div className="glabel">Badges</div>
+          <div className="row">
+            <Badge tone="accent">Empieza aquí</Badge>
+            <Badge tone="solid">BrainTech</Badge>
+            <Badge tone="metric">+18.000</Badge>
+            <Badge tone="neutral">Newsletter</Badge>
+          </div>
+        </div>
+        <div className="group">
+          <div className="glabel">Wordmark</div>
+          <div className="row" style={{ gap: 40 }}>
+            <Logo layout="horizontal" size={28} tone="dark" />
+            <Logo layout="stacked" size={40} tone="dark" />
+          </div>
+        </div>
+        <div className="group" style={{ marginBottom: 0 }}>
+          <div className="glabel">Card + SectionHeading</div>
+          <Card interactive style={{ maxWidth: 380 }}>
+            <SectionHeading eyebrow="Advisory" title="Acompañamiento 1:1" intro="Para founders y executives que quieren operar con más claridad." />
+          </Card>
+        </div>
+      </React.Fragment>
+    );
+  }
+  ReactDOM.createRoot(document.getElementById("root")).render(<Demo />);
+</script>
+</body>
+</html>

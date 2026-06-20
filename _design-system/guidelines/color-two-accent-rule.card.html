@@ -1,0 +1,34 @@
+<!-- @dsCard group="Colors" viewport="700x190" name="The two-accent rule" subtitle="Ultramarine = every general accent. Champagne = numbers only." -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<link rel="stylesheet" href="../styles.css">
+<style>
+  body { margin: 0; background: var(--bg-base); font-family: var(--font-sans); padding: 24px; display: flex; gap: 16px; }
+  .panel { flex: 1; background: var(--royal); border: 1px solid var(--border-subtle); border-radius: var(--radius-card); padding: 18px 20px; }
+  .tag { font-size: 11px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.12em; margin-bottom: 12px; }
+  .ok { color: var(--ultra-light); }
+  .num { color: var(--champagne); }
+  h3 { color: #fff; font-weight: 700; font-size: 18px; margin: 0 0 6px; }
+  p { color: var(--white-64); font-size: 13px; line-height: 1.5; margin: 0 0 14px; }
+  .btn { display: inline-block; background: var(--ultramarine); color: #fff; font-weight: 500; font-size: 13px; padding: 8px 16px; border-radius: var(--radius-button); }
+  a.link { color: var(--ultra-light); font-size: 13px; font-weight: 500; }
+  .big { font-weight: 900; font-size: 40px; color: var(--champagne); line-height: 1; font-variant-numeric: tabular-nums; }
+  .cap { color: var(--white-64); font-size: 12px; margin-top: 4px; }
+</style>
+</head>
+<body>
+  <div class="panel">
+    <div class="tag ok">Ultramarine · acentos</div>
+    <h3>Vuelvo alcanzable lo imposible</h3>
+    <p>Acento de títulos, <a class="link" href="#">enlaces</a> y botones.</p>
+    <span class="btn">Trabajemos juntos</span>
+  </div>
+  <div class="panel">
+    <div class="tag num">Champagne · solo números</div>
+    <div class="big">+18.000</div>
+    <div class="cap">emprendedores fortalecidos en +15 países</div>
+  </div>
+</body>
+</html>

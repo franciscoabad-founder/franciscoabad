@@ -1,0 +1,21 @@
+<!-- @dsCard group="Spacing" viewport="700x170" name="Radii" subtitle="Buttons 6px · cards 12px · restrained, not playful" -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<link rel="stylesheet" href="../styles.css">
+<style>
+  body { margin: 0; background: var(--bg-base); font-family: var(--font-sans); padding: 24px; display: flex; gap: 18px; }
+  .box { flex: 1; height: 96px; background: var(--royal); border: 1px solid var(--border-subtle); display: flex; align-items: flex-end; padding: 12px; }
+  .lab { font-size: 11px; color: var(--white-64); }
+  .lab b { color: #fff; display: block; font-size: 12px; }
+</style>
+</head>
+<body>
+  <div class="box" style="border-radius: var(--radius-button)"><span class="lab"><b>Button</b>6px</span></div>
+  <div class="box" style="border-radius: var(--radius-md)"><span class="lab"><b>Medium</b>10px</span></div>
+  <div class="box" style="border-radius: var(--radius-card)"><span class="lab"><b>Card</b>12px</span></div>
+  <div class="box" style="border-radius: var(--radius-lg)"><span class="lab"><b>Large</b>16px</span></div>
+  <div class="box" style="border-radius: var(--radius-pill)"><span class="lab"><b>Pill</b>999px</span></div>
+</body>
+</html>

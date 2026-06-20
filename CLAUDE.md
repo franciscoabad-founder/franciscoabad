@@ -92,6 +92,9 @@ Archivos en `apps/web/public/`:
 Lógica en Navbar.astro: CSS `[data-theme="light"]` muestra `logo-light`, oculta `logo-dark`.
 Footer siempre usa `fa_logo_whitemono.svg` (fondo charcoal #1A1A1A siempre oscuro).
 
+Lee siempre _design-system/SKILL.md y _design-system/readme.md 
+antes de diseñar o escribir cualquier cosa para esta marca.
+
 ## Redes sociales (Footer.astro)
 
 - LinkedIn: `https://www.linkedin.com/in/franciscoabadec/`

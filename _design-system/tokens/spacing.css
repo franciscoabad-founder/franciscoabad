@@ -1,0 +1,51 @@
+/* ============================================================
+   Ultramarine v5 · Spacing, Radius, Shadow, Motion
+   Editorial and premium: generous whitespace, restrained radii,
+   soft deep-blue shadows. Buttons are 6px. Cards 12px.
+   ============================================================ */
+
+:root {
+  /* ---- Spacing scale (4px base) ---- */
+  --space-0: 0;
+  --space-1: 0.25rem;   /* 4 */
+  --space-2: 0.5rem;    /* 8 */
+  --space-3: 0.75rem;   /* 12 */
+  --space-4: 1rem;      /* 16 */
+  --space-5: 1.5rem;    /* 24 */
+  --space-6: 2rem;      /* 32 */
+  --space-7: 3rem;      /* 48 */
+  --space-8: 4rem;      /* 64 */
+  --space-9: 6rem;      /* 96 */
+  --space-10: 8rem;     /* 128 */
+
+  /* ---- Layout ---- */
+  --container-max: 1200px;
+  --container-pad: 1.5rem;     /* 24, gutters on mobile */
+  --container-pad-lg: 2rem;    /* 32, desktop */
+  --section-y: clamp(3rem, 8vw, 7.5rem); /* @kind spacing */
+
+  /* ---- Radii ---- */
+  --radius-button: 6px;        /* brand spec: primary button radius */
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-card: 12px;
+  --radius-lg: 16px;
+  --radius-pill: 999px;
+
+  /* ---- Borders ---- */
+  --border-width: 1px;
+
+  /* ---- Shadows (deep-blue tinted, soft) ---- */
+  --shadow-sm: 0 1px 2px rgba(14, 23, 56, 0.18);
+  --shadow-md: 0 6px 20px rgba(14, 23, 56, 0.28);
+  --shadow-lg: 0 18px 48px rgba(14, 23, 56, 0.40);
+  --shadow-accent: 0 8px 28px rgba(59, 78, 217, 0.36);   /* lifted CTA */
+  --shadow-inset: inset 0 1px 0 rgba(255, 255, 255, 0.06);
+
+  /* ---- Motion ---- */
+  --ease-standard: cubic-bezier(0.4, 0, 0.2, 1); /* @kind other */
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);   /* @kind other */
+  --dur-fast: 160ms; /* @kind other */
+  --dur-base: 280ms; /* @kind other */
+  --dur-slow: 600ms;                            /* @kind other */
+}

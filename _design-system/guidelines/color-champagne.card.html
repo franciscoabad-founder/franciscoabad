@@ -1,0 +1,34 @@
+<!-- @dsCard group="Colors" viewport="700x200" name="Champagne · numbers only" subtitle="REGLA DE ORO: reserved exclusively for metrics, KPIs, credentials" -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<link rel="stylesheet" href="../styles.css">
+<style>
+  body { margin: 0; background: var(--bg-base); font-family: var(--font-sans); padding: 24px; display: flex; gap: 20px; align-items: stretch; }
+  .swatches { display: flex; gap: 12px; flex: 0 0 280px; }
+  .sw { flex: 1; border-radius: var(--radius-card); padding: 14px; display: flex; flex-direction: column; justify-content: space-between; border: 1px solid var(--border-subtle); }
+  .name { font-weight: 700; font-size: 13px; }
+  .hex { font-weight: 500; font-size: 11px; opacity: 0.75; letter-spacing: 0.04em; }
+  .demo { flex: 1; background: var(--royal); border-radius: var(--radius-card); border: 1px solid var(--border-subtle); padding: 18px 22px; display: flex; flex-direction: column; justify-content: center; }
+  .metric { font-weight: 900; font-size: 48px; color: var(--champagne); line-height: 1; font-variant-numeric: tabular-nums; }
+  .label { color: var(--white-64); font-size: 12px; margin-top: 6px; }
+  .rule { color: var(--text-muted); font-size: 11px; margin-top: 14px; line-height: 1.4; }
+</style>
+</head>
+<body>
+  <div class="swatches">
+    <div class="sw" style="background: var(--champagne); color: var(--ink);">
+      <div class="name">Champagne</div><div class="hex">#B5985A</div>
+    </div>
+    <div class="sw" style="background: var(--bronze); color: #fff;">
+      <div class="name">Bronze</div><div class="hex">#8A6F3D</div>
+    </div>
+  </div>
+  <div class="demo">
+    <div class="metric">36 &rarr; 78%</div>
+    <div class="label">Eficiencia operativa del IESS en seis meses</div>
+    <div class="rule">Champagne solo en cifras que prueban algo. Nunca en CTAs ni acentos generales.</div>
+  </div>
+</body>
+</html>

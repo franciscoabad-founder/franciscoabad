@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Conceptos award-winning · Francisco Abad</title>
+<link rel="stylesheet" href="../styles.css">
+<style>
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg-base); font-family: var(--font-sans); -webkit-font-smoothing: antialiased; }
+  .wrap { max-width: 1160px; margin: 0 auto; padding: 0 40px; }
+  .concept-tag { position: sticky; top: 0; z-index: 5; background: var(--bg-sunken); border-bottom: 1px solid var(--border-subtle); padding: 14px 40px; display: flex; align-items: baseline; gap: 12px; }
+  .concept-tag .n { font-weight: 900; font-size: 14px; color: var(--ultra-light); }
+  .concept-tag .t { font-weight: 700; font-size: 14px; color: #fff; }
+  .concept-tag .d { font-weight: 400; font-size: 13px; color: var(--text-muted); }
+
+  /* hairline label */
+  .rail { display: flex; align-items: center; gap: 14px; margin-bottom: 28px; }
+  .rail .line { height: 1px; width: 48px; background: var(--ultra-light); }
+  .rail .lbl { font-weight: 500; font-size: 12px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--ultra-light); }
+  .live-dot { width: 8px; height: 8px; border-radius: 50%; background: #2ED47A; box-shadow: 0 0 0 0 rgba(46,212,122,.6); animation: pulse 2s infinite; }
+  @keyframes pulse { 0%{box-shadow:0 0 0 0 rgba(46,212,122,.5)} 70%{box-shadow:0 0 0 9px rgba(46,212,122,0)} 100%{box-shadow:0 0 0 0 rgba(46,212,122,0)} }
+
+  h2.big { font-family: var(--font-sans); font-weight: 900; font-size: clamp(2.4rem,5vw,3.6rem); letter-spacing: -0.025em; color: #fff; margin: 0 0 8px; line-height: 1.02; }
+  .sub { font-size: 16px; color: var(--text-secondary); margin: 0 0 44px; max-width: 52ch; line-height: 1.6; }
+
+  /* ---- Concept 1: Desde Adentro en vivo ---- */
+  .c1 { padding: 80px 0 100px; }
+  .feed { display: grid; grid-template-columns: 1.15fr 1fr; gap: 56px; align-items: start; }
+  .feature { background: var(--royal); border: 1px solid var(--border-subtle); border-radius: var(--radius-card); padding: 32px; box-shadow: var(--shadow-md); }
+  .feature .meta { display: flex; align-items: center; gap: 10px; margin-bottom: 20px; }
+  .pill { display: inline-flex; align-items: center; gap: 7px; font-size: 11px; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; color: #2ED47A; }
+  .wk { font-size: 12px; color: var(--text-muted); letter-spacing: 0.04em; }
+  .feature h3 { font-family: var(--font-sans); font-weight: 700; font-size: 26px; color: #fff; margin: 0 0 14px; line-height: 1.2; }
+  .feature p { font-size: 15px; color: var(--white-64); line-height: 1.65; margin: 0 0 24px; }
+  .progress { margin-bottom: 24px; }
+  .progress .ptop { display: flex; justify-content: space-between; font-size: 12px; color: var(--text-muted); margin-bottom: 8px; }
+  .ptrack { height: 4px; background: var(--white-12); border-radius: 999px; overflow: hidden; }
+  .pfill { height: 100%; width: 0; background: var(--ultramarine); border-radius: 999px; transition: width 1.4s var(--ease-out); }
+  .readbtn { display: inline-flex; align-items: center; white-space: nowrap; background: var(--ultramarine); color: #fff; font-weight: 500; font-size: 14px; padding: 11px 22px; border-radius: var(--radius-button); cursor: pointer; }
+
+  .timeline { position: relative; padding-left: 26px; }
+  .timeline::before { content: ""; position: absolute; left: 4px; top: 6px; bottom: 6px; width: 1px; background: var(--border-subtle); }
+  .entry { position: relative; padding: 0 0 26px; }
+  .entry::before { content: ""; position: absolute; left: -25px; top: 5px; width: 9px; height: 9px; border-radius: 50%; background: var(--bg-base); border: 1.5px solid var(--ultra-light); }
+  .entry.done::before { background: var(--ultra-light); }
+  .entry .date { font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--metric); font-weight: 700; font-variant-numeric: tabular-nums; }
+  .entry h4 { font-size: 16px; font-weight: 500; color: #fff; margin: 4px 0 4px; }
+  .entry span { font-size: 13px; color: var(--text-muted); }
+
+  .subline { margin-top: 40px; display: flex; gap: 10px; align-items: center; flex-wrap: wrap; padding-top: 28px; border-top: 1px solid var(--border-subtle); }
+  .subline .q { font-size: 14px; color: var(--text-secondary); }
+  .field { display: flex; gap: 8px; }
+  .field input { background: var(--bg-elevated); border: 1px solid var(--border-subtle); border-radius: var(--radius-sm); padding: 10px 14px; color: #fff; font-family: var(--font-sans); font-size: 14px; width: 220px; }
+  .field input:focus { outline: none; border-color: var(--ultramarine); box-shadow: 0 0 0 3px var(--ultramarine-24); }
+  .field button { background: var(--ultramarine); color: #fff; border: none; font-family: var(--font-sans); font-weight: 500; font-size: 14px; padding: 10px 18px; border-radius: var(--radius-button); cursor: pointer; white-space: nowrap; }
+
+  /* ---- Concept 2: prueba tangible ---- */
+  .c2 { padding: 90px 0 110px; }
+  .proofgrid { display: grid; grid-template-columns: 1.1fr 1fr; gap: 64px; align-items: center; }
+  .ba { display: flex; flex-direction: column; gap: 16px; }
+  .figjump { font-size: 12px; font-weight: 500; letter-spacing: 0.16em; text-transform: uppercase; color: var(--ultra-light); }
+  .bigfig { font-weight: 900; font-size: clamp(7rem,15vw,12rem); line-height: 0.92; color: var(--metric); font-variant-numeric: tabular-nums; letter-spacing: -0.03em; }
+  .figsub { font-size: 16px; color: #fff; font-weight: 500; }
+  .figlabel { font-size: 14px; color: var(--text-secondary); max-width: 34ch; line-height: 1.55; }
+  .barpair { display: flex; flex-direction: column; gap: 18px; }
+  .bar { }
+  .bar .bl { display: flex; justify-content: space-between; font-size: 13px; color: var(--text-secondary); margin-bottom: 8px; }
+  .bar .bl b { color: #fff; font-weight: 700; font-variant-numeric: tabular-nums; }
+  .btrack { height: 10px; background: var(--white-08); border-radius: 999px; overflow: hidden; }
+  .bfill { height: 100%; width: 0; border-radius: 999px; transition: width 1.6s var(--ease-out); }
+  .bfill.before { background: var(--slate-mid); }
+  .bfill.after { background: linear-gradient(90deg, var(--bronze), var(--champagne)); }
+
+  .mini { display: grid; grid-template-columns: repeat(3,1fr); gap: 36px; margin-top: 64px; padding-top: 40px; border-top: 1px solid var(--border-subtle); }
+  .mini .v { font-weight: 900; font-size: 40px; color: var(--metric); font-variant-numeric: tabular-nums; line-height: 1; }
+  .mini .k { font-size: 13px; color: var(--text-secondary); margin-top: 8px; max-width: 22ch; line-height: 1.4; }
+
+  /* ---- Concept 2: mapa de los tres motores ---- */
+  .cmap { padding: 90px 0 110px; }
+  .mapwrap { display: flex; flex-direction: column; align-items: center; }
+  .mapnode { text-align: center; background: var(--royal); border: 1px solid var(--border-strong); border-radius: var(--radius-card); padding: 22px 38px; box-shadow: var(--shadow-md); }
+  .mapnode .mtag { font-size: 11px; font-weight: 500; letter-spacing: 0.16em; text-transform: uppercase; color: var(--ultra-light); }
+  .mapnode .mname { font-weight: 900; font-size: 24px; color: #fff; margin: 6px 0 4px; letter-spacing: -0.01em; white-space: nowrap; }
+  .mapnode .mthru { font-size: 13px; color: var(--text-secondary); font-style: italic; }
+  .mtrunk { width: 1px; height: 44px; background: var(--border-strong); }
+  .engines { position: relative; display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; width: 100%; padding-top: 22px; }
+  .erail { position: absolute; top: 0; left: 16.66%; right: 16.66%; height: 1px; background: var(--border-strong); }
+  .engine { position: relative; background: var(--bg-elevated); border: 1px solid var(--border-subtle); border-radius: var(--radius-card); padding: 26px; transition: border-color var(--dur-base) var(--ease-standard), transform var(--dur-base) var(--ease-standard), box-shadow var(--dur-base) var(--ease-standard); cursor: default; }
+  .engine::before { content: ""; position: absolute; top: -22px; left: 50%; width: 1px; height: 22px; background: var(--border-strong); }
+  .engine:hover { border-color: var(--border-accent); transform: translateY(-3px); box-shadow: var(--shadow-md); }
+  .engine .etag { font-size: 10px; font-weight: 500; letter-spacing: 0.14em; text-transform: uppercase; color: var(--text-muted); }
+  .engine .ename { font-weight: 700; font-size: 22px; color: #fff; margin: 8px 0 10px; }
+  .engine .edesc { font-size: 14px; color: var(--white-64); line-height: 1.6; margin: 0 0 18px; min-height: 66px; }
+  .engine .emetric { font-weight: 900; font-size: 22px; color: var(--metric); font-variant-numeric: tabular-nums; }
+  .engine .emetric small { font-size: 13px; font-weight: 400; color: var(--text-muted); letter-spacing: 0.02em; }
+
+  /* ---- Concept 4: modo claro = documento ---- */
+  .cdoss { padding: 90px 0 110px; }
+  .dossier { background: var(--surface-card); border: 1px solid var(--border-subtle); border-radius: 6px; box-shadow: var(--shadow-lg); padding: 48px 52px; max-width: 880px; margin: 0 auto; }
+  .dhead { display: flex; justify-content: space-between; align-items: baseline; border-bottom: 1px solid var(--border-subtle); padding-bottom: 20px; margin-bottom: 28px; }
+  .dhead .dname { font-weight: 900; font-size: 24px; color: var(--text-primary); letter-spacing: -0.01em; }
+  .dhead .dkind { font-size: 11px; font-weight: 500; letter-spacing: 0.18em; text-transform: uppercase; color: var(--accent); }
+  .dcols { display: grid; grid-template-columns: 1.2fr 1fr; gap: 44px; }
+  .dgroup { margin-bottom: 22px; }
+  .dgroup h5 { font-size: 11px; font-weight: 500; letter-spacing: 0.12em; text-transform: uppercase; color: var(--text-secondary); margin: 0 0 10px; }
+  .dgroup .row { font-size: 14px; color: var(--text-primary); line-height: 1.5; margin-bottom: 7px; }
+  .dgroup .row span { color: var(--text-secondary); }
+  .dproof { display: flex; flex-direction: column; gap: 18px; }
+  .dproof .pv { font-weight: 900; font-size: 34px; color: var(--metric); font-variant-numeric: tabular-nums; line-height: 1; }
+  .dproof .pk { font-size: 13px; color: var(--text-secondary); margin-top: 4px; }
+  .dsign { margin-top: 32px; padding-top: 20px; border-top: 1px solid var(--border-subtle); display: flex; justify-content: flex-end; }
+  .dsign .sig { font-style: italic; font-weight: 300; font-size: 22px; color: var(--text-primary); }
+  .modehint { text-align: center; font-size: 13px; color: var(--text-secondary); margin-top: 26px; }
+  .modehint b { color: var(--accent); font-weight: 500; }
+</style>
+</head>
+<body>
+
+<!-- ========== CONCEPT 1 ========== -->
+<div class="concept-tag"><span class="n">#1</span><span class="t">Desde Adentro · en vivo</span><span class="d">La transformación documentada semana a semana. Tu jugada firma: prueba el foso y alimenta el newsletter.</span></div>
+<section class="c1"><div class="wrap">
+  <div class="rail"><span class="live-dot"></span><span class="lbl">En vivo · Serie Rafik</span></div>
+  <h2 class="big">Desde Adentro</h2>
+  <p class="sub">No un caso pulido después. La transformación de Rafik a AI-native mientras ocurre: qué decido, qué falla, qué funciona.</p>
+
+  <div class="feed">
+    <div class="feature">
+      <div class="meta"><span class="pill"><span class="live-dot"></span>En curso</span><span class="wk">Semana 3 de 7 · 6 jul 2026</span></div>
+      <h3>Diagnóstico operativo: dónde se rompe el flujo legal</h3>
+      <p>Mapeé el proceso de intake de Rafik de punta a punta. El cuello no era la IA, era cómo entran los casos. Esta semana: instalar el primer agente sobre ese flujo.</p>
+      <div class="progress">
+        <div class="ptop"><span>Avance de la serie</span><span>43%</span></div>
+        <div class="ptrack"><div class="pfill" data-w="43%"></div></div>
+      </div>
+      <span class="readbtn">Leer la entrega completa →</span>
+    </div>
+
+    <div class="timeline">
+      <div class="entry"><div class="date">04 JUL</div><h4>Semana 2 · El company brain, primer borrador</h4><span>Qué entra, qué se automatiza, qué se queda humano.</span></div>
+      <div class="entry done"><div class="date">27 JUN</div><h4>Semana 1 · Acuerdo de qué es público</h4><span>Cómo arranco una transformación en público sin quemar la confianza.</span></div>
+      <div class="entry done"><div class="date">22 JUN</div><h4>Semana 0 · Por qué Rafik, por qué en vivo</h4><span>El planteamiento de la serie y la apuesta.</span></div>
+      <div class="subline">
+        <span class="q">Recíbelo cada viernes.</span>
+        <span class="field"><input type="email" placeholder="tu@email.com"><button>Suscribirme</button></span>
+      </div>
+    </div>
+  </div>
+</div></section>
+
+<!-- ========== CONCEPT 2 ========== -->
+<div class="concept-tag"><span class="n">#3</span><span class="t">La prueba, tangible</span><span class="d">Los números no solo se leen: se animan al entrar y muestran el antes/después. Credibilidad que se siente.</span></div>
+<section class="c2"><div class="wrap">
+  <div class="proofgrid">
+    <div class="ba">
+      <div class="bigfig" data-count="78" data-from="36" data-suffix="%">78%</div>
+      <div class="figsub">De 36% a 78% en seis meses.</div>
+      <div class="figlabel">Con resultados que se miden.</div>
+    </div>
+    <div class="barpair">
+      <div class="bar"><div class="bl"><span>Antes · junio 2025</span><b>36%</b></div><div class="btrack"><div class="bfill before" data-w="36%"></div></div></div>
+      <div class="bar"><div class="bl"><span>Después · diciembre 2025</span><b>78%</b></div><div class="btrack"><div class="bfill after" data-w="78%"></div></div></div>
+    </div>
+  </div>
+
+  <div class="mini">
+    <div><div class="v" data-count="18000" data-prefix="+" data-sep>+18.000</div><div class="k">emprendedores fortalecidos en +15 países</div></div>
+    <div><div class="v" data-count="400" data-prefix="250 a " data-raw>250 a 400</div><div class="k">mentores en la red CODEIS</div></div>
+    <div><div class="v" data-count="10" data-prefix="$" data-suffix="B+">$10B+</div><div class="k">presupuesto administrado</div></div>
+  </div>
+</div></section>
+
+<!-- ========== CONCEPT 2 (mapa) ========== -->
+<div class="concept-tag"><span class="n">#2</span><span class="t">El mapa de los tres motores</span><span class="d">Tu posicionamiento explicado como sistema: la marca se sienta encima de BrainTech, ELAB y taskr.</span></div>
+<section class="cmap"><div class="wrap">
+  <div class="rail"><span class="line"></span><span class="lbl">Cómo opero</span></div>
+  <h2 class="big">No asesoro de lejos. Opero el sistema.</h2>
+  <p class="sub">La marca personal se sienta encima de tres motores reales. El hilo que los une: hacer alcanzable.</p>
+  <div class="mapwrap">
+    <div class="mapnode">
+      <div class="mtag">Marca personal</div>
+      <div class="mname">Francisco Abad</div>
+      <div class="mthru">Hacer alcanzable</div>
+    </div>
+    <div class="mtrunk"></div>
+    <div class="engines">
+      <div class="erail"></div>
+      <div class="engine">
+        <div class="etag">Motor de cash</div>
+        <div class="ename">BrainTech</div>
+        <div class="edesc">Vuelvo tu empresa AI-native e instalo su motor de GTM. Custodia del framework AI Thinking.</div>
+        <div class="emetric">5 Cs <small>AI Thinking</small></div>
+      </div>
+      <div class="engine">
+        <div class="etag">Motor de misión</div>
+        <div class="ename">CODEIS · ELAB</div>
+        <div class="edesc">Emprendimiento y sostenibilidad alcanzables. Earned income para el sector social.</div>
+        <div class="emetric">+18.000 <small>emprendedores</small></div>
+      </div>
+      <div class="engine">
+        <div class="etag">Motor de equity</div>
+        <div class="ename">taskr</div>
+        <div class="edesc">Conexión humana alcanzable. OS de networking cross-community con un agente de IA por miembro.</div>
+        <div class="emetric">1 <small>agente de IA por miembro</small></div>
+      </div>
+    </div>
+  </div>
+</div></section>
+
+<!-- ========== CONCEPT 4 (dossier modo claro) ========== -->
+<div class="concept-tag"><span class="n">#4</span><span class="t">Modo claro con significado</span><span class="d">La sección de prueba cambia a Linen claro, como un expediente. El cambio de modo tiene sentido, no es decoración.</span></div>
+<section class="cdoss theme-light"><div class="wrap">
+  <div class="dossier">
+    <div class="dhead">
+      <span class="dname">Francisco Abad</span>
+      <span class="dkind">Dossier · Trayectoria verificada</span>
+    </div>
+    <div class="dcols">
+      <div>
+        <div class="dgroup">
+          <h5>Formación</h5>
+          <div class="row">MPA · <span>London School of Economics</span></div>
+          <div class="row">Global Competitiveness Leadership · <span>Georgetown</span></div>
+          <div class="row">Global Social Impact House · <span>University of Pennsylvania</span></div>
+        </div>
+        <div class="dgroup">
+          <h5>Operación</h5>
+          <div class="row">Director General del IESS · <span>jun a dic 2025</span></div>
+          <div class="row">Fundador y Presidente · <span>CODEIS, desde 2016</span></div>
+          <div class="row">Fundador · <span>BrainTech, AI-native</span></div>
+        </div>
+      </div>
+      <div class="dproof">
+        <div><div class="pv">78%</div><div class="pk">eficiencia operativa del IESS, desde 36% en seis meses</div></div>
+        <div><div class="pv">+32.000</div><div class="pk">empleados bajo liderazgo</div></div>
+        <div><div class="pv">+15</div><div class="pk">países con presencia de CODEIS</div></div>
+      </div>
+    </div>
+    <div class="dsign"><span class="sig">Francisco Abad</span></div>
+  </div>
+  <p class="modehint">El resto del sitio vive en <b>Ink oscuro</b>. La prueba documentada entra en <b>Linen claro</b>, el código visual de "esto es un expediente".</p>
+</div></section>
+
+<script>
+  // reveal bars + progress on scroll
+  const fills = document.querySelectorAll('.pfill,.bfill');
+  const barObs = new IntersectionObserver((es)=>{es.forEach(e=>{if(e.isIntersecting){e.target.style.width=e.target.dataset.w;barObs.unobserve(e.target);}});},{threshold:.4});
+  fills.forEach(f=>barObs.observe(f));
+
+  // count-up numbers (supports data-from start value)
+  function countUp(el){
+    const target = +el.dataset.count, start = +el.dataset.from || 0;
+    const dur = 1500, t0 = performance.now();
+    const pre = el.dataset.prefix||'', suf = el.dataset.suffix||'', sep = 'sep' in el.dataset, raw = 'raw' in el.dataset;
+    function fmt(n){ return sep ? n.toLocaleString('es') : n; }
+    function tick(now){
+      const p = Math.min((now-t0)/dur,1), e = 1-Math.pow(1-p,3);
+      const val = Math.round(start + (target-start)*e);
+      el.textContent = pre + (raw ? val : fmt(val)) + suf;
+      if(p<1) requestAnimationFrame(tick);
+    }
+    requestAnimationFrame(tick);
+  }
+  const numObs = new IntersectionObserver((es)=>{es.forEach(e=>{if(e.isIntersecting){countUp(e.target); numObs.unobserve(e.target);}});},{threshold:.5});
+  document.querySelectorAll('[data-count]').forEach(el=>numObs.observe(el));
+
+  // safety net: if the observer hasn't filled bars (e.g. no scroll), fill them anyway
+  setTimeout(()=>{ fills.forEach(f=>{ if(!f.style.width||f.style.width==='0px'||f.style.width==='0') f.style.width=f.dataset.w; }); }, 2600);
+</script>
+</body>
+</html>

@@ -1,0 +1,20 @@
+<!-- @dsCard group="Spacing" viewport="700x180" name="Shadows" subtitle="Deep-blue tinted, soft. Accent glow lifts CTAs only." -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<link rel="stylesheet" href="../styles.css">
+<style>
+  body { margin: 0; background: var(--bg-elevated); font-family: var(--font-sans); padding: 30px 26px; display: flex; gap: 24px; }
+  .card { flex: 1; height: 88px; background: var(--ink); border-radius: var(--radius-card); display: flex; align-items: flex-end; padding: 12px; }
+  .lab { font-size: 11px; color: var(--white-64); }
+  .lab b { color: #fff; display: block; font-size: 12px; }
+</style>
+</head>
+<body>
+  <div class="card" style="box-shadow: var(--shadow-sm)"><span class="lab"><b>sm</b>subtle lift</span></div>
+  <div class="card" style="box-shadow: var(--shadow-md)"><span class="lab"><b>md</b>cards</span></div>
+  <div class="card" style="box-shadow: var(--shadow-lg)"><span class="lab"><b>lg</b>modals / hero img</span></div>
+  <div class="card" style="box-shadow: var(--shadow-accent); background: var(--ultramarine)"><span class="lab"><b style="color:#fff">accent</b><span style="color:rgba(255,255,255,.8)">CTA glow</span></span></div>
+</body>
+</html>

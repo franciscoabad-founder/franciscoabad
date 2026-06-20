@@ -1,0 +1,41 @@
+<!-- @dsCard group="Brand" viewport="700x250" name="Wordmark" subtitle="FRANCISCO whisper (XLight) + ABAD protagonist (Black)" -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<link rel="stylesheet" href="../styles.css">
+<style>
+  body { margin: 0; font-family: var(--font-sans); display: flex; }
+  .pane { flex: 1; padding: 28px 32px; display: flex; flex-direction: column; gap: 26px; justify-content: center; }
+  .dark { background: var(--ink); }
+  .light { background: var(--linen); }
+  /* Stacked lockup */
+  .mark { line-height: 0.92; }
+  .first { font-weight: 200; font-size: 20px; letter-spacing: 0.34em; display: block; }
+  .last { font-weight: 900; font-size: 52px; letter-spacing: -0.01em; display: block; }
+  .dark .first { color: var(--white-64); }
+  .dark .last { color: var(--ultramarine); }
+  .light .first { color: var(--slate-mid); }
+  .light .last { color: var(--royal); }
+  /* Horizontal lockup */
+  .horiz { display: flex; align-items: baseline; gap: 12px; }
+  .horiz .first { font-size: 15px; }
+  .horiz .last { font-size: 34px; }
+  .cap { font-size: 10px; letter-spacing: 0.04em; }
+  .dark .cap { color: var(--text-muted); }
+  .light .cap { color: var(--slate-mid); }
+</style>
+</head>
+<body>
+  <div class="pane dark">
+    <div class="mark"><span class="first">FRANCISCO</span><span class="last">ABAD</span></div>
+    <div class="horiz"><span class="first">FRANCISCO</span><span class="last">ABAD</span></div>
+    <span class="cap">On dark · ABAD in Ultramarine</span>
+  </div>
+  <div class="pane light">
+    <div class="mark"><span class="first">FRANCISCO</span><span class="last">ABAD</span></div>
+    <div class="horiz"><span class="first">FRANCISCO</span><span class="last">ABAD</span></div>
+    <span class="cap">On light · ABAD in Royal</span>
+  </div>
+</body>
+</html>
