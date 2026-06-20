@@ -5,7 +5,7 @@ const stats = [
   { value: 10,    suffix: "B+", prefix: "$", label: "Fondos administrados" },
   { value: 32000, suffix: "",   prefix: "",  label: "Personas bajo liderazgo" },
   { value: 15,    suffix: "",   prefix: "",  label: "Países con presencia" },
-  { value: 12000, suffix: "+",  prefix: "",  label: "Emprendedores impactados" },
+  { value: 18000, suffix: "+",  prefix: "",  label: "Emprendedores impactados" },
 ];
 
 interface StatItemProps {
@@ -22,7 +22,7 @@ function StatItem({ value, suffix, prefix, label, start }: StatItemProps) {
 
   return (
     <div className="text-center space-y-2">
-      <p className="font-montserrat font-bold text-ember text-[clamp(1.8rem,7vw,3.5rem)] md:text-[64px] leading-none tabular-nums">
+      <p className="font-montserrat font-bold text-champagne text-[clamp(1.8rem,7vw,3.5rem)] md:text-[64px] leading-none tabular-nums">
         {prefix}
         {display}
         {suffix}
