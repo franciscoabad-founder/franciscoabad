@@ -95,6 +95,10 @@ Footer siempre usa `fa_logo_whitemono.svg` (fondo charcoal #1A1A1A siempre oscur
 Lee siempre _design-system/SKILL.md y _design-system/readme.md 
 antes de diseñar o escribir cualquier cosa para esta marca.
 
+## Fonts Gotham
+
+Los fonts Gotham están en `_design-system/assets/fonts/` localmente pero no están en el repo (licencia comercial, .gitignore). En producción se cargan vía `@font-face` desde los archivos locales o desde el servidor privado. El fallback en producción es Montserrat (Google Fonts).
+
 ## Redes sociales (Footer.astro)
 
 - LinkedIn: `https://www.linkedin.com/in/franciscoabadec/`

@@ -1,9 +1,6 @@
 ---
-import { useTranslations } from "../../i18n/utils";
-
-interface Props { lang?: string; }
-const { lang = "es" } = Astro.props;
-const t = useTranslations(lang);
+// Hero · DS v2 — editorial puro, sin eyebrow flotante, sin glows.
+// Titular principal primero; proof como credential line con números champagne.
 ---
 
 <section
@@ -11,36 +8,75 @@ const t = useTranslations(lang);
   class="min-h-screen bg-bg-primary flex items-center pt-20"
 >
   <div class="max-w-[1200px] mx-auto px-6 lg:px-8 py-20 lg:py-32 w-full">
-    <div class="grid grid-cols-1 lg:grid-cols-[3fr_2fr] gap-12 lg:gap-20 items-center">
-      <div class="space-y-7" data-reveal>
-        <p class="font-montserrat font-light italic text-white text-[15px] tracking-wide">
-          {t("hero.tagline")}
-        </p>
+    <div class="grid grid-cols-1 lg:grid-cols-[1.4fr_1fr] gap-12 lg:gap-20 items-center">
 
-        <h1 class="font-montserrat font-bold text-text-primary text-[clamp(2rem,8vw,4rem)] leading-[1.12] tracking-[-0.5px]">
-          {t("hero.h1")}
+      <!-- Copy -->
+      <div class="flex flex-col gap-8" data-reveal>
+
+        <!-- H1: titular principal, Black weight -->
+        <h1
+          class="font-montserrat text-text-primary leading-tight tracking-tight m-0"
+          style="font-weight: 900; font-size: clamp(2.75rem, 7vw, 5rem); line-height: 1.08; letter-spacing: -0.02em; text-wrap: balance;"
+        >
+          Vuelvo alcanzable lo imposible.
         </h1>
 
-        <p class="font-inter text-text-secondary text-lg tracking-[2px]">
-          {t("hero.pills")}
+        <!-- Subtext -->
+        <p
+          class="font-inter text-text-secondary m-0"
+          style="font-size: 1.125rem; line-height: 1.6; max-width: 46ch;"
+        >
+          Diseño y opero sistemas que hacen rendir a personas, empresas e instituciones. Desde adentro, codo a codo, con resultados que se miden.
         </p>
 
-        <div class="flex flex-wrap gap-4 pt-2">
+        <!-- Credential line: proof real, sin píldoras decorativas -->
+        <div class="flex flex-wrap items-center gap-x-4 gap-y-2">
+          {[
+            { text: "Ex Director General del IESS" },
+            { num: "+32.000", text: "personas" },
+            { num: "$10.000M", text: "administrados" },
+            { text: "Fundador de CODEIS" },
+          ].map((c, i) => (
+            <>
+              {i > 0 && (
+                <span class="text-text-muted-brand select-none" aria-hidden="true">·</span>
+              )}
+              <span
+                class="font-montserrat text-text-secondary whitespace-nowrap"
+                style="font-size: 14px;"
+              >
+                {c.num && (
+                  <b
+                    class="text-champagne"
+                    style="font-weight: 700; font-variant-numeric: tabular-nums;"
+                  >
+                    {c.num}{" "}
+                  </b>
+                )}
+                {c.text}
+              </span>
+            </>
+          ))}
+        </div>
+
+        <!-- CTAs -->
+        <div class="flex flex-wrap gap-4 mt-2">
           <a
-            href="#servicios"
-            class="font-inter font-medium text-white bg-ember hover:brightness-110 px-8 py-3 rounded-md transition-colors duration-300"
+            href="/trabaja-conmigo"
+            class="font-montserrat font-semibold text-[13px] uppercase tracking-[1.5px] text-white bg-ember px-8 py-3.5 rounded-[6px] hover:brightness-110 transition-all duration-300 whitespace-nowrap"
           >
-            {t("hero.cta_primary")}
+            Trabajemos juntos
           </a>
           <a
-            href="#recursos"
-            class="font-inter font-medium text-ember border border-ember hover:bg-ember hover:text-white px-8 py-3 rounded-md transition-all duration-300"
+            href="/sobre-mi"
+            class="font-montserrat font-semibold text-[13px] uppercase tracking-[1.5px] text-ultra-light border border-ember px-8 py-3.5 rounded-[6px] hover:bg-ember hover:text-white transition-all duration-300 whitespace-nowrap"
           >
-            {t("hero.cta_secondary")}
+            Conoce mi trayectoria
           </a>
         </div>
       </div>
 
+      <!-- Portrait -->
       <div class="flex justify-center lg:justify-end" data-reveal data-reveal-delay="3">
         <img
           src="/francisco-abad.jpg"
@@ -49,9 +85,11 @@ const t = useTranslations(lang);
           height="1600"
           loading="eager"
           fetchpriority="high"
-          class="w-full max-w-[340px] aspect-[3/4] object-cover rounded-2xl shadow-2xl"
+          class="w-full max-w-[360px] lg:max-w-[38vw]"
+          style="aspect-ratio: 3/4; object-fit: cover; border-radius: 16px; box-shadow: 0 18px 48px rgba(14, 23, 56, 0.40);"
         />
       </div>
+
     </div>
   </div>
 </section>

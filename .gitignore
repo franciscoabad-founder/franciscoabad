@@ -19,6 +19,10 @@ dist-ssr
 # Imágenes originales pre-optimización (no versionadas, demasiado pesadas)
 _archive/
 
+# Fonts licenciadas — no subir a repo público
+_design-system/assets/fonts/
+_design-system/uploads/Gotham*
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
