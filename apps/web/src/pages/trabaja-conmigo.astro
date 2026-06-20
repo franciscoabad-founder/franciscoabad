@@ -3,49 +3,33 @@ import BaseLayout from "../layouts/BaseLayout.astro";
 import Navbar from "../components/Navbar.astro";
 import Footer from "../components/Footer.astro";
 
-const sessions = [
+const areas = [
   {
-    title: "Sesión de Diagnóstico",
-    price: "$297",
-    duration: "90 min · Zoom",
-    includes: [
-      "Diagnóstico estructurado",
-      "Plan de 90 días",
-      "Excel configurado",
-      "Resumen ejecutivo",
-    ],
-    cta: "Aplicar a esta sesión →",
-    href: "/contacto?tipo=advisory",
+    question: "¿Quieres transformar tu empresa con inteligencia artificial?",
+    body: "Instalo IA como motor operativo: automatización de flujos, revenue engineering y el company brain que hace que tu equipo tome mejores decisiones más rápido.",
+    cta: "Escríbeme →",
+    href: "/contacto?tipo=ia",
   },
   {
-    title: "Sesión + Seguimiento",
-    price: "$497",
-    duration: "90 min + 2 check-ins de 30 min",
-    includes: [
-      "Todo lo de la Sesión de Diagnóstico",
-      "2 check-ins de seguimiento",
-      "Ajustes en tiempo real",
-    ],
-    cta: "Aplicar a esta sesión →",
-    href: "/contacto?tipo=advisory",
+    question: "¿Quieres generar impacto social o ambiental sostenible?",
+    body: "Trabajo con organizaciones que quieren construir modelos de earned income, escalar sin depender de donaciones y medir su impacto con rigor.",
+    cta: "Escríbeme →",
+    href: "/contacto?tipo=impacto",
   },
   {
-    title: "Sistema Completo",
-    price: "Desde $997",
-    duration: "Done-For-You",
-    includes: [
-      "Para founders que quieren que el sistema esté instalado, no solo explicado",
-    ],
-    cta: "Solicitar información →",
-    href: "/contacto?tipo=advisory",
+    question: "¿Quieres monetizar o llevar tu comunidad al siguiente nivel?",
+    body: "Si tienes una comunidad activa y quieres convertirla en un activo que genera ingresos reales, hablemos del modelo y la infraestructura que lo hace posible.",
+    cta: "Escríbeme →",
+    href: "/contacto?tipo=comunidad",
   },
 ];
 
 const speakingTopics = [
-  "Systems thinking aplicado",
-  "Transformación institucional",
+  "Transformación digital impulsada por IA",
   "Liderazgo y toma de decisiones bajo presión",
   "Ejecución estratégica",
+  "Obtención y gestión de fondos",
+  "Implementación de sistemas de crecimiento",
 ];
 ---
 
@@ -124,44 +108,33 @@ const speakingTopics = [
       </div>
     </section>
 
-    {/* Sección B — Sesiones 1:1 */}
+    {/* Sección B — Áreas de trabajo */}
     <section class="bg-bg-elevated py-12 md:py-20 border-t border-border-subtle">
       <div class="max-w-[1200px] mx-auto px-6 lg:px-8">
-        <p class="font-montserrat text-[11px] uppercase tracking-[2px] text-ember mb-3">
+        <p class="font-montserrat text-[11px] uppercase tracking-[2px] text-ultra-light mb-3">
           Para founders y executives
         </p>
         <h2 class="font-montserrat font-bold text-text-primary text-[32px] md:text-[38px] leading-tight mb-3">
           Trabajemos directamente
         </h2>
         <p class="font-inter text-text-secondary text-[15px] mb-12">
-          Aplica primero. Si hay fit, agendamos.
+          Escribe primero. Si hay fit, agendamos.
         </p>
 
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {sessions.map((s) => (
+          {areas.map((a) => (
             <div class="bg-bg-primary border border-border-subtle hover:border-ember rounded-lg p-8 flex flex-col transition-colors duration-300">
-              <p class="font-montserrat font-bold text-ember text-[28px] mb-1">
-                {s.price}
+              <p class="font-montserrat font-bold text-text-primary text-[18px] leading-snug mb-4">
+                {a.question}
               </p>
-              <p class="font-montserrat font-semibold text-text-primary text-[18px] mb-1">
-                {s.title}
+              <p class="font-inter text-text-secondary text-[14px] leading-relaxed flex-1 mb-8">
+                {a.body}
               </p>
-              <p class="font-inter text-text-muted-brand text-[12px] mb-6">
-                {s.duration}
-              </p>
-              <ul class="space-y-2 mb-8 flex-1">
-                {s.includes.map((item) => (
-                  <li class="font-inter text-text-secondary text-[14px] flex items-start gap-2 leading-snug">
-                    <span class="text-ember flex-shrink-0 mt-[2px]">·</span>
-                    {item}
-                  </li>
-                ))}
-              </ul>
               <a
-                href={s.href}
+                href={a.href}
                 class="font-montserrat font-semibold text-[13px] uppercase tracking-[1.5px] text-ultra-light border border-ember px-5 py-3 rounded-md text-center hover:bg-ember hover:text-white transition-all duration-300"
               >
-                {s.cta}
+                {a.cta}
               </a>
             </div>
           ))}
