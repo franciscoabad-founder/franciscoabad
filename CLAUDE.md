@@ -160,6 +160,57 @@ Si no aparece: `git add + commit + push` antes de continuar.
 Para imágenes en content collections (MDX heroImage): usar siempre nombre de archivo
 nuevo cuando se reemplaza una imagen. Astro cachea por hash; mismo nombre = cache stale.
 
+## VPS Automations — pancho-automations-01 (junio 2026)
+
+Servidor dedicado separado del sitio web. NO tiene relación con Vercel ni con franciscoabad.com.
+
+- IP: `178.105.163.120`
+- OS: Ubuntu 26.04 LTS, 2 vCPU, 3.7 GB RAM, 2 GB swap en `/swapfile`
+- Acceso: SSH con llave a `root@178.105.163.120`
+
+### Servicios corriendo
+
+| Servicio | Contenedor / proceso | Acceso interno | Acceso público |
+|---|---|---|---|
+| n8n | `n8n-n8n-1` (Docker) | puerto 5678 | `https://n8n.franciscoabad.com` |
+| Caddy | `n8n-caddy-1` (Docker) | puertos 80/443 | proxy para n8n y gbrain |
+| gbrain MCP server | systemd `gbrain.service` | `172.18.0.1:3131` | `https://brain.franciscoabad.com` |
+| Postgres + pgvector | `gbrain-postgres` (Docker) | `127.0.0.1:5432` | cerrado al exterior |
+
+### Archivos de config clave en el VPS
+
+- Caddyfile: `/opt/n8n/Caddyfile` (NO tocar bloques de n8n)
+- gbrain env: `/root/gbrain.env` (ZEROENTROPY_API_KEY, GBRAIN_ADMIN_TOKEN)
+- Postgres env: `/opt/gbrain-db/.env` (POSTGRES_PASSWORD)
+- Postgres data: `/opt/gbrain-db/data/`
+- gbrain systemd: `/etc/systemd/system/gbrain.service`
+
+### gbrain — estado (junio 2026)
+
+- Versión: `0.42.52.0`
+- Instalado en el host vía Bun (`/root/.bun/bin/gbrain`)
+- Backend: Postgres local con pgvector, schema v119, todas las migraciones completas
+- Search mode: `conservative` (menor costo)
+- Embeddings: ZeroEntropy (`zembed-1`, 1280 dims)
+- MCP endpoint: `https://brain.franciscoabad.com/mcp`
+- Admin dashboard: `https://brain.franciscoabad.com/admin`
+- Admin token guardado en `/root/gbrain.env` como `GBRAIN_ADMIN_TOKEN`
+- Para conectar Claude Code al brain: `claude mcp add --transport http gbrain https://brain.franciscoabad.com/mcp --header "Authorization: Bearer <TOKEN>" --scope user`
+
+### Red Docker
+
+- Red: `n8n_n8n_net`
+- Gateway (IP del host vista desde contenedores): `172.18.0.1`
+- gbrain bindeado a `172.18.0.1:3131` (no en interfaz pública)
+- UFW permite `172.18.0.0/16 → 3131/tcp` para que Caddy alcance gbrain
+- Puerto 3131 cerrado al exterior
+
+### Regla de seguridad VPS
+
+NUNCA exponer puertos de Postgres (5432) ni gbrain (3131) en la interfaz pública.
+NUNCA tocar `/opt/n8n/Caddyfile` sin verificar primero que n8n sigue respondiendo.
+Antes de cualquier cambio en Caddy: `docker exec n8n-caddy-1 caddy validate --config /etc/caddy/Caddyfile`
+
 ## Rutas del proyecto
 
 Repo: `C:\DEV\franciscoabad`
