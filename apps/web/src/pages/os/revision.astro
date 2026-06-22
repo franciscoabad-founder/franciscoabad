@@ -1,0 +1,107 @@
+---
+import OSLayout from '../../layouts/OSLayout.astro';
+import { datosRevision } from '../../os/data/revision';
+
+const { weekly, monthly } = datosRevision;
+
+const energiaColor: Record<string, string> = { alta: '#6B7AE8', media: '#B5985A', baja: '#6B7280' };
+---
+
+<OSLayout title="Revision">
+  <div>
+    <h1 style="font-size:1.375rem;font-weight:700;color:#F4F6F8;margin:0 0 1.75rem;">Revision</h1>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1rem;">
+
+      <!-- Weekly review -->
+      <div style="background:#131F4A;border:1px solid rgba(232,234,240,0.09);border-radius:12px;padding:1.25rem;">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;">
+          <p style="font-family:'Montserrat',sans-serif;font-size:10px;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;color:#6B7280;margin:0;">Weekly Review</p>
+          <span style={`font-size:11px;font-weight:600;color:${energiaColor[weekly.energia]};font-family:'Montserrat',sans-serif;`}>Energia {weekly.energia}</span>
+        </div>
+        <p style="font-size:12px;color:#6B7280;margin:0 0 1rem;">{weekly.periodo}</p>
+
+        <div style="margin-bottom:0.875rem;">
+          <p style="font-size:11px;font-weight:600;color:#6B7AE8;margin:0 0 0.5rem;font-family:'Montserrat',sans-serif;letter-spacing:0.05em;">Completado</p>
+          <ul style="list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:5px;">
+            {weekly.completado.map((c) => (
+              <li style="display:flex;align-items:flex-start;gap:7px;">
+                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#6B7AE8" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;margin-top:3px;"><polyline points="20 6 9 17 4 12"/></svg>
+                <span style="font-size:13px;color:#E8EAF0;line-height:1.4;">{c}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+
+        <div style="margin-bottom:0.875rem;">
+          <p style="font-size:11px;font-weight:600;color:#B5985A;margin:0 0 0.5rem;font-family:'Montserrat',sans-serif;letter-spacing:0.05em;">Que parar</p>
+          <ul style="list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:5px;">
+            {weekly.que_parar.map((q) => (
+              <li style="font-size:13px;color:#E8EAF0;line-height:1.4;padding-left:18px;position:relative;">
+                <span style="position:absolute;left:0;top:5px;width:6px;height:1px;background:#B5985A;display:block;"></span>
+                {q}
+              </li>
+            ))}
+          </ul>
+        </div>
+
+        <div>
+          <p style="font-size:11px;font-weight:600;color:#6B7280;margin:0 0 0.5rem;font-family:'Montserrat',sans-serif;letter-spacing:0.05em;">Que escalar</p>
+          <ul style="list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:5px;">
+            {weekly.que_escalar.map((q) => (
+              <li style="font-size:13px;color:#E8EAF0;line-height:1.4;padding-left:18px;position:relative;">
+                <span style="position:absolute;left:0;top:5px;width:6px;height:1px;background:#6B7280;display:block;"></span>
+                {q}
+              </li>
+            ))}
+          </ul>
+        </div>
+
+        <div style="margin-top:1rem;padding-top:1rem;border-top:1px solid rgba(232,234,240,0.08);">
+          <p style="font-size:13px;color:#6B7280;font-style:italic;margin:0;line-height:1.5;">"{weekly.nota}"</p>
+        </div>
+      </div>
+
+      <!-- Monthly review -->
+      <div style="background:#131F4A;border:1px solid rgba(232,234,240,0.09);border-radius:12px;padding:1.25rem;">
+        <p style="font-family:'Montserrat',sans-serif;font-size:10px;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;color:#6B7280;margin:0 0 0.5rem;">Monthly Review</p>
+        <p style="font-size:12px;color:#6B7280;margin:0 0 1.25rem;">{monthly.periodo}</p>
+
+        <!-- Big number -->
+        <div style="text-align:center;padding:1rem;background:rgba(59,78,217,0.06);border-radius:8px;margin-bottom:1.25rem;">
+          <p style="font-family:'Montserrat',sans-serif;font-size:2rem;font-weight:700;color:#B5985A;margin:0;line-height:1;">{monthly.numero_destacado}</p>
+          <p style="font-size:12px;color:#6B7280;margin:0.25rem 0 0;">{monthly.numero_label}</p>
+        </div>
+
+        <div style="margin-bottom:0.875rem;">
+          <p style="font-size:11px;font-weight:600;color:#6B7AE8;margin:0 0 0.5rem;font-family:'Montserrat',sans-serif;letter-spacing:0.05em;">Wins del mes</p>
+          <ul style="list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:5px;">
+            {monthly.wins.map((w) => (
+              <li style="display:flex;align-items:flex-start;gap:7px;">
+                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#6B7AE8" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;margin-top:3px;"><polyline points="20 6 9 17 4 12"/></svg>
+                <span style="font-size:13px;color:#E8EAF0;line-height:1.4;">{w}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+
+        <div style="margin-bottom:0.875rem;">
+          <p style="font-size:11px;font-weight:600;color:#6B7280;margin:0 0 0.5rem;font-family:'Montserrat',sans-serif;letter-spacing:0.05em;">Pendientes</p>
+          <ul style="list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:4px;">
+            {monthly.pendientes.map((p) => (
+              <li style="font-size:13px;color:#E8EAF0;line-height:1.4;padding-left:14px;position:relative;">
+                <span style="position:absolute;left:0;top:7px;width:5px;height:5px;border-radius:50%;background:#6B7280;display:block;"></span>
+                {p}
+              </li>
+            ))}
+          </ul>
+        </div>
+
+        <div style="padding:0.875rem;background:rgba(59,78,217,0.08);border-left:2px solid #3B4ED9;border-radius:0 6px 6px 0;">
+          <p style="font-size:11px;font-weight:600;color:#6B7AE8;margin:0 0 0.25rem;font-family:'Montserrat',sans-serif;letter-spacing:0.05em;">Decision clave</p>
+          <p style="font-size:13px;color:#E8EAF0;margin:0;line-height:1.4;">{monthly.decision_clave}</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</OSLayout>

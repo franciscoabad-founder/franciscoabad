@@ -1,0 +1,64 @@
+---
+import OSLayout from '../../layouts/OSLayout.astro';
+import { eventos } from '../../os/data/agenda';
+
+const fechas = [...new Set(eventos.map((e) => e.fecha))].sort();
+
+const tipoColor: Record<string, string> = {
+  reunion: '#3B4ED9',
+  recordatorio: '#B5985A',
+  'deep-work': '#6B7AE8',
+  personal: '#6B7280',
+};
+const tipoLabel: Record<string, string> = {
+  reunion: 'Reunion',
+  recordatorio: 'Recordatorio',
+  'deep-work': 'Deep work',
+  personal: 'Personal',
+};
+
+const fechaLabel: Record<string, string> = {
+  '2026-06-22': 'Hoy — lun 22 jun',
+  '2026-06-23': 'Manana — mar 23 jun',
+  '2026-06-26': 'Vie 26 jun',
+};
+---
+
+<OSLayout title="Agenda">
+  <div>
+    <h1 style="font-size:1.375rem;font-weight:700;color:#F4F6F8;margin:0 0 1.75rem;">Agenda</h1>
+
+    <div style="display:flex;flex-direction:column;gap:1.5rem;">
+      {fechas.map((fecha) => {
+        const eventosDia = eventos.filter((e) => e.fecha === fecha).sort((a, b) => a.hora.localeCompare(b.hora));
+        return (
+          <div>
+            <p style="font-family:'Montserrat',sans-serif;font-size:10px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:#6B7280;margin:0 0 0.625rem;">
+              {fechaLabel[fecha] ?? fecha}
+            </p>
+            <div style="display:flex;flex-direction:column;gap:6px;">
+              {eventosDia.map((e) => (
+                <div style="display:flex;align-items:flex-start;gap:12px;background:#131F4A;border:1px solid rgba(232,234,240,0.09);border-radius:8px;padding:0.75rem 1rem;">
+                  <div style="min-width:44px;text-align:right;flex-shrink:0;">
+                    <p style="font-family:'Montserrat',sans-serif;font-size:12px;font-weight:600;color:#F4F6F8;margin:0;">{e.hora}</p>
+                    <p style="font-size:10px;color:#6B7280;margin:1px 0 0;">{e.duracion}</p>
+                  </div>
+                  <div style={`width:2px;min-width:2px;border-radius:2px;background:${tipoColor[e.tipo]};align-self:stretch;flex-shrink:0;`}></div>
+                  <div style="flex:1;min-width:0;">
+                    <p style="font-size:14px;font-weight:500;color:#F4F6F8;margin:0 0 2px;line-height:1.3;">{e.titulo}</p>
+                    {e.con && (
+                      <p style="font-size:12px;color:#6B7280;margin:0;">{e.con}</p>
+                    )}
+                  </div>
+                  <span style={`font-size:10px;font-weight:600;color:${tipoColor[e.tipo]};flex-shrink:0;font-family:'Montserrat',sans-serif;letter-spacing:0.05em;white-space:nowrap;`}>
+                    {tipoLabel[e.tipo]}
+                  </span>
+                </div>
+              ))}
+            </div>
+          </div>
+        );
+      })}
+    </div>
+  </div>
+</OSLayout>
