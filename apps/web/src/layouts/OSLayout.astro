@@ -1,6 +1,7 @@
 ---
-// TODO: auth — protect this route
 import "../styles/global.css";
+import { datosHoy } from '../os/data/hoy';
+import { datosDaily } from '../os/data/daily';
 
 interface Props {
   title: string;
@@ -9,32 +10,44 @@ interface Props {
 const { title } = Astro.props;
 const pathname = Astro.url.pathname;
 
+const DIAS = ['Domingo', 'Lunes', 'Martes', 'Miercoles', 'Jueves', 'Viernes', 'Sabado'];
+const diaHoy = DIAS[new Date().getDay()];
+const diaData = datosDaily.semana.find(d => d.dia === diaHoy);
+const tipoDia = diaData?.tipo ?? 'manager';
+
+const tipoLabel: Record<string, string> = { maker: 'Maker', manager: 'Manager', off: 'Off' };
+const tipoColor: Record<string, string> = { maker: '#3B4ED9', manager: '#6B7280', off: '#6B7280' };
+const tipoBg: Record<string, string>   = { maker: 'rgba(59,78,217,0.18)', manager: 'rgba(232,234,240,0.07)', off: 'rgba(232,234,240,0.04)' };
+
+const dominoTexto = datosHoy.domino.tarea;
+
 const navGroups = [
   {
     label: 'Sistema',
     items: [
-      { href: '/os', label: 'Hoy' },
-      { href: '/os/daily', label: 'Daily OS' },
-      { href: '/os/revision', label: 'Revision' },
+      { href: '/os',          label: 'Hoy'      },
+      { href: '/os/daily',    label: 'Daily OS'  },
+      { href: '/os/revision', label: 'Revision'  },
     ],
   },
   {
     label: 'Control',
     items: [
-      { href: '/os/kpis', label: 'KPIs' },
+      { href: '/os/kpis',      label: 'KPIs'      },
       { href: '/os/proyectos', label: 'Proyectos' },
-      { href: '/os/crm', label: 'CRM' },
-      { href: '/os/tareas', label: 'Tareas' },
-      { href: '/os/agenda', label: 'Agenda' },
+      { href: '/os/crm',       label: 'CRM'       },
+      { href: '/os/tareas',    label: 'Tareas'    },
+      { href: '/os/agenda',    label: 'Agenda'    },
     ],
   },
   {
     label: 'Captura',
     items: [
-      { href: '/os/bandeja', label: 'Por revisar' },
-      { href: '/os/contenido', label: 'Contenido' },
-      { href: '/os/finanzas', label: 'Finanzas' },
-      { href: '/os/salud', label: 'Salud' },
+      { href: '/os/bandeja',   label: 'Por revisar' },
+      { href: '/os/contenido', label: 'Contenido'   },
+      { href: '/os/redes',     label: 'Redes'       },
+      { href: '/os/finanzas',  label: 'Finanzas'    },
+      { href: '/os/salud',     label: 'Salud'       },
     ],
   },
   {
@@ -51,19 +64,20 @@ function isActive(href: string): boolean {
 }
 
 const icons: Record<string, string> = {
-  '/os':            '<svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>',
-  '/os/daily':      '<svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg>',
-  '/os/revision':   '<svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/><path d="M8 16H3v5"/></svg>',
-  '/os/kpis':       '<svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" x2="12" y1="20" y2="10"/><line x1="18" x2="18" y1="20" y2="4"/><line x1="6" x2="6" y1="20" y2="16"/></svg>',
-  '/os/proyectos':  '<svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>',
-  '/os/crm':        '<svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>',
-  '/os/tareas':     '<svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>',
-  '/os/agenda':     '<svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="4" rx="2" ry="2"/><line x1="16" x2="16" y1="2" y2="6"/><line x1="8" x2="8" y1="2" y2="6"/><line x1="3" x2="21" y1="10" y2="10"/></svg>',
-  '/os/bandeja':    '<svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 16 12 14 15 10 15 8 12 2 12"/><path d="M5.45 5.11 2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"/></svg>',
-  '/os/contenido':  '<svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>',
-  '/os/finanzas':   '<svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" x2="12" y1="1" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>',
-  '/os/salud':      '<svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>',
-  '/os/cerebro':    '<svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9.5 2A2.5 2.5 0 0 1 12 4.5v15a2.5 2.5 0 0 1-4.96-.46 2.5 2.5 0 0 1-2.96-3.08 3 3 0 0 1-.34-5.58 2.5 2.5 0 0 1 1.32-4.24 2.5 2.5 0 0 1 1.98-3A2.5 2.5 0 0 1 9.5 2Z"/><path d="M14.5 2A2.5 2.5 0 0 0 12 4.5v15a2.5 2.5 0 0 0 4.96-.46 2.5 2.5 0 0 0 2.96-3.08 3 3 0 0 0 .34-5.58 2.5 2.5 0 0 0-1.32-4.24 2.5 2.5 0 0 0-1.98-3A2.5 2.5 0 0 0 14.5 2Z"/></svg>',
+  '/os':            '<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>',
+  '/os/daily':      '<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg>',
+  '/os/revision':   '<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/><path d="M8 16H3v5"/></svg>',
+  '/os/kpis':       '<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" x2="12" y1="20" y2="10"/><line x1="18" x2="18" y1="20" y2="4"/><line x1="6" x2="6" y1="20" y2="16"/></svg>',
+  '/os/proyectos':  '<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>',
+  '/os/crm':        '<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>',
+  '/os/tareas':     '<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>',
+  '/os/agenda':     '<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="4" rx="2" ry="2"/><line x1="16" x2="16" y1="2" y2="6"/><line x1="8" x2="8" y1="2" y2="6"/><line x1="3" x2="21" y1="10" y2="10"/></svg>',
+  '/os/bandeja':    '<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 16 12 14 15 10 15 8 12 2 12"/><path d="M5.45 5.11 2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"/></svg>',
+  '/os/contenido':  '<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>',
+  '/os/redes':      '<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" x2="15.42" y1="13.51" y2="17.49"/><line x1="15.41" x2="8.59" y1="6.51" y2="10.49"/></svg>',
+  '/os/finanzas':   '<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" x2="12" y1="1" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>',
+  '/os/salud':      '<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>',
+  '/os/cerebro':    '<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9.5 2A2.5 2.5 0 0 1 12 4.5v15a2.5 2.5 0 0 1-4.96-.46 2.5 2.5 0 0 1-2.96-3.08 3 3 0 0 1-.34-5.58 2.5 2.5 0 0 1 1.32-4.24 2.5 2.5 0 0 1 1.98-3A2.5 2.5 0 0 1 9.5 2Z"/><path d="M14.5 2A2.5 2.5 0 0 0 12 4.5v15a2.5 2.5 0 0 0 4.96-.46 2.5 2.5 0 0 0 2.96-3.08 3 3 0 0 0 .34-5.58 2.5 2.5 0 0 0-1.32-4.24 2.5 2.5 0 0 0-1.98-3A2.5 2.5 0 0 0 14.5 2Z"/></svg>',
 };
 ---
 
@@ -79,153 +93,372 @@ const icons: Record<string, string> = {
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
       rel="stylesheet"
-      href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;700&display=swap"
     />
     <style>
       *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
       html, body { height: 100%; }
+
       body {
-        background: #0E1738;
+        background: #080F26;
         color: #F4F6F8;
         font-family: 'Inter', sans-serif;
         -webkit-font-smoothing: antialiased;
-        display: flex;
-        flex-direction: column;
         min-height: 100vh;
       }
       h1, h2, h3, h4, h5, h6 { font-family: 'Montserrat', sans-serif; }
 
-      .os-shell {
-        display: flex;
-        flex: 1;
-        min-height: 0;
-        height: 100vh;
-      }
-      .os-sidebar {
-        width: 220px;
-        flex-shrink: 0;
-        background: #070E24;
-        border-right: 1px solid rgba(232,234,240,0.08);
-        display: flex;
-        flex-direction: column;
-        overflow-y: auto;
+      /* ── Command bar ── */
+      .os-cmdbar {
         position: sticky;
         top: 0;
-        height: 100vh;
+        z-index: 100;
+        height: 44px;
+        display: flex;
+        align-items: center;
+        background: #060C1E;
+        border-bottom: 1px solid rgba(59,78,217,0.15);
+        gap: 0;
+        flex-shrink: 0;
       }
-      .os-main {
+
+      .cmd-brand {
+        width: 196px;
+        flex-shrink: 0;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 0 1rem 0 1.125rem;
+        border-right: 1px solid rgba(232,234,240,0.07);
+        height: 100%;
+      }
+      .cmd-brand-os {
+        font-family: 'Montserrat', sans-serif;
+        font-size: 11px;
+        font-weight: 700;
+        letter-spacing: 0.2em;
+        text-transform: uppercase;
+        color: #6B7AE8;
+      }
+      .cmd-brand-sep {
+        width: 1px;
+        height: 12px;
+        background: rgba(232,234,240,0.12);
+      }
+      .cmd-brand-name {
+        font-family: 'Montserrat', sans-serif;
+        font-size: 9px;
+        font-weight: 600;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        color: #6B7280;
+      }
+
+      .cmd-center {
         flex: 1;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 0 1rem;
         min-width: 0;
-        overflow-y: auto;
-        padding: 2rem 2.5rem;
-        max-width: 100%;
+        height: 100%;
+        border-right: 1px solid rgba(232,234,240,0.07);
+        overflow: hidden;
       }
+      .cmd-day-pill {
+        display: inline-flex;
+        align-items: center;
+        padding: 2px 8px;
+        border-radius: 4px;
+        font-family: 'Montserrat', sans-serif;
+        font-size: 8px;
+        font-weight: 700;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        flex-shrink: 0;
+      }
+      .cmd-domino-label {
+        font-size: 9px;
+        color: #6B7280;
+        font-family: 'Montserrat', sans-serif;
+        font-weight: 600;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        flex-shrink: 0;
+      }
+      .cmd-domino-text {
+        font-size: 12px;
+        color: #E8EAF0;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        min-width: 0;
+      }
+
+      .cmd-right {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 0 0.875rem;
+        height: 100%;
+        flex-shrink: 0;
+      }
+      .cmd-capture {
+        display: flex;
+        align-items: center;
+        background: rgba(232,234,240,0.04);
+        border: 1px solid rgba(232,234,240,0.09);
+        border-radius: 5px;
+        overflow: hidden;
+      }
+      .cmd-capture input {
+        background: transparent;
+        border: none;
+        outline: none;
+        padding: 4px 8px;
+        font-size: 11px;
+        color: #E8EAF0;
+        font-family: 'Inter', sans-serif;
+        width: 140px;
+      }
+      .cmd-capture input::placeholder { color: #6B7280; }
+      .cmd-status {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        font-size: 10px;
+        color: #6B7280;
+        font-family: 'Montserrat', sans-serif;
+        letter-spacing: 0.06em;
+      }
+      .cmd-status-dot {
+        width: 5px;
+        height: 5px;
+        border-radius: 50%;
+        background: #22c55e;
+        box-shadow: 0 0 5px rgba(34,197,94,0.5);
+        flex-shrink: 0;
+      }
+      .cmd-logout {
+        font-size: 10px;
+        color: #6B7280;
+        text-decoration: none;
+        font-family: 'Montserrat', sans-serif;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+        font-weight: 600;
+        transition: color 0.14s;
+        padding: 3px 6px;
+        border-radius: 4px;
+        border: 1px solid rgba(232,234,240,0.08);
+      }
+      .cmd-logout:hover { color: #E8EAF0; border-color: rgba(232,234,240,0.18); }
+
+      /* Mobile topbar (replaces command bar on small screens) */
       .os-topbar {
         display: none;
         align-items: center;
         justify-content: space-between;
-        padding: 0.75rem 1rem;
-        background: #070E24;
-        border-bottom: 1px solid rgba(232,234,240,0.08);
+        padding: 0 0.875rem;
+        background: #060C1E;
+        border-bottom: 1px solid rgba(59,78,217,0.15);
+        height: 44px;
         position: sticky;
         top: 0;
-        z-index: 50;
-      }
-      .os-mobile-nav {
-        display: none;
-        position: fixed;
-        inset: 0;
-        z-index: 60;
-        flex-direction: row;
-      }
-      .os-mobile-nav-inner {
-        width: 260px;
-        background: #070E24;
-        height: 100%;
-        overflow-y: auto;
-        display: flex;
-        flex-direction: column;
-      }
-      .os-overlay {
-        flex: 1;
-        background: rgba(0,0,0,0.6);
-      }
-      @media (max-width: 768px) {
-        .os-sidebar { display: none; }
-        .os-topbar { display: flex; }
-        .os-main { padding: 1.25rem 1rem; }
+        z-index: 100;
+        flex-shrink: 0;
       }
 
+      /* ── Shell ── */
+      .os-shell {
+        display: flex;
+        min-height: calc(100vh - 44px);
+      }
+
+      /* ── Sidebar ── */
+      .os-sidebar {
+        width: 196px;
+        flex-shrink: 0;
+        background: #060C1E;
+        border-right: 1px solid rgba(232,234,240,0.07);
+        display: flex;
+        flex-direction: column;
+        overflow-y: auto;
+        position: sticky;
+        top: 44px;
+        height: calc(100vh - 44px);
+      }
+
+      /* ── Main ── */
+      .os-main {
+        flex: 1;
+        min-width: 0;
+        overflow-y: auto;
+        position: relative;
+        background-image:
+          linear-gradient(rgba(59,78,217,0.022) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(59,78,217,0.022) 1px, transparent 1px);
+        background-size: 36px 36px;
+      }
+      .os-glow {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 320px;
+        background: radial-gradient(ellipse 80% 100% at 50% 0%, rgba(59,78,217,0.07) 0%, transparent 70%);
+        pointer-events: none;
+        z-index: 0;
+      }
+      .os-content {
+        position: relative;
+        z-index: 1;
+        padding: 2rem 2.5rem;
+        max-width: 100%;
+      }
+
+      /* ── Nav ── */
       .nav-group-label {
         font-family: 'Montserrat', sans-serif;
-        font-size: 9px;
-        font-weight: 600;
-        letter-spacing: 0.14em;
+        font-size: 8px;
+        font-weight: 700;
+        letter-spacing: 0.18em;
         text-transform: uppercase;
-        color: #6B7280;
-        padding: 0 0.75rem;
-        margin-bottom: 2px;
+        color: rgba(107,114,128,0.7);
+        padding: 0 0.625rem;
+        margin-bottom: 1px;
       }
       .nav-item {
         display: flex;
         align-items: center;
-        gap: 0.5rem;
-        padding: 0.4rem 0.75rem;
-        border-radius: 6px;
-        font-size: 13px;
+        gap: 7px;
+        padding: 0.35rem 0.625rem;
+        border-radius: 5px;
+        font-size: 12.5px;
         color: #6B7280;
         background: transparent;
         border-left: 2px solid transparent;
         text-decoration: none;
-        transition: color 0.16s, background 0.16s;
+        transition: color 0.14s, background 0.14s;
         white-space: nowrap;
+        letter-spacing: 0.01em;
       }
       .nav-item:hover {
-        color: #F4F6F8;
-        background: rgba(232,234,240,0.05);
+        color: #E8EAF0;
+        background: rgba(232,234,240,0.04);
       }
       .nav-item.active {
-        color: #F4F6F8;
+        color: #E8EAF0;
         font-weight: 600;
-        background: rgba(59,78,217,0.15);
+        background: rgba(59,78,217,0.13);
         border-left-color: #3B4ED9;
       }
       .nav-item.active .nav-icon { color: #6B7AE8; }
-      .nav-icon { color: #6B7280; flex-shrink: 0; }
+      .nav-icon { color: rgba(107,114,128,0.7); flex-shrink: 0; }
+
+      /* ── Mobile nav ── */
+      .os-mobile-nav {
+        display: none;
+        position: fixed;
+        inset: 0;
+        z-index: 200;
+        flex-direction: row;
+      }
+      .os-mobile-nav-inner {
+        width: 256px;
+        background: #060C1E;
+        height: 100%;
+        overflow-y: auto;
+        display: flex;
+        flex-direction: column;
+        border-right: 1px solid rgba(232,234,240,0.08);
+      }
+      .os-overlay {
+        flex: 1;
+        background: rgba(0,0,0,0.65);
+        backdrop-filter: blur(2px);
+      }
 
       .menu-btn {
         background: none;
         border: none;
         cursor: pointer;
         color: #F4F6F8;
-        padding: 4px;
+        padding: 5px;
         display: flex;
         align-items: center;
+      }
+
+      /* ── Responsive ── */
+      @media (max-width: 820px) {
+        .os-sidebar   { display: none; }
+        .os-cmdbar    { display: none; }
+        .os-topbar    { display: flex; }
+        .os-content   { padding: 1.25rem 1rem; }
+        .os-shell     { min-height: calc(100vh - 44px); }
+      }
+      @media (max-width: 480px) {
+        .cmd-capture  { display: none; }
       }
     </style>
   </head>
   <body>
+
+    <!-- Desktop command bar -->
+    <header class="os-cmdbar">
+      <div class="cmd-brand">
+        <span class="cmd-brand-os">OS</span>
+        <span class="cmd-brand-sep"></span>
+        <span class="cmd-brand-name">Pancho</span>
+      </div>
+
+      <div class="cmd-center">
+        <span
+          class="cmd-day-pill"
+          style={`background:${tipoBg[tipoDia]};color:${tipoColor[tipoDia]};`}
+        >{tipoLabel[tipoDia]}</span>
+        <span class="cmd-domino-label">Domino</span>
+        <span class="cmd-domino-text">{dominoTexto}</span>
+      </div>
+
+      <div class="cmd-right">
+        <div class="cmd-capture">
+          <input id="os-capture" type="text" placeholder="Capturar idea..." maxlength="200" />
+        </div>
+        <div class="cmd-status">
+          <span class="cmd-status-dot"></span>
+          <span>Activo</span>
+        </div>
+        <a href="/api/os-auth?action=logout" class="cmd-logout" title="Cerrar sesion">salir</a>
+      </div>
+    </header>
+
     <!-- Mobile top bar -->
     <header class="os-topbar">
-      <span style="font-family:'Montserrat',sans-serif;font-size:11px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:#6B7AE8;">OS</span>
-      <span style="font-size:13px;color:#6B7280;">{title}</span>
       <button class="menu-btn" id="menu-open" aria-label="Abrir menu">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" x2="20" y1="12" y2="12"/><line x1="4" x2="20" y1="6" y2="6"/><line x1="4" x2="20" y1="18" y2="18"/></svg>
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" x2="20" y1="6" y2="6"/><line x1="4" x2="20" y1="12" y2="12"/><line x1="4" x2="20" y1="18" y2="18"/></svg>
       </button>
+      <span style="display:flex;align-items:center;gap:7px;">
+        <span style="font-family:'Montserrat',sans-serif;font-size:10px;font-weight:700;letter-spacing:0.18em;text-transform:uppercase;color:#6B7AE8;">OS</span>
+        <span style="font-size:12px;color:#6B7280;">{title}</span>
+      </span>
+      <div class="cmd-status" style="gap:4px;">
+        <span class="cmd-status-dot"></span>
+      </div>
     </header>
 
     <!-- Mobile nav drawer -->
     <div class="os-mobile-nav" id="mobile-nav" style="display:none;">
-      <div class="os-mobile-nav-inner" id="mobile-nav-inner">
-        <div style="display:flex;align-items:center;justify-content:space-between;padding:1rem 1.25rem;border-bottom:1px solid rgba(232,234,240,0.08);">
-          <span style="font-family:'Montserrat',sans-serif;font-size:11px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:#6B7AE8;">OS</span>
+      <div class="os-mobile-nav-inner">
+        <div style="display:flex;align-items:center;justify-content:space-between;padding:0.875rem 1rem;border-bottom:1px solid rgba(232,234,240,0.07);">
+          <span style="font-family:'Montserrat',sans-serif;font-size:10px;font-weight:700;letter-spacing:0.18em;text-transform:uppercase;color:#6B7AE8;">OS</span>
           <button class="menu-btn" id="menu-close" aria-label="Cerrar menu">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
           </button>
         </div>
         {navGroups.map((group) => (
-          <div style="padding:1rem 0.75rem 0.25rem;">
-            <p class="nav-group-label" style="margin-bottom:4px;">{group.label}</p>
+          <div style="padding:0.875rem 0.5rem 0.125rem;">
+            <p class="nav-group-label" style="margin-bottom:3px;">{group.label}</p>
             {group.items.map((item) => (
               <a href={item.href} class={`nav-item${isActive(item.href) ? ' active' : ''}`}>
                 <span class="nav-icon" set:html={icons[item.href] ?? ''} />
@@ -234,8 +467,9 @@ const icons: Record<string, string> = {
             ))}
           </div>
         ))}
-        <div style="margin-top:auto;padding:1rem 1.25rem 1.25rem;border-top:1px solid rgba(232,234,240,0.08);">
-          <a href="/" style="font-size:11px;color:#6B7280;text-decoration:none;">← franciscoabad.com</a>
+        <div style="margin-top:auto;padding:0.875rem 1rem;border-top:1px solid rgba(232,234,240,0.07);display:flex;flex-direction:column;gap:8px;">
+          <a href="/" style="font-size:11px;color:#6B7280;text-decoration:none;">franciscoabad.com</a>
+          <a href="/api/os-auth?action=logout" style="font-size:11px;color:#6B7280;text-decoration:none;">Cerrar sesion</a>
         </div>
       </div>
       <div class="os-overlay" id="overlay"></div>
@@ -244,16 +478,8 @@ const icons: Record<string, string> = {
     <div class="os-shell">
       <!-- Desktop sidebar -->
       <nav class="os-sidebar">
-        <div style="padding:1.25rem 1.25rem 1rem;border-bottom:1px solid rgba(232,234,240,0.08);">
-          <a href="/os" style="text-decoration:none;display:flex;align-items:center;gap:0.5rem;">
-            <span style="font-family:'Montserrat',sans-serif;font-size:11px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:#6B7AE8;">OS</span>
-            <span style="width:1px;height:12px;background:rgba(232,234,240,0.15);"></span>
-            <span style="font-family:'Montserrat',sans-serif;font-size:10px;letter-spacing:0.06em;text-transform:uppercase;color:#6B7280;">Francisco Abad</span>
-          </a>
-        </div>
-
         {navGroups.map((group) => (
-          <div style="padding:1rem 0.625rem 0.25rem;">
+          <div style="padding:0.875rem 0.5rem 0.125rem;">
             <p class="nav-group-label">{group.label}</p>
             {group.items.map((item) => (
               <a href={item.href} class={`nav-item${isActive(item.href) ? ' active' : ''}`}>
@@ -263,23 +489,25 @@ const icons: Record<string, string> = {
             ))}
           </div>
         ))}
-
-        <div style="margin-top:auto;padding:1rem 1.25rem 1.25rem;border-top:1px solid rgba(232,234,240,0.08);">
-          <a href="/" style="font-size:11px;color:#6B7280;text-decoration:none;letter-spacing:0.03em;">← franciscoabad.com</a>
+        <div style="margin-top:auto;padding:0.875rem 0.875rem 1rem;border-top:1px solid rgba(232,234,240,0.07);">
+          <a href="/" style="display:block;font-size:11px;color:rgba(107,114,128,0.6);text-decoration:none;letter-spacing:0.03em;margin-bottom:6px;">franciscoabad.com</a>
         </div>
       </nav>
 
       <!-- Main content -->
       <main class="os-main">
-        <slot />
+        <div class="os-glow" aria-hidden="true"></div>
+        <div class="os-content">
+          <slot />
+        </div>
       </main>
     </div>
 
     <script>
-      const menuOpen = document.getElementById('menu-open');
+      const menuOpen  = document.getElementById('menu-open');
       const menuClose = document.getElementById('menu-close');
       const mobileNav = document.getElementById('mobile-nav');
-      const overlay = document.getElementById('overlay');
+      const overlay   = document.getElementById('overlay');
 
       menuOpen?.addEventListener('click', () => {
         if (mobileNav) mobileNav.style.display = 'flex';
@@ -289,6 +517,19 @@ const icons: Record<string, string> = {
       };
       menuClose?.addEventListener('click', close);
       overlay?.addEventListener('click', close);
+
+      // Quick capture: save to localStorage on Enter
+      const captureInput = document.getElementById('os-capture') as HTMLInputElement | null;
+      captureInput?.addEventListener('keydown', (e: KeyboardEvent) => {
+        if (e.key === 'Enter' && captureInput.value.trim()) {
+          const items: { text: string; ts: string }[] = JSON.parse(localStorage.getItem('os-capture') ?? '[]');
+          items.unshift({ text: captureInput.value.trim(), ts: new Date().toISOString() });
+          localStorage.setItem('os-capture', JSON.stringify(items.slice(0, 100)));
+          captureInput.value = '';
+          captureInput.placeholder = 'Capturado';
+          setTimeout(() => { captureInput.placeholder = 'Capturar idea...'; }, 1200);
+        }
+      });
     </script>
   </body>
 </html>

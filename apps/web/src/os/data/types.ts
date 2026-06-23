@@ -229,3 +229,33 @@ export interface NotaCerebro {
   fecha: string;
   conexiones: string[];
 }
+
+export interface GrafoNodo {
+  id: string;
+  label: string;
+  tipo: 'proyecto' | 'concepto' | 'persona' | 'herramienta';
+  peso: number;
+}
+
+export interface GrafoArista {
+  origen: string;
+  destino: string;
+  etiqueta?: string;
+}
+
+export interface RedSocial {
+  red: 'linkedin' | 'instagram' | 'youtube';
+  seguidores: number;
+  alcance_semana: number;
+  publicaciones_semana: number;
+  tendencia: 'up' | 'down' | 'flat';
+  ultimo_post?: string;
+}
+
+export interface Borrador {
+  id: string;
+  titulo: string;
+  cuerpo: string;
+  plataforma: 'linkedin' | 'instagram' | 'twitter' | 'blog';
+  fecha: string;
+}

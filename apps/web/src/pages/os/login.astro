@@ -1,0 +1,146 @@
+---
+export const prerender = false;
+
+const error = Astro.url.searchParams.get('error');
+---
+
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Acceso — OS · Francisco Abad</title>
+    <meta name="robots" content="noindex, nofollow" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap" />
+    <style>
+      *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+      body {
+        background: #0E1738;
+        color: #F4F6F8;
+        font-family: 'Inter', sans-serif;
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        -webkit-font-smoothing: antialiased;
+        background-image:
+          radial-gradient(ellipse 60% 50% at 50% 50%, rgba(59,78,217,0.08) 0%, transparent 70%),
+          linear-gradient(rgba(59,78,217,0.025) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(59,78,217,0.025) 1px, transparent 1px);
+        background-size: auto, 36px 36px, 36px 36px;
+      }
+      .card {
+        background: #131F4A;
+        border: 1px solid rgba(59,78,217,0.25);
+        border-radius: 16px;
+        padding: 2.5rem 2rem;
+        width: 100%;
+        max-width: 360px;
+        margin: 1rem;
+      }
+      .eyebrow {
+        font-family: 'Montserrat', sans-serif;
+        font-size: 9px;
+        font-weight: 600;
+        letter-spacing: 0.18em;
+        text-transform: uppercase;
+        color: #6B7AE8;
+        display: block;
+        margin-bottom: 1.25rem;
+      }
+      h1 {
+        font-family: 'Montserrat', sans-serif;
+        font-size: 1.25rem;
+        font-weight: 700;
+        color: #F4F6F8;
+        margin-bottom: 0.375rem;
+      }
+      .sub {
+        font-size: 13px;
+        color: #6B7280;
+        margin-bottom: 2rem;
+        line-height: 1.4;
+      }
+      .field-label {
+        font-family: 'Montserrat', sans-serif;
+        font-size: 9px;
+        font-weight: 600;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        color: #6B7280;
+        display: block;
+        margin-bottom: 6px;
+      }
+      input[type="password"] {
+        width: 100%;
+        background: rgba(232,234,240,0.04);
+        border: 1px solid rgba(232,234,240,0.12);
+        border-radius: 8px;
+        padding: 0.75rem 1rem;
+        font-size: 14px;
+        color: #F4F6F8;
+        font-family: 'Inter', sans-serif;
+        outline: none;
+        margin-bottom: 1rem;
+        transition: border-color 0.15s;
+      }
+      input[type="password"]:focus {
+        border-color: rgba(59,78,217,0.55);
+      }
+      button[type="submit"] {
+        width: 100%;
+        background: #3B4ED9;
+        border: none;
+        border-radius: 8px;
+        padding: 0.75rem 1rem;
+        font-family: 'Montserrat', sans-serif;
+        font-size: 12px;
+        font-weight: 700;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        color: #F4F6F8;
+        cursor: pointer;
+        transition: background 0.15s;
+      }
+      button[type="submit"]:hover { background: #4a5fea; }
+      .error-msg {
+        font-size: 12px;
+        color: #e05050;
+        margin-bottom: 1rem;
+        padding: 0.5rem 0.75rem;
+        background: rgba(224,80,80,0.08);
+        border-radius: 6px;
+        border: 1px solid rgba(224,80,80,0.2);
+      }
+      .back-link {
+        display: block;
+        margin-top: 1.5rem;
+        font-size: 11px;
+        color: #6B7280;
+        text-decoration: none;
+        text-align: center;
+        letter-spacing: 0.03em;
+      }
+      .back-link:hover { color: #E8EAF0; }
+    </style>
+  </head>
+  <body>
+    <div class="card">
+      <span class="eyebrow">OS / Francisco Abad</span>
+      <h1>Acceso restringido</h1>
+      <p class="sub">Sistema operativo personal. Solo para uso del titular.</p>
+      {error && (
+        <p class="error-msg">Contrasena incorrecta. Intenta de nuevo.</p>
+      )}
+      <form method="POST" action="/api/os-auth">
+        <label class="field-label" for="password">Contrasena</label>
+        <input type="password" id="password" name="password" placeholder="••••••••••••" autofocus required />
+        <button type="submit">Entrar al OS</button>
+      </form>
+      <a href="/" class="back-link">franciscoabad.com</a>
+    </div>
+  </body>
+</html>

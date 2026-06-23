@@ -1,113 +1,178 @@
 ---
+export const prerender = false;
+
 import OSLayout from '../../layouts/OSLayout.astro';
 import { datosHoy } from '../../os/data/hoy';
 import { objetivos } from '../../os/data/objetivos';
 import { datosDaily } from '../../os/data/daily';
+import { kpis } from '../../os/data/kpis';
+import { notas } from '../../os/data/cerebro';
 import OSChecklist from '../../os/components/OSChecklist';
 
 const { domino, discomfort, checklist, wins, priorities } = datosHoy;
 
 const urgenciaColor: Record<string, string> = {
-  alta: '#3B4ED9',
+  alta:  '#3B4ED9',
   media: '#6B7AE8',
-  baja: '#6B7280',
+  baja:  '#6B7280',
 };
+
+const tipoColor: Record<string, string> = { maker: '#3B4ED9', manager: '#6B7280', off: '#6B7280' };
+const tipoBg: Record<string, string>    = { maker: 'rgba(59,78,217,0.15)', manager: 'rgba(232,234,240,0.06)', off: 'rgba(232,234,240,0.03)' };
+const tipoLabel: Record<string, string> = { maker: 'Maker', manager: 'Manager', off: 'Off' };
+
+const trendIcon: Record<string, string> = {
+  up:   '<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg>',
+  down: '<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 17 13.5 8.5 8.5 13.5 2 7"/><polyline points="16 17 22 17 22 11"/></svg>',
+  flat: '<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#6B7280" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/></svg>',
+};
+
+const fechaLarga = new Date().toLocaleDateString('es-EC', {
+  weekday: 'long', day: 'numeric', month: 'long', year: 'numeric',
+});
 ---
 
 <OSLayout title="Hoy">
   <div>
-    <div style="margin-bottom:2rem;">
-      <h1 style="font-size:1.375rem;font-weight:700;color:#F4F6F8;margin:0 0 0.25rem;">Hoy</h1>
-      <p style="font-size:13px;color:#6B7280;margin:0;">{datosHoy.fecha}</p>
+
+    <!-- Header -->
+    <div style="display:flex;align-items:baseline;justify-content:space-between;flex-wrap:wrap;gap:0.5rem;margin-bottom:1.5rem;">
+      <h1 style="font-size:1.375rem;font-weight:700;color:#F4F6F8;margin:0;">Hoy</h1>
+      <span style="font-size:12px;color:#6B7280;text-transform:capitalize;">{fechaLarga}</span>
     </div>
 
-    <!-- Objetivos 90 dias -->
-    <div style="background:#131F4A;border:1px solid rgba(232,234,240,0.09);border-radius:12px;padding:1.125rem 1.25rem;margin-bottom:1rem;">
-      <p style="font-family:'Montserrat',sans-serif;font-size:10px;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;color:#6B7280;margin:0 0 0.75rem;">Objetivos 90 dias</p>
-      <div style="display:flex;flex-direction:column;gap:8px;">
-        {objetivos.map((o, i) => (
-          <div style="display:flex;align-items:flex-start;gap:10px;">
-            <span style="font-family:'Montserrat',sans-serif;font-size:11px;font-weight:700;color:#B5985A;min-width:18px;padding-top:1px;">{i + 1}</span>
-            <div>
-              <span style="font-size:13px;font-weight:600;color:#F4F6F8;">{o.titulo}</span>
-              <span style="font-size:12px;color:#6B7280;margin-left:6px;">{o.descripcion}</span>
-            </div>
+    <!-- KPI strip -->
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:8px;margin-bottom:1.25rem;">
+      {kpis.slice(0, 6).map((k) => (
+        <div style="background:#131F4A;border:1px solid rgba(232,234,240,0.07);border-radius:10px;padding:0.75rem 0.875rem;">
+          <p style="font-family:'Montserrat',sans-serif;font-size:8px;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;color:#6B7280;margin:0 0 0.375rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">{k.label}</p>
+          <p style="font-family:'JetBrains Mono','SF Mono',monospace;font-size:1.125rem;font-weight:700;color:#B5985A;margin:0 0 2px;line-height:1;">{k.valor}</p>
+          <div style="display:flex;align-items:center;gap:4px;">
+            <span set:html={trendIcon[k.tendencia]} />
+            <span style="font-size:10px;color:#6B7280;">{k.cambio}</span>
           </div>
-        ))}
-      </div>
+        </div>
+      ))}
     </div>
 
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1rem;">
-
-      <!-- One Domino -->
-      <div style="grid-column:1/-1;background:#131F4A;border:1px solid rgba(59,78,217,0.3);border-radius:12px;padding:1.25rem;">
-        <p style="font-family:'Montserrat',sans-serif;font-size:10px;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;color:#6B7AE8;margin:0 0 0.625rem;">One Domino</p>
-        <p style="font-size:1.0625rem;font-weight:600;color:#F4F6F8;margin:0 0 0.375rem;line-height:1.35;">{domino.tarea}</p>
-        <p style="font-size:12px;color:#6B7280;margin:0 0 0.25rem;">{domino.proyecto}</p>
+    <!-- One Domino (featured) -->
+    <div style="background:#131F4A;border:1px solid rgba(59,78,217,0.35);border-radius:12px;padding:1.25rem 1.5rem;margin-bottom:1rem;position:relative;overflow:hidden;">
+      <div style="position:absolute;top:0;left:0;width:4px;height:100%;background:#3B4ED9;"></div>
+      <div style="padding-left:0.25rem;">
+        <p style="font-family:'Montserrat',sans-serif;font-size:9px;font-weight:700;letter-spacing:0.16em;text-transform:uppercase;color:#6B7AE8;margin:0 0 0.5rem;">One Domino</p>
+        <p style="font-size:1.0625rem;font-weight:600;color:#F4F6F8;margin:0 0 0.25rem;line-height:1.35;">{domino.tarea}</p>
+        <p style="font-size:12px;color:#6B7AE8;margin:0 0 0.25rem;">{domino.proyecto}</p>
         <p style="font-size:13px;color:#E8EAF0;margin:0;line-height:1.4;">{domino.razon}</p>
       </div>
-
-      <!-- Discomfort First -->
-      <div style="background:#131F4A;border:1px solid rgba(232,234,240,0.09);border-radius:12px;padding:1.25rem;">
-        <p style="font-family:'Montserrat',sans-serif;font-size:10px;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;color:#B5985A;margin:0 0 0.625rem;">Discomfort First</p>
-        <p style="font-size:14px;font-weight:500;color:#F4F6F8;margin:0 0 0.375rem;line-height:1.35;">{discomfort.tarea}</p>
-        <p style="font-size:12px;color:#6B7280;margin:0;line-height:1.4;">{discomfort.contexto}</p>
-      </div>
-
-      <!-- Checklist de 3 -->
-      <div style="background:#131F4A;border:1px solid rgba(232,234,240,0.09);border-radius:12px;padding:1.25rem;">
-        <OSChecklist items={checklist} title="Checklist del dia" client:load />
-      </div>
     </div>
 
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;">
+    <!-- 2-col grid: priorities + checklist/discomfort -->
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1rem;">
 
-      <!-- Priority stack -->
-      <div style="background:#131F4A;border:1px solid rgba(232,234,240,0.09);border-radius:12px;padding:1.25rem;">
-        <p style="font-family:'Montserrat',sans-serif;font-size:10px;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;color:#6B7280;margin:0 0 0.75rem;">Priority Stack</p>
-        <ol style="list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:6px;">
-          {priorities.map((p, i) => (
-            <li style="display:flex;align-items:flex-start;gap:10px;">
-              <span style={`font-family:'Montserrat',sans-serif;font-size:11px;font-weight:700;color:${urgenciaColor[p.urgencia]};min-width:16px;padding-top:2px;`}>{i + 1}</span>
-              <div>
-                <span style="font-size:13px;color:#F4F6F8;">{p.tarea}</span>
-                <span style="font-size:11px;color:#6B7280;margin-left:6px;">{p.proyecto}</span>
-              </div>
-            </li>
-          ))}
-        </ol>
-      </div>
-
-      <!-- Wins + principios de referencia -->
+      <!-- Priority stack + wins -->
       <div style="display:flex;flex-direction:column;gap:1rem;">
+        <div style="background:#131F4A;border:1px solid rgba(232,234,240,0.09);border-radius:12px;padding:1.25rem;flex:1;">
+          <p style="font-family:'Montserrat',sans-serif;font-size:9px;font-weight:600;letter-spacing:0.14em;text-transform:uppercase;color:#6B7280;margin:0 0 0.75rem;">Priority Stack</p>
+          <ol style="list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:7px;">
+            {priorities.map((p, i) => (
+              <li style="display:flex;align-items:flex-start;gap:10px;">
+                <span style={`font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:700;color:${urgenciaColor[p.urgencia]};min-width:16px;padding-top:2px;`}>{i + 1}</span>
+                <div>
+                  <span style="font-size:13px;color:#F4F6F8;">{p.tarea}</span>
+                  <span style="font-size:11px;color:#6B7280;margin-left:6px;">{p.proyecto}</span>
+                </div>
+              </li>
+            ))}
+          </ol>
+        </div>
+
         <div style="background:#131F4A;border:1px solid rgba(232,234,240,0.09);border-radius:12px;padding:1.25rem;">
-          <p style="font-family:'Montserrat',sans-serif;font-size:10px;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;color:#6B7280;margin:0 0 0.75rem;">Wins recientes</p>
-          <ul style="list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:7px;">
+          <p style="font-family:'Montserrat',sans-serif;font-size:9px;font-weight:600;letter-spacing:0.14em;text-transform:uppercase;color:#6B7280;margin:0 0 0.75rem;">Wins recientes</p>
+          <ul style="list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:6px;">
             {wins.map((w) => (
               <li style="display:flex;align-items:flex-start;gap:8px;">
-                <span style="color:#6B7AE8;margin-top:3px;flex-shrink:0;">
-                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
-                </span>
+                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#6B7AE8" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;margin-top:3px;"><polyline points="20 6 9 17 4 12"/></svg>
                 <span style="font-size:13px;color:#E8EAF0;line-height:1.4;">{w.texto}</span>
               </li>
             ))}
           </ul>
         </div>
+      </div>
 
-        <!-- Principios mini referencia -->
+      <!-- Checklist + Discomfort + Principios -->
+      <div style="display:flex;flex-direction:column;gap:1rem;">
+        <div style="background:#131F4A;border:1px solid rgba(232,234,240,0.09);border-radius:12px;padding:1.25rem;">
+          <OSChecklist items={checklist} title="Checklist del dia" client:load />
+        </div>
+
+        <div style="background:#131F4A;border:1px solid rgba(232,234,240,0.09);border-radius:12px;padding:1.25rem;">
+          <p style="font-family:'Montserrat',sans-serif;font-size:9px;font-weight:600;letter-spacing:0.14em;text-transform:uppercase;color:#B5985A;margin:0 0 0.625rem;">Discomfort First</p>
+          <p style="font-size:14px;font-weight:500;color:#F4F6F8;margin:0 0 0.375rem;line-height:1.35;">{discomfort.tarea}</p>
+          <p style="font-size:12px;color:#6B7280;margin:0;line-height:1.4;">{discomfort.contexto}</p>
+        </div>
+
         <div style="background:#131F4A;border:1px solid rgba(232,234,240,0.09);border-radius:12px;padding:1rem 1.25rem;">
-          <p style="font-family:'Montserrat',sans-serif;font-size:10px;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;color:#6B7280;margin:0 0 0.625rem;">Principios</p>
+          <p style="font-family:'Montserrat',sans-serif;font-size:9px;font-weight:600;letter-spacing:0.14em;text-transform:uppercase;color:#6B7280;margin:0 0 0.625rem;">Principios</p>
           <ul style="list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:4px;">
             {datosDaily.principios.map((p, i) => (
               <li style="display:flex;gap:8px;">
-                <span style="font-family:'Montserrat',sans-serif;font-size:10px;font-weight:700;color:#3B4ED9;min-width:14px;">{i+1}</span>
+                <span style="font-family:'JetBrains Mono',monospace;font-size:9px;font-weight:700;color:#3B4ED9;min-width:14px;padding-top:2px;">{i + 1}</span>
                 <span style="font-size:12px;color:#6B7280;line-height:1.35;">{p}</span>
               </li>
             ))}
           </ul>
         </div>
       </div>
-
     </div>
+
+    <!-- Maker/Manager semana + objetivos -->
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1rem;">
+
+      <!-- Semana -->
+      <div style="background:#131F4A;border:1px solid rgba(232,234,240,0.09);border-radius:12px;padding:1.25rem;">
+        <p style="font-family:'Montserrat',sans-serif;font-size:9px;font-weight:600;letter-spacing:0.14em;text-transform:uppercase;color:#6B7280;margin:0 0 0.75rem;">Semana Maker / Manager</p>
+        <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:5px;">
+          {datosDaily.semana.map((d) => (
+            <div style={`background:${tipoBg[d.tipo]};border:1px solid ${d.tipo === 'maker' ? 'rgba(59,78,217,0.18)' : 'rgba(232,234,240,0.06)'};border-radius:6px;padding:0.5rem 0.25rem;text-align:center;`}>
+              <p style="font-family:'Montserrat',sans-serif;font-size:8px;font-weight:600;letter-spacing:0.06em;text-transform:uppercase;color:#6B7280;margin:0 0 3px;">{d.dia.slice(0,3)}</p>
+              <p style={`font-family:'Montserrat',sans-serif;font-size:7px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:${tipoColor[d.tipo]};margin:0;`}>{tipoLabel[d.tipo]}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <!-- Objetivos 90 dias -->
+      <div style="background:#131F4A;border:1px solid rgba(59,78,217,0.2);border-radius:12px;padding:1.25rem;">
+        <p style="font-family:'Montserrat',sans-serif;font-size:9px;font-weight:600;letter-spacing:0.14em;text-transform:uppercase;color:#6B7AE8;margin:0 0 0.75rem;">Norte — 90 dias</p>
+        <div style="display:flex;flex-direction:column;gap:8px;">
+          {objetivos.map((o, i) => (
+            <div style="display:flex;align-items:flex-start;gap:10px;">
+              <span style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;color:#B5985A;min-width:18px;padding-top:1px;">{i + 1}</span>
+              <div>
+                <span style="font-size:13px;font-weight:600;color:#F4F6F8;">{o.titulo}.</span>
+                <span style="font-size:12px;color:#6B7280;margin-left:5px;">{o.descripcion}</span>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+
+    <!-- Brain feed (recent notas) -->
+    <div style="background:#131F4A;border:1px solid rgba(232,234,240,0.09);border-radius:12px;padding:1.25rem;">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:0.875rem;">
+        <p style="font-family:'Montserrat',sans-serif;font-size:9px;font-weight:600;letter-spacing:0.14em;text-transform:uppercase;color:#6B7280;margin:0;">Cerebro — ultimas notas</p>
+        <a href="/os/cerebro" style="font-size:11px;color:#6B7AE8;text-decoration:none;font-family:'Montserrat',sans-serif;letter-spacing:0.06em;">ver todo</a>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:8px;">
+        {notas.slice(0, 4).map((n) => (
+          <div style="padding:0.75rem;border-radius:8px;background:rgba(232,234,240,0.03);border:1px solid rgba(232,234,240,0.06);">
+            <p style="font-size:12px;font-weight:600;color:#E8EAF0;margin:0 0 0.375rem;line-height:1.3;">{n.titulo}</p>
+            <p style="font-size:11px;color:#6B7280;margin:0;line-height:1.4;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;">{n.resumen}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+
   </div>
 </OSLayout>

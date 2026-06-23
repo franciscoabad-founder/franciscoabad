@@ -1,0 +1,57 @@
+---
+export const prerender = false;
+
+import OSLayout from '../../layouts/OSLayout.astro';
+import { redes } from '../../os/data/redes';
+import OSContenidoEditor from '../../os/components/OSContenidoEditor';
+
+const redLabel: Record<string, string> = { linkedin: 'LinkedIn', instagram: 'Instagram', youtube: 'YouTube' };
+const redColor: Record<string, string> = { linkedin: '#3B4ED9', instagram: '#B5985A', youtube: '#6B7280' };
+
+const trendIcon: Record<string, string> = {
+  up:   '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg>',
+  down: '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 17 13.5 8.5 8.5 13.5 2 7"/><polyline points="16 17 22 17 22 11"/></svg>',
+  flat: '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#6B7280" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/></svg>',
+};
+---
+
+<OSLayout title="Redes">
+  <div>
+    <div style="display:flex;align-items:baseline;justify-content:space-between;margin-bottom:1.75rem;flex-wrap:wrap;gap:0.5rem;">
+      <h1 style="font-size:1.375rem;font-weight:700;color:#F4F6F8;margin:0;">Redes y Contenido</h1>
+      <span style="font-size:11px;color:#6B7280;font-family:'Montserrat',sans-serif;letter-spacing:0.06em;">Demo — conectar APIs pendiente</span>
+    </div>
+
+    <!-- Social insight cards -->
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:10px;margin-bottom:1.5rem;">
+      {redes.map((r) => (
+        <div style={`background:#131F4A;border:1px solid rgba(232,234,240,0.09);border-top:2px solid ${redColor[r.red]};border-radius:12px;padding:1.25rem;`}>
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;">
+            <p style={`font-family:'Montserrat',sans-serif;font-size:11px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:${redColor[r.red]};margin:0;`}>{redLabel[r.red]}</p>
+            <span set:html={trendIcon[r.tendencia]} />
+          </div>
+
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.75rem;margin-bottom:0.875rem;">
+            <div>
+              <p style="font-family:'Montserrat',sans-serif;font-size:8px;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;color:#6B7280;margin:0 0 3px;">Seguidores</p>
+              <p style="font-family:'JetBrains Mono','SF Mono',monospace;font-size:1.25rem;font-weight:700;color:#B5985A;margin:0;line-height:1;">{r.seguidores.toLocaleString('es-EC')}</p>
+            </div>
+            <div>
+              <p style="font-family:'Montserrat',sans-serif;font-size:8px;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;color:#6B7280;margin:0 0 3px;">Alcance / sem</p>
+              <p style="font-family:'JetBrains Mono','SF Mono',monospace;font-size:1.25rem;font-weight:700;color:#B5985A;margin:0;line-height:1;">{r.alcance_semana.toLocaleString('es-EC')}</p>
+            </div>
+          </div>
+
+          <div style="padding-top:0.75rem;border-top:1px solid rgba(232,234,240,0.07);">
+            <p style="font-size:9px;font-weight:600;color:#6B7280;font-family:'Montserrat',sans-serif;letter-spacing:0.1em;text-transform:uppercase;margin:0 0 4px;">Ultimo post</p>
+            <p style="font-size:12px;color:#E8EAF0;margin:0;line-height:1.35;">{r.ultimo_post}</p>
+            <p style="font-size:10px;color:#6B7280;margin:4px 0 0;">{r.publicaciones_semana} publicacion{r.publicaciones_semana !== 1 ? 'es' : ''} esta semana</p>
+          </div>
+        </div>
+      ))}
+    </div>
+
+    <!-- Content editor -->
+    <OSContenidoEditor client:load />
+  </div>
+</OSLayout>
