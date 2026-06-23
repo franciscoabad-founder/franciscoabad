@@ -42,11 +42,22 @@ export interface RutinaItem {
   completado: boolean;
 }
 
+export type TipoDia = 'maker' | 'manager' | 'off';
+
+export interface DiaSemana {
+  dia: string;
+  tipo: TipoDia;
+  descripcion: string;
+  detalle: string;
+}
+
 export interface DatosDaily {
   principios: string[];
+  semana: DiaSemana[];
   rutina_am: RutinaItem[];
   check_10min: string[];
   pm_close: RutinaItem[];
+  reglas: string[];
 }
 
 export interface ReviewWeekly {
@@ -96,6 +107,13 @@ export interface Proyecto {
   siguiente_accion: string;
   deadline?: string;
   motor: boolean;
+  recibe_maker: boolean;
+}
+
+export interface ObjetivoTrimestral {
+  id: string;
+  titulo: string;
+  descripcion: string;
 }
 
 export type CRMEtapa = 'prospecto' | 'contacto' | 'propuesta' | 'negociacion' | 'cerrado';
@@ -190,6 +208,9 @@ export interface HabitoSalud {
 
 export interface DatosSalud {
   fecha: string;
+  identidad: string;
+  filosofia: string;
+  reglas: string[];
   pasos: number;
   pasos_meta: number;
   sueno_horas: number;

@@ -1,6 +1,7 @@
 ---
 import OSLayout from '../../layouts/OSLayout.astro';
 import { datosRevision } from '../../os/data/revision';
+import { objetivos } from '../../os/data/objetivos';
 
 const { weekly, monthly } = datosRevision;
 
@@ -10,6 +11,22 @@ const energiaColor: Record<string, string> = { alta: '#6B7AE8', media: '#B5985A'
 <OSLayout title="Revision">
   <div>
     <h1 style="font-size:1.375rem;font-weight:700;color:#F4F6F8;margin:0 0 1.75rem;">Revision</h1>
+
+    <!-- Objetivos 90 dias (norte de la revision) -->
+    <div style="background:#131F4A;border:1px solid rgba(59,78,217,0.2);border-radius:12px;padding:1.125rem 1.25rem;margin-bottom:1rem;">
+      <p style="font-family:'Montserrat',sans-serif;font-size:10px;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;color:#6B7AE8;margin:0 0 0.75rem;">Norte — Objetivos 90 dias</p>
+      <div style="display:flex;flex-direction:column;gap:7px;">
+        {objetivos.map((o, i) => (
+          <div style="display:flex;align-items:flex-start;gap:10px;">
+            <span style="font-family:'Montserrat',sans-serif;font-size:11px;font-weight:700;color:#B5985A;min-width:18px;padding-top:1px;">{i + 1}</span>
+            <div>
+              <span style="font-size:13px;font-weight:600;color:#F4F6F8;">{o.titulo}.</span>
+              <span style="font-size:12px;color:#6B7280;margin-left:5px;">{o.descripcion}</span>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
 
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1rem;">
 
