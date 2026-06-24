@@ -1,0 +1,156 @@
+---
+export const prerender = false;
+import OSLayout from '../../layouts/OSLayout.astro';
+
+const inputStyle = "background:rgba(232,234,240,0.05);border:1px solid rgba(232,234,240,0.12);border-radius:5px;padding:5px 10px;font-size:12px;color:#F4F6F8;font-family:'Inter',sans-serif;outline:none;";
+const selStyle = "background:#0E1738;border:1px solid rgba(232,234,240,0.12);border-radius:5px;padding:5px 10px;font-size:12px;color:#F4F6F8;font-family:'Inter',sans-serif;outline:none;color-scheme:dark;";
+const btnStyle = "background:#3B4ED9;color:#fff;border:none;border-radius:5px;padding:5px 16px;font-size:12px;font-family:'Montserrat',sans-serif;font-weight:600;cursor:pointer;white-space:nowrap;flex-shrink:0;";
+---
+
+<OSLayout title="Comidas">
+  <div>
+    <div style="display:flex;align-items:baseline;justify-content:space-between;margin-bottom:0.5rem;">
+      <h1 style="font-size:1.375rem;font-weight:700;color:#F4F6F8;margin:0;">Comidas</h1>
+      <p id="comida-count" style="font-size:12px;color:#6B7280;margin:0;">Cargando...</p>
+    </div>
+    <p style="font-size:12px;color:#6B7280;margin:0 0 1.25rem;line-height:1.5;">Bitacora de que y cuando como. El foco son los patrones de alimentacion, no las calorias.</p>
+
+    <!-- Quick-add -->
+    <form id="comida-form" style="display:flex;gap:8px;flex-wrap:wrap;align-items:flex-end;margin-bottom:1.5rem;background:#131F4A;border:1px solid rgba(232,234,240,0.09);border-radius:8px;padding:0.75rem 1rem;">
+      <select name="momento" style={selStyle}>
+        <option value="desayuno">Desayuno</option>
+        <option value="almuerzo">Almuerzo</option>
+        <option value="cena">Cena</option>
+        <option value="snack">Snack</option>
+      </select>
+      <input name="descripcion" type="text" placeholder="Que comiste *" required style={inputStyle + "flex:2;min-width:180px;"} />
+      <input name="notas" type="text" placeholder="Nota (como me senti, contexto...)" style={inputStyle + "flex:1;min-width:140px;"} />
+      <input name="foto_url" type="url" placeholder="URL de foto (opcional)" style={inputStyle + "flex:1;min-width:140px;"} />
+      <input name="fecha" type="datetime-local" style={selStyle} />
+      <button type="submit" style={btnStyle}>+ Registrar</button>
+      <p id="comida-form-msg" style="font-size:11px;color:#F87171;width:100%;margin:0;display:none;"></p>
+    </form>
+
+    <!-- Historial agrupado por dia -->
+    <div id="comidas-list" style="display:flex;flex-direction:column;gap:1.5rem;">
+      <div style="background:#131F4A;border:1px solid rgba(232,234,240,0.06);border-radius:8px;padding:1rem;color:#6B7280;font-size:13px;">Cargando...</div>
+    </div>
+  </div>
+</OSLayout>
+
+<script is:inline>
+var comidas = [];
+var MOMENTO_LABEL = { desayuno:'Desayuno', almuerzo:'Almuerzo', cena:'Cena', snack:'Snack' };
+var MOMENTO_COLOR = { desayuno:'#FBBF24', almuerzo:'#34D399', cena:'#6B7AE8', snack:'#C084FC' };
+
+function esc(s) {
+  return String(s == null ? '' : s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+function dayKey(iso) { return new Date(iso).toISOString().slice(0,10); }
+function dayLabel(key) {
+  var today = new Date().toISOString().slice(0,10);
+  var d = new Date(key + 'T12:00:00');
+  var label = d.toLocaleDateString('es', { weekday:'long', day:'numeric', month:'long' });
+  if (key === today) return 'Hoy · ' + label;
+  return label.charAt(0).toUpperCase() + label.slice(1);
+}
+function timeLabel(iso) {
+  return new Date(iso).toLocaleTimeString('es', { hour:'2-digit', minute:'2-digit' });
+}
+
+async function delComida(id) {
+  if (!confirm('Eliminar este registro?')) return;
+  try {
+    var res = await fetch('/api/os/comidas?id=' + encodeURIComponent(id), { method:'DELETE' });
+    if (!res.ok) throw new Error(String(res.status));
+    await loadComidas();
+  } catch(e) { alert('Error: ' + e.message); }
+}
+
+function render() {
+  var list = document.getElementById('comidas-list');
+  if (!comidas.length) {
+    list.innerHTML = '<div style="background:#131F4A;border:1px solid rgba(232,234,240,0.06);border-radius:8px;padding:1.5rem;text-align:center;color:#6B7280;font-size:12px;">Sin registros aun. Anota tu primera comida arriba.</div>';
+    return;
+  }
+  var byDay = {};
+  comidas.forEach(function(c) {
+    var k = dayKey(c.fecha);
+    if (!byDay[k]) byDay[k] = [];
+    byDay[k].push(c);
+  });
+  var days = Object.keys(byDay).sort().reverse();
+  list.innerHTML = days.map(function(k) {
+    var items = byDay[k].slice().sort(function(a,b){ return new Date(b.fecha) - new Date(a.fecha); });
+    return '<div>'
+      + '<p style="font-family:Montserrat,sans-serif;font-size:10px;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;color:#6B7280;margin:0 0 8px;">' + esc(dayLabel(k)) + '</p>'
+      + '<div style="display:flex;flex-direction:column;gap:6px;">'
+      + items.map(function(c) {
+          var mom = c.momento || 'snack';
+          var color = MOMENTO_COLOR[mom] || '#6B7280';
+          var foto = c.foto_url
+            ? '<a href="' + esc(c.foto_url) + '" target="_blank" rel="noopener" style="flex-shrink:0;"><img src="' + esc(c.foto_url) + '" alt="" style="width:46px;height:46px;object-fit:cover;border-radius:6px;border:1px solid rgba(232,234,240,0.12);" /></a>'
+            : '';
+          return '<div style="display:flex;align-items:center;gap:12px;background:#131F4A;border:1px solid rgba(232,234,240,0.09);border-left:3px solid ' + color + ';border-radius:8px;padding:0.65rem 0.875rem;">'
+            + foto
+            + '<div style="flex:1;min-width:0;">'
+              + '<div style="display:flex;align-items:center;gap:8px;margin-bottom:2px;">'
+                + '<span style="font-size:9px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:' + color + ';font-family:Montserrat,sans-serif;">' + esc(MOMENTO_LABEL[mom] || mom) + '</span>'
+                + '<span style="font-size:10px;color:rgba(107,114,128,0.7);">' + esc(timeLabel(c.fecha)) + '</span>'
+              + '</div>'
+              + '<p style="font-size:13px;color:#F4F6F8;margin:0;line-height:1.4;">' + esc(c.descripcion || '') + '</p>'
+              + (c.notas ? '<p style="font-size:11px;color:#6B7280;margin:3px 0 0;line-height:1.4;">' + esc(c.notas) + '</p>' : '')
+            + '</div>'
+            + '<button onclick="delComida(\'' + c.id + '\')" title="Eliminar" style="background:none;border:none;color:rgba(107,114,128,0.4);cursor:pointer;font-size:15px;padding:0;line-height:1;flex-shrink:0;">x</button>'
+            + '</div>';
+        }).join('')
+      + '</div></div>';
+  }).join('');
+}
+
+async function loadComidas() {
+  try {
+    var res = await fetch('/api/os/comidas');
+    if (!res.ok) throw new Error(String(res.status));
+    var data = await res.json();
+    comidas = data.comidas || [];
+    var countEl = document.getElementById('comida-count');
+    if (countEl) countEl.textContent = comidas.length + ' registros';
+    render();
+  } catch(e) {
+    var list = document.getElementById('comidas-list');
+    if (list) list.innerHTML = '<div style="color:#F87171;font-size:12px;padding:1rem;">Error: ' + esc(e.message) + '</div>';
+  }
+}
+
+var form = document.getElementById('comida-form');
+if (form) {
+  form.addEventListener('submit', async function(e) {
+    e.preventDefault();
+    var msg = document.getElementById('comida-form-msg');
+    if (msg) msg.style.display = 'none';
+    var fd = new FormData(form);
+    var fechaVal = fd.get('fecha');
+    var body = {
+      momento: fd.get('momento'),
+      descripcion: fd.get('descripcion'),
+      notas: fd.get('notas') || null,
+      foto_url: fd.get('foto_url') || null,
+      fecha: fechaVal ? new Date(fechaVal).toISOString() : null,
+    };
+    try {
+      var res = await fetch('/api/os/comidas', {
+        method:'POST', headers:{ 'Content-Type':'application/json' }, body: JSON.stringify(body),
+      });
+      var jsonR = await res.json();
+      if (!res.ok) throw new Error(jsonR.error || String(res.status));
+      form.reset();
+      await loadComidas();
+    } catch(err) {
+      if (msg) { msg.textContent = 'Error: ' + err.message; msg.style.display = 'block'; }
+    }
+  });
+}
+
+loadComidas();
+</script>
