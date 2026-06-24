@@ -1,59 +1,267 @@
 ---
 export const prerender = false;
 import OSLayout from '../../layouts/OSLayout.astro';
-import { tareas } from '../../os/data/tareas';
-
-const proyectos = [...new Set(tareas.map((t) => t.proyecto))];
-
-const prioridadColor: Record<string, string> = {
-  alta: '#3B4ED9',
-  media: '#6B7AE8',
-  baja: '#6B7280',
-};
-const statusColor: Record<string, string> = {
-  pendiente: '#6B7280',
-  'en-curso': '#6B7AE8',
-  completada: '#B5985A',
-};
-const statusLabel: Record<string, string> = {
-  pendiente: 'Pendiente',
-  'en-curso': 'En curso',
-  completada: 'Completada',
-};
 ---
 
 <OSLayout title="Tareas">
   <div>
-    <div style="display:flex;align-items:baseline;justify-content:space-between;margin-bottom:1.75rem;">
+    <!-- Header -->
+    <div style="display:flex;align-items:baseline;justify-content:space-between;margin-bottom:1.25rem;">
       <h1 style="font-size:1.375rem;font-weight:700;color:#F4F6F8;margin:0;">Tareas</h1>
-      <p style="font-size:12px;color:#6B7280;margin:0;">{tareas.filter(t => t.status !== 'completada').length} pendientes</p>
+      <p id="tarea-count" style="font-size:12px;color:#6B7280;margin:0;">Cargando...</p>
     </div>
 
-    <div style="display:flex;flex-direction:column;gap:1.5rem;">
-      {proyectos.map((proyecto) => {
-        const tareasProyecto = tareas.filter((t) => t.proyecto === proyecto);
-        return (
-          <div>
-            <p style="font-family:'Montserrat',sans-serif;font-size:10px;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;color:#6B7280;margin:0 0 0.5rem;">{proyecto}</p>
-            <div style="display:flex;flex-direction:column;gap:4px;">
-              {tareasProyecto.map((t) => (
-                <div style="display:flex;align-items:flex-start;gap:10px;background:#131F4A;border:1px solid rgba(232,234,240,0.09);border-radius:6px;padding:0.625rem 0.875rem;">
-                  <span style={`width:3px;height:3px;border-radius:50%;background:${prioridadColor[t.prioridad]};flex-shrink:0;margin-top:7px;`}></span>
-                  <div style="flex:1;min-width:0;">
-                    <p style={`font-size:13px;color:${t.status === 'completada' ? '#6B7280' : '#F4F6F8'};margin:0;line-height:1.4;text-decoration:${t.status === 'completada' ? 'line-through' : 'none'};`}>{t.label}</p>
-                    {t.deadline && (
-                      <p style="font-size:11px;color:#B5985A;margin:2px 0 0;">{t.deadline}</p>
-                    )}
-                  </div>
-                  <span style={`font-size:10px;font-weight:600;color:${statusColor[t.status]};flex-shrink:0;font-family:'Montserrat',sans-serif;letter-spacing:0.05em;`}>
-                    {statusLabel[t.status]}
-                  </span>
-                </div>
-              ))}
-            </div>
-          </div>
-        );
-      })}
+    <!-- Quick-add form -->
+    <form id="tarea-form" style="display:flex;gap:8px;flex-wrap:wrap;align-items:flex-end;margin-bottom:1.25rem;background:#131F4A;border:1px solid rgba(232,234,240,0.09);border-radius:8px;padding:0.75rem 1rem;">
+      <input name="titulo" type="text" placeholder="Titulo de la tarea *" required
+        style="flex:2;min-width:180px;background:rgba(232,234,240,0.05);border:1px solid rgba(232,234,240,0.12);border-radius:5px;padding:5px 10px;font-size:12px;color:#F4F6F8;font-family:'Inter',sans-serif;outline:none;" />
+      <input name="proyecto" type="text" placeholder="Proyecto"
+        style="flex:1;min-width:110px;background:rgba(232,234,240,0.05);border:1px solid rgba(232,234,240,0.12);border-radius:5px;padding:5px 10px;font-size:12px;color:#F4F6F8;font-family:'Inter',sans-serif;outline:none;" />
+      <input name="deadline" type="date"
+        style="background:#0E1738;border:1px solid rgba(232,234,240,0.12);border-radius:5px;padding:5px 10px;font-size:12px;color:#F4F6F8;font-family:'Inter',sans-serif;outline:none;color-scheme:dark;" />
+      <label style="display:flex;align-items:center;gap:6px;font-size:12px;color:#6B7280;cursor:pointer;user-select:none;white-space:nowrap;">
+        <input name="urgente" type="checkbox" value="true" style="accent-color:#3B4ED9;" />
+        Urgente
+      </label>
+      <button type="submit"
+        style="background:#3B4ED9;color:#fff;border:none;border-radius:5px;padding:5px 16px;font-size:12px;font-family:'Montserrat',sans-serif;font-weight:600;cursor:pointer;white-space:nowrap;flex-shrink:0;">
+        + Agregar
+      </button>
+      <p id="tarea-form-msg" style="font-size:11px;color:#F87171;width:100%;margin:0;display:none;"></p>
+    </form>
+
+    <!-- Filters -->
+    <div style="display:flex;flex-wrap:wrap;gap:10px;margin-bottom:1.25rem;align-items:center;">
+      <!-- Estado -->
+      <div style="display:flex;gap:4px;align-items:center;flex-wrap:wrap;">
+        <span style="font-size:10px;color:#6B7280;font-family:'Montserrat',sans-serif;letter-spacing:0.08em;text-transform:uppercase;margin-right:2px;flex-shrink:0;">Estado</span>
+        <button data-fest="todos" onclick="setEstadoFilter('todos')"
+          style="padding:3px 10px;font-size:11px;font-family:'Montserrat',sans-serif;font-weight:600;border-radius:4px;border:1px solid rgba(59,78,217,0.5);background:rgba(59,78,217,0.2);color:#E8EAF0;cursor:pointer;">Todos</button>
+        <button data-fest="pendiente" onclick="setEstadoFilter('pendiente')"
+          style="padding:3px 10px;font-size:11px;font-family:'Montserrat',sans-serif;font-weight:600;border-radius:4px;border:1px solid rgba(232,234,240,0.12);background:transparent;color:#6B7280;cursor:pointer;">Pendiente</button>
+        <button data-fest="en progreso" onclick="setEstadoFilter('en progreso')"
+          style="padding:3px 10px;font-size:11px;font-family:'Montserrat',sans-serif;font-weight:600;border-radius:4px;border:1px solid rgba(232,234,240,0.12);background:transparent;color:#6B7280;cursor:pointer;">En progreso</button>
+        <button data-fest="hecho" onclick="setEstadoFilter('hecho')"
+          style="padding:3px 10px;font-size:11px;font-family:'Montserrat',sans-serif;font-weight:600;border-radius:4px;border:1px solid rgba(232,234,240,0.12);background:transparent;color:#6B7280;cursor:pointer;">Hecho</button>
+      </div>
+      <!-- Urgente toggle -->
+      <button id="btn-urgente" onclick="toggleUrgente()"
+        style="padding:3px 10px;font-size:11px;font-family:'Montserrat',sans-serif;font-weight:600;border-radius:4px;border:1px solid rgba(232,234,240,0.12);background:transparent;color:#6B7280;cursor:pointer;">
+        Urgente
+      </button>
+      <!-- Deadline -->
+      <div style="display:flex;gap:4px;align-items:center;flex-wrap:wrap;">
+        <span style="font-size:10px;color:#6B7280;font-family:'Montserrat',sans-serif;letter-spacing:0.08em;text-transform:uppercase;margin-right:2px;flex-shrink:0;">Deadline</span>
+        <button data-fdl="todos" onclick="setDeadlineFilter('todos')"
+          style="padding:3px 10px;font-size:11px;font-family:'Montserrat',sans-serif;font-weight:600;border-radius:4px;border:1px solid rgba(59,78,217,0.5);background:rgba(59,78,217,0.2);color:#E8EAF0;cursor:pointer;">Todos</button>
+        <button data-fdl="hoy" onclick="setDeadlineFilter('hoy')"
+          style="padding:3px 10px;font-size:11px;font-family:'Montserrat',sans-serif;font-weight:600;border-radius:4px;border:1px solid rgba(232,234,240,0.12);background:transparent;color:#6B7280;cursor:pointer;">Hoy</button>
+        <button data-fdl="semana" onclick="setDeadlineFilter('semana')"
+          style="padding:3px 10px;font-size:11px;font-family:'Montserrat',sans-serif;font-weight:600;border-radius:4px;border:1px solid rgba(232,234,240,0.12);background:transparent;color:#6B7280;cursor:pointer;">Esta semana</button>
+        <button data-fdl="vencidas" onclick="setDeadlineFilter('vencidas')"
+          style="padding:3px 10px;font-size:11px;font-family:'Montserrat',sans-serif;font-weight:600;border-radius:4px;border:1px solid rgba(232,234,240,0.12);background:transparent;color:#6B7280;cursor:pointer;">Vencidas</button>
+        <button data-fdl="sin" onclick="setDeadlineFilter('sin')"
+          style="padding:3px 10px;font-size:11px;font-family:'Montserrat',sans-serif;font-weight:600;border-radius:4px;border:1px solid rgba(232,234,240,0.12);background:transparent;color:#6B7280;cursor:pointer;">Sin deadline</button>
+      </div>
+    </div>
+
+    <!-- List -->
+    <div id="tareas-list" style="display:flex;flex-direction:column;gap:4px;">
+      <div style="background:#131F4A;border:1px solid rgba(232,234,240,0.06);border-radius:8px;padding:1rem;color:#6B7280;font-size:13px;">Cargando...</div>
     </div>
   </div>
 </OSLayout>
+
+<script is:inline>
+var allTareas = [];
+var estadoFilter = 'todos';
+var urgenteFilter = false;
+var deadlineFilter = 'todos';
+
+var ESTADO_COLOR = { pendiente:'#6B7280', 'en progreso':'#6B7AE8', hecho:'#22c55e' };
+var ESTADO_LABEL = { pendiente:'Pendiente', 'en progreso':'En progreso', hecho:'Hecho' };
+
+function esc(s) {
+  return String(s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+function todayStr() {
+  return new Date().toISOString().slice(0,10);
+}
+function endOfWeekStr() {
+  var d = new Date();
+  var diff = 6 - d.getDay();
+  d.setDate(d.getDate() + diff);
+  return d.toISOString().slice(0,10);
+}
+function dlDisplay(dl) {
+  if (!dl) return '';
+  var today = todayStr();
+  var overdue = dl < today;
+  var color = overdue ? '#F87171' : (dl === today ? '#FB923C' : '#6B7280');
+  var label = new Date(dl + 'T12:00:00').toLocaleDateString('es',{day:'numeric',month:'short'});
+  return '<span style="font-size:11px;color:' + color + ';">' + (overdue ? 'Vencio: ' : '') + esc(label) + '</span>';
+}
+function applyFilters(tareas) {
+  return tareas.filter(function(t) {
+    if (estadoFilter !== 'todos' && t.estado !== estadoFilter) return false;
+    if (urgenteFilter && !t.urgente) return false;
+    var dl = t.deadline;
+    var today = todayStr();
+    if (deadlineFilter === 'hoy') return dl === today;
+    if (deadlineFilter === 'semana') return !!(dl && dl >= today && dl <= endOfWeekStr());
+    if (deadlineFilter === 'vencidas') return !!(dl && dl < today && t.estado !== 'hecho');
+    if (deadlineFilter === 'sin') return !dl;
+    return true;
+  });
+}
+function activateBtn(selector, attr, val) {
+  document.querySelectorAll('[' + attr + ']').forEach(function(b) {
+    var active = b.getAttribute(attr) === val;
+    b.style.background = active ? 'rgba(59,78,217,0.2)' : 'transparent';
+    b.style.color = active ? '#E8EAF0' : '#6B7280';
+    b.style.borderColor = active ? 'rgba(59,78,217,0.5)' : 'rgba(232,234,240,0.12)';
+  });
+}
+function setEstadoFilter(val) {
+  estadoFilter = val;
+  activateBtn(null, 'data-fest', val);
+  renderTareas(applyFilters(allTareas));
+}
+function setDeadlineFilter(val) {
+  deadlineFilter = val;
+  activateBtn(null, 'data-fdl', val);
+  renderTareas(applyFilters(allTareas));
+}
+function toggleUrgente() {
+  urgenteFilter = !urgenteFilter;
+  var btn = document.getElementById('btn-urgente');
+  if (btn) {
+    btn.style.background = urgenteFilter ? 'rgba(248,113,113,0.15)' : 'transparent';
+    btn.style.color = urgenteFilter ? '#F87171' : '#6B7280';
+    btn.style.borderColor = urgenteFilter ? 'rgba(248,113,113,0.4)' : 'rgba(232,234,240,0.12)';
+  }
+  renderTareas(applyFilters(allTareas));
+}
+async function patchDeadline(id, current) {
+  var val = prompt('Fecha limite (YYYY-MM-DD):', current || '');
+  if (val === null) return;
+  val = val.trim();
+  if (val && !/^\d{4}-\d{2}-\d{2}$/.test(val)) { alert('Formato invalido. Usa YYYY-MM-DD'); return; }
+  try {
+    var res = await fetch('/api/os/tareas?id=' + encodeURIComponent(id), {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ deadline: val || null }),
+    });
+    if (!res.ok) throw new Error(String(res.status));
+    await loadTareas();
+  } catch(e) { alert('Error: ' + e.message); }
+}
+async function patchEstado(id, estado) {
+  try {
+    var res = await fetch('/api/os/tareas?id=' + encodeURIComponent(id), {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ estado: estado }),
+    });
+    if (!res.ok) throw new Error(String(res.status));
+    await loadTareas();
+  } catch(e) { alert('Error: ' + e.message); }
+}
+async function deleteTarea(id) {
+  if (!confirm('Eliminar esta tarea?')) return;
+  try {
+    var res = await fetch('/api/os/tareas?id=' + encodeURIComponent(id), { method: 'DELETE' });
+    if (!res.ok) throw new Error(String(res.status));
+    await loadTareas();
+  } catch(e) { alert('Error: ' + e.message); }
+}
+
+function renderTareas(tareas) {
+  var list = document.getElementById('tareas-list');
+  if (!list) return;
+  if (!tareas.length) {
+    list.innerHTML = '<div style="background:#131F4A;border:1px solid rgba(232,234,240,0.06);border-radius:8px;padding:1.5rem;text-align:center;color:#6B7280;font-size:12px;">Sin tareas con estos filtros.</div>';
+    return;
+  }
+  var byProyecto = {};
+  tareas.forEach(function(t) {
+    var p = t.proyecto || 'Sin proyecto';
+    if (!byProyecto[p]) byProyecto[p] = [];
+    byProyecto[p].push(t);
+  });
+  list.innerHTML = Object.keys(byProyecto).map(function(p) {
+    return '<div style="margin-bottom:1.25rem;">'
+      + '<p style="font-family:Montserrat,sans-serif;font-size:10px;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;color:#6B7280;margin:0 0 6px;">' + esc(p) + '</p>'
+      + '<div style="display:flex;flex-direction:column;gap:4px;">'
+      + byProyecto[p].map(function(t) {
+          var isDone = t.estado === 'hecho';
+          var opts = Object.keys(ESTADO_LABEL).map(function(e) {
+            return '<option value="' + e + '"' + (t.estado === e ? ' selected' : '') + '>' + ESTADO_LABEL[e] + '</option>';
+          }).join('');
+          var dlHtml = t.deadline
+            ? '<button onclick="patchDeadline(\'' + t.id + '\',\'' + t.deadline + '\')" title="Cambiar" style="background:none;border:none;cursor:pointer;padding:0;line-height:1;">' + dlDisplay(t.deadline) + '</button>'
+            : '<button onclick="patchDeadline(\'' + t.id + '\',\'\')" style="font-size:10px;color:rgba(107,114,128,0.45);background:none;border:1px dashed rgba(107,114,128,0.25);border-radius:3px;padding:1px 8px;cursor:pointer;font-family:Montserrat,sans-serif;white-space:nowrap;">+ deadline</button>';
+          return '<div style="display:flex;align-items:center;gap:10px;background:#131F4A;border:1px solid rgba(232,234,240,0.09);border-radius:6px;padding:0.55rem 0.875rem;">'
+            + (t.urgente ? '<span title="Urgente" style="width:6px;height:6px;border-radius:50%;background:#F87171;flex-shrink:0;"></span>' : '<span style="width:6px;height:6px;flex-shrink:0;opacity:0;"></span>')
+            + '<p style="font-size:13px;color:' + (isDone ? '#6B7280' : '#F4F6F8') + ';margin:0;flex:1;min-width:0;line-height:1.4;text-decoration:' + (isDone ? 'line-through' : 'none') + ';">' + esc(t.titulo) + '</p>'
+            + '<div style="display:flex;align-items:center;gap:8px;flex-shrink:0;">'
+            + dlHtml
+            + '<select onchange="patchEstado(\'' + t.id + '\',this.value)" style="background:#0E1738;border:1px solid rgba(232,234,240,0.12);border-radius:4px;padding:2px 6px;font-size:11px;font-family:Montserrat,sans-serif;font-weight:600;color:' + (ESTADO_COLOR[t.estado] || '#6B7280') + ';cursor:pointer;outline:none;">'
+            + opts
+            + '</select>'
+            + '<button onclick="deleteTarea(\'' + t.id + '\')" title="Eliminar" style="background:none;border:none;color:rgba(107,114,128,0.4);cursor:pointer;font-size:15px;padding:0;line-height:1;">x</button>'
+            + '</div>'
+            + '</div>';
+        }).join('')
+      + '</div></div>';
+  }).join('');
+}
+
+async function loadTareas() {
+  try {
+    var res = await fetch('/api/os/tareas');
+    if (!res.ok) throw new Error(String(res.status));
+    var data = await res.json();
+    allTareas = data.tareas || [];
+    var pending = allTareas.filter(function(t) { return t.estado !== 'hecho'; }).length;
+    var countEl = document.getElementById('tarea-count');
+    if (countEl) countEl.textContent = pending + ' pendientes';
+    renderTareas(applyFilters(allTareas));
+  } catch(e) {
+    var list = document.getElementById('tareas-list');
+    if (list) list.innerHTML = '<div style="color:#F87171;font-size:12px;padding:1rem;">Error: ' + e.message + '</div>';
+  }
+}
+
+var form = document.getElementById('tarea-form');
+if (form) {
+  form.addEventListener('submit', async function(e) {
+    e.preventDefault();
+    var msg = document.getElementById('tarea-form-msg');
+    if (msg) msg.style.display = 'none';
+    var fd = new FormData(form);
+    var body = {
+      titulo: fd.get('titulo'),
+      proyecto: fd.get('proyecto') || null,
+      deadline: fd.get('deadline') || null,
+      urgente: fd.get('urgente') === 'true',
+    };
+    try {
+      var res = await fetch('/api/os/tareas', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body),
+      });
+      var json = await res.json();
+      if (!res.ok) throw new Error(json.error || String(res.status));
+      form.reset();
+      await loadTareas();
+    } catch(err) {
+      if (msg) { msg.textContent = 'Error: ' + err.message; msg.style.display = 'block'; }
+    }
+  });
+}
+
+loadTareas();
+</script>
