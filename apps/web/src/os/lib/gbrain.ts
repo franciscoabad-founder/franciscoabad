@@ -58,6 +58,9 @@ export function createGbrainClient(token: string) {
     listPages: (args: { limit?: number; sort?: string; tag?: string; type?: string } = {}) =>
       callTool('list_pages', args as Record<string, unknown>, token) as Promise<BrainPage[]>,
 
+    listPagesByTag: (tag: string, limit = 50) =>
+      callTool('list_pages', { tag, limit, sort: 'updated_desc' }, token) as Promise<BrainPage[]>,
+
     getPage: (slug: string) =>
       callTool('get_page', { slug }, token) as Promise<BrainPageFull>,
 
