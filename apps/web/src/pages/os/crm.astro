@@ -1,0 +1,208 @@
+---
+export const prerender = false;
+import OSLayout from '../../layouts/OSLayout.astro';
+---
+
+<OSLayout title="CRM">
+  <div>
+    <!-- Header -->
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1.25rem;flex-wrap:wrap;gap:8px;">
+      <h1 style="font-size:1.375rem;font-weight:700;color:#F4F6F8;margin:0;">CRM</h1>
+      <div style="display:flex;align-items:center;gap:10px;">
+        <p id="lead-count" style="font-size:12px;color:#6B7280;margin:0;">Cargando...</p>
+        <div style="display:flex;background:rgba(232,234,240,0.05);border:1px solid rgba(232,234,240,0.1);border-radius:6px;overflow:hidden;">
+          <button id="btn-kanban" onclick="setView('kanban')" style="padding:4px 12px;font-size:11px;font-family:'Montserrat',sans-serif;font-weight:600;letter-spacing:0.06em;text-transform:uppercase;background:rgba(59,78,217,0.3);color:#E8EAF0;border:none;cursor:pointer;transition:background .15s,color .15s;">Kanban</button>
+          <button id="btn-tabla" onclick="setView('tabla')" style="padding:4px 12px;font-size:11px;font-family:'Montserrat',sans-serif;font-weight:600;letter-spacing:0.06em;text-transform:uppercase;background:transparent;color:#6B7280;border:none;cursor:pointer;transition:background .15s,color .15s;">Tabla</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Quick-add form -->
+    <form id="lead-form" style="display:flex;gap:8px;flex-wrap:wrap;align-items:flex-end;margin-bottom:1.25rem;background:#131F4A;border:1px solid rgba(232,234,240,0.09);border-radius:8px;padding:0.75rem 1rem;">
+      <input name="nombre" type="text" placeholder="Nombre del lead *" required
+        style="flex:2;min-width:140px;background:rgba(232,234,240,0.05);border:1px solid rgba(232,234,240,0.12);border-radius:5px;padding:5px 10px;font-size:12px;color:#F4F6F8;font-family:'Inter',sans-serif;outline:none;" />
+      <input name="empresa" type="text" placeholder="Empresa"
+        style="flex:1;min-width:110px;background:rgba(232,234,240,0.05);border:1px solid rgba(232,234,240,0.12);border-radius:5px;padding:5px 10px;font-size:12px;color:#F4F6F8;font-family:'Inter',sans-serif;outline:none;" />
+      <input name="proyecto" type="text" placeholder="Proyecto"
+        style="flex:1;min-width:100px;background:rgba(232,234,240,0.05);border:1px solid rgba(232,234,240,0.12);border-radius:5px;padding:5px 10px;font-size:12px;color:#F4F6F8;font-family:'Inter',sans-serif;outline:none;" />
+      <select name="etapa"
+        style="background:#0E1738;border:1px solid rgba(232,234,240,0.12);border-radius:5px;padding:5px 10px;font-size:12px;color:#F4F6F8;font-family:'Inter',sans-serif;outline:none;cursor:pointer;">
+        <option value="nuevo">Nuevo</option>
+        <option value="prospecto">Prospecto</option>
+        <option value="contacto">Contacto</option>
+        <option value="propuesta">Propuesta</option>
+        <option value="negociacion">Negociacion</option>
+        <option value="cerrado">Cerrado</option>
+      </select>
+      <button type="submit"
+        style="background:#3B4ED9;color:#fff;border:none;border-radius:5px;padding:5px 16px;font-size:12px;font-family:'Montserrat',sans-serif;font-weight:600;cursor:pointer;white-space:nowrap;flex-shrink:0;">
+        + Agregar
+      </button>
+      <p id="form-msg" style="font-size:11px;color:#F87171;width:100%;margin:0;display:none;"></p>
+    </form>
+
+    <!-- Kanban view -->
+    <div id="crm-kanban" style="display:flex;gap:12px;overflow-x:auto;padding-bottom:1rem;min-height:300px;">
+      <div style="color:#6B7280;font-size:13px;padding:1rem 0;">Cargando...</div>
+    </div>
+
+    <!-- Tabla view -->
+    <div id="crm-tabla" style="display:none;overflow-x:auto;">
+      <table style="width:100%;border-collapse:collapse;font-size:13px;min-width:600px;">
+        <thead>
+          <tr>
+            {['Lead','Empresa','Proyecto','Etapa'].map(h => (
+              <th style="text-align:left;padding:8px 10px;font-family:'Montserrat',sans-serif;font-size:9px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:#6B7280;border-bottom:1px solid rgba(232,234,240,0.1);">{h}</th>
+            ))}
+            {['Prob %','Scoring','Valor'].map(h => (
+              <th style="text-align:right;padding:8px 10px;font-family:'Montserrat',sans-serif;font-size:9px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:#6B7280;border-bottom:1px solid rgba(232,234,240,0.1);">{h}</th>
+            ))}
+            <th style="text-align:left;padding:8px 10px;font-family:'Montserrat',sans-serif;font-size:9px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:#6B7280;border-bottom:1px solid rgba(232,234,240,0.1);">Etiquetas</th>
+            <th style="border-bottom:1px solid rgba(232,234,240,0.1);padding:8px 10px;"></th>
+          </tr>
+        </thead>
+        <tbody id="tabla-body">
+          <tr><td colspan="9" style="padding:2rem;text-align:center;color:#6B7280;font-size:12px;">Cargando...</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</OSLayout>
+
+<script is:inline>
+var ETAPAS = ['nuevo','prospecto','contacto','propuesta','negociacion','cerrado'];
+var ETAPA_LABEL = {nuevo:'Nuevo',prospecto:'Prospecto',contacto:'Contacto',propuesta:'Propuesta',negociacion:'Negociacion',cerrado:'Cerrado'};
+var ETAPA_COLOR = {nuevo:'#6B7280',prospecto:'#94A3B8',contacto:'#6B7AE8',propuesta:'#3B4ED9',negociacion:'#B5985A',cerrado:'#22c55e'};
+var allLeads = [];
+
+function esc(s) {
+  return String(s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+function fmtValor(n) {
+  if (!n && n !== 0) return '';
+  return '$' + Number(n).toLocaleString('es-EC', {minimumFractionDigits:0,maximumFractionDigits:2});
+}
+
+function setView(v) {
+  var kanban = document.getElementById('crm-kanban');
+  var tabla = document.getElementById('crm-tabla');
+  var btnK = document.getElementById('btn-kanban');
+  var btnT = document.getElementById('btn-tabla');
+  var isKanban = v === 'kanban';
+  if (kanban) kanban.style.display = isKanban ? 'flex' : 'none';
+  if (tabla) tabla.style.display = isKanban ? 'none' : 'block';
+  if (btnK) { btnK.style.background = isKanban ? 'rgba(59,78,217,0.3)' : 'transparent'; btnK.style.color = isKanban ? '#E8EAF0' : '#6B7280'; }
+  if (btnT) { btnT.style.background = isKanban ? 'transparent' : 'rgba(59,78,217,0.3)'; btnT.style.color = isKanban ? '#6B7280' : '#E8EAF0'; }
+}
+
+function renderKanban(leads) {
+  var kanban = document.getElementById('crm-kanban');
+  if (!kanban) return;
+  kanban.innerHTML = ETAPAS.map(function(etapa) {
+    var cols = leads.filter(function(l) { return l.etapa === etapa; });
+    var cards = cols.length === 0
+      ? '<div style="background:#131F4A;border:1px dashed rgba(232,234,240,0.1);border-radius:8px;padding:1.25rem;text-align:center;"><p style="font-size:12px;color:#6B7280;margin:0;">Sin leads</p></div>'
+      : cols.map(function(lead) {
+          return '<div style="background:#131F4A;border:1px solid rgba(232,234,240,0.09);border-radius:8px;padding:0.875rem;position:relative;">'
+            + '<button onclick="deleteLead(\'' + lead.id + '\')" title="Eliminar" style="position:absolute;top:8px;right:8px;background:none;border:none;cursor:pointer;color:rgba(107,114,128,0.4);font-size:15px;line-height:1;padding:0;">x</button>'
+            + '<p style="font-family:Montserrat,sans-serif;font-size:13px;font-weight:600;color:#F4F6F8;margin:0 20px 3px 0;">' + esc(lead.nombre) + '</p>'
+            + (lead.empresa ? '<p style="font-size:11px;color:#6B7280;margin:0 0 4px;">' + esc(lead.empresa) + '</p>' : '')
+            + (lead.valor ? '<p style="font-family:Montserrat,sans-serif;font-size:13px;font-weight:700;color:#B5985A;margin:0 0 3px;">' + fmtValor(lead.valor) + '</p>' : '')
+            + (lead.proyecto ? '<p style="font-size:11px;color:#E8EAF0;margin:0;">' + esc(lead.proyecto) + '</p>' : '')
+            + '</div>';
+        }).join('');
+    return '<div style="min-width:210px;flex-shrink:0;display:flex;flex-direction:column;gap:8px;">'
+      + '<div style="display:flex;align-items:center;gap:6px;padding:0 2px;margin-bottom:4px;">'
+      + '<span style="width:7px;height:7px;border-radius:50%;background:' + ETAPA_COLOR[etapa] + ';flex-shrink:0;"></span>'
+      + '<p style="font-family:Montserrat,sans-serif;font-size:10px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:#6B7280;margin:0;">' + esc(ETAPA_LABEL[etapa]) + '</p>'
+      + '<span style="font-size:11px;color:#6B7280;margin-left:auto;">' + cols.length + '</span>'
+      + '</div>'
+      + cards
+      + '</div>';
+  }).join('');
+}
+
+function renderTabla(leads) {
+  var tbody = document.getElementById('tabla-body');
+  if (!tbody) return;
+  if (!leads.length) {
+    tbody.innerHTML = '<tr><td colspan="9" style="padding:2rem;text-align:center;color:#6B7280;font-size:12px;">Sin leads. Agrega uno arriba.</td></tr>';
+    return;
+  }
+  tbody.innerHTML = leads.map(function(l) {
+    var tags = (l.etiquetas || []).map(function(t) {
+      return '<span style="font-size:10px;color:#6B7280;background:rgba(232,234,240,0.06);padding:1px 6px;border-radius:3px;margin-right:3px;">' + esc(t) + '</span>';
+    }).join('');
+    var etapaColor = ETAPA_COLOR[l.etapa] || '#6B7280';
+    var etapaLabel = ETAPA_LABEL[l.etapa] || l.etapa;
+    return '<tr style="border-bottom:1px solid rgba(232,234,240,0.06);transition:background .12s;" onmouseenter="this.style.background=\'rgba(59,78,217,0.04)\'" onmouseleave="this.style.background=\'transparent\'">'
+      + '<td style="padding:9px 10px;color:#F4F6F8;font-weight:600;white-space:nowrap;">' + esc(l.nombre) + '</td>'
+      + '<td style="padding:9px 10px;color:#94A3B8;">' + esc(l.empresa || '') + '</td>'
+      + '<td style="padding:9px 10px;color:#94A3B8;">' + esc(l.proyecto || '') + '</td>'
+      + '<td style="padding:9px 10px;"><span style="font-size:10px;font-weight:700;font-family:Montserrat,sans-serif;letter-spacing:0.05em;color:' + etapaColor + ';background:' + etapaColor + '22;padding:2px 9px;border-radius:4px;">' + esc(etapaLabel) + '</span></td>'
+      + '<td style="padding:9px 10px;text-align:right;color:#B5985A;font-family:Montserrat,sans-serif;font-weight:700;">' + (l.probabilidad || 0) + '%</td>'
+      + '<td style="padding:9px 10px;text-align:right;color:#B5985A;font-family:Montserrat,sans-serif;font-weight:700;">' + (l.scoring || 0) + '</td>'
+      + '<td style="padding:9px 10px;text-align:right;color:#B5985A;font-family:Montserrat,sans-serif;font-weight:700;">' + (l.valor ? fmtValor(l.valor) : '') + '</td>'
+      + '<td style="padding:9px 10px;">' + (tags || '<span style="color:rgba(107,114,128,0.3);font-size:11px;">-</span>') + '</td>'
+      + '<td style="padding:9px 10px;text-align:right;"><button onclick="deleteLead(\'' + l.id + '\')" title="Eliminar" style="background:none;border:none;color:rgba(107,114,128,0.4);cursor:pointer;font-size:14px;padding:0;line-height:1;">x</button></td>'
+      + '</tr>';
+  }).join('');
+}
+
+function renderAll(leads) {
+  allLeads = leads;
+  var countEl = document.getElementById('lead-count');
+  if (countEl) countEl.textContent = leads.length + ' leads';
+  renderKanban(leads);
+  renderTabla(leads);
+}
+
+async function loadLeads() {
+  try {
+    var res = await fetch('/api/os/leads');
+    if (!res.ok) throw new Error(String(res.status));
+    var data = await res.json();
+    renderAll(data.leads || []);
+  } catch(e) {
+    var kanban = document.getElementById('crm-kanban');
+    if (kanban) kanban.innerHTML = '<div style="color:#F87171;font-size:12px;padding:1rem 0;">' + e.message + '</div>';
+  }
+}
+
+async function deleteLead(id) {
+  if (!confirm('Eliminar este lead?')) return;
+  try {
+    var res = await fetch('/api/os/leads?id=' + encodeURIComponent(id), { method: 'DELETE' });
+    if (!res.ok) throw new Error(String(res.status));
+    await loadLeads();
+  } catch(e) {
+    alert('Error al eliminar: ' + e.message);
+  }
+}
+
+var form = document.getElementById('lead-form');
+if (form) {
+  form.addEventListener('submit', async function(e) {
+    e.preventDefault();
+    var msg = document.getElementById('form-msg');
+    if (msg) msg.style.display = 'none';
+    var fd = new FormData(form);
+    var body = { nombre: fd.get('nombre'), empresa: fd.get('empresa'), proyecto: fd.get('proyecto'), etapa: fd.get('etapa') };
+    try {
+      var res = await fetch('/api/os/leads', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body),
+      });
+      var json = await res.json();
+      if (!res.ok) throw new Error(json.error || String(res.status));
+      form.reset();
+      await loadLeads();
+    } catch(err) {
+      if (msg) { msg.textContent = 'Error: ' + err.message; msg.style.display = 'block'; }
+    }
+  });
+}
+
+loadLeads();
+</script>

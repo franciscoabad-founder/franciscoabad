@@ -1,0 +1,15 @@
+---
+export const prerender = false;
+import OSLayout from '../../layouts/OSLayout.astro';
+import { bandeja } from '../../os/data/bandeja';
+import OSBandeja from '../../os/components/OSBandeja';
+---
+
+<OSLayout title="Por revisar">
+  <div>
+    <div style="display:flex;align-items:baseline;justify-content:space-between;margin-bottom:1.75rem;">
+      <h1 style="font-size:1.375rem;font-weight:700;color:#F4F6F8;margin:0;">Por revisar</h1>
+    </div>
+    <OSBandeja items={bandeja} client:load />
+  </div>
+</OSLayout>
