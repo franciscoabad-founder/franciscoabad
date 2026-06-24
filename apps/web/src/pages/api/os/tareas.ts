@@ -26,7 +26,8 @@ export const GET: APIRoute = async ({ cookies }) => {
     if (error) throw error;
     return json({ tareas: data ?? [] });
   } catch (err) {
-    return json({ error: String(err) }, 502);
+    const msg = err instanceof Error ? err.message : (err as any)?.message ?? JSON.stringify(err);
+    return json({ error: msg }, 502);
   }
 };
 
@@ -52,7 +53,8 @@ export const POST: APIRoute = async ({ cookies, request }) => {
     if (error) throw error;
     return json({ tarea: data }, 201);
   } catch (err) {
-    return json({ error: String(err) }, 502);
+    const msg = err instanceof Error ? err.message : (err as any)?.message ?? JSON.stringify(err);
+    return json({ error: msg }, 502);
   }
 };
 
@@ -72,7 +74,8 @@ export const PATCH: APIRoute = async ({ cookies, request, url }) => {
     if (error) throw error;
     return json({ tarea: data });
   } catch (err) {
-    return json({ error: String(err) }, 502);
+    const msg = err instanceof Error ? err.message : (err as any)?.message ?? JSON.stringify(err);
+    return json({ error: msg }, 502);
   }
 };
 
@@ -86,6 +89,7 @@ export const DELETE: APIRoute = async ({ cookies, url }) => {
     if (error) throw error;
     return json({ ok: true });
   } catch (err) {
-    return json({ error: String(err) }, 502);
+    const msg = err instanceof Error ? err.message : (err as any)?.message ?? JSON.stringify(err);
+    return json({ error: msg }, 502);
   }
 };
