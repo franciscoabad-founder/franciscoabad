@@ -26,6 +26,28 @@ function inferGroup(slug: string, title: string): string {
   return 'otros';
 }
 
+// Tags live in two places: the structured `tags` array (populated on some pages)
+// and inline in the body as `Tags: [arazza, marca]`. Merge + normalize both.
+function extractTags(structured: string[] | undefined, body: string | undefined): string[] {
+  const out = new Set<string>();
+  const norm = (t: string) => t.trim().replace(/^#/, '').toLowerCase();
+
+  for (const t of structured ?? []) {
+    const n = norm(t);
+    if (n) out.add(n);
+  }
+
+  const m = (body ?? '').match(/Tags:\s*\[([^\]]*)\]/i);
+  if (m) {
+    for (const raw of m[1].split(',')) {
+      const n = norm(raw);
+      if (n) out.add(n);
+    }
+  }
+
+  return [...out];
+}
+
 export const GET: APIRoute = async ({ cookies }) => {
   const token = cookies.get('os_auth')?.value;
   const expected = import.meta.env.OS_AUTH_TOKEN;
@@ -49,64 +71,71 @@ export const GET: APIRoute = async ({ cookies }) => {
   try {
     const pages = await brain.listPages({ limit: 100, sort: 'updated_desc' });
 
-    // Fetch links for all pages in parallel
-    const linksResults = await Promise.all(
-      pages.map((p) => brain.getLinks(p.slug).catch(() => []))
+    // Fetch full pages in parallel to read tags (structured + inline in body).
+    const fullResults = await Promise.all(
+      pages.map((p) => brain.getPage(p.slug).catch(() => null))
     );
 
-    const nodes = pages.map((p) => ({
+    // tags[i] = normalized tag list for pages[i]
+    const tagsByIndex = pages.map((_, i) =>
+      extractTags(fullResults[i]?.tags, fullResults[i]?.compiled_truth)
+    );
+
+    const nodes = pages.map((p, i) => ({
       id: p.slug,
       label: p.title,
       type: p.type,
       group: inferGroup(p.slug, p.title),
+      tags: tagsByIndex[i],
       updated_at: p.updated_at,
     }));
 
-    const slugSet = new Set(pages.map((p) => p.slug));
-    const edgeSet = new Set<string>();
-    const edges: { source: string; target: string; kind: 'real' | 'tema' }[] = [];
+    // Tag frequency: a tag present in > 60% of notes is too generic to link by
+    // (it would collapse the whole graph into one blob). Exclude those.
+    const total = pages.length;
+    const tagFreq: Record<string, number> = {};
+    for (const tags of tagsByIndex) {
+      for (const t of tags) tagFreq[t] = (tagFreq[t] ?? 0) + 1;
+    }
+    const threshold = total * 0.6;
+    const excluded = new Set(
+      Object.entries(tagFreq).filter(([, c]) => c > threshold).map(([t]) => t)
+    );
 
-    // Real edges from gbrain links
+    // Edges: connect two notes if they share at least one non-generic tag.
+    // One line per pair regardless of how many tags they share (dedup by key).
+    const tagToSlugs: Record<string, string[]> = {};
     pages.forEach((p, i) => {
-      for (const link of linksResults[i]) {
-        const target = link.target_slug ?? (link as any).target;
-        if (!target || !slugSet.has(target)) continue;
-        const key = [p.slug, target].sort().join('|');
-        if (edgeSet.has(key)) continue;
-        edgeSet.add(key);
-        edges.push({ source: p.slug, target, kind: 'real' });
+      for (const t of tagsByIndex[i]) {
+        if (excluded.has(t)) continue;
+        (tagToSlugs[t] ??= []).push(p.slug);
       }
     });
 
-    // Derived edges: connect same-group nodes so each theme forms a visible cluster.
-    // Strategy: ring topology per group (chain + close if 3+ members).
-    const byGroup: Record<string, string[]> = {};
-    for (const n of nodes) {
-      byGroup[n.group] = byGroup[n.group] ?? [];
-      byGroup[n.group].push(n.id);
-    }
+    const edgeSet = new Set<string>();
+    const edges: { source: string; target: string; kind: 'real' | 'tema' }[] = [];
 
-    for (const members of Object.values(byGroup)) {
-      if (members.length < 2) continue;
-      // Chain: 0-1, 1-2, ..., N-2 to N-1
-      for (let i = 0; i < members.length - 1; i++) {
-        const key = [members[i], members[i + 1]].sort().join('|');
-        if (!edgeSet.has(key)) {
+    for (const slugs of Object.values(tagToSlugs)) {
+      for (let i = 0; i < slugs.length; i++) {
+        for (let j = i + 1; j < slugs.length; j++) {
+          const key = [slugs[i], slugs[j]].sort().join('|');
+          if (edgeSet.has(key)) continue;
           edgeSet.add(key);
-          edges.push({ source: members[i], target: members[i + 1], kind: 'tema' });
-        }
-      }
-      // Close ring if 3+ members
-      if (members.length >= 3) {
-        const key = [members[0], members[members.length - 1]].sort().join('|');
-        if (!edgeSet.has(key)) {
-          edgeSet.add(key);
-          edges.push({ source: members[0], target: members[members.length - 1], kind: 'tema' });
+          edges.push({ source: slugs[i], target: slugs[j], kind: 'tema' });
         }
       }
     }
 
-    const data = { nodes, edges };
+    const data = {
+      nodes,
+      edges,
+      meta: {
+        notes: total,
+        edges: edges.length,
+        tags_used: Object.keys(tagToSlugs).length,
+        tags_excluded: [...excluded],
+      },
+    };
     cache = { data, ts: Date.now() };
 
     return new Response(JSON.stringify(data), {

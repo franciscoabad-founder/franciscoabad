@@ -101,7 +101,7 @@ export default function OSGraphBrain() {
     } else {
       svg.selectAll('.node-g').attr('opacity', 1);
       svg.selectAll<SVGLineElement, SimEdge>('.edge-line').attr('opacity', (d: any) =>
-        d.kind === 'tema' ? 0.18 : 0.55
+        d.kind === 'tema' ? 0.5 : 0.6
       );
     }
   }, [activeGroup]);
@@ -204,10 +204,10 @@ export default function OSGraphBrain() {
       .enter()
       .append('line')
       .attr('class', 'edge-line')
-      .attr('stroke', (d) => d.kind === 'tema' ? 'rgba(150,160,200,0.22)' : 'rgba(107,122,232,0.55)')
-      .attr('stroke-width', (d) => d.kind === 'tema' ? 0.8 : 1.5)
-      .attr('stroke-dasharray', (d) => d.kind === 'tema' ? '5,4' : 'none')
-      .attr('opacity', (d) => d.kind === 'tema' ? 0.18 : 0.55);
+      .attr('stroke', (d) => d.kind === 'tema' ? 'rgba(148,163,184,0.6)' : 'rgba(107,122,232,0.6)')
+      .attr('stroke-width', (d) => d.kind === 'tema' ? 1.3 : 1.5)
+      .attr('stroke-dasharray', 'none')
+      .attr('opacity', (d) => d.kind === 'tema' ? 0.5 : 0.6);
 
     // Nodes
     const nodeSel = g.append('g')
@@ -282,8 +282,8 @@ export default function OSGraphBrain() {
         d3.select(this).select('.node-label')
           .text(d.connections >= 4 ? d.label : '').attr('fill', '#6B7280').attr('font-size', '9px').attr('font-weight', '400');
         edgeSel
-          .attr('stroke', (e: any) => e.kind === 'tema' ? 'rgba(150,160,200,0.22)' : 'rgba(107,122,232,0.55)')
-          .attr('stroke-width', (e: any) => e.kind === 'tema' ? 0.8 : 1.5);
+          .attr('stroke', (e: any) => e.kind === 'tema' ? 'rgba(148,163,184,0.6)' : 'rgba(107,122,232,0.6)')
+          .attr('stroke-width', (e: any) => e.kind === 'tema' ? 1.3 : 1.5);
       })
       .on('click', (ev, d) => {
         ev.stopPropagation();
