@@ -48,6 +48,7 @@ const navGroups = [
       { href: '/os/redes',     label: 'Redes'       },
       { href: '/os/finanzas',  label: 'Finanzas'    },
       { href: '/os/salud',     label: 'Salud'       },
+      { href: '/os/comidas',   label: 'Comidas'     },
     ],
   },
   {
@@ -77,6 +78,7 @@ const icons: Record<string, string> = {
   '/os/redes':      '<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" x2="15.42" y1="13.51" y2="17.49"/><line x1="15.41" x2="8.59" y1="6.51" y2="10.49"/></svg>',
   '/os/finanzas':   '<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" x2="12" y1="1" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>',
   '/os/salud':      '<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>',
+  '/os/comidas':    '<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 2v7c0 1.1.9 2 2 2h0a2 2 0 0 0 2-2V2"/><path d="M5 2v20"/><path d="M21 15V2a5 5 0 0 0-5 5v6c0 1.1.9 2 2 2h3Zm0 0v7"/></svg>',
   '/os/cerebro':    '<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9.5 2A2.5 2.5 0 0 1 12 4.5v15a2.5 2.5 0 0 1-4.96-.46 2.5 2.5 0 0 1-2.96-3.08 3 3 0 0 1-.34-5.58 2.5 2.5 0 0 1 1.32-4.24 2.5 2.5 0 0 1 1.98-3A2.5 2.5 0 0 1 9.5 2Z"/><path d="M14.5 2A2.5 2.5 0 0 0 12 4.5v15a2.5 2.5 0 0 0 4.96-.46 2.5 2.5 0 0 0 2.96-3.08 3 3 0 0 0 .34-5.58 2.5 2.5 0 0 0-1.32-4.24 2.5 2.5 0 0 0-1.98-3A2.5 2.5 0 0 0 14.5 2Z"/></svg>',
 };
 ---
@@ -478,13 +480,21 @@ const icons: Record<string, string> = {
       <div class="os-overlay" id="overlay"></div>
     </div>
 
-    <!-- Pregunta panel -->
-    <div id="os-pregunta-panel" style="display:none;position:fixed;top:44px;right:0;z-index:150;width:420px;max-width:100vw;background:#0E1738;border:1px solid rgba(59,78,217,0.3);border-left:1px solid rgba(59,78,217,0.3);border-bottom-left-radius:10px;box-shadow:0 8px 32px rgba(0,0,0,0.5);">
-      <div style="display:flex;align-items:center;justify-content:space-between;padding:0.625rem 1rem;border-bottom:1px solid rgba(232,234,240,0.08);">
-        <span style="font-family:'Montserrat',sans-serif;font-size:9px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:#6B7AE8;">Respuesta del cerebro</span>
-        <button id="os-pregunta-close" style="background:none;border:none;color:#6B7280;cursor:pointer;font-size:18px;line-height:1;padding:0;" title="Cerrar">x</button>
+    <!-- Chat con el cerebro -->
+    <div id="os-pregunta-panel" style="display:none;position:fixed;top:44px;right:0;z-index:150;width:420px;max-width:100vw;background:#0E1738;border:1px solid rgba(59,78,217,0.3);border-bottom-left-radius:10px;box-shadow:0 8px 32px rgba(0,0,0,0.5);display:flex;flex-direction:column;max-height:calc(100vh - 44px);">
+      <div style="display:flex;align-items:center;justify-content:space-between;padding:0.625rem 1rem;border-bottom:1px solid rgba(232,234,240,0.08);flex-shrink:0;">
+        <span style="font-family:'Montserrat',sans-serif;font-size:9px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:#6B7AE8;">Chat con el cerebro</span>
+        <div style="display:flex;align-items:center;gap:10px;">
+          <button id="os-pregunta-clear" style="background:none;border:none;color:#6B7280;cursor:pointer;font-size:10px;font-family:'Montserrat',sans-serif;letter-spacing:0.06em;text-transform:uppercase;padding:0;" title="Limpiar conversacion">Limpiar</button>
+          <button id="os-pregunta-close" style="background:none;border:none;color:#6B7280;cursor:pointer;font-size:18px;line-height:1;padding:0;" title="Cerrar">x</button>
+        </div>
       </div>
-      <div id="os-pregunta-body" style="padding:0.875rem 1rem;font-size:13px;color:#CBD5E1;line-height:1.65;max-height:55vh;overflow-y:auto;"></div>
+      <div id="os-pregunta-body" style="padding:0.875rem 1rem;font-size:13px;color:#CBD5E1;line-height:1.65;overflow-y:auto;flex:1;min-height:120px;display:flex;flex-direction:column;gap:10px;"></div>
+      <div style="display:flex;gap:6px;padding:0.625rem 0.75rem;border-top:1px solid rgba(232,234,240,0.08);flex-shrink:0;">
+        <input id="os-pregunta-input" type="text" placeholder="Escribe tu pregunta..." maxlength="400"
+          style="flex:1;background:rgba(232,234,240,0.05);border:1px solid rgba(232,234,240,0.12);border-radius:6px;padding:7px 10px;font-size:12px;color:#F4F6F8;font-family:'Inter',sans-serif;outline:none;" />
+        <button id="os-pregunta-send" style="background:#3B4ED9;color:#fff;border:none;border-radius:6px;padding:7px 14px;font-size:12px;font-family:'Montserrat',sans-serif;font-weight:600;cursor:pointer;flex-shrink:0;">Enviar</button>
+      </div>
     </div>
 
     <div class="os-shell">
@@ -530,52 +540,130 @@ const icons: Record<string, string> = {
       menuClose?.addEventListener('click', close);
       overlay?.addEventListener('click', close);
 
-      // Preguntar al cerebro
-      const preguntaInput = document.getElementById('os-pregunta') as HTMLInputElement | null;
+      // ── Chat con el cerebro ──
+      const preguntaBar   = document.getElementById('os-pregunta') as HTMLInputElement | null;
       const preguntaPanel = document.getElementById('os-pregunta-panel') as HTMLElement | null;
       const preguntaBody  = document.getElementById('os-pregunta-body') as HTMLElement | null;
       const preguntaClose = document.getElementById('os-pregunta-close') as HTMLElement | null;
+      const preguntaClear = document.getElementById('os-pregunta-clear') as HTMLElement | null;
+      const preguntaInput = document.getElementById('os-pregunta-input') as HTMLInputElement | null;
+      const preguntaSend  = document.getElementById('os-pregunta-send') as HTMLButtonElement | null;
 
-      preguntaClose?.addEventListener('click', () => {
-        if (preguntaPanel) preguntaPanel.style.display = 'none';
-      });
+      type ChatTurn = { role: 'user' | 'brain' | 'error'; text: string };
+      const CHAT_KEY = 'os-chat-history';
+      let chatHistory: ChatTurn[] = [];
+      try { chatHistory = JSON.parse(sessionStorage.getItem(CHAT_KEY) ?? '[]'); } catch { chatHistory = []; }
 
-      preguntaInput?.addEventListener('keydown', async (e: KeyboardEvent) => {
-        if (e.key !== 'Enter') return;
-        const q = preguntaInput.value.trim();
-        if (!q || !preguntaPanel || !preguntaBody) return;
-        preguntaPanel.style.display = 'block';
-        preguntaBody.innerHTML = '<p style="color:#6B7280;font-size:12px;">Consultando...</p>';
+      const escHtml = (s: string) =>
+        s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+
+      function renderChat(pending = false) {
+        if (!preguntaBody) return;
+        if (!chatHistory.length && !pending) {
+          preguntaBody.innerHTML = '<p style="color:#6B7280;font-size:12px;margin:auto;text-align:center;">Pregunta lo que quieras. El cerebro recuerda esta conversacion.</p>';
+          return;
+        }
+        let html = chatHistory.map((t) => {
+          if (t.role === 'user') {
+            return '<div style="align-self:flex-end;max-width:85%;background:#3B4ED9;color:#fff;padding:7px 11px;border-radius:10px 10px 2px 10px;font-size:13px;white-space:pre-wrap;">' + escHtml(t.text) + '</div>';
+          }
+          if (t.role === 'error') {
+            return '<div style="align-self:flex-start;max-width:85%;color:#F87171;font-size:12px;padding:2px 0;">' + escHtml(t.text) + '</div>';
+          }
+          return '<div style="align-self:flex-start;max-width:90%;background:rgba(232,234,240,0.05);border:1px solid rgba(232,234,240,0.08);color:#CBD5E1;padding:8px 11px;border-radius:10px 10px 10px 2px;font-size:13px;white-space:pre-wrap;">' + escHtml(t.text) + '</div>';
+        }).join('');
+        if (pending) {
+          html += '<div style="align-self:flex-start;color:#6B7280;font-size:12px;padding:2px 0;">Consultando el cerebro...</div>';
+        }
+        preguntaBody.innerHTML = html;
+        preguntaBody.scrollTop = preguntaBody.scrollHeight;
+      }
+
+      function openChat() {
+        if (preguntaPanel) preguntaPanel.style.display = 'flex';
+        renderChat();
+        preguntaInput?.focus();
+      }
+
+      async function askBrain(q: string) {
+        if (!q.trim()) return;
+        chatHistory.push({ role: 'user', text: q.trim() });
+        sessionStorage.setItem(CHAT_KEY, JSON.stringify(chatHistory.slice(-50)));
+        if (preguntaPanel) preguntaPanel.style.display = 'flex';
+        renderChat(true);
         try {
           const res = await fetch('/api/os/preguntar', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ pregunta: q }),
+            body: JSON.stringify({ pregunta: q.trim() }),
           });
           const data: { respuesta?: string; error?: string } = await res.json();
           if (data.error) {
-            preguntaBody.innerHTML = '<p style="color:#F87171;font-size:12px;">Error: ' + data.error + '</p>';
+            chatHistory.push({ role: 'error', text: 'Error: ' + data.error });
           } else {
-            const safe = (data.respuesta ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
-            preguntaBody.innerHTML = '<p style="white-space:pre-wrap;font-size:13px;">' + safe + '</p>';
-            preguntaInput.value = '';
+            chatHistory.push({ role: 'brain', text: data.respuesta ?? '(sin respuesta)' });
           }
         } catch {
-          preguntaBody.innerHTML = '<p style="color:#F87171;font-size:12px;">Error de conexion.</p>';
+          chatHistory.push({ role: 'error', text: 'Error de conexion.' });
         }
+        sessionStorage.setItem(CHAT_KEY, JSON.stringify(chatHistory.slice(-50)));
+        renderChat();
+      }
+
+      // Trigger from command-bar input
+      preguntaBar?.addEventListener('keydown', (e: KeyboardEvent) => {
+        if (e.key !== 'Enter') return;
+        const q = preguntaBar.value.trim();
+        if (!q) { openChat(); return; }
+        preguntaBar.value = '';
+        askBrain(q);
       });
 
-      // Quick capture: save to localStorage on Enter
+      // Send from panel input
+      const sendFromPanel = () => {
+        if (!preguntaInput) return;
+        const q = preguntaInput.value.trim();
+        if (!q) return;
+        preguntaInput.value = '';
+        askBrain(q);
+      };
+      preguntaSend?.addEventListener('click', sendFromPanel);
+      preguntaInput?.addEventListener('keydown', (e: KeyboardEvent) => {
+        if (e.key === 'Enter') { e.preventDefault(); sendFromPanel(); }
+      });
+
+      preguntaClose?.addEventListener('click', () => {
+        if (preguntaPanel) preguntaPanel.style.display = 'none';
+      });
+      preguntaClear?.addEventListener('click', () => {
+        chatHistory = [];
+        sessionStorage.removeItem(CHAT_KEY);
+        renderChat();
+      });
+
+      // ── Capturar idea → cerebro (n8n webhook) ──
       const captureInput = document.getElementById('os-capture') as HTMLInputElement | null;
-      captureInput?.addEventListener('keydown', (e: KeyboardEvent) => {
-        if (e.key === 'Enter' && captureInput.value.trim()) {
-          const items: { text: string; ts: string }[] = JSON.parse(localStorage.getItem('os-capture') ?? '[]');
-          items.unshift({ text: captureInput.value.trim(), ts: new Date().toISOString() });
-          localStorage.setItem('os-capture', JSON.stringify(items.slice(0, 100)));
-          captureInput.value = '';
-          captureInput.placeholder = 'Capturado';
-          setTimeout(() => { captureInput.placeholder = 'Capturar idea...'; }, 1200);
+      async function sendCapture() {
+        if (!captureInput) return;
+        const texto = captureInput.value.trim();
+        if (!texto) return;
+        captureInput.value = '';
+        captureInput.placeholder = 'Guardando...';
+        try {
+          const res = await fetch('/api/os/capturar', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ texto }),
+          });
+          const data: { ok?: boolean; error?: string } = await res.json();
+          captureInput.placeholder = (res.ok && data.ok) ? 'Guardado en el cerebro' : 'Error al guardar';
+        } catch {
+          captureInput.placeholder = 'Error al guardar';
         }
+        setTimeout(() => { if (captureInput) captureInput.placeholder = 'Capturar idea...'; }, 1800);
+      }
+      captureInput?.addEventListener('keydown', (e: KeyboardEvent) => {
+        if (e.key === 'Enter') sendCapture();
       });
     </script>
   </body>
