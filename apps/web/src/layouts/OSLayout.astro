@@ -401,6 +401,14 @@ const icons: Record<string, string> = {
       }
       @media (max-width: 480px) {
         .cmd-capture  { display: none; }
+        #os-pregunta-panel {
+          width: 100vw !important;
+          border-radius: 0 !important;
+          border-left: none !important;
+          border-right: none !important;
+          height: calc(100vh - 44px) !important;
+          max-height: calc(100vh - 44px) !important;
+        }
       }
     </style>
   </head>
@@ -447,8 +455,13 @@ const icons: Record<string, string> = {
         <span style="font-family:'Montserrat',sans-serif;font-size:10px;font-weight:700;letter-spacing:0.18em;text-transform:uppercase;color:#6B7AE8;">OS</span>
         <span style="font-size:12px;color:#6B7280;">{title}</span>
       </span>
-      <div class="cmd-status" style="gap:4px;">
-        <span class="cmd-status-dot"></span>
+      <div style="display:flex;align-items:center;gap:8px;">
+        <button class="menu-btn" id="chat-mobile-toggle" aria-label="Preguntar al cerebro" style="color:#6B7AE8;padding:4px;">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9.5 2A2.5 2.5 0 0 1 12 4.5v15a2.5 2.5 0 0 1-4.96-.46 2.5 2.5 0 0 1-2.96-3.08 3 3 0 0 1-.34-5.58 2.5 2.5 0 0 1 1.32-4.24 2.5 2.5 0 0 1 1.98-3A2.5 2.5 0 0 1 9.5 2Z"/><path d="M14.5 2A2.5 2.5 0 0 0 12 4.5v15a2.5 2.5 0 0 0 4.96-.46 2.5 2.5 0 0 0 2.96-3.08 3 3 0 0 0 .34-5.58 2.5 2.5 0 0 0-1.32-4.24 2.5 2.5 0 0 0-1.98-3A2.5 2.5 0 0 0 14.5 2Z"/></svg>
+        </button>
+        <div class="cmd-status" style="gap:4px;">
+          <span class="cmd-status-dot"></span>
+        </div>
       </div>
     </header>
 
@@ -461,11 +474,22 @@ const icons: Record<string, string> = {
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
           </button>
         </div>
+
+        <!-- Mobile Quick Capture & Ask -->
+        <div style="padding:1rem;border-bottom:1px solid rgba(232,234,240,0.07);display:flex;flex-direction:column;gap:10px;">
+          <div style="display:flex;align-items:center;background:rgba(232,234,240,0.04);border:1px solid rgba(232,234,240,0.09);border-radius:5px;width:100%;">
+            <input id="os-pregunta-mobile" type="text" placeholder="Preguntar al cerebro..." style="background:transparent;border:none;outline:none;padding:8px 10px;font-size:12px;color:#E8EAF0;font-family:'Inter',sans-serif;width:100%;" maxlength="400" />
+          </div>
+          <div style="display:flex;align-items:center;background:rgba(232,234,240,0.04);border:1px solid rgba(232,234,240,0.09);border-radius:5px;width:100%;">
+            <input id="os-capture-mobile" type="text" placeholder="Capturar idea..." style="background:transparent;border:none;outline:none;padding:8px 10px;font-size:12px;color:#E8EAF0;font-family:'Inter',sans-serif;width:100%;" maxlength="200" />
+          </div>
+        </div>
+
         {navGroups.map((group) => (
           <div style="padding:0.875rem 0.5rem 0.125rem;">
             <p class="nav-group-label" style="margin-bottom:3px;">{group.label}</p>
             {group.items.map((item) => (
-              <a href={item.href} class={`nav-item${isActive(item.href) ? ' active' : ''}`}>
+              <a href={item.href} class={`nav-item${isActive(item.href) ? ' active' : ''}`} style="padding: 0.5rem 0.625rem; font-size: 13.5px;">
                 <span class="nav-icon" set:html={icons[item.href] ?? ''} />
                 {item.label}
               </a>
@@ -481,7 +505,7 @@ const icons: Record<string, string> = {
     </div>
 
     <!-- Chat con el cerebro -->
-    <div id="os-pregunta-panel" style="display:none;position:fixed;top:44px;right:0;z-index:150;width:420px;max-width:100vw;background:#0E1738;border:1px solid rgba(59,78,217,0.3);border-bottom-left-radius:10px;box-shadow:0 8px 32px rgba(0,0,0,0.5);display:flex;flex-direction:column;max-height:calc(100vh - 44px);">
+    <div id="os-pregunta-panel" style="display:none;position:fixed;top:44px;right:0;z-index:150;width:420px;max-width:100vw;background:#0E1738;border:1px solid rgba(59,78,217,0.3);border-bottom-left-radius:10px;box-shadow:0 8px 32px rgba(0,0,0,0.5);flex-direction:column;max-height:calc(100vh - 44px);">
       <div style="display:flex;align-items:center;justify-content:space-between;padding:0.625rem 1rem;border-bottom:1px solid rgba(232,234,240,0.08);flex-shrink:0;">
         <span style="font-family:'Montserrat',sans-serif;font-size:9px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:#6B7AE8;">Chat con el cerebro</span>
         <div style="display:flex;align-items:center;gap:10px;">
@@ -548,6 +572,7 @@ const icons: Record<string, string> = {
       const preguntaClear = document.getElementById('os-pregunta-clear') as HTMLElement | null;
       const preguntaInput = document.getElementById('os-pregunta-input') as HTMLInputElement | null;
       const preguntaSend  = document.getElementById('os-pregunta-send') as HTMLButtonElement | null;
+      const chatMobileToggle = document.getElementById('chat-mobile-toggle');
 
       type ChatTurn = { role: 'user' | 'brain' | 'error'; text: string };
       const CHAT_KEY = 'os-chat-history';
@@ -639,6 +664,50 @@ const icons: Record<string, string> = {
         chatHistory = [];
         sessionStorage.removeItem(CHAT_KEY);
         renderChat();
+      });
+
+      // Toggle chat from mobile top bar
+      chatMobileToggle?.addEventListener('click', () => {
+        if (preguntaPanel && preguntaPanel.style.display === 'flex') {
+          preguntaPanel.style.display = 'none';
+        } else {
+          openChat();
+        }
+      });
+
+      // Mobile drawer inputs
+      const preguntaBarMobile = document.getElementById('os-pregunta-mobile') as HTMLInputElement | null;
+      preguntaBarMobile?.addEventListener('keydown', (e: KeyboardEvent) => {
+        if (e.key !== 'Enter') return;
+        const q = preguntaBarMobile.value.trim();
+        if (!q) { close(); openChat(); return; }
+        preguntaBarMobile.value = '';
+        close();
+        askBrain(q);
+      });
+
+      const captureInputMobile = document.getElementById('os-capture-mobile') as HTMLInputElement | null;
+      async function sendCaptureMobile() {
+        if (!captureInputMobile) return;
+        const texto = captureInputMobile.value.trim();
+        if (!texto) return;
+        captureInputMobile.value = '';
+        captureInputMobile.placeholder = 'Guardando...';
+        try {
+          const res = await fetch('/api/os/capturar', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ texto }),
+          });
+          const data: { ok?: boolean; error?: string } = await res.json();
+          captureInputMobile.placeholder = (res.ok && data.ok) ? 'Guardado' : 'Error';
+        } catch {
+          captureInputMobile.placeholder = 'Error';
+        }
+        setTimeout(() => { if (captureInputMobile) captureInputMobile.placeholder = 'Capturar idea...'; }, 1800);
+      }
+      captureInputMobile?.addEventListener('keydown', (e: KeyboardEvent) => {
+        if (e.key === 'Enter') sendCaptureMobile();
       });
 
       // ── Capturar idea → cerebro (n8n webhook) ──
