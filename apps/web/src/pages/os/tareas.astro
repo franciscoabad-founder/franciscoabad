@@ -45,7 +45,7 @@ import OSLayout from '../../layouts/OSLayout.astro';
           style="padding:3px 11px;font-size:11px;font-family:'Montserrat',sans-serif;font-weight:700;border-radius:var(--os-r-sm);border:1px solid rgba(59,78,217,0.5);background:rgba(59,78,217,0.2);color:#E8EAF0;cursor:pointer;">Todos</button>
         <button data-fest="pendiente" onclick="setEstadoFilter('pendiente')"
           style="padding:3px 11px;font-size:11px;font-family:'Montserrat',sans-serif;font-weight:700;border-radius:var(--os-r-sm);border:1px solid rgba(232,234,240,0.12);background:transparent;color:#6B7280;cursor:pointer;">Pendiente</button>
-        <button data-fest="en progreso" onclick="setEstadoFilter('en progreso')"
+        <button data-fest="en_progreso" onclick="setEstadoFilter('en_progreso')"
           style="padding:3px 11px;font-size:11px;font-family:'Montserrat',sans-serif;font-weight:700;border-radius:var(--os-r-sm);border:1px solid rgba(232,234,240,0.12);background:transparent;color:#6B7280;cursor:pointer;">En progreso</button>
         <button data-fest="hecho" onclick="setEstadoFilter('hecho')"
           style="padding:3px 11px;font-size:11px;font-family:'Montserrat',sans-serif;font-weight:700;border-radius:var(--os-r-sm);border:1px solid rgba(232,234,240,0.12);background:transparent;color:#6B7280;cursor:pointer;">Hecho</button>
@@ -93,14 +93,17 @@ var estadoFilter = 'todos';
 var urgenteFilter = false;
 var deadlineFilter = 'todos';
 
-var ESTADO_COLOR = { pendiente:'#6B7280', 'en progreso':'#6B7AE8', hecho:'#22c55e' };
-var ESTADO_LABEL = { pendiente:'Pendiente', 'en progreso':'En progreso', hecho:'Hecho' };
+var ESTADO_COLOR = { pendiente:'#6B7280', en_progreso:'#6B7AE8', hecho:'#22c55e', 'en progreso':'#6B7AE8' };
+var ESTADO_LABEL = { pendiente:'Pendiente', en_progreso:'En progreso', hecho:'Hecho' };
 
 function esc(s) {
   return String(s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
 function todayStr() {
   return new Date().toISOString().slice(0,10);
+}
+function estadoValue(estado) {
+  return estado === 'en progreso' ? 'en_progreso' : (estado || 'pendiente');
 }
 function endOfWeekStr() {
   var d = new Date();
@@ -118,7 +121,7 @@ function dlDisplay(dl) {
 }
 function applyFilters(tareas) {
   return tareas.filter(function(t) {
-    if (estadoFilter !== 'todos' && t.estado !== estadoFilter) return false;
+    if (estadoFilter !== 'todos' && estadoValue(t.estado) !== estadoFilter) return false;
     if (urgenteFilter && !t.urgente) return false;
     var dl = t.deadline;
     var today = todayStr();
@@ -183,6 +186,39 @@ async function patchEstado(id, estado) {
     await loadTareas();
   } catch(e) { alert('Error: ' + e.message); }
 }
+async function completarTarea(id) {
+  await patchEstado(id, 'hecho');
+}
+async function editTarea(id) {
+  var tarea = allTareas.find(function(t) { return t.id === id; });
+  if (!tarea) return;
+  var titulo = prompt('Titulo de la tarea:', tarea.titulo || '');
+  if (titulo === null) return;
+  titulo = titulo.trim();
+  if (!titulo) { alert('Titulo requerido'); return; }
+  var proyecto = prompt('Proyecto:', tarea.proyecto || '');
+  if (proyecto === null) return;
+  var deadline = prompt('Deadline (YYYY-MM-DD):', tarea.deadline || '');
+  if (deadline === null) return;
+  deadline = deadline.trim();
+  if (deadline && !/^\d{4}-\d{2}-\d{2}$/.test(deadline)) { alert('Formato invalido. Usa YYYY-MM-DD'); return; }
+  var urgente = confirm('Marcar como urgente? Aceptar = si, Cancelar = no');
+  try {
+    var res = await fetch('/api/os/tareas?id=' + encodeURIComponent(id), {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        titulo: titulo,
+        proyecto: proyecto.trim() || null,
+        deadline: deadline || null,
+        urgente: urgente,
+      }),
+    });
+    var json = await res.json();
+    if (!res.ok) throw new Error(json.error || String(res.status));
+    await loadTareas();
+  } catch(e) { alert('Error: ' + e.message); }
+}
 async function deleteTarea(id) {
   if (!confirm('Eliminar esta tarea?')) return;
   try {
@@ -211,15 +247,16 @@ function renderTareas(tareas) {
       + '<div style="display:flex;flex-direction:column;gap:6px;">'
       + byProyecto[p].map(function(t) {
           var isDone = t.estado === 'hecho';
+          var currentEstado = estadoValue(t.estado);
           var opts = Object.keys(ESTADO_LABEL).map(function(e) {
-            return '<option value="' + e + '"' + (t.estado === e ? ' selected' : '') + '>' + ESTADO_LABEL[e] + '</option>';
+            return '<option value="' + e + '"' + (currentEstado === e ? ' selected' : '') + '>' + ESTADO_LABEL[e] + '</option>';
           }).join('');
           var dlHtml = t.deadline
             ? '<button onclick="patchDeadline(\'' + t.id + '\',\'' + t.deadline + '\')" title="Cambiar" style="background:none;border:none;cursor:pointer;padding:0;line-height:1;">' + dlDisplay(t.deadline) + '</button>'
             : '<button onclick="patchDeadline(\'' + t.id + '\',\'\')" style="font-size:10px;color:rgba(107,114,128,0.55);background:none;border:1px dashed rgba(107,114,128,0.3);border-radius:4px;padding:2px 8px;cursor:pointer;font-family:Montserrat,sans-serif;white-space:nowrap;">+ deadline</button>';
           var check = isDone
-            ? '<span class="material-symbols-outlined" style="font-size:20px;color:#22c55e;flex-shrink:0;">check_circle</span>'
-            : '<span class="material-symbols-outlined" style="font-size:20px;color:' + (t.urgente ? '#6B7AE8' : 'rgba(107,114,128,0.55)') + ';flex-shrink:0;">radio_button_unchecked</span>';
+            ? '<button onclick="patchEstado(\'' + t.id + '\',\'pendiente\')" title="Reabrir" style="background:none;border:none;padding:0;cursor:pointer;line-height:1;display:inline-flex;flex-shrink:0;"><span class="material-symbols-outlined" style="font-size:20px;color:#22c55e;">check_circle</span></button>'
+            : '<button onclick="completarTarea(\'' + t.id + '\')" title="Marcar como hecha" style="background:none;border:none;padding:0;cursor:pointer;line-height:1;display:inline-flex;flex-shrink:0;"><span class="material-symbols-outlined" style="font-size:20px;color:' + (t.urgente ? '#6B7AE8' : 'rgba(107,114,128,0.55)') + ';">radio_button_unchecked</span></button>';
           return '<div style="display:flex;align-items:center;gap:11px;background:#131F4A;border:1px solid rgba(255,255,255,0.10);border-left:3px solid ' + (t.urgente && !isDone ? '#3B4ED9' : 'transparent') + ';border-radius:10px;padding:0.625rem 0.875rem;transition:border-color .15s;">'
             + check
             + '<p style="font-size:13px;color:' + (isDone ? '#6B7280' : '#F4F6F8') + ';margin:0;flex:1;min-width:0;line-height:1.4;text-decoration:' + (isDone ? 'line-through' : 'none') + ';">' + esc(t.titulo) + '</p>'
@@ -228,6 +265,7 @@ function renderTareas(tareas) {
             + '<select onchange="patchEstado(\'' + t.id + '\',this.value)" style="background:#0E1738;border:1px solid rgba(255,255,255,0.12);border-radius:var(--os-r-sm);padding:3px 7px;font-size:11px;font-family:Montserrat,sans-serif;font-weight:700;color:' + (ESTADO_COLOR[t.estado] || '#6B7280') + ';cursor:pointer;outline:none;">'
             + opts
             + '</select>'
+            + '<button onclick="editTarea(\'' + t.id + '\')" title="Editar" style="background:none;border:1px solid rgba(255,255,255,0.12);border-radius:var(--os-r-sm);color:#6B7AE8;cursor:pointer;padding:2px 7px;line-height:1;display:inline-flex;align-items:center;gap:3px;font-size:10px;font-family:Montserrat,sans-serif;font-weight:700;text-transform:uppercase;white-space:nowrap;"><span class="material-symbols-outlined" style="font-size:14px;">edit</span>Editar</button>'
             + '<button onclick="deleteTarea(\'' + t.id + '\')" title="Eliminar" style="background:none;border:none;color:rgba(107,114,128,0.45);cursor:pointer;padding:0;line-height:1;display:inline-flex;"><span class="material-symbols-outlined" style="font-size:16px;">close</span></button>'
             + '</div>'
             + '</div>';

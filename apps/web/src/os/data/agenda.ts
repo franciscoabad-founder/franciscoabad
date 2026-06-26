@@ -3,7 +3,7 @@ import type { EventoAgenda } from './types';
 export const eventos: EventoAgenda[] = [
   {
     id: 'e1',
-    titulo: 'Deep Work — Propuesta Rafik USA',
+    titulo: 'Deep Work: Propuesta Rafik USA',
     hora: '08:00',
     duracion: '90 min',
     tipo: 'deep-work',
@@ -20,7 +20,7 @@ export const eventos: EventoAgenda[] = [
   },
   {
     id: 'e3',
-    titulo: 'Check semanal BrainTech — pipeline y prioridades',
+    titulo: 'Check semanal BrainTech: pipeline y prioridades',
     hora: '11:00',
     duracion: '30 min',
     tipo: 'reunion',
@@ -29,7 +29,7 @@ export const eventos: EventoAgenda[] = [
   },
   {
     id: 'e4',
-    titulo: 'Bloque Maker — contenido LinkedIn',
+    titulo: 'Bloque Maker: contenido LinkedIn',
     hora: '14:00',
     duracion: '60 min',
     tipo: 'deep-work',
@@ -37,7 +37,7 @@ export const eventos: EventoAgenda[] = [
   },
   {
     id: 'e5',
-    titulo: 'Reunion CODEIS — agenda julio',
+    titulo: 'Reunion CODEIS: agenda julio',
     hora: '18:00',
     duracion: '60 min',
     tipo: 'reunion',
@@ -46,7 +46,7 @@ export const eventos: EventoAgenda[] = [
   },
   {
     id: 'e6',
-    titulo: 'Sync taskr — revision wireframes MVP',
+    titulo: 'Sync taskr: revision wireframes MVP',
     hora: '09:30',
     duracion: '45 min',
     tipo: 'reunion',

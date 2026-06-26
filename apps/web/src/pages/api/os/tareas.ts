@@ -51,7 +51,7 @@ export const POST: APIRoute = async ({ cookies, request }) => {
       .select()
       .single();
     if (error) throw error;
-    return json({ tarea: data }, 201);
+    return json({ ok: true, tarea: data }, 201);
   } catch (err) {
     const msg = err instanceof Error ? err.message : (err as any)?.message ?? JSON.stringify(err);
     return json({ error: msg }, 502);
@@ -60,19 +60,38 @@ export const POST: APIRoute = async ({ cookies, request }) => {
 
 export const PATCH: APIRoute = async ({ cookies, request, url }) => {
   if (!isAuthorized(cookies)) return json({ error: 'Unauthorized' }, 401);
-  const id = url.searchParams.get('id');
-  if (!id) return json({ error: 'id requerido' }, 400);
   try {
     const body = await request.json();
+    const id = url.searchParams.get('id') ?? body.id;
+    if (!id) return json({ error: 'id requerido' }, 400);
+
+    const patch: Record<string, unknown> = {};
+    if (typeof body.titulo === 'string') {
+      const titulo = body.titulo.trim();
+      if (!titulo) return json({ error: 'titulo requerido' }, 400);
+      patch.titulo = titulo;
+    }
+    if ('proyecto' in body) patch.proyecto = body.proyecto?.toString().trim() || null;
+    if ('urgente' in body) patch.urgente = body.urgente === true || body.urgente === 'true';
+    if ('estado' in body) {
+      const estado = body.estado?.toString();
+      if (!['pendiente', 'en_progreso', 'hecho'].includes(estado)) {
+        return json({ error: 'estado invalido' }, 400);
+      }
+      patch.estado = estado;
+    }
+    if ('deadline' in body) patch.deadline = body.deadline || null;
+    if (!Object.keys(patch).length) return json({ error: 'sin campos para actualizar' }, 400);
+
     const sb = getSupabaseServer();
     const { data, error } = await sb
       .from('tareas')
-      .update(body)
+      .update(patch)
       .eq('id', id)
       .select()
       .single();
     if (error) throw error;
-    return json({ tarea: data });
+    return json({ ok: true, tarea: data });
   } catch (err) {
     const msg = err instanceof Error ? err.message : (err as any)?.message ?? JSON.stringify(err);
     return json({ error: msg }, 502);
