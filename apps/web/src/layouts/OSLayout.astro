@@ -1,5 +1,5 @@
 ---
-import "../styles/global.css";
+import '../styles/os.css';
 import { datosHoy } from '../os/data/hoy';
 import { datosDaily } from '../os/data/daily';
 
@@ -15,400 +15,280 @@ const diaHoy = DIAS[new Date().getDay()];
 const diaData = datosDaily.semana.find(d => d.dia === diaHoy);
 const tipoDia = diaData?.tipo ?? 'manager';
 
-const tipoLabel: Record<string, string> = { maker: 'Maker', manager: 'Manager', off: 'Off' };
-const tipoColor: Record<string, string> = { maker: '#3B4ED9', manager: '#6B7280', off: '#6B7280' };
-const tipoBg: Record<string, string>   = { maker: 'rgba(59,78,217,0.18)', manager: 'rgba(232,234,240,0.07)', off: 'rgba(232,234,240,0.04)' };
+const tipoLabel: Record<string, string> = { maker: 'Maker Mode', manager: 'Manager Mode', off: 'Modo Off' };
+const tipoColor: Record<string, string> = { maker: '#6B7AE8', manager: '#6B7280', off: '#6B7280' };
 
 const dominoTexto = datosHoy.domino.tarea;
 
+// route → Material Symbol
+const ms: Record<string, string> = {
+  '/os': 'dashboard',
+  '/os/daily': 'wb_sunny',
+  '/os/revision': 'history',
+  '/os/kpis': 'bar_chart',
+  '/os/proyectos': 'folder',
+  '/os/crm': 'contacts',
+  '/os/tareas': 'checklist',
+  '/os/agenda': 'calendar_today',
+  '/os/bandeja': 'inbox',
+  '/os/contenido': 'edit_note',
+  '/os/redes': 'share',
+  '/os/finanzas': 'payments',
+  '/os/salud': 'favorite',
+  '/os/comidas': 'restaurant',
+  '/os/cerebro': 'psychology',
+};
+
 const navGroups = [
-  {
-    label: 'Sistema',
-    items: [
-      { href: '/os',          label: 'Hoy'      },
-      { href: '/os/daily',    label: 'Daily OS'  },
-      { href: '/os/revision', label: 'Revision'  },
-    ],
-  },
-  {
-    label: 'Control',
-    items: [
-      { href: '/os/kpis',      label: 'KPIs'      },
-      { href: '/os/proyectos', label: 'Proyectos' },
-      { href: '/os/crm',       label: 'CRM'       },
-      { href: '/os/tareas',    label: 'Tareas'    },
-      { href: '/os/agenda',    label: 'Agenda'    },
-    ],
-  },
-  {
-    label: 'Captura',
-    items: [
-      { href: '/os/bandeja',   label: 'Por revisar' },
-      { href: '/os/contenido', label: 'Contenido'   },
-      { href: '/os/redes',     label: 'Redes'       },
-      { href: '/os/finanzas',  label: 'Finanzas'    },
-      { href: '/os/salud',     label: 'Salud'       },
-      { href: '/os/comidas',   label: 'Comidas'     },
-    ],
-  },
-  {
-    label: 'Conocimiento',
-    items: [
-      { href: '/os/cerebro', label: 'Cerebro' },
-    ],
-  },
+  { label: 'Sistema', items: [
+    { href: '/os', label: 'Hoy' },
+    { href: '/os/daily', label: 'Daily OS' },
+    { href: '/os/revision', label: 'Revision' },
+  ]},
+  { label: 'Control', items: [
+    { href: '/os/kpis', label: 'KPIs' },
+    { href: '/os/proyectos', label: 'Proyectos' },
+    { href: '/os/crm', label: 'CRM' },
+    { href: '/os/tareas', label: 'Tareas' },
+    { href: '/os/agenda', label: 'Agenda' },
+  ]},
+  { label: 'Captura', items: [
+    { href: '/os/bandeja', label: 'Por revisar' },
+    { href: '/os/contenido', label: 'Contenido' },
+    { href: '/os/redes', label: 'Redes' },
+    { href: '/os/finanzas', label: 'Finanzas' },
+    { href: '/os/salud', label: 'Salud' },
+    { href: '/os/comidas', label: 'Comidas' },
+  ]},
+  { label: 'Conocimiento', items: [
+    { href: '/os/cerebro', label: 'Cerebro' },
+  ]},
+];
+
+// Bottom-nav (movil): 5 destinos primarios + Mas
+const bottomNav = [
+  { href: '/os', label: 'Hoy', icon: 'dashboard' },
+  { href: '/os/cerebro', label: 'Cerebro', icon: 'psychology' },
+  { href: '/os/crm', label: 'CRM', icon: 'contacts' },
+  { href: '/os/agenda', label: 'Agenda', icon: 'calendar_today' },
+  { href: '/os/finanzas', label: 'Finanzas', icon: 'payments' },
 ];
 
 function isActive(href: string): boolean {
   if (href === '/os') return pathname === '/os' || pathname === '/os/';
   return pathname === href || pathname === href + '/';
 }
-
-const icons: Record<string, string> = {
-  '/os':            '<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>',
-  '/os/daily':      '<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg>',
-  '/os/revision':   '<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/><path d="M8 16H3v5"/></svg>',
-  '/os/kpis':       '<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" x2="12" y1="20" y2="10"/><line x1="18" x2="18" y1="20" y2="4"/><line x1="6" x2="6" y1="20" y2="16"/></svg>',
-  '/os/proyectos':  '<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>',
-  '/os/crm':        '<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>',
-  '/os/tareas':     '<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>',
-  '/os/agenda':     '<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="4" rx="2" ry="2"/><line x1="16" x2="16" y1="2" y2="6"/><line x1="8" x2="8" y1="2" y2="6"/><line x1="3" x2="21" y1="10" y2="10"/></svg>',
-  '/os/bandeja':    '<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 16 12 14 15 10 15 8 12 2 12"/><path d="M5.45 5.11 2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"/></svg>',
-  '/os/contenido':  '<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>',
-  '/os/redes':      '<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" x2="15.42" y1="13.51" y2="17.49"/><line x1="15.41" x2="8.59" y1="6.51" y2="10.49"/></svg>',
-  '/os/finanzas':   '<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" x2="12" y1="1" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>',
-  '/os/salud':      '<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>',
-  '/os/comidas':    '<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 2v7c0 1.1.9 2 2 2h0a2 2 0 0 0 2-2V2"/><path d="M5 2v20"/><path d="M21 15V2a5 5 0 0 0-5 5v6c0 1.1.9 2 2 2h3Zm0 0v7"/></svg>',
-  '/os/cerebro':    '<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9.5 2A2.5 2.5 0 0 1 12 4.5v15a2.5 2.5 0 0 1-4.96-.46 2.5 2.5 0 0 1-2.96-3.08 3 3 0 0 1-.34-5.58 2.5 2.5 0 0 1 1.32-4.24 2.5 2.5 0 0 1 1.98-3A2.5 2.5 0 0 1 9.5 2Z"/><path d="M14.5 2A2.5 2.5 0 0 0 12 4.5v15a2.5 2.5 0 0 0 4.96-.46 2.5 2.5 0 0 0 2.96-3.08 3 3 0 0 0 .34-5.58 2.5 2.5 0 0 0-1.32-4.24 2.5 2.5 0 0 0-1.98-3A2.5 2.5 0 0 0 14.5 2Z"/></svg>',
-};
+const anyBottomActive = bottomNav.some(i => isActive(i.href));
 ---
 
 <!doctype html>
 <html lang="es">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
     <title>{title} — OS · Francisco Abad</title>
     <meta name="robots" content="noindex, nofollow" />
+
+    <!-- PWA -->
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <meta name="theme-color" content="#060C1E" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="OS Pancho" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+
+    <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
       rel="stylesheet"
-      href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;700&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;900&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;700&display=swap"
     />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=swap"
+    />
+
     <style>
       *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
       html, body { height: 100%; }
-
       body {
-        background: #080F26;
-        color: #F4F6F8;
-        font-family: 'Inter', sans-serif;
+        background: var(--os-bg);
+        color: var(--os-text);
+        font-family: var(--os-font-body);
         -webkit-font-smoothing: antialiased;
-        min-height: 100vh;
+        min-height: 100dvh;
       }
-      h1, h2, h3, h4, h5, h6 { font-family: 'Montserrat', sans-serif; }
+      h1, h2, h3, h4, h5, h6 { font-family: var(--os-font-display); }
+      a { color: inherit; }
 
-      /* ── Command bar ── */
+      /* ── Command bar (desktop/tablet) ── */
       .os-cmdbar {
-        position: sticky;
-        top: 0;
-        z-index: 100;
-        height: 44px;
-        display: flex;
-        align-items: center;
-        background: #060C1E;
-        border-bottom: 1px solid rgba(59,78,217,0.15);
-        gap: 0;
+        position: sticky; top: 0; z-index: 100;
+        height: 44px; display: flex; align-items: center;
+        background: var(--os-bg-sunken);
+        border-bottom: 1px solid var(--os-line-accent);
         flex-shrink: 0;
       }
-
       .cmd-brand {
-        width: 196px;
-        flex-shrink: 0;
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        padding: 0 1rem 0 1.125rem;
-        border-right: 1px solid rgba(232,234,240,0.07);
-        height: 100%;
+        width: 196px; flex-shrink: 0; display: flex; align-items: center; gap: 8px;
+        padding: 0 1rem 0 1.125rem; height: 100%;
+        border-right: 1px solid var(--os-line-soft);
       }
-      .cmd-brand-os {
-        font-family: 'Montserrat', sans-serif;
-        font-size: 11px;
-        font-weight: 700;
-        letter-spacing: 0.2em;
-        text-transform: uppercase;
-        color: #6B7AE8;
+      .cmd-mode {
+        display: inline-flex; align-items: center; gap: 5px;
       }
-      .cmd-brand-sep {
-        width: 1px;
-        height: 12px;
-        background: rgba(232,234,240,0.12);
+      .cmd-mode .material-symbols-outlined {
+        font-size: 16px; color: var(--os-accent-light);
+        animation: os-pulse 2.4s cubic-bezier(0.4,0,0.6,1) infinite;
       }
-      .cmd-brand-name {
-        font-family: 'Montserrat', sans-serif;
-        font-size: 9px;
-        font-weight: 600;
-        letter-spacing: 0.12em;
-        text-transform: uppercase;
-        color: #6B7280;
+      .cmd-mode-label {
+        font-family: var(--os-font-display); font-size: 9px; font-weight: 700;
+        letter-spacing: 0.18em; text-transform: uppercase; color: var(--os-accent-light);
       }
-
+      .cmd-sep { width: 1px; height: 12px; background: var(--os-line); }
+      .cmd-name {
+        font-family: var(--os-font-display); font-size: 9px; font-weight: 600;
+        letter-spacing: 0.12em; text-transform: uppercase; color: var(--os-muted);
+      }
       .cmd-center {
-        flex: 1;
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        padding: 0 1rem;
-        min-width: 0;
-        height: 100%;
-        border-right: 1px solid rgba(232,234,240,0.07);
-        overflow: hidden;
+        flex: 1; display: flex; align-items: center; gap: 10px;
+        padding: 0 1rem; min-width: 0; height: 100%;
+        border-right: 1px solid var(--os-line-soft); overflow: hidden;
       }
       .cmd-day-pill {
-        display: inline-flex;
-        align-items: center;
-        padding: 2px 8px;
-        border-radius: 4px;
-        font-family: 'Montserrat', sans-serif;
-        font-size: 8px;
-        font-weight: 700;
-        letter-spacing: 0.14em;
-        text-transform: uppercase;
-        flex-shrink: 0;
+        display: inline-flex; align-items: center; padding: 2px 8px;
+        border-radius: 4px; font-family: var(--os-font-display);
+        font-size: 8px; font-weight: 700; letter-spacing: 0.14em;
+        text-transform: uppercase; flex-shrink: 0;
+        background: rgba(59,78,217,0.14);
       }
       .cmd-domino-label {
-        font-size: 9px;
-        color: #6B7280;
-        font-family: 'Montserrat', sans-serif;
-        font-weight: 600;
-        letter-spacing: 0.1em;
-        text-transform: uppercase;
-        flex-shrink: 0;
+        font-size: 9px; color: var(--os-muted); font-family: var(--os-font-display);
+        font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; flex-shrink: 0;
       }
       .cmd-domino-text {
-        font-size: 12px;
-        color: #E8EAF0;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        min-width: 0;
+        font-size: 12px; color: var(--os-text); white-space: nowrap;
+        overflow: hidden; text-overflow: ellipsis; min-width: 0;
       }
-
-      .cmd-right {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        padding: 0 0.875rem;
-        height: 100%;
-        flex-shrink: 0;
-      }
+      .cmd-right { display: flex; align-items: center; gap: 10px; padding: 0 0.875rem; height: 100%; flex-shrink: 0; }
       .cmd-capture {
-        display: flex;
-        align-items: center;
+        display: flex; align-items: center;
         background: rgba(232,234,240,0.04);
         border: 1px solid rgba(232,234,240,0.09);
-        border-radius: 5px;
-        overflow: hidden;
+        border-radius: 5px; overflow: hidden;
       }
       .cmd-capture input {
-        background: transparent;
-        border: none;
-        outline: none;
-        padding: 4px 8px;
-        font-size: 11px;
-        color: #E8EAF0;
-        font-family: 'Inter', sans-serif;
-        width: 140px;
+        background: transparent; border: none; outline: none;
+        padding: 4px 8px; font-size: 11px; color: var(--os-text);
+        font-family: var(--os-font-body); width: 140px;
       }
-      .cmd-capture input::placeholder { color: #6B7280; }
-      .cmd-status {
-        display: flex;
-        align-items: center;
-        gap: 5px;
-        font-size: 10px;
-        color: #6B7280;
-        font-family: 'Montserrat', sans-serif;
-        letter-spacing: 0.06em;
-      }
-      .cmd-status-dot {
-        width: 5px;
-        height: 5px;
-        border-radius: 50%;
-        background: #22c55e;
-        box-shadow: 0 0 5px rgba(34,197,94,0.5);
-        flex-shrink: 0;
-      }
+      .cmd-capture input::placeholder { color: var(--os-muted); }
+      .cmd-status { display: flex; align-items: center; gap: 5px; font-size: 10px; color: var(--os-muted); font-family: var(--os-font-display); letter-spacing: 0.06em; }
+      .cmd-status-dot { width: 5px; height: 5px; border-radius: 50%; background: var(--os-ok); box-shadow: 0 0 5px rgba(34,197,94,0.5); flex-shrink: 0; }
       .cmd-logout {
-        font-size: 10px;
-        color: #6B7280;
-        text-decoration: none;
-        font-family: 'Montserrat', sans-serif;
-        letter-spacing: 0.06em;
-        text-transform: uppercase;
-        font-weight: 600;
-        transition: color 0.14s;
-        padding: 3px 6px;
-        border-radius: 4px;
-        border: 1px solid rgba(232,234,240,0.08);
+        font-size: 10px; color: var(--os-muted); text-decoration: none;
+        font-family: var(--os-font-display); letter-spacing: 0.06em;
+        text-transform: uppercase; font-weight: 600; transition: color 0.14s;
+        padding: 3px 6px; border-radius: 4px; border: 1px solid rgba(232,234,240,0.08);
       }
-      .cmd-logout:hover { color: #E8EAF0; border-color: rgba(232,234,240,0.18); }
+      .cmd-logout:hover { color: var(--os-text); border-color: rgba(232,234,240,0.18); }
 
-      /* Mobile topbar (replaces command bar on small screens) */
+      /* ── Mobile topbar ── */
       .os-topbar {
-        display: none;
-        align-items: center;
-        justify-content: space-between;
-        padding: 0 0.875rem;
-        background: #060C1E;
-        border-bottom: 1px solid rgba(59,78,217,0.15);
-        height: 44px;
-        position: sticky;
-        top: 0;
-        z-index: 100;
-        flex-shrink: 0;
+        display: none; align-items: center; justify-content: space-between;
+        padding: 0 0.875rem 0 1rem; background: var(--os-bg-sunken);
+        border-bottom: 1px solid var(--os-line-accent);
+        height: 44px; position: sticky; top: 0; z-index: 100; flex-shrink: 0;
       }
+      .os-topbar-title { display: flex; align-items: center; gap: 7px; min-width: 0; }
 
       /* ── Shell ── */
-      .os-shell {
-        display: flex;
-        min-height: calc(100vh - 44px);
-      }
+      .os-shell { display: flex; min-height: calc(100dvh - 44px); }
 
       /* ── Sidebar ── */
       .os-sidebar {
-        width: 196px;
-        flex-shrink: 0;
-        background: #060C1E;
-        border-right: 1px solid rgba(232,234,240,0.07);
-        display: flex;
-        flex-direction: column;
-        overflow-y: auto;
-        position: sticky;
-        top: 44px;
-        height: calc(100vh - 44px);
+        width: 196px; flex-shrink: 0; background: var(--os-bg-sunken);
+        border-right: 1px solid var(--os-line-soft);
+        display: flex; flex-direction: column; overflow-y: auto;
+        position: sticky; top: 44px; height: calc(100dvh - 44px);
       }
 
       /* ── Main ── */
       .os-main {
-        flex: 1;
-        min-width: 0;
-        overflow-y: auto;
-        position: relative;
+        flex: 1; min-width: 0; overflow-y: auto; position: relative;
         background-image:
           linear-gradient(rgba(59,78,217,0.022) 1px, transparent 1px),
           linear-gradient(90deg, rgba(59,78,217,0.022) 1px, transparent 1px);
         background-size: 36px 36px;
       }
       .os-glow {
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        height: 320px;
-        background: radial-gradient(ellipse 80% 100% at 50% 0%, rgba(59,78,217,0.07) 0%, transparent 70%);
-        pointer-events: none;
-        z-index: 0;
+        position: absolute; top: 0; left: 0; right: 0; height: 360px;
+        background: radial-gradient(ellipse 80% 100% at 50% 0%, rgba(59,78,217,0.10) 0%, transparent 70%);
+        pointer-events: none; z-index: 0;
       }
-      .os-content {
-        position: relative;
-        z-index: 1;
-        padding: 2rem 2.5rem;
-        max-width: 100%;
-      }
+      .os-content { position: relative; z-index: 1; padding: 2rem 2.5rem; max-width: 1200px; }
 
       /* ── Nav ── */
       .nav-group-label {
-        font-family: 'Montserrat', sans-serif;
-        font-size: 8px;
-        font-weight: 700;
-        letter-spacing: 0.18em;
-        text-transform: uppercase;
-        color: rgba(107,114,128,0.7);
-        padding: 0 0.625rem;
-        margin-bottom: 1px;
+        font-family: var(--os-font-display); font-size: 8px; font-weight: 700;
+        letter-spacing: 0.18em; text-transform: uppercase;
+        color: rgba(107,114,128,0.7); padding: 0 0.625rem; margin-bottom: 1px;
       }
       .nav-item {
-        display: flex;
-        align-items: center;
-        gap: 7px;
-        padding: 0.35rem 0.625rem;
-        border-radius: 5px;
-        font-size: 12.5px;
-        color: #6B7280;
-        background: transparent;
-        border-left: 2px solid transparent;
-        text-decoration: none;
-        transition: color 0.14s, background 0.14s;
-        white-space: nowrap;
-        letter-spacing: 0.01em;
+        display: flex; align-items: center; gap: 9px;
+        padding: 0.35rem 0.625rem; border-radius: 5px;
+        font-size: 12.5px; color: var(--os-muted); background: transparent;
+        border-left: 2px solid transparent; text-decoration: none;
+        transition: color 0.14s, background 0.14s; white-space: nowrap; letter-spacing: 0.01em;
       }
-      .nav-item:hover {
-        color: #E8EAF0;
-        background: rgba(232,234,240,0.04);
-      }
-      .nav-item.active {
-        color: #E8EAF0;
-        font-weight: 600;
-        background: rgba(59,78,217,0.13);
-        border-left-color: #3B4ED9;
-      }
-      .nav-item.active .nav-icon { color: #6B7AE8; }
-      .nav-icon { color: rgba(107,114,128,0.7); flex-shrink: 0; }
+      .nav-item:hover { color: var(--os-text); background: rgba(232,234,240,0.04); }
+      .nav-item.active { color: var(--os-text); font-weight: 600; background: rgba(59,78,217,0.13); border-left-color: var(--os-accent); }
+      .nav-item .material-symbols-outlined { font-size: 18px; color: rgba(107,114,128,0.8); flex-shrink: 0; }
+      .nav-item.active .material-symbols-outlined { color: var(--os-accent-light); }
 
-      /* ── Mobile nav ── */
-      .os-mobile-nav {
-        display: none;
-        position: fixed;
-        inset: 0;
-        z-index: 200;
-        flex-direction: row;
-      }
+      /* ── Mobile drawer (Mas) ── */
+      .os-mobile-nav { display: none; position: fixed; inset: 0; z-index: 200; flex-direction: row; }
       .os-mobile-nav-inner {
-        width: 256px;
-        background: #060C1E;
-        height: 100%;
-        overflow-y: auto;
-        display: flex;
-        flex-direction: column;
-        border-right: 1px solid rgba(232,234,240,0.08);
+        width: 264px; background: var(--os-bg-sunken); height: 100%; overflow-y: auto;
+        display: flex; flex-direction: column; border-right: 1px solid var(--os-line);
+        animation: os-fade-up 0.2s ease-out;
       }
-      .os-overlay {
-        flex: 1;
-        background: rgba(0,0,0,0.65);
-        backdrop-filter: blur(2px);
-      }
+      .os-overlay { flex: 1; background: rgba(0,0,0,0.65); backdrop-filter: blur(2px); }
+      .menu-btn { background: none; border: none; cursor: pointer; color: var(--os-text); padding: 5px; display: flex; align-items: center; }
 
-      .menu-btn {
-        background: none;
-        border: none;
-        cursor: pointer;
-        color: #F4F6F8;
-        padding: 5px;
-        display: flex;
-        align-items: center;
+      /* ── Bottom nav (movil) ── */
+      .os-bottomnav {
+        display: none; position: fixed; bottom: 0; left: 0; right: 0; z-index: 150;
+        height: calc(72px + env(safe-area-inset-bottom, 0px));
+        padding-bottom: env(safe-area-inset-bottom, 0px);
+        background: var(--os-bg-sunken);
+        border-top: 1px solid var(--os-line);
+        box-shadow: 0 -6px 20px rgba(14,23,56,0.28);
+        align-items: stretch; justify-content: space-around;
       }
+      .bn-item {
+        flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center;
+        gap: 3px; color: var(--os-muted); text-decoration: none; background: none; border: none;
+        cursor: pointer; transition: color 0.15s, transform 0.15s; padding: 8px 0;
+      }
+      .bn-item .material-symbols-outlined { font-size: 23px; }
+      .bn-label { font-family: var(--os-font-display); font-size: 9px; font-weight: 600; letter-spacing: 0.04em; }
+      .bn-item:active { transform: scale(0.9); }
+      .bn-item.active { color: var(--os-accent-light); }
+      .bn-item.active .material-symbols-outlined { font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
 
       /* ── Responsive ── */
       @media (max-width: 820px) {
-        .os-sidebar   { display: none; }
-        .os-cmdbar    { display: none; }
-        .os-topbar    { display: flex; }
-        .os-content   { padding: 1.25rem 1rem; }
-        .os-shell     { min-height: calc(100vh - 44px); }
-      }
-      @media (max-width: 480px) {
-        .cmd-capture  { display: none; }
-        #os-pregunta-panel {
-          width: 100vw !important;
-          border-radius: 0 !important;
-          border-left: none !important;
-          border-right: none !important;
-          height: calc(100vh - 44px) !important;
-          max-height: calc(100vh - 44px) !important;
-        }
+        .os-sidebar { display: none; }
+        .os-cmdbar { display: none; }
+        .os-topbar { display: flex; }
+        .os-bottomnav { display: flex; }
+        .os-content { padding: 1.25rem 1rem calc(72px + 1.5rem + env(safe-area-inset-bottom, 0px)); }
+        .os-main { background-size: 30px 30px; }
+        .os-shell { min-height: calc(100dvh - 44px); }
       }
     </style>
   </head>
@@ -417,16 +297,16 @@ const icons: Record<string, string> = {
     <!-- Desktop command bar -->
     <header class="os-cmdbar">
       <div class="cmd-brand">
-        <span class="cmd-brand-os">OS</span>
-        <span class="cmd-brand-sep"></span>
-        <span class="cmd-brand-name">Pancho</span>
+        <span class="cmd-mode">
+          <span class="material-symbols-outlined">bolt</span>
+          <span class="cmd-mode-label">OS</span>
+        </span>
+        <span class="cmd-sep"></span>
+        <span class="cmd-name">Pancho</span>
       </div>
 
       <div class="cmd-center">
-        <span
-          class="cmd-day-pill"
-          style={`background:${tipoBg[tipoDia]};color:${tipoColor[tipoDia]};`}
-        >{tipoLabel[tipoDia]}</span>
+        <span class="cmd-day-pill" style={`color:${tipoColor[tipoDia]};`}>{tipoLabel[tipoDia]}</span>
         <span class="cmd-domino-label">Domino</span>
         <span class="cmd-domino-text">{dominoTexto}</span>
       </div>
@@ -438,86 +318,70 @@ const icons: Record<string, string> = {
         <div class="cmd-capture">
           <input id="os-capture" type="text" placeholder="Capturar idea..." maxlength="200" />
         </div>
-        <div class="cmd-status">
-          <span class="cmd-status-dot"></span>
-          <span>Activo</span>
-        </div>
+        <div class="cmd-status"><span class="cmd-status-dot"></span><span>Activo</span></div>
         <a href="/api/os-auth?action=logout" class="cmd-logout" title="Cerrar sesion">salir</a>
       </div>
     </header>
 
     <!-- Mobile top bar -->
     <header class="os-topbar">
-      <button class="menu-btn" id="menu-open" aria-label="Abrir menu">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" x2="20" y1="6" y2="6"/><line x1="4" x2="20" y1="12" y2="12"/><line x1="4" x2="20" y1="18" y2="18"/></svg>
-      </button>
-      <span style="display:flex;align-items:center;gap:7px;">
-        <span style="font-family:'Montserrat',sans-serif;font-size:10px;font-weight:700;letter-spacing:0.18em;text-transform:uppercase;color:#6B7AE8;">OS</span>
-        <span style="font-size:12px;color:#6B7280;">{title}</span>
+      <span class="cmd-mode">
+        <span class="material-symbols-outlined">bolt</span>
+        <span class="cmd-mode-label">{tipoLabel[tipoDia]}</span>
       </span>
-      <div style="display:flex;align-items:center;gap:8px;">
-        <button class="menu-btn" id="chat-mobile-toggle" aria-label="Preguntar al cerebro" style="color:#6B7AE8;padding:4px;">
-          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9.5 2A2.5 2.5 0 0 1 12 4.5v15a2.5 2.5 0 0 1-4.96-.46 2.5 2.5 0 0 1-2.96-3.08 3 3 0 0 1-.34-5.58 2.5 2.5 0 0 1 1.32-4.24 2.5 2.5 0 0 1 1.98-3A2.5 2.5 0 0 1 9.5 2Z"/><path d="M14.5 2A2.5 2.5 0 0 0 12 4.5v15a2.5 2.5 0 0 0 4.96-.46 2.5 2.5 0 0 0 2.96-3.08 3 3 0 0 0 .34-5.58 2.5 2.5 0 0 0-1.32-4.24 2.5 2.5 0 0 0-1.98-3A2.5 2.5 0 0 0 14.5 2Z"/></svg>
-        </button>
-        <div class="cmd-status" style="gap:4px;">
-          <span class="cmd-status-dot"></span>
-        </div>
-      </div>
+      <span class="os-topbar-title">
+        <span style="font-size:12px;color:var(--os-text);font-family:var(--os-font-display);font-weight:600;">{title}</span>
+      </span>
+      <button class="menu-btn" id="search-open" aria-label="Preguntar al cerebro">
+        <span class="material-symbols-outlined" style="font-size:21px;color:var(--os-muted);">search</span>
+      </button>
     </header>
 
-    <!-- Mobile nav drawer -->
-    <div class="os-mobile-nav" id="mobile-nav" style="display:none;">
+    <!-- Mobile nav drawer (Mas) -->
+    <div class="os-mobile-nav" id="mobile-nav">
       <div class="os-mobile-nav-inner">
-        <div style="display:flex;align-items:center;justify-content:space-between;padding:0.875rem 1rem;border-bottom:1px solid rgba(232,234,240,0.07);">
-          <span style="font-family:'Montserrat',sans-serif;font-size:10px;font-weight:700;letter-spacing:0.18em;text-transform:uppercase;color:#6B7AE8;">OS</span>
+        <div style="display:flex;align-items:center;justify-content:space-between;padding:0.875rem 1rem;border-bottom:1px solid var(--os-line-soft);">
+          <span class="cmd-mode">
+            <span class="material-symbols-outlined" style="font-size:16px;">bolt</span>
+            <span class="cmd-mode-label">OS · Pancho</span>
+          </span>
           <button class="menu-btn" id="menu-close" aria-label="Cerrar menu">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+            <span class="material-symbols-outlined" style="font-size:20px;color:var(--os-muted);">close</span>
           </button>
         </div>
-
-        <!-- Mobile Quick Capture & Ask -->
-        <div style="padding:1rem;border-bottom:1px solid rgba(232,234,240,0.07);display:flex;flex-direction:column;gap:10px;">
-          <div style="display:flex;align-items:center;background:rgba(232,234,240,0.04);border:1px solid rgba(232,234,240,0.09);border-radius:5px;width:100%;">
-            <input id="os-pregunta-mobile" type="text" placeholder="Preguntar al cerebro..." style="background:transparent;border:none;outline:none;padding:8px 10px;font-size:12px;color:#E8EAF0;font-family:'Inter',sans-serif;width:100%;" maxlength="400" />
-          </div>
-          <div style="display:flex;align-items:center;background:rgba(232,234,240,0.04);border:1px solid rgba(232,234,240,0.09);border-radius:5px;width:100%;">
-            <input id="os-capture-mobile" type="text" placeholder="Capturar idea..." style="background:transparent;border:none;outline:none;padding:8px 10px;font-size:12px;color:#E8EAF0;font-family:'Inter',sans-serif;width:100%;" maxlength="200" />
-          </div>
-        </div>
-
         {navGroups.map((group) => (
           <div style="padding:0.875rem 0.5rem 0.125rem;">
             <p class="nav-group-label" style="margin-bottom:3px;">{group.label}</p>
             {group.items.map((item) => (
-              <a href={item.href} class={`nav-item${isActive(item.href) ? ' active' : ''}`} style="padding: 0.5rem 0.625rem; font-size: 13.5px;">
-                <span class="nav-icon" set:html={icons[item.href] ?? ''} />
+              <a href={item.href} class={`nav-item${isActive(item.href) ? ' active' : ''}`}>
+                <span class="material-symbols-outlined">{ms[item.href] ?? 'circle'}</span>
                 {item.label}
               </a>
             ))}
           </div>
         ))}
-        <div style="margin-top:auto;padding:0.875rem 1rem;border-top:1px solid rgba(232,234,240,0.07);display:flex;flex-direction:column;gap:8px;">
-          <a href="/" style="font-size:11px;color:#6B7280;text-decoration:none;">franciscoabad.com</a>
-          <a href="/api/os-auth?action=logout" style="font-size:11px;color:#6B7280;text-decoration:none;">Cerrar sesion</a>
+        <div style="margin-top:auto;padding:0.875rem 1rem;border-top:1px solid var(--os-line-soft);display:flex;flex-direction:column;gap:8px;">
+          <a href="/" style="font-size:11px;color:var(--os-muted);text-decoration:none;">franciscoabad.com</a>
+          <a href="/api/os-auth?action=logout" style="font-size:11px;color:var(--os-muted);text-decoration:none;">Cerrar sesion</a>
         </div>
       </div>
       <div class="os-overlay" id="overlay"></div>
     </div>
 
     <!-- Chat con el cerebro -->
-    <div id="os-pregunta-panel" style="display:none;position:fixed;top:44px;right:0;z-index:150;width:420px;max-width:100vw;background:#0E1738;border:1px solid rgba(59,78,217,0.3);border-bottom-left-radius:10px;box-shadow:0 8px 32px rgba(0,0,0,0.5);flex-direction:column;max-height:calc(100vh - 44px);">
-      <div style="display:flex;align-items:center;justify-content:space-between;padding:0.625rem 1rem;border-bottom:1px solid rgba(232,234,240,0.08);flex-shrink:0;">
-        <span style="font-family:'Montserrat',sans-serif;font-size:9px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:#6B7AE8;">Chat con el cerebro</span>
+    <div id="os-pregunta-panel" style="display:none;position:fixed;top:44px;right:0;z-index:160;width:420px;max-width:100vw;background:#0E1738;border:1px solid var(--os-line-accent);border-bottom-left-radius:10px;box-shadow:var(--os-shadow-modal);flex-direction:column;max-height:calc(100dvh - 44px);">
+      <div style="display:flex;align-items:center;justify-content:space-between;padding:0.625rem 1rem;border-bottom:1px solid var(--os-line-soft);flex-shrink:0;">
+        <span class="os-eyebrow">Chat con el cerebro</span>
         <div style="display:flex;align-items:center;gap:10px;">
-          <button id="os-pregunta-clear" style="background:none;border:none;color:#6B7280;cursor:pointer;font-size:10px;font-family:'Montserrat',sans-serif;letter-spacing:0.06em;text-transform:uppercase;padding:0;" title="Limpiar conversacion">Limpiar</button>
-          <button id="os-pregunta-close" style="background:none;border:none;color:#6B7280;cursor:pointer;font-size:18px;line-height:1;padding:0;" title="Cerrar">x</button>
+          <button id="os-pregunta-clear" style="background:none;border:none;color:var(--os-muted);cursor:pointer;font-size:10px;font-family:var(--os-font-display);letter-spacing:0.06em;text-transform:uppercase;padding:0;" title="Limpiar conversacion">Limpiar</button>
+          <button id="os-pregunta-close" style="background:none;border:none;color:var(--os-muted);cursor:pointer;font-size:18px;line-height:1;padding:0;" title="Cerrar">×</button>
         </div>
       </div>
-      <div id="os-pregunta-body" style="padding:0.875rem 1rem;font-size:13px;color:#CBD5E1;line-height:1.65;overflow-y:auto;flex:1;min-height:120px;display:flex;flex-direction:column;gap:10px;"></div>
-      <div style="display:flex;gap:6px;padding:0.625rem 0.75rem;border-top:1px solid rgba(232,234,240,0.08);flex-shrink:0;">
+      <div id="os-pregunta-body" style="padding:0.875rem 1rem;font-size:13px;color:var(--os-text-2);line-height:1.65;overflow-y:auto;flex:1;min-height:120px;display:flex;flex-direction:column;gap:10px;"></div>
+      <div style="display:flex;gap:6px;padding:0.625rem 0.75rem;border-top:1px solid var(--os-line-soft);flex-shrink:0;">
         <input id="os-pregunta-input" type="text" placeholder="Escribe tu pregunta..." maxlength="400"
-          style="flex:1;background:rgba(232,234,240,0.05);border:1px solid rgba(232,234,240,0.12);border-radius:6px;padding:7px 10px;font-size:12px;color:#F4F6F8;font-family:'Inter',sans-serif;outline:none;" />
-        <button id="os-pregunta-send" style="background:#3B4ED9;color:#fff;border:none;border-radius:6px;padding:7px 14px;font-size:12px;font-family:'Montserrat',sans-serif;font-weight:600;cursor:pointer;flex-shrink:0;">Enviar</button>
+          style="flex:1;background:rgba(232,234,240,0.05);border:1px solid var(--os-line);border-radius:6px;padding:7px 10px;font-size:12px;color:var(--os-text);font-family:var(--os-font-body);outline:none;" />
+        <button id="os-pregunta-send" class="os-btn">Enviar</button>
       </div>
     </div>
 
@@ -529,14 +393,14 @@ const icons: Record<string, string> = {
             <p class="nav-group-label">{group.label}</p>
             {group.items.map((item) => (
               <a href={item.href} class={`nav-item${isActive(item.href) ? ' active' : ''}`}>
-                <span class="nav-icon" set:html={icons[item.href] ?? ''} />
+                <span class="material-symbols-outlined">{ms[item.href] ?? 'circle'}</span>
                 {item.label}
               </a>
             ))}
           </div>
         ))}
-        <div style="margin-top:auto;padding:0.875rem 0.875rem 1rem;border-top:1px solid rgba(232,234,240,0.07);">
-          <a href="/" style="display:block;font-size:11px;color:rgba(107,114,128,0.6);text-decoration:none;letter-spacing:0.03em;margin-bottom:6px;">franciscoabad.com</a>
+        <div style="margin-top:auto;padding:0.875rem 0.875rem 1rem;border-top:1px solid var(--os-line-soft);">
+          <a href="/" style="display:block;font-size:11px;color:rgba(107,114,128,0.6);text-decoration:none;letter-spacing:0.03em;">franciscoabad.com</a>
         </div>
       </nav>
 
@@ -549,20 +413,32 @@ const icons: Record<string, string> = {
       </main>
     </div>
 
+    <!-- Bottom nav (movil) -->
+    <nav class="os-bottomnav">
+      {bottomNav.map((item) => (
+        <a href={item.href} class={`bn-item${isActive(item.href) ? ' active' : ''}`}>
+          <span class="material-symbols-outlined">{item.icon}</span>
+          <span class="bn-label">{item.label}</span>
+        </a>
+      ))}
+      <button class="bn-item" id="bn-more" type="button" aria-label="Mas secciones">
+        <span class="material-symbols-outlined">{anyBottomActive ? 'apps' : 'apps'}</span>
+        <span class="bn-label">Mas</span>
+      </button>
+    </nav>
+
     <script>
-      const menuOpen  = document.getElementById('menu-open');
+      // ── Mobile drawer (Mas) ──
       const menuClose = document.getElementById('menu-close');
       const mobileNav = document.getElementById('mobile-nav');
       const overlay   = document.getElementById('overlay');
+      const bnMore    = document.getElementById('bn-more');
 
-      menuOpen?.addEventListener('click', () => {
-        if (mobileNav) mobileNav.style.display = 'flex';
-      });
-      const close = () => {
-        if (mobileNav) mobileNav.style.display = 'none';
-      };
-      menuClose?.addEventListener('click', close);
-      overlay?.addEventListener('click', close);
+      const openDrawer  = () => { if (mobileNav) mobileNav.style.display = 'flex'; };
+      const closeDrawer = () => { if (mobileNav) mobileNav.style.display = 'none'; };
+      bnMore?.addEventListener('click', openDrawer);
+      menuClose?.addEventListener('click', closeDrawer);
+      overlay?.addEventListener('click', closeDrawer);
 
       // ── Chat con el cerebro ──
       const preguntaBar   = document.getElementById('os-pregunta') as HTMLInputElement | null;
@@ -572,7 +448,7 @@ const icons: Record<string, string> = {
       const preguntaClear = document.getElementById('os-pregunta-clear') as HTMLElement | null;
       const preguntaInput = document.getElementById('os-pregunta-input') as HTMLInputElement | null;
       const preguntaSend  = document.getElementById('os-pregunta-send') as HTMLButtonElement | null;
-      const chatMobileToggle = document.getElementById('chat-mobile-toggle');
+      const searchOpen    = document.getElementById('search-open');
 
       type ChatTurn = { role: 'user' | 'brain' | 'error'; text: string };
       const CHAT_KEY = 'os-chat-history';
@@ -595,7 +471,7 @@ const icons: Record<string, string> = {
           if (t.role === 'error') {
             return '<div style="align-self:flex-start;max-width:85%;color:#F87171;font-size:12px;padding:2px 0;">' + escHtml(t.text) + '</div>';
           }
-          return '<div style="align-self:flex-start;max-width:90%;background:rgba(232,234,240,0.05);border:1px solid rgba(232,234,240,0.08);color:#CBD5E1;padding:8px 11px;border-radius:10px 10px 10px 2px;font-size:13px;white-space:pre-wrap;">' + escHtml(t.text) + '</div>';
+          return '<div style="align-self:flex-start;max-width:90%;background:rgba(232,234,240,0.05);border:1px solid rgba(232,234,240,0.08);color:#C5C5D7;padding:8px 11px;border-radius:10px 10px 10px 2px;font-size:13px;white-space:pre-wrap;">' + escHtml(t.text) + '</div>';
         }).join('');
         if (pending) {
           html += '<div style="align-self:flex-start;color:#6B7280;font-size:12px;padding:2px 0;">Consultando el cerebro...</div>';
@@ -609,6 +485,7 @@ const icons: Record<string, string> = {
         renderChat();
         preguntaInput?.focus();
       }
+      searchOpen?.addEventListener('click', openChat);
 
       async function askBrain(q: string) {
         if (!q.trim()) return;
@@ -635,7 +512,6 @@ const icons: Record<string, string> = {
         renderChat();
       }
 
-      // Trigger from command-bar input
       preguntaBar?.addEventListener('keydown', (e: KeyboardEvent) => {
         if (e.key !== 'Enter') return;
         const q = preguntaBar.value.trim();
@@ -644,7 +520,6 @@ const icons: Record<string, string> = {
         askBrain(q);
       });
 
-      // Send from panel input
       const sendFromPanel = () => {
         if (!preguntaInput) return;
         const q = preguntaInput.value.trim();
@@ -656,61 +531,14 @@ const icons: Record<string, string> = {
       preguntaInput?.addEventListener('keydown', (e: KeyboardEvent) => {
         if (e.key === 'Enter') { e.preventDefault(); sendFromPanel(); }
       });
-
-      preguntaClose?.addEventListener('click', () => {
-        if (preguntaPanel) preguntaPanel.style.display = 'none';
-      });
+      preguntaClose?.addEventListener('click', () => { if (preguntaPanel) preguntaPanel.style.display = 'none'; });
       preguntaClear?.addEventListener('click', () => {
         chatHistory = [];
         sessionStorage.removeItem(CHAT_KEY);
         renderChat();
       });
 
-      // Toggle chat from mobile top bar
-      chatMobileToggle?.addEventListener('click', () => {
-        if (preguntaPanel && preguntaPanel.style.display === 'flex') {
-          preguntaPanel.style.display = 'none';
-        } else {
-          openChat();
-        }
-      });
-
-      // Mobile drawer inputs
-      const preguntaBarMobile = document.getElementById('os-pregunta-mobile') as HTMLInputElement | null;
-      preguntaBarMobile?.addEventListener('keydown', (e: KeyboardEvent) => {
-        if (e.key !== 'Enter') return;
-        const q = preguntaBarMobile.value.trim();
-        if (!q) { close(); openChat(); return; }
-        preguntaBarMobile.value = '';
-        close();
-        askBrain(q);
-      });
-
-      const captureInputMobile = document.getElementById('os-capture-mobile') as HTMLInputElement | null;
-      async function sendCaptureMobile() {
-        if (!captureInputMobile) return;
-        const texto = captureInputMobile.value.trim();
-        if (!texto) return;
-        captureInputMobile.value = '';
-        captureInputMobile.placeholder = 'Guardando...';
-        try {
-          const res = await fetch('/api/os/capturar', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ texto }),
-          });
-          const data: { ok?: boolean; error?: string } = await res.json();
-          captureInputMobile.placeholder = (res.ok && data.ok) ? 'Guardado' : 'Error';
-        } catch {
-          captureInputMobile.placeholder = 'Error';
-        }
-        setTimeout(() => { if (captureInputMobile) captureInputMobile.placeholder = 'Capturar idea...'; }, 1800);
-      }
-      captureInputMobile?.addEventListener('keydown', (e: KeyboardEvent) => {
-        if (e.key === 'Enter') sendCaptureMobile();
-      });
-
-      // ── Capturar idea → cerebro (n8n webhook) ──
+      // ── Capturar idea → cerebro ──
       const captureInput = document.getElementById('os-capture') as HTMLInputElement | null;
       async function sendCapture() {
         if (!captureInput) return;
@@ -734,6 +562,13 @@ const icons: Record<string, string> = {
       captureInput?.addEventListener('keydown', (e: KeyboardEvent) => {
         if (e.key === 'Enter') sendCapture();
       });
+
+      // ── PWA: registrar service worker ──
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+          navigator.serviceWorker.register('/sw.js', { scope: '/os' }).catch(() => {});
+        });
+      }
     </script>
   </body>
 </html>

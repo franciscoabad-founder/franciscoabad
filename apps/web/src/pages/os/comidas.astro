@@ -2,21 +2,26 @@
 export const prerender = false;
 import OSLayout from '../../layouts/OSLayout.astro';
 
-const inputStyle = "background:rgba(232,234,240,0.05);border:1px solid rgba(232,234,240,0.12);border-radius:5px;padding:5px 10px;font-size:12px;color:#F4F6F8;font-family:'Inter',sans-serif;outline:none;";
-const selStyle = "background:#0E1738;border:1px solid rgba(232,234,240,0.12);border-radius:5px;padding:5px 10px;font-size:12px;color:#F4F6F8;font-family:'Inter',sans-serif;outline:none;color-scheme:dark;";
-const btnStyle = "background:#3B4ED9;color:#fff;border:none;border-radius:5px;padding:5px 16px;font-size:12px;font-family:'Montserrat',sans-serif;font-weight:600;cursor:pointer;white-space:nowrap;flex-shrink:0;";
+const inputStyle = "background:rgba(232,234,240,0.05);border:1px solid var(--os-line);border-radius:var(--os-r-sm);padding:6px 11px;font-size:12px;color:var(--os-text);font-family:var(--os-font-body);outline:none;";
+const selStyle = "background:var(--os-bg-sunken);border:1px solid var(--os-line);border-radius:var(--os-r-sm);padding:6px 11px;font-size:12px;color:var(--os-text);font-family:var(--os-font-body);outline:none;color-scheme:dark;";
+const btnStyle = "background:var(--os-accent);color:#fff;border:none;border-radius:var(--os-r-sm);padding:6px 16px;font-size:12px;font-family:var(--os-font-display);font-weight:700;letter-spacing:0.02em;cursor:pointer;white-space:nowrap;flex-shrink:0;display:inline-flex;align-items:center;gap:5px;";
 ---
 
 <OSLayout title="Comidas">
-  <div>
-    <div style="display:flex;align-items:baseline;justify-content:space-between;margin-bottom:0.5rem;">
-      <h1 style="font-size:1.375rem;font-weight:700;color:#F4F6F8;margin:0;">Comidas</h1>
-      <p id="comida-count" style="font-size:12px;color:#6B7280;margin:0;">Cargando...</p>
+  <div class="os-fade-up">
+
+    <!-- Header -->
+    <div style="display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:0.5rem;flex-wrap:wrap;gap:0.5rem;">
+      <div>
+        <p class="os-eyebrow" style="margin-bottom:6px;">Bitacora</p>
+        <h1 class="os-h1">Comidas</h1>
+      </div>
+      <p id="comida-count" class="os-num" style="font-size:12px;margin:0;">Cargando...</p>
     </div>
-    <p style="font-size:12px;color:#6B7280;margin:0 0 1.25rem;line-height:1.5;">Bitacora de que y cuando como. El foco son los patrones de alimentacion, no las calorias.</p>
+    <p style="font-size:12px;color:var(--os-muted);margin:0 0 1.25rem;line-height:1.5;">Bitacora de que y cuando como. El foco son los patrones de alimentacion, no las calorias.</p>
 
     <!-- Quick-add -->
-    <form id="comida-form" style="display:flex;gap:8px;flex-wrap:wrap;align-items:flex-end;margin-bottom:1.5rem;background:#131F4A;border:1px solid rgba(232,234,240,0.09);border-radius:8px;padding:0.75rem 1rem;">
+    <form id="comida-form" class="os-card-2" style="display:flex;gap:8px;flex-wrap:wrap;align-items:flex-end;margin-bottom:1.5rem;padding:0.875rem 1rem;">
       <select name="momento" style={selStyle}>
         <option value="desayuno">Desayuno</option>
         <option value="almuerzo">Almuerzo</option>
@@ -27,13 +32,13 @@ const btnStyle = "background:#3B4ED9;color:#fff;border:none;border-radius:5px;pa
       <input name="notas" type="text" placeholder="Nota (como me senti, contexto...)" style={inputStyle + "flex:1;min-width:140px;"} />
       <input name="foto_url" type="url" placeholder="URL de foto (opcional)" style={inputStyle + "flex:1;min-width:140px;"} />
       <input name="fecha" type="datetime-local" style={selStyle} />
-      <button type="submit" style={btnStyle}>+ Registrar</button>
-      <p id="comida-form-msg" style="font-size:11px;color:#F87171;width:100%;margin:0;display:none;"></p>
+      <button type="submit" style={btnStyle}><span class="material-symbols-outlined" style="font-size:15px;">add</span>Registrar</button>
+      <p id="comida-form-msg" style="font-size:11px;color:var(--os-error);width:100%;margin:0;display:none;"></p>
     </form>
 
     <!-- Historial agrupado por dia -->
     <div id="comidas-list" style="display:flex;flex-direction:column;gap:1.5rem;">
-      <div style="background:#131F4A;border:1px solid rgba(232,234,240,0.06);border-radius:8px;padding:1rem;color:#6B7280;font-size:13px;">Cargando...</div>
+      <div class="os-card-2" style="color:var(--os-muted);font-size:13px;">Cargando...</div>
     </div>
   </div>
 </OSLayout>
@@ -41,7 +46,7 @@ const btnStyle = "background:#3B4ED9;color:#fff;border:none;border-radius:5px;pa
 <script is:inline>
 var comidas = [];
 var MOMENTO_LABEL = { desayuno:'Desayuno', almuerzo:'Almuerzo', cena:'Cena', snack:'Snack' };
-var MOMENTO_COLOR = { desayuno:'#FBBF24', almuerzo:'#34D399', cena:'#6B7AE8', snack:'#C084FC' };
+var MOMENTO_COLOR = { desayuno:'#B5985A', almuerzo:'#6B7AE8', cena:'#3B4ED9', snack:'#6B7AE8' };
 
 function esc(s) {
   return String(s == null ? '' : s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
@@ -70,7 +75,7 @@ async function delComida(id) {
 function render() {
   var list = document.getElementById('comidas-list');
   if (!comidas.length) {
-    list.innerHTML = '<div style="background:#131F4A;border:1px solid rgba(232,234,240,0.06);border-radius:8px;padding:1.5rem;text-align:center;color:#6B7280;font-size:12px;">Sin registros aun. Anota tu primera comida arriba.</div>';
+    list.innerHTML = '<div style="background:var(--os-surface-2);border:1px solid var(--os-line-soft);border-radius:var(--os-r-card);padding:1.5rem;text-align:center;color:var(--os-muted);font-size:12px;">Sin registros aun. Anota tu primera comida arriba.</div>';
     return;
   }
   var byDay = {};
@@ -83,25 +88,25 @@ function render() {
   list.innerHTML = days.map(function(k) {
     var items = byDay[k].slice().sort(function(a,b){ return new Date(b.fecha) - new Date(a.fecha); });
     return '<div>'
-      + '<p style="font-family:Montserrat,sans-serif;font-size:10px;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;color:#6B7280;margin:0 0 8px;">' + esc(dayLabel(k)) + '</p>'
+      + '<p style="font-family:Montserrat,sans-serif;font-size:10px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:var(--os-muted);margin:0 0 8px;">' + esc(dayLabel(k)) + '</p>'
       + '<div style="display:flex;flex-direction:column;gap:6px;">'
       + items.map(function(c) {
           var mom = c.momento || 'snack';
           var color = MOMENTO_COLOR[mom] || '#6B7280';
           var foto = c.foto_url
-            ? '<a href="' + esc(c.foto_url) + '" target="_blank" rel="noopener" style="flex-shrink:0;"><img src="' + esc(c.foto_url) + '" alt="" style="width:46px;height:46px;object-fit:cover;border-radius:6px;border:1px solid rgba(232,234,240,0.12);" /></a>'
+            ? '<a href="' + esc(c.foto_url) + '" target="_blank" rel="noopener" style="flex-shrink:0;"><img src="' + esc(c.foto_url) + '" alt="" style="width:46px;height:46px;object-fit:cover;border-radius:6px;border:1px solid var(--os-line);" /></a>'
             : '';
-          return '<div style="display:flex;align-items:center;gap:12px;background:#131F4A;border:1px solid rgba(232,234,240,0.09);border-left:3px solid ' + color + ';border-radius:8px;padding:0.65rem 0.875rem;">'
+          return '<div style="display:flex;align-items:center;gap:12px;background:var(--os-surface-2);border:1px solid var(--os-line-soft);border-left:3px solid ' + color + ';border-radius:var(--os-r-card);padding:0.65rem 0.875rem;">'
             + foto
             + '<div style="flex:1;min-width:0;">'
               + '<div style="display:flex;align-items:center;gap:8px;margin-bottom:2px;">'
                 + '<span style="font-size:9px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:' + color + ';font-family:Montserrat,sans-serif;">' + esc(MOMENTO_LABEL[mom] || mom) + '</span>'
-                + '<span style="font-size:10px;color:rgba(107,114,128,0.7);">' + esc(timeLabel(c.fecha)) + '</span>'
+                + '<span style="font-size:10px;color:var(--os-muted);font-family:var(--os-font-mono);">' + esc(timeLabel(c.fecha)) + '</span>'
               + '</div>'
-              + '<p style="font-size:13px;color:#F4F6F8;margin:0;line-height:1.4;">' + esc(c.descripcion || '') + '</p>'
-              + (c.notas ? '<p style="font-size:11px;color:#6B7280;margin:3px 0 0;line-height:1.4;">' + esc(c.notas) + '</p>' : '')
+              + '<p style="font-size:13px;color:var(--os-text);margin:0;line-height:1.4;">' + esc(c.descripcion || '') + '</p>'
+              + (c.notas ? '<p style="font-size:11px;color:var(--os-muted);margin:3px 0 0;line-height:1.4;">' + esc(c.notas) + '</p>' : '')
             + '</div>'
-            + '<button onclick="delComida(\'' + c.id + '\')" title="Eliminar" style="background:none;border:none;color:rgba(107,114,128,0.4);cursor:pointer;font-size:15px;padding:0;line-height:1;flex-shrink:0;">x</button>'
+            + '<button onclick="delComida(\'' + c.id + '\')" title="Eliminar" style="background:none;border:none;color:var(--os-muted);cursor:pointer;font-size:18px;padding:0;line-height:1;flex-shrink:0;" class="material-symbols-outlined">close</button>'
             + '</div>';
         }).join('')
       + '</div></div>';
@@ -119,7 +124,7 @@ async function loadComidas() {
     render();
   } catch(e) {
     var list = document.getElementById('comidas-list');
-    if (list) list.innerHTML = '<div style="color:#F87171;font-size:12px;padding:1rem;">Error: ' + esc(e.message) + '</div>';
+    if (list) list.innerHTML = '<div style="color:var(--os-error);font-size:12px;padding:1rem;">Error: ' + esc(e.message) + '</div>';
   }
 }
 
