@@ -116,6 +116,58 @@ export interface ObjetivoTrimestral {
   descripcion: string;
 }
 
+export interface SistemaObjetivo extends ObjetivoTrimestral {
+  metrica?: string;
+}
+
+export interface SistemaPriorityItem extends PriorityItem {
+  id: string;
+  orden: number;
+  owner?: string;
+}
+
+export interface SistemaModulo {
+  id: string;
+  nombre: string;
+  estado: 'activo' | 'pendiente' | 'pausado';
+  descripcion: string;
+}
+
+export interface SistemaConexion {
+  id: string;
+  nombre: string;
+  estado: 'activo' | 'pendiente' | 'error';
+  detalle: string;
+}
+
+export interface SistemaOnboarding {
+  completado: boolean;
+  nombre: string;
+  foco_90_dias: string;
+  tono_agente: string;
+  ritmo: string;
+  canales: string[];
+}
+
+export interface SistemaState {
+  version: number;
+  updated_at: string;
+  onboarding: SistemaOnboarding;
+  objetivos_90d: SistemaObjetivo[];
+  priority_stack: SistemaPriorityItem[];
+  modulos: SistemaModulo[];
+  conexiones: SistemaConexion[];
+}
+
+export interface ApprovalItem {
+  id: string;
+  titulo: string;
+  descripcion: string;
+  estado: 'pendiente' | 'aprobado' | 'rechazado' | 'ejecutado';
+  tipo: 'sistema' | 'infra' | 'contenido' | 'finanzas' | 'otro';
+  creado_en: string;
+}
+
 export type CRMEtapa = 'prospecto' | 'contacto' | 'propuesta' | 'negociacion' | 'cerrado';
 
 export interface CRMLead {

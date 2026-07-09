@@ -23,6 +23,8 @@ const dominoTexto = datosHoy.domino.tarea;
 // route → Material Symbol
 const ms: Record<string, string> = {
   '/os': 'dashboard',
+  '/os/sistema': 'account_tree',
+  '/os/aprobaciones': 'approval_delegation',
   '/os/daily': 'wb_sunny',
   '/os/revision': 'history',
   '/os/kpis': 'bar_chart',
@@ -42,6 +44,8 @@ const ms: Record<string, string> = {
 const navGroups = [
   { label: 'Sistema', items: [
     { href: '/os', label: 'Hoy' },
+    { href: '/os/sistema', label: 'Mi Sistema' },
+    { href: '/os/aprobaciones', label: 'Aprobaciones' },
     { href: '/os/daily', label: 'Daily OS' },
     { href: '/os/revision', label: 'Revision' },
   ]},
@@ -68,8 +72,8 @@ const navGroups = [
 // Bottom-nav (movil): 5 destinos primarios + Mas
 const bottomNav = [
   { href: '/os', label: 'Hoy', icon: 'dashboard' },
+  { href: '/os/sistema', label: 'Sistema', icon: 'account_tree' },
   { href: '/os/cerebro', label: 'Cerebro', icon: 'psychology' },
-  { href: '/os/crm', label: 'CRM', icon: 'contacts' },
   { href: '/os/agenda', label: 'Agenda', icon: 'calendar_today' },
   { href: '/os/finanzas', label: 'Finanzas', icon: 'payments' },
 ];
