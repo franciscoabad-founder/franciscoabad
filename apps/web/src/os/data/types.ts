@@ -149,10 +149,21 @@ export interface SistemaOnboarding {
   canales: string[];
 }
 
+export interface FinanzasOnboarding {
+  moneda_base: string;
+  ingreso_mensual_necesario: string;
+  runway_objetivo_meses: string;
+  deuda_prioritaria: string;
+  regla_asignacion: string;
+  cuentas_a_conectar: string[];
+  cadencia_revision: string;
+}
+
 export interface SistemaState {
   version: number;
   updated_at: string;
   onboarding: SistemaOnboarding;
+  finanzas_onboarding: FinanzasOnboarding;
   objetivos_90d: SistemaObjetivo[];
   priority_stack: SistemaPriorityItem[];
   modulos: SistemaModulo[];

@@ -13,6 +13,15 @@ export const sistemaDefault: SistemaState = {
     ritmo: 'Briefing AM, captura durante el dia, cierre PM y revision semanal.',
     canales: ['Telegram', 'OS web', 'n8n', 'Hermes', 'gbrain'],
   },
+  finanzas_onboarding: {
+    moneda_base: 'USD',
+    ingreso_mensual_necesario: '',
+    runway_objetivo_meses: '3',
+    deuda_prioritaria: '',
+    regla_asignacion: 'Primero cubrir fijos, luego deuda de mayor tasa, luego colchon y reinversion.',
+    cuentas_a_conectar: ['Cuentas bancarias', 'Tarjetas', 'Por cobrar', 'Deudas', 'Gastos recurrentes'],
+    cadencia_revision: 'Viernes: revision financiera semanal. Inicio de mes: cierre y presupuesto.',
+  },
   objetivos_90d: objetivos.map((o) => ({
     id: o.id,
     titulo: o.titulo,

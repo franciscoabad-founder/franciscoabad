@@ -130,6 +130,18 @@ export default function OSSistema({ initialState }: Props) {
         </div>
       </div>
 
+      {!completed && (
+        <div className="os-domino" style={{ marginBottom: 0 }}>
+          <p className="os-eyebrow" style={{ marginBottom: 8 }}>Onboarding pendiente</p>
+          <p style={{ margin: '0 0 6px', color: '#E8EAF0', fontWeight: 700, fontSize: 15 }}>
+            Empieza en la tarjeta “Onboarding del agente”.
+          </p>
+          <p style={{ margin: 0, color: '#C5C5D7', fontSize: 13, lineHeight: 1.5 }}>
+            Llena foco, ritmo, tono y finanzas. Cuando este listo, presiona Completar y luego Guardar sistema.
+          </p>
+        </div>
+      )}
+
       <div className="os-card os-card-accent">
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12, marginBottom: 12 }}>
           <div>
@@ -174,6 +186,108 @@ export default function OSSistema({ initialState }: Props) {
               rows={2}
               value={state.onboarding.tono_agente}
               onChange={(e) => setState((prev) => ({ ...prev, onboarding: { ...prev.onboarding, tono_agente: e.target.value } }))}
+            />
+          </label>
+        </div>
+      </div>
+
+      <div className="os-card os-card-accent">
+        <div style={{ marginBottom: 12 }}>
+          <p className="os-section-title" style={{ marginBottom: 4 }}>Onboarding financiero</p>
+          <p style={{ margin: 0, color: '#C5C5D7', fontSize: 13, lineHeight: 1.5 }}>
+            Esto alimenta la revision financiera de Hermes: gap mensual, deuda prioritaria, cuentas y reglas de asignacion.
+          </p>
+        </div>
+
+        <div style={{ display: 'grid', gridTemplateColumns: '0.5fr 0.8fr 0.6fr', gap: 10, marginBottom: 10 }}>
+          <label style={{ display: 'flex', flexDirection: 'column', gap: 5 }}>
+            <span className="os-eyebrow os-eyebrow-muted">Moneda</span>
+            <input
+              className="os-input"
+              value={state.finanzas_onboarding?.moneda_base ?? ''}
+              onChange={(e) => setState((prev) => ({
+                ...prev,
+                finanzas_onboarding: { ...prev.finanzas_onboarding, moneda_base: e.target.value },
+              }))}
+            />
+          </label>
+          <label style={{ display: 'flex', flexDirection: 'column', gap: 5 }}>
+            <span className="os-eyebrow os-eyebrow-muted">Ingreso mensual necesario</span>
+            <input
+              className="os-input"
+              placeholder="Ej: 4500"
+              value={state.finanzas_onboarding?.ingreso_mensual_necesario ?? ''}
+              onChange={(e) => setState((prev) => ({
+                ...prev,
+                finanzas_onboarding: { ...prev.finanzas_onboarding, ingreso_mensual_necesario: e.target.value },
+              }))}
+            />
+          </label>
+          <label style={{ display: 'flex', flexDirection: 'column', gap: 5 }}>
+            <span className="os-eyebrow os-eyebrow-muted">Runway meta</span>
+            <input
+              className="os-input"
+              placeholder="Meses"
+              value={state.finanzas_onboarding?.runway_objetivo_meses ?? ''}
+              onChange={(e) => setState((prev) => ({
+                ...prev,
+                finanzas_onboarding: { ...prev.finanzas_onboarding, runway_objetivo_meses: e.target.value },
+              }))}
+            />
+          </label>
+        </div>
+
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
+          <label style={{ display: 'flex', flexDirection: 'column', gap: 5 }}>
+            <span className="os-eyebrow os-eyebrow-muted">Deuda prioritaria</span>
+            <textarea
+              className="os-input"
+              rows={3}
+              placeholder="Acreedor, monto, tasa, fecha limite"
+              value={state.finanzas_onboarding?.deuda_prioritaria ?? ''}
+              onChange={(e) => setState((prev) => ({
+                ...prev,
+                finanzas_onboarding: { ...prev.finanzas_onboarding, deuda_prioritaria: e.target.value },
+              }))}
+            />
+          </label>
+          <label style={{ display: 'flex', flexDirection: 'column', gap: 5 }}>
+            <span className="os-eyebrow os-eyebrow-muted">Regla de asignacion</span>
+            <textarea
+              className="os-input"
+              rows={3}
+              value={state.finanzas_onboarding?.regla_asignacion ?? ''}
+              onChange={(e) => setState((prev) => ({
+                ...prev,
+                finanzas_onboarding: { ...prev.finanzas_onboarding, regla_asignacion: e.target.value },
+              }))}
+            />
+          </label>
+          <label style={{ display: 'flex', flexDirection: 'column', gap: 5 }}>
+            <span className="os-eyebrow os-eyebrow-muted">Cuentas a conectar</span>
+            <textarea
+              className="os-input"
+              rows={3}
+              value={(state.finanzas_onboarding?.cuentas_a_conectar ?? []).join('\n')}
+              onChange={(e) => setState((prev) => ({
+                ...prev,
+                finanzas_onboarding: {
+                  ...prev.finanzas_onboarding,
+                  cuentas_a_conectar: e.target.value.split('\n').map((x) => x.trim()).filter(Boolean),
+                },
+              }))}
+            />
+          </label>
+          <label style={{ display: 'flex', flexDirection: 'column', gap: 5 }}>
+            <span className="os-eyebrow os-eyebrow-muted">Cadencia</span>
+            <textarea
+              className="os-input"
+              rows={3}
+              value={state.finanzas_onboarding?.cadencia_revision ?? ''}
+              onChange={(e) => setState((prev) => ({
+                ...prev,
+                finanzas_onboarding: { ...prev.finanzas_onboarding, cadencia_revision: e.target.value },
+              }))}
             />
           </label>
         </div>
