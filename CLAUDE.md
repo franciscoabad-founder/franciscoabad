@@ -176,6 +176,13 @@ Servidor dedicado separado del sitio web. NO tiene relación con Vercel ni con f
 | Caddy | `n8n-caddy-1` (Docker) | puertos 80/443 | proxy para n8n y gbrain |
 | gbrain MCP server | systemd `gbrain.service` | `172.18.0.1:3131` | `https://brain.franciscoabad.com` |
 | Postgres + pgvector | `gbrain-postgres` (Docker) | `127.0.0.1:5432` | cerrado al exterior |
+| Evolution API (WhatsApp) | `evolution_api` + `evolution_postgres` + `evolution_redis` (Docker) | `127.0.0.1:8080` | cerrado al exterior |
+| Hermes gateway | systemd `hermes-gateway.service` | local | no expuesto |
+| Hermes approval | systemd `hermes-approval.service` | local | no expuesto |
+| Cortex bridge (OS-Hermes) | systemd `cortex-bridge.service`, código en `/root/cortex/` | local | no expuesto |
+
+Hermes VPS tiene 33 skills en `/root/.hermes/skills` (oficiales de Anthropic + skills Cortex + pancho-*).
+Cron activo: sync de gstack-artifacts cada hora. Auditado por SSH el 12 jul 2026.
 
 ### Archivos de config clave en el VPS
 
