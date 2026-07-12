@@ -8,6 +8,7 @@ import { datosDaily } from '../../os/data/daily';
 import { kpis } from '../../os/data/kpis';
 import { notas } from '../../os/data/cerebro';
 import OSChecklist from '../../os/components/OSChecklist';
+import OSOnboarding from '../../os/components/OSOnboarding';
 
 const { domino, discomfort, checklist, wins, priorities } = datosHoy;
 
@@ -28,6 +29,7 @@ const fechaLarga = new Date().toLocaleDateString('es-EC', {
 ---
 
 <OSLayout title="Hoy">
+  <OSOnboarding client:load />
   <div class="os-fade-up">
 
     <!-- Header -->
