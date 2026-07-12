@@ -16,7 +16,7 @@ create index if not exists tareas_parent_idx on tareas(parent_id);
 -- subtarea.deadline <= tarea_padre.deadline
 
 -- 2. Pendientes: cosas que quiero hacer, sin fecha ni deadline
-create table if not exists pendientes (
+create table if not exists public.pendientes (
   id uuid primary key default gen_random_uuid(),
   titulo text not null,
   detalle text,
@@ -30,7 +30,7 @@ create table if not exists pendientes (
 );
 
 -- 3. Notas: capturas de pensamiento, convertibles a pendiente/tarea/recordatorio
-create table if not exists notas (
+create table if not exists public.notas (
   id uuid primary key default gen_random_uuid(),
   contenido text not null,
   tags text[] default '{}',
@@ -42,7 +42,7 @@ create table if not exists notas (
 );
 
 -- 4. Recordatorios: avisos con fecha que Hermes manda al celular
-create table if not exists recordatorios (
+create table if not exists public.recordatorios (
   id uuid primary key default gen_random_uuid(),
   mensaje text not null,
   recordar_at timestamptz not null,
@@ -56,7 +56,7 @@ create table if not exists recordatorios (
 create index if not exists recordatorios_pendientes_idx on recordatorios(recordar_at) where estado = 'pendiente';
 
 -- 5. Reuniones: registro con resumen de Flow (integración posterior)
-create table if not exists reuniones (
+create table if not exists public.reuniones (
   id uuid primary key default gen_random_uuid(),
   titulo text not null,
   fecha timestamptz not null,
@@ -71,7 +71,9 @@ alter table os_system_state add column if not exists onboarding_completed boolea
 alter table os_system_state add column if not exists onboarding_answers jsonb default '{}';
 
 -- RLS igual que el resto del OS (acceso solo via service_role desde endpoints)
-alter table pendientes enable row level security;
-alter table notas enable row level security;
-alter table recordatorios enable row level security;
-alter table reuniones enable row level security;
+alter table public.pendientes enable row level security;
+alter table public.notas enable row level security;
+alter table public.recordatorios enable row level security;
+alter table public.reuniones enable row level security;
+
+grant all on public.recordatorios, public.pendientes, public.notas, public.reuniones to service_role;
