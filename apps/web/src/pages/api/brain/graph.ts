@@ -7,6 +7,11 @@ import { createGbrainClient } from '../../../os/lib/gbrain';
 let cache: { data: unknown; ts: number } | null = null;
 const CACHE_TTL = 5 * 60 * 1000;
 
+// Above this many live pages we degrade to a "top N by connections" view by
+// default. The client can still ask for the full set with ?all=1.
+const TRUNCATE_ABOVE = 300;
+const TOP_N = 180;
+
 const KNOWN_GROUPS: Array<[string, RegExp]> = [
   ['arazza', /arazza|meal.prep/i],
   ['braintech', /braintech|brain.tech/i],
@@ -48,14 +53,32 @@ function extractTags(structured: string[] | undefined, body: string | undefined)
   return [...out];
 }
 
-export const GET: APIRoute = async ({ cookies }) => {
+// Run async work over a list with bounded concurrency so we don't fire
+// hundreds of simultaneous requests at the gbrain MCP endpoint.
+async function mapLimit<T, R>(items: T[], limit: number, fn: (item: T, i: number) => Promise<R>): Promise<R[]> {
+  const results: R[] = new Array(items.length);
+  let cursor = 0;
+  async function worker() {
+    while (cursor < items.length) {
+      const i = cursor++;
+      results[i] = await fn(items[i], i);
+    }
+  }
+  await Promise.all(Array.from({ length: Math.min(limit, items.length) }, worker));
+  return results;
+}
+
+export const GET: APIRoute = async ({ cookies, url }) => {
   const token = cookies.get('os_auth')?.value;
   const expected = import.meta.env.OS_AUTH_TOKEN;
   if (!token || token !== expected) {
     return new Response(JSON.stringify({ error: 'Unauthorized' }), { status: 401 });
   }
 
-  if (cache && Date.now() - cache.ts < CACHE_TTL) {
+  const wantAll = url.searchParams.get('all') === '1';
+  const cacheKey = wantAll ? 'all' : 'default';
+
+  if (cache && (cache.data as any)?.__key === cacheKey && Date.now() - cache.ts < CACHE_TTL) {
     return new Response(JSON.stringify(cache.data), {
       headers: { 'Content-Type': 'application/json' },
     });
@@ -69,71 +92,78 @@ export const GET: APIRoute = async ({ cookies }) => {
   const brain = createGbrainClient(gbrainToken);
 
   try {
-    const pages = await brain.listPages({ limit: 100, sort: 'updated_desc' });
+    // Pull every live page (not just the last 100). 500 is comfortably above
+    // the current corpus size (~240) and cheap for list_pages.
+    const pages = await brain.listPages({ limit: 500, sort: 'updated_desc' });
+    const slugSet = new Set(pages.map((p) => p.slug));
 
-    // Fetch full pages in parallel to read tags (structured + inline in body).
-    const fullResults = await Promise.all(
-      pages.map((p) => brain.getPage(p.slug).catch(() => null))
-    );
+    // Fetch full pages (tags) and real wikilinks in parallel, capped concurrency.
+    const [fullResults, linksResults] = await Promise.all([
+      mapLimit(pages, 15, (p) => brain.getPage(p.slug).catch(() => null)),
+      mapLimit(pages, 15, (p) => brain.getLinks(p.slug).catch(() => [])),
+    ]);
 
-    // tags[i] = normalized tag list for pages[i]
     const tagsByIndex = pages.map((_, i) =>
       extractTags(fullResults[i]?.tags, fullResults[i]?.compiled_truth)
     );
 
-    const nodes = pages.map((p, i) => ({
+    // Real edges only: actual wikilinks resolved by gbrain, source -> target.
+    // Drop anything pointing at a slug we don't have as a node (dangling link).
+    const edgeSet = new Set<string>();
+    const edges: { source: string; target: string }[] = [];
+    pages.forEach((p, i) => {
+      for (const link of linksResults[i] ?? []) {
+        const target = (link as any).target_slug ?? (link as any).to_slug;
+        if (!target || target === p.slug || !slugSet.has(target)) continue;
+        const key = [p.slug, target].sort().join('|');
+        if (edgeSet.has(key)) continue;
+        edgeSet.add(key);
+        edges.push({ source: p.slug, target });
+      }
+    });
+
+    // Connection count (backlinks + forward links) per node — drives node size.
+    const connCount: Record<string, number> = {};
+    for (const e of edges) {
+      connCount[e.source] = (connCount[e.source] ?? 0) + 1;
+      connCount[e.target] = (connCount[e.target] ?? 0) + 1;
+    }
+
+    let nodes = pages.map((p, i) => ({
       id: p.slug,
       label: p.title,
       type: p.type,
       group: inferGroup(p.slug, p.title),
       tags: tagsByIndex[i],
       updated_at: p.updated_at,
+      connections: connCount[p.slug] ?? 0,
     }));
 
-    // Tag frequency: a tag present in > 60% of notes is too generic to link by
-    // (it would collapse the whole graph into one blob). Exclude those.
-    const total = pages.length;
-    const tagFreq: Record<string, number> = {};
-    for (const tags of tagsByIndex) {
-      for (const t of tags) tagFreq[t] = (tagFreq[t] ?? 0) + 1;
-    }
-    const threshold = total * 0.6;
-    const excluded = new Set(
-      Object.entries(tagFreq).filter(([, c]) => c > threshold).map(([t]) => t)
-    );
+    let finalEdges = edges;
+    let truncated = false;
 
-    // Edges: connect two notes if they share at least one non-generic tag.
-    // One line per pair regardless of how many tags they share (dedup by key).
-    const tagToSlugs: Record<string, string[]> = {};
-    pages.forEach((p, i) => {
-      for (const t of tagsByIndex[i]) {
-        if (excluded.has(t)) continue;
-        (tagToSlugs[t] ??= []).push(p.slug);
-      }
-    });
-
-    const edgeSet = new Set<string>();
-    const edges: { source: string; target: string; kind: 'real' | 'tema' }[] = [];
-
-    for (const slugs of Object.values(tagToSlugs)) {
-      for (let i = 0; i < slugs.length; i++) {
-        for (let j = i + 1; j < slugs.length; j++) {
-          const key = [slugs[i], slugs[j]].sort().join('|');
-          if (edgeSet.has(key)) continue;
-          edgeSet.add(key);
-          edges.push({ source: slugs[i], target: slugs[j], kind: 'tema' });
-        }
-      }
+    if (nodes.length > TRUNCATE_ABOVE && !wantAll) {
+      truncated = true;
+      const top = [...nodes].sort((a, b) => b.connections - a.connections).slice(0, TOP_N);
+      const topIds = new Set(top.map((n) => n.id));
+      // Keep any node that's an endpoint of an edge whose other end is in the
+      // top set too, so hub neighborhoods stay intact.
+      finalEdges = edges.filter((e) => topIds.has(e.source) && topIds.has(e.target));
+      nodes = top;
     }
 
     const data = {
+      __key: cacheKey,
       nodes,
-      edges,
+      edges: finalEdges,
       meta: {
-        notes: total,
-        edges: edges.length,
-        tags_used: Object.keys(tagToSlugs).length,
-        tags_excluded: [...excluded],
+        notes: pages.length,
+        notes_shown: nodes.length,
+        edges: finalEdges.length,
+        connected: nodes.filter((n) => n.connections > 0).length,
+        orphans: nodes.filter((n) => n.connections === 0).length,
+        truncated,
+        top_n: TOP_N,
       },
     };
     cache = { data, ts: Date.now() };

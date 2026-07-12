@@ -19,7 +19,11 @@ export const GET: APIRoute = async ({ cookies, url }) => {
   const brain = createGbrainClient(gbrainToken);
 
   try {
-    const pages = await brain.listPages({ limit, sort: 'updated_desc' });
+    // list_pages with a high limit gives us the true total count of live
+    // pages; we still only hydrate + return `limit` of them for the grid.
+    const allPages = await brain.listPages({ limit: 500, sort: 'updated_desc' });
+    const total = allPages.length;
+    const pages = allPages.slice(0, limit);
 
     // Fetch full content for excerpts
     const full = await Promise.all(
@@ -44,7 +48,7 @@ export const GET: APIRoute = async ({ cookies, url }) => {
       };
     });
 
-    return new Response(JSON.stringify({ notes }), {
+    return new Response(JSON.stringify({ notes, total }), {
       headers: { 'Content-Type': 'application/json' },
     });
   } catch (err) {

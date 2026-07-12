@@ -136,7 +136,7 @@ import OSGraphBrain from '../../os/components/OSGraphBrain';
       var notes = data.notes;
 
       var countEl = document.getElementById('nota-count');
-      if (countEl) countEl.textContent = notes.length + ' notas indexadas';
+      if (countEl) countEl.textContent = (data.total || notes.length) + ' notas indexadas';
 
       var grid = document.getElementById('notes-grid');
       if (!grid || !notes.length) return;

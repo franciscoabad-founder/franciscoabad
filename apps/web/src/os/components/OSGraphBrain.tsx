@@ -7,21 +7,28 @@ interface GraphNode extends d3.SimulationNodeDatum {
   type: string;
   group: string;
   connections: number;
+  orphan?: boolean;
 }
 
 interface RawEdge {
   source: string;
   target: string;
-  kind?: 'real' | 'tema';
 }
 
-interface SimEdge extends d3.SimulationLinkDatum<GraphNode> {
-  kind?: 'real' | 'tema';
-}
+interface SimEdge extends d3.SimulationLinkDatum<GraphNode> {}
 
 interface RawData {
-  nodes: Array<{ id: string; label: string; type: string; group: string }>;
+  nodes: Array<{ id: string; label: string; type: string; group: string; connections?: number }>;
   edges: RawEdge[];
+  meta?: {
+    notes: number;
+    notes_shown: number;
+    edges: number;
+    connected: number;
+    orphans: number;
+    truncated: boolean;
+    top_n: number;
+  };
 }
 
 const GROUP_COLORS: Record<string, string> = {
@@ -62,15 +69,19 @@ export default function OSGraphBrain() {
   const [graphData, setGraphData]           = useState<RawData | null>(null);
   const [nodeCount, setNodeCount]           = useState(0);
   const [edgeCount, setEdgeCount]           = useState(0);
+  const [totalNotes, setTotalNotes]         = useState(0);
   const [availableGroups, setAvailableGroups] = useState<string[]>([]);
   const [activeGroup, setActiveGroup]       = useState<string | null>(null);
   const [panelSlug, setPanelSlug]           = useState<string | null>(null);
   const [panelData, setPanelData]           = useState<{label:string;group:string;connections:number} | null>(null);
+  const [onlyConnected, setOnlyConnected]   = useState(false);
+  const [showAll, setShowAll]               = useState(false);
 
   // --- Effect 1: fetch data (no DOM access) ---
   useEffect(() => {
     let cancelled = false;
-    fetch('/api/brain/graph')
+    setLoading(true);
+    fetch(`/api/brain/graph${showAll ? '?all=1' : ''}`)
       .then((r) => { if (!r.ok) throw new Error(`HTTP ${r.status}`); return r.json(); })
       .then((data: RawData) => {
         if (cancelled) return;
@@ -83,7 +94,7 @@ export default function OSGraphBrain() {
         setLoading(false);
       });
     return () => { cancelled = true; };
-  }, []);
+  }, [showAll]);
 
   // --- Effect 2: filter opacity (no restart) ---
   useEffect(() => {
@@ -100,9 +111,7 @@ export default function OSGraphBrain() {
         });
     } else {
       svg.selectAll('.node-g').attr('opacity', 1);
-      svg.selectAll<SVGLineElement, SimEdge>('.edge-line').attr('opacity', (d: any) =>
-        d.kind === 'tema' ? 0.5 : 0.6
-      );
+      svg.selectAll<SVGLineElement, SimEdge>('.edge-line').attr('opacity', 0.6);
     }
   }, [activeGroup]);
 
@@ -120,32 +129,51 @@ export default function OSGraphBrain() {
       connCount[e.target] = (connCount[e.target] || 0) + 1;
     }
 
-    const nodes: GraphNode[] = graphData.nodes.map((n) => ({
+    const allNodes: GraphNode[] = graphData.nodes.map((n) => ({
       ...n,
-      connections: connCount[n.id] || 0,
+      connections: n.connections ?? connCount[n.id] ?? 0,
+      orphan: (n.connections ?? connCount[n.id] ?? 0) === 0,
     }));
+
+    const nodes = onlyConnected ? allNodes.filter((n) => !n.orphan) : allNodes;
+    const nodeIds = new Set(nodes.map((n) => n.id));
 
     const groups = [...new Set(nodes.map((n) => n.group))].sort();
     setAvailableGroups(groups);
-    setNodeCount(nodes.length);
-    setEdgeCount(graphData.edges.length);
+    setNodeCount(graphData.meta?.notes_shown ?? nodes.length);
+    setTotalNotes(graphData.meta?.notes ?? nodes.length);
+    setEdgeCount(graphData.meta?.edges ?? graphData.edges.length);
 
-    // Group centroids — place clusters in a circle
+    // Group centroids — place connected clusters in a circle, orphans in a
+    // wider outer ring so they read as "unlinked" rather than floating randomly.
     const groupCentroids: Record<string, { x: number; y: number }> = {};
     groups.forEach((grp, i) => {
       const angle = (i / groups.length) * 2 * Math.PI - Math.PI / 2;
-      const r = Math.min(W, H) * 0.3;
+      const r = Math.min(W, H) * 0.28;
       groupCentroids[grp] = { x: W / 2 + r * Math.cos(angle), y: H / 2 + r * Math.sin(angle) };
     });
 
+    const outerR = Math.min(W, H) * 0.46;
+
     // Seed positions
+    let orphanIdx = 0;
+    const orphanCount = nodes.filter((n) => n.orphan).length;
     nodes.forEach((n) => {
-      const c = groupCentroids[n.group] ?? { x: W / 2, y: H / 2 };
-      n.x = c.x + (Math.random() - 0.5) * 60;
-      n.y = c.y + (Math.random() - 0.5) * 60;
+      if (n.orphan) {
+        const angle = (orphanIdx / Math.max(orphanCount, 1)) * 2 * Math.PI;
+        orphanIdx++;
+        n.x = W / 2 + outerR * Math.cos(angle);
+        n.y = H / 2 + outerR * Math.sin(angle);
+      } else {
+        const c = groupCentroids[n.group] ?? { x: W / 2, y: H / 2 };
+        n.x = c.x + (Math.random() - 0.5) * 60;
+        n.y = c.y + (Math.random() - 0.5) * 60;
+      }
     });
 
-    const edges: SimEdge[] = graphData.edges.map((e) => ({ ...e }));
+    const edges: SimEdge[] = graphData.edges
+      .filter((e) => nodeIds.has(e.source) && nodeIds.has(e.target))
+      .map((e) => ({ ...e }));
 
     const svg = d3.select(svgRef.current)
       .attr('width', W)
@@ -176,14 +204,25 @@ export default function OSGraphBrain() {
     const sim = d3.forceSimulation<GraphNode>(nodes)
       .force('link', d3.forceLink<GraphNode, SimEdge>(edges)
         .id((d) => d.id)
-        .distance((e: any) => e.kind === 'tema' ? 80 : 50)
-        .strength((e: any) => e.kind === 'tema' ? 0.5 : 0.9))
+        .distance(55)
+        .strength(0.85))
       .force('charge', d3.forceManyBody<GraphNode>().strength(-320))
       .force('collide', d3.forceCollide<GraphNode>().radius((d) => nodeR(d.connections) + 12))
       .force('cluster', (() => {
         const cf = () => {
           const a = sim.alpha();
           for (const n of nodes) {
+            if (n.orphan) {
+              // Keep orphans drifting near the outer margin rather than the
+              // main topic clusters, so they read as visually unlinked.
+              const dx = (n.x ?? 0) - W / 2;
+              const dy = (n.y ?? 0) - H / 2;
+              const dist = Math.sqrt(dx * dx + dy * dy) || 1;
+              const pull = (outerR - dist) * 0.02 * a;
+              n.vx = (n.vx ?? 0) + (dx / dist) * pull;
+              n.vy = (n.vy ?? 0) + (dy / dist) * pull;
+              continue;
+            }
             const c = groupCentroids[n.group];
             if (!c) continue;
             n.vx = (n.vx ?? 0) + (c.x - (n.x ?? 0)) * 0.045 * a;
@@ -204,10 +243,10 @@ export default function OSGraphBrain() {
       .enter()
       .append('line')
       .attr('class', 'edge-line')
-      .attr('stroke', (d) => d.kind === 'tema' ? 'rgba(148,163,184,0.6)' : 'rgba(107,122,232,0.6)')
-      .attr('stroke-width', (d) => d.kind === 'tema' ? 1.3 : 1.5)
+      .attr('stroke', 'rgba(107,122,232,0.6)')
+      .attr('stroke-width', 1.4)
       .attr('stroke-dasharray', 'none')
-      .attr('opacity', (d) => d.kind === 'tema' ? 0.5 : 0.6);
+      .attr('opacity', 0.6);
 
     // Nodes
     const nodeSel = g.append('g')
@@ -282,8 +321,8 @@ export default function OSGraphBrain() {
         d3.select(this).select('.node-label')
           .text(d.connections >= 4 ? d.label : '').attr('fill', '#6B7280').attr('font-size', '9px').attr('font-weight', '400');
         edgeSel
-          .attr('stroke', (e: any) => e.kind === 'tema' ? 'rgba(148,163,184,0.6)' : 'rgba(107,122,232,0.6)')
-          .attr('stroke-width', (e: any) => e.kind === 'tema' ? 1.3 : 1.5);
+          .attr('stroke', 'rgba(107,122,232,0.6)')
+          .attr('stroke-width', 1.4);
       })
       .on('click', (ev, d) => {
         ev.stopPropagation();
@@ -317,7 +356,7 @@ export default function OSGraphBrain() {
     });
 
     return () => { sim.stop(); };
-  }, [graphData]);
+  }, [graphData, onlyConnected]);
 
   const MUTED  = '#6B7280';
   const BORDER = 'rgba(232,234,240,0.1)';
@@ -357,6 +396,24 @@ export default function OSGraphBrain() {
                 {GROUP_LABELS[gr] ?? gr}
               </button>
             ))}
+
+            <span style={{ flex: 1 }} />
+
+            <button
+              onClick={() => setOnlyConnected((v) => !v)}
+              style={{ fontSize: '11px', padding: '4px 12px', borderRadius: '99px', border: `1px solid ${onlyConnected ? '#3B4ED9' : BORDER}`, background: onlyConnected ? '#3B4ED9' : 'transparent', color: onlyConnected ? '#fff' : MUTED, cursor: 'pointer', fontFamily: 'Montserrat, sans-serif' }}
+            >
+              Solo conectados
+            </button>
+
+            {graphData?.meta?.truncated && (
+              <button
+                onClick={() => setShowAll((v) => !v)}
+                style={{ fontSize: '11px', padding: '4px 12px', borderRadius: '99px', border: `1px solid ${BORDER}`, background: 'transparent', color: MUTED, cursor: 'pointer', fontFamily: 'Montserrat, sans-serif' }}
+              >
+                {showAll ? 'Ver top conectadas' : 'Ver todo'}
+              </button>
+            )}
           </div>
 
           {/* Graph container with fixed height so SVG gets real dimensions */}
@@ -390,7 +447,8 @@ export default function OSGraphBrain() {
               </div>
             ))}
             <span style={{ fontSize: '10px', color: '#4B5563', marginLeft: 'auto' }}>
-              {nodeCount} nodos · {edgeCount} enlaces
+              {totalNotes} notas · {nodeCount} mostradas · {edgeCount} enlaces reales
+              {graphData?.meta?.orphans ? ` · ${graphData.meta.orphans} sin enlaces` : ''}
             </span>
           </div>
         </div>
