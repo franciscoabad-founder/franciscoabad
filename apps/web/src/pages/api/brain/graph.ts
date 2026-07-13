@@ -144,12 +144,34 @@ export const GET: APIRoute = async ({ cookies, url }) => {
 
     if (nodes.length > TRUNCATE_ABOVE && !wantAll) {
       truncated = true;
-      const top = [...nodes].sort((a, b) => b.connections - a.connections).slice(0, TOP_N);
-      const topIds = new Set(top.map((n) => n.id));
-      // Keep any node that's an endpoint of an edge whose other end is in the
-      // top set too, so hub neighborhoods stay intact.
-      finalEdges = edges.filter((e) => topIds.has(e.source) && topIds.has(e.target));
-      nodes = top;
+      // Get the 100 most recently updated nodes
+      const sortedByRecency = [...nodes].sort((a, b) => new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime());
+      const seedNodes = sortedByRecency.slice(0, 100);
+      const seedIds = new Set(seedNodes.map((n) => n.id));
+
+      // Keep edges connected to or from the seed nodes
+      const activeEdges = edges.filter((e) => seedIds.has(e.source) || seedIds.has(e.target));
+      const activeNodeIds = new Set<string>();
+      activeEdges.forEach((e) => {
+        activeNodeIds.add(e.source);
+        activeNodeIds.add(e.target);
+      });
+      // Ensure all seed nodes are in the active set
+      seedIds.forEach((id) => activeNodeIds.add(id));
+
+      // Filter nodes and edges
+      nodes = nodes.filter((n) => activeNodeIds.has(n.id));
+      finalEdges = edges.filter((e) => activeNodeIds.has(e.source) && activeNodeIds.has(e.target));
+
+      // Recompute connections count for the visible subset
+      const filteredConnCount: Record<string, number> = {};
+      for (const e of finalEdges) {
+        filteredConnCount[e.source] = (filteredConnCount[e.source] ?? 0) + 1;
+        filteredConnCount[e.target] = (filteredConnCount[e.target] ?? 0) + 1;
+      }
+      nodes.forEach((n) => {
+        n.connections = filteredConnCount[n.id] ?? 0;
+      });
     }
 
     const data = {
