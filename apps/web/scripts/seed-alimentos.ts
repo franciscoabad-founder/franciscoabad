@@ -361,6 +361,23 @@ const usdaAlimentos: Alimento[] = [
   usda('Polvo de hornear', 53, 0, 28, 0, 0.2),
   usda('Caldo de pollo', 15, 1, 1, 0.5, 0),
   usda('Gelatina en polvo', 381, 8, 91, 0, 0),
+
+  // --- Adicionales comunes ---
+  usda('Nuggets de pollo', 296, 15, 18, 19, 1),
+  usda('Hamburguesa de res (solo carne)', 254, 26, 0, 16, 0),
+  usda('Res asada al horno', 217, 27, 0, 11, 0),
+  usda('Manteca de cerdo', 902, 0, 0, 100, 0),
+  usda('Leche de coco', 230, 2.3, 6, 24, 2.2),
+  usda('Coco rallado seco', 660, 6.9, 24, 64, 16),
+  usda('Queso ricotta', 174, 11, 3, 13, 0),
+  usda('Queso suizo', 393, 27, 1.4, 31, 0),
+  usda('Baguette', 274, 9, 52, 3, 2.2),
+  usda('Salvado de avena', 246, 17, 66, 7, 15),
+  usda('Ciruela pasa', 240, 2.2, 64, 0.4, 7),
+  usda('Arandano rojo seco', 308, 0.2, 82, 1.4, 5.7),
+  usda('Tomate deshidratado', 258, 14, 56, 3, 12),
+  usda('Semilla de cáñamo', 553, 32, 9, 49, 4),
+  usda('Espinaca baby cruda', 23, 2.9, 3.6, 0.4, 2.2),
 ];
 
 // ---------------------------------------------------------------------------
