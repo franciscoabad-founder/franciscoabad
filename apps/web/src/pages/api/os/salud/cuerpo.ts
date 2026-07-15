@@ -32,7 +32,9 @@ export const POST: APIRoute = async (context) => {
     const body = await context.request.json();
     const source = body.source?.trim() || 'manual';
     if (!SOURCES.includes(source)) return json({ error: `source debe ser: ${SOURCES.join(', ')}` }, 400);
-    if (body.peso_kg == null && body.grasa_pct == null && body.cintura_cm == null) {
+    // Cualquier medición cuenta, incluido solo sueño (alimenta la regla de recuperación).
+    const MEDICIONES = ['peso_kg', 'grasa_pct', 'musculo_kg', 'agua_pct', 'cintura_cm', 'sueno_horas'];
+    if (MEDICIONES.every((f) => numOrNull(body[f]) == null)) {
       return json({ error: 'al menos una medición requerida' }, 400);
     }
     const sb = getSupabaseServer();

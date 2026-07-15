@@ -64,7 +64,9 @@ export default function OSSaludCuerpo() {
   useEffect(() => { cargar(); }, []);
 
   async function guardar() {
-    if (!form.peso_kg && !form.grasa_pct && !form.cintura_cm) { setError('Ingresa al menos peso, grasa o cintura'); return; }
+    if (!form.peso_kg && !form.grasa_pct && !form.musculo_kg && !form.agua_pct && !form.cintura_cm && !form.sueno_horas) {
+      setError('Ingresa al menos una medición'); return;
+    }
     setGuardando(true); setError('');
     const res = await fetch('/api/os/salud/cuerpo', {
       method: 'POST', headers: { 'Content-Type': 'application/json' },
