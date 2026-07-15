@@ -78,8 +78,10 @@ export const GET: APIRoute = async (context) => {
     }
 
     // 2. Búsqueda por texto: ilike sobre nombre y marca. Tabla vacía => [].
+    // Se escapan comas y paréntesis que romperían la sintaxis del filtro .or() de PostgREST.
     let query = sb.from('alimentos').select('*').order('nombre', { ascending: true }).limit(40);
-    if (q) query = query.or(`nombre.ilike.%${q}%,marca.ilike.%${q}%`);
+    const qSafe = q.replace(/[,()*]/g, ' ').trim();
+    if (qSafe) query = query.or(`nombre.ilike.%${qSafe}%,marca.ilike.%${qSafe}%`);
     const { data, error } = await query;
     if (error) throw error;
     return json({ alimentos: data ?? [], fuente: 'local' });

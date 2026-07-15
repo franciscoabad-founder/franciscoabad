@@ -16,7 +16,8 @@ export const GET: APIRoute = async (context) => {
     const texto = url.searchParams.get('q')?.trim();
     const grupo = url.searchParams.get('grupo')?.trim();
     const patron = url.searchParams.get('patron')?.trim();
-    if (texto) q = q.or(`nombre.ilike.%${texto}%,nombre_en.ilike.%${texto}%`);
+    const textoSafe = texto ? texto.replace(/[,()*]/g, ' ').trim() : '';
+    if (textoSafe) q = q.or(`nombre.ilike.%${textoSafe}%,nombre_en.ilike.%${textoSafe}%`);
     if (grupo) q = q.eq('grupo_muscular_primario', grupo);
     if (patron) q = q.eq('patron', patron);
     const { data, error } = await q.limit(500);
