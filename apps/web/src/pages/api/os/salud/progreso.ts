@@ -3,7 +3,7 @@ export const prerender = false;
 import type { APIRoute } from 'astro';
 import { getSupabaseServer } from '../../../../lib/supabase';
 import { isOsAuthorized, json } from '../../../../os/lib/osAuth';
-import { errMsg } from '../../../../lib/salud/apiHelpers';
+import { errMsg, hoyGuayaquil } from '../../../../lib/salud/apiHelpers';
 
 // Devuelve los datos crudos para analytics de progreso. La lógica (progressIndex,
 // sugerenciaOverload, e1RM, promedio móvil) vive en src/lib/salud/progresion.ts y la
@@ -14,7 +14,11 @@ export const GET: APIRoute = async (context) => {
   try {
     const sb = getSupabaseServer();
     const dias = Number(url.searchParams.get('dias')) || 120;
-    const desde = new Date(Date.now() - dias * 86400000).toISOString().slice(0, 10);
+    // Ventana anclada a la fecha local de Guayaquil (las columnas `fecha` son locales UTC-5).
+    // Se ancla a mediodía para que restar días completos no cruce el borde de zona horaria.
+    const anchor = new Date(hoyGuayaquil() + 'T12:00:00');
+    anchor.setDate(anchor.getDate() - dias);
+    const desde = anchor.toLocaleDateString('en-CA');
 
     // Sets con datos de ejercicio y fecha de sesión.
     const { data: sesiones, error } = await sb
