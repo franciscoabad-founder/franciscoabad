@@ -93,6 +93,7 @@ export default function OSChecklistHoy({ title }: Props) {
         if (data.xp) {
           setXpFlash({ id: h.id, xp: data.xp });
           setTimeout(() => setXpFlash((cur) => (cur?.id === h.id ? null : cur)), 1500);
+          window.dispatchEvent(new CustomEvent('os:xp', { detail: { xp: data.xp } }));
         }
         await cargar(false);
       } catch (e) {

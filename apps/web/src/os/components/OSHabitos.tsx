@@ -127,6 +127,7 @@ export default function OSHabitos() {
       if (res.status === 409) { setError('Esta diaria ya fue registrada hoy.'); await cargar(false); return; }
       if (data.error) throw new Error(data.error);
       mostrarFeedback(habitoId, data.xp, data.oro);
+      window.dispatchEvent(new CustomEvent('os:xp', { detail: { xp: data.xp, oro: data.oro } }));
       if (data.subioNivel && data.nivel) mostrarNivelUp(data.nivel.nivel);
       await cargar(false);
     } catch (e) {

@@ -2,6 +2,7 @@
 import '../styles/os.css';
 import { datosHoy } from '../os/data/hoy';
 import { datosDaily } from '../os/data/daily';
+import OSJugadorBar from '../os/components/OSJugadorBar';
 
 interface Props {
   title: string;
@@ -216,6 +217,7 @@ const anyBottomActive = bottomNav.some(i => isActive(i.href));
         height: 44px; position: sticky; top: 0; z-index: 100; flex-shrink: 0;
       }
       .os-topbar-title { display: flex; align-items: center; gap: 7px; min-width: 0; }
+      .os-topbar-jugador { display: none; justify-content: flex-end; }
 
       /* ── Shell ── */
       .os-shell { display: flex; min-height: calc(100dvh - 44px); }
@@ -297,6 +299,7 @@ const anyBottomActive = bottomNav.some(i => isActive(i.href));
         .os-sidebar { display: none; }
         .os-cmdbar { display: none; }
         .os-topbar { display: flex; }
+        .os-topbar-jugador { display: flex; }
         .os-bottomnav { display: flex; }
         .os-content { padding: 1.25rem 1rem calc(72px + 1.5rem + env(safe-area-inset-bottom, 0px)); }
         .os-main { background-size: 30px 30px; }
@@ -330,6 +333,7 @@ const anyBottomActive = bottomNav.some(i => isActive(i.href));
         <div class="cmd-capture">
           <input id="os-capture" type="text" placeholder="Capturar idea..." maxlength="200" />
         </div>
+        <OSJugadorBar client:load />
         <div class="cmd-status"><span class="cmd-status-dot"></span><span>Activo</span></div>
         <a href="/api/os-auth?action=logout" class="cmd-logout" title="Cerrar sesion">salir</a>
       </div>
@@ -348,6 +352,9 @@ const anyBottomActive = bottomNav.some(i => isActive(i.href));
         <span class="material-symbols-outlined" style="font-size:21px;color:var(--os-muted);">search</span>
       </button>
     </header>
+    <div class="os-topbar-jugador">
+      <OSJugadorBar client:load />
+    </div>
 
     <!-- Mobile nav drawer (Mas) -->
     <div class="os-mobile-nav" id="mobile-nav">
