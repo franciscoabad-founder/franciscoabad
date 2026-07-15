@@ -10,7 +10,8 @@
     "build": "astro build",
     "preview": "astro preview",
     "astro": "astro",
-    "test:salud": "node --experimental-strip-types --test src/lib/salud/*.test.ts"
+    "test:salud": "node --experimental-strip-types --test src/lib/salud/*.test.ts",
+    "test:habitos": "node --experimental-strip-types --test src/lib/habitos/*.test.ts src/lib/juego/*.test.ts"
   },
   "dependencies": {
     "@astrojs/mdx": "^5.0.4",
