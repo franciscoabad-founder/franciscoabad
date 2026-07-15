@@ -38,6 +38,15 @@ async function aplicarDanioPorFallos(
   sb: SB,
   resumenes: Record<string, unknown>,
 ): Promise<number> {
+  // El motor (registrarEvento) ya no zerea automaticamente el hp explicito cuando
+  // hp_activo esta apagado (los toggles solo apagan la generacion DERIVADA; ver
+  // comentario en lib/juego/motor.ts). Como aca el dano se calcula explicitamente
+  // ANTES de llamar a registrarEvento, el chequeo del toggle tiene que vivir aca.
+  const { data: jugadorRows, error: errJugador } = await sb.from('jugador').select('config').limit(1);
+  if (errJugador) throw errJugador;
+  const hpActivo = jugadorRows?.[0]?.config?.hp_activo !== false;
+  if (!hpActivo) return 0;
+
   let hpPerdidoTotal = 0;
   for (const [fecha, resumenRaw] of Object.entries(resumenes)) {
     const resumen = resumenRaw as { diarias_falladas_detalle?: FalladaDetalle[] };

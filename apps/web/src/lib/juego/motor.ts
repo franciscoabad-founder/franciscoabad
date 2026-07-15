@@ -47,6 +47,7 @@ interface JugadorRow {
 // @supabase/supabase-js como dependencia directa de tipos).
 interface SupabaseLike {
   from: (tabla: string) => any;
+  rpc: (fn: string, args: Record<string, unknown>) => any;
 }
 
 /**
@@ -74,17 +75,25 @@ export async function registrarEvento(
 
   const meta = ev.meta ?? {};
   const calculado = recompensaPorEvento(ev.tipo, meta);
+  const oroExplicito = ev.oro !== undefined;
+  const hpExplicito = ev.hp !== undefined;
   let xp = ev.xp ?? calculado.xp;
   let oro = ev.oro ?? calculado.oro;
-  if (!oroActivo) oro = 0;
+  // Regla: los toggles (hp_activo/oro_activo) apagan la GENERACION derivada
+  // (recompensaPorEvento, dano de diaria_fallo calculado aqui mismo), no la
+  // contabilidad explicita que ya trae el evento (compras, ajustes, liquidacion de
+  // quests, dano ya calculado por el cierre). Si el llamador decidio el monto, se
+  // respeta aunque el toggle este apagado; el llamador es quien debe chequear el
+  // toggle antes de mandarlo si corresponde (ver aplicarDanioPorFallos en cierre.ts).
+  if (!oroActivo && !oroExplicito) oro = 0;
 
   let hpDelta = ev.hp ?? 0;
-  if ((ev.tipo === 'diaria_fallo') && hpActivo && hpDelta === 0) {
+  if ((ev.tipo === 'diaria_fallo') && hpActivo && !hpExplicito && hpDelta === 0) {
     const dificultad = (meta.dificultad ?? 'facil') as Dificultad;
     const valor = meta.valor ?? 0;
     hpDelta = -danioPorFallo(dificultad, valor);
   }
-  if (!hpActivo) hpDelta = 0;
+  if (!hpActivo && !hpExplicito) hpDelta = 0;
 
   const fecha = ev.fecha ?? hoyLocal();
 
@@ -123,14 +132,26 @@ export async function registrarEvento(
     }
   }
 
-  let hpNuevo = Math.min(jugador.hp_max, Math.max(0, jugador.hp + hpDelta));
-  let oroTotal = jugador.oro + oro;
+  const nivelAntes = nivelDesdeXp(jugador.xp_total).nivel;
+  let hpNuevo: number;
+  let oroTotal: number;
+  let xpTotalNuevo: number;
   let muerte: ResultadoEvento['muerte'];
 
-  if (hpNuevo <= 0 && hpActivo) {
-    const { oroPerdido, hpNuevo: hpRestaurado } = aplicarMuerte(oroTotal, jugador.hp_max);
-    oroTotal = Math.max(0, oroTotal - oroPerdido);
-    hpNuevo = hpRestaurado;
+  // Aplica el incremento de forma atomica via RPC (evita el lost update de leer
+  // jugador -> calcular en JS -> update absoluto, si dos eventos llegan casi a la
+  // vez). Fallback al camino viejo (select + update absoluto) ante CUALQUIER error
+  // de la RPC (funcion inexistente, PGRST202 por cache de PostgREST desactualizado,
+  // etc.), para nunca dejar el ledger de xp_events divergido del cache de jugador.
+  const { data: filasIncrementadas, error: errIncrementar } = await sb.rpc('juego_incrementar', {
+    p_xp: xp,
+    p_oro: oro,
+    p_hp: hpDelta,
+  });
+
+  // Maneja la muerte (hp <= 0) de forma consistente sin importar el camino tomado.
+  const manejarMuerte = async (oroActual: number): Promise<{ oroTotal: number; hpNuevo: number }> => {
+    const { oroPerdido, hpNuevo: hpRestaurado } = aplicarMuerte(oroActual, jugador.hp_max);
     muerte = { oroPerdido };
     await sb.from('xp_events').insert({
       tipo: 'muerte',
@@ -140,16 +161,50 @@ export async function registrarEvento(
       fecha,
       meta: {},
     });
+    return { oroTotal: Math.max(0, oroActual - oroPerdido), hpNuevo: hpRestaurado };
+  };
+
+  if (!errIncrementar) {
+    const filaNueva = Array.isArray(filasIncrementadas) ? filasIncrementadas[0] : filasIncrementadas;
+    hpNuevo = filaNueva.hp;
+    oroTotal = filaNueva.oro;
+    xpTotalNuevo = filaNueva.xp_total;
+
+    if (hpNuevo <= 0 && hpActivo) {
+      // Calcula el oro perdido antes de registrar el evento (manejarMuerte ya inserta
+      // el evento 'muerte'), luego aplica el ajuste via RPC para mantener el update
+      // atomico en este camino.
+      const oroAntes = oroTotal;
+      const resultado = await manejarMuerte(oroAntes);
+      const oroPerdido = oroAntes - resultado.oroTotal;
+      const { data: filasMuerte } = await sb.rpc('juego_incrementar', {
+        p_xp: 0,
+        p_oro: -oroPerdido,
+        p_hp: jugador.hp_max,
+      });
+      const filaMuerte = Array.isArray(filasMuerte) ? filasMuerte[0] : filasMuerte;
+      oroTotal = filaMuerte ? filaMuerte.oro : resultado.oroTotal;
+      hpNuevo = filaMuerte ? filaMuerte.hp : resultado.hpNuevo;
+    }
+  } else {
+    // Fallback (RPC fallo por cualquier motivo): select + update absoluto, como antes.
+    hpNuevo = Math.min(jugador.hp_max, Math.max(0, jugador.hp + hpDelta));
+    oroTotal = jugador.oro + oro;
+    xpTotalNuevo = jugador.xp_total + xp;
+
+    if (hpNuevo <= 0 && hpActivo) {
+      const resultado = await manejarMuerte(oroTotal);
+      oroTotal = resultado.oroTotal;
+      hpNuevo = resultado.hpNuevo;
+    }
+
+    await sb
+      .from('jugador')
+      .update({ xp_total: xpTotalNuevo, oro: oroTotal, hp: hpNuevo, updated_at: new Date().toISOString() })
+      .eq('id', jugador.id);
   }
 
-  const xpTotalNuevo = jugador.xp_total + xp;
-  const nivelAntes = nivelDesdeXp(jugador.xp_total).nivel;
   const nivelInfo = nivelDesdeXp(xpTotalNuevo);
-
-  await sb
-    .from('jugador')
-    .update({ xp_total: xpTotalNuevo, oro: oroTotal, hp: hpNuevo, updated_at: new Date().toISOString() })
-    .eq('id', jugador.id);
 
   return {
     xp,

@@ -2,7 +2,7 @@
 // Logica pura, testeable con node:test.
 
 export type ObjetivoQuest =
-  | { tipo: 'conteo_eventos'; evento: string; meta: number }
+  | { tipo: 'conteo_eventos' | 'evento'; evento: string; meta: number }
   | { tipo: 'habito'; habito_id: string; meta: number };
 
 export interface Quest {
@@ -41,7 +41,10 @@ export function evaluarQuest(
 ): ResultadoEvaluacion {
   let progreso = 0;
 
-  if (objetivo.tipo === 'conteo_eventos') {
+  // 'evento' es alias de 'conteo_eventos': el front (OSJuego.tsx) y datos ya guardados
+  // en Supabase antes de la normalizacion del endpoint usan 'evento'. Se acepta aqui
+  // por robustez aunque el POST del endpoint ya normaliza al guardar.
+  if (objetivo.tipo === 'conteo_eventos' || objetivo.tipo === 'evento') {
     progreso = eventosSemana.filter((e) => e.tipo === objetivo.evento).length;
   } else if (objetivo.tipo === 'habito') {
     progreso = checksSemana.filter((c) => c.habito_id === objetivo.habito_id).length;

@@ -14,6 +14,16 @@ test('evaluarQuest conteo_eventos: cumplida cuando progreso >= meta', () => {
   assert.equal(r.meta, 2);
 });
 
+test('evaluarQuest acepta el alias "evento" (usado por el front y datos legacy)', () => {
+  const eventos = [
+    { tipo: 'sesion_gym', fecha: '2026-07-13' },
+    { tipo: 'sesion_gym', fecha: '2026-07-14' },
+  ];
+  const r = evaluarQuest({ tipo: 'evento', evento: 'sesion_gym', meta: 2 }, eventos, []);
+  assert.equal(r.estado, 'cumplida');
+  assert.equal(r.progreso, 2);
+});
+
 test('evaluarQuest conteo_eventos: pendiente si no alcanza la meta', () => {
   const eventos = [{ tipo: 'sesion_gym', fecha: '2026-07-13' }];
   const r = evaluarQuest({ tipo: 'conteo_eventos', evento: 'sesion_gym', meta: 4 }, eventos, []);

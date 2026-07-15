@@ -4,6 +4,7 @@ import type { APIRoute } from 'astro';
 import { getSupabaseServer } from '../../../../lib/supabase';
 import { isOsAuthorized, json } from '../../../../os/lib/osAuth';
 import { registrarEvento } from '../../../../lib/juego/motor';
+import { evaluarQuest, type ObjetivoQuest } from '../../../../lib/juego/quests';
 import { hoyLocal, addDias, diaIso } from '../../../../lib/habitos/fechas';
 
 const errMsg = (err: unknown) =>
@@ -36,7 +37,39 @@ export const GET: APIRoute = async (context) => {
       .limit(8);
     if (errHistorial) throw errHistorial;
 
-    return json({ semanaActual, quests: actuales ?? [], historial: historial ?? [] });
+    // Progreso de las quests activas de la semana en curso: mismo patron que
+    // procesarLunes en api/os/juego/cierre.ts (una query de xp_events y una de
+    // habito_checks para toda la semana, no por quest).
+    const questsActivas = actuales?.filter((q: any) => q.estado === 'activa') ?? [];
+    let quests = actuales ?? [];
+    if (questsActivas.length > 0) {
+      const finSemana = addDias(semanaActual, 6);
+      const { data: eventosSemanaData, error: errEventos } = await sb
+        .from('xp_events')
+        .select('tipo, fecha')
+        .gte('fecha', semanaActual)
+        .lte('fecha', finSemana);
+      if (errEventos) throw errEventos;
+
+      const { data: checksSemanaData, error: errChecks } = await sb
+        .from('habito_checks')
+        .select('habito_id, fecha')
+        .gte('fecha', semanaActual)
+        .lte('fecha', finSemana);
+      if (errChecks) throw errChecks;
+
+      quests = (actuales ?? []).map((q: any) => {
+        if (q.estado !== 'activa') return q;
+        const evaluacion = evaluarQuest(
+          q.objetivo as ObjetivoQuest,
+          eventosSemanaData ?? [],
+          checksSemanaData ?? [],
+        );
+        return { ...q, progreso: { estado: evaluacion.estado, progreso: evaluacion.progreso, meta: evaluacion.meta } };
+      });
+    }
+
+    return json({ semanaActual, quests, historial: historial ?? [] });
   } catch (err) {
     return json({ error: errMsg(err) }, 502);
   }
@@ -76,12 +109,18 @@ export const POST: APIRoute = async (context) => {
       }
     }
 
+    // El front (OSJuego.tsx) manda tipo:'evento'; evaluarQuest reconoce 'conteo_eventos'.
+    // Se normaliza aqui al guardar para que el dato en Supabase quede canonico.
+    const objetivo = body.objetivo.tipo === 'evento'
+      ? { ...body.objetivo, tipo: 'conteo_eventos' }
+      : body.objetivo;
+
     const semanaInicio = lunesDeSemana(hoyLocal());
     const { data: quest, error: errQuest } = await sb
       .from('quests')
       .insert([{
         titulo: body.titulo.trim(),
-        objetivo: body.objetivo,
+        objetivo,
         apuesta_oro: Math.round(apuestaOro),
         premio_xp: Math.round(premioXp),
         premio_oro: Math.round(premioOro),

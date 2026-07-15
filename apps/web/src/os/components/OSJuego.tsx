@@ -400,7 +400,9 @@ export default function OSJuego() {
       )}
 
       {/* ── [ QUESTS / SEMANA ] ── */}
-      {jugador?.config.loot_activo && (
+      {/* Siempre visible: es un commitment device (Ariely), mecanica distinta al loot
+          aleatorio; loot_activo solo controla el loot aleatorio dentro del motor. */}
+      {(
         <div>
           <p className="m-section-title">[ Quests / Semana ]</p>
           {questsActivas.length === 0 ? (
