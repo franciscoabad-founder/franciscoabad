@@ -92,7 +92,7 @@ function latam(
 // Datos USDA (FoodData Central, dominio publico) — macros por 100 g
 // ---------------------------------------------------------------------------
 
-const usdaAlimentos: Alimento[] = [
+export const usdaAlimentos: Alimento[] = [
   // --- Proteinas: aves ---
   usda('Pollo pechuga cocida sin piel', 165, 31, 0, 3.6, 0, [{ medida: '1 pechuga', gramos: 172 }]),
   usda('Pollo pechuga cruda sin piel', 120, 22.5, 0, 2.6, 0),
@@ -385,7 +385,7 @@ const usdaAlimentos: Alimento[] = [
 // Basadas en tablas de composicion INCAP y Ecuador, redondeadas.
 // ---------------------------------------------------------------------------
 
-const latamAlimentos: Alimento[] = [
+export const latamAlimentos: Alimento[] = [
   latam('Arroz con menestra', 155, 5, 27, 3, 3),
   latam('Tigrillo', 214, 6, 25, 10, 3),
   latam('Bolon de verde', 239, 5, 30, 11, 3),
@@ -509,10 +509,14 @@ async function main(): Promise<void> {
   console.log('Seed completado.');
 }
 
-main().catch((err) => {
-  console.error('Fallo inesperado:', err);
-  process.exit(1);
-});
+// Solo ejecuta el insert cuando se corre directamente (no al importar los arrays).
+const esEntrada = !!process.argv[1] && import.meta.url === new URL('file://' + process.argv[1]).href;
+if (esEntrada) {
+  main().catch((err) => {
+    console.error('Fallo inesperado:', err);
+    process.exit(1);
+  });
+}
 
 // ---------------------------------------------------------------------------
 // Atribucion de fuentes

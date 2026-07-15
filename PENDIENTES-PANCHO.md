@@ -1,6 +1,18 @@
 # PENDIENTES PANCHO — Salud OS
 
-Pasos manuales para dejar Salud OS 100% operativo. Hazlos en orden.
+## Estado actual (aplicado por Claude vía MCP de Supabase)
+
+Ya quedó hecho en el proyecto `yfrrfmankgodpepbgyvu` (franciscoabad):
+
+- ✅ Las 4 migraciones SQL (todas las tablas + RLS + migración de comidas + seed Full Body Casa + 2 rutinas de estiramiento).
+- ✅ Seed de 304 alimentos (261 USDA + 43 LATAM) cargado.
+- ✅ salud_config con tus targets, Full Body Casa (4 ejercicios) y 2 rutinas de estiramiento.
+
+**Te faltan solo 2 cosas** (PASO 2b y PASO 3 abajo). El PASO 1 y el seed de alimentos ya no hace falta correrlos.
+
+---
+
+Pasos manuales para dejar Salud OS 100% operativo.
 
 ## Qué se construyó
 
@@ -42,17 +54,20 @@ de cada archivo, **en este orden**:
 
 Todos son idempotentes: puedes correrlos más de una vez sin duplicar.
 
-## PASO 2 — Correr los seeds de datos (desde `apps/web/`)
+## PASO 1 — (YA HECHO) SQL en Supabase
 
-Necesitas el `SERVICE_ROLE_KEY` de Supabase (Studio → Project Settings → API → service_role).
+Las 4 migraciones ya se aplicaron por MCP. No hagas nada aquí.
+
+## PASO 2b — Correr SOLO el seed de ejercicios de wger (desde tu PC)
+
+El seed de alimentos ya está cargado. Falta el de ejercicios, y este SÍ lo tienes que correr tú:
+el entorno cloud de Claude no puede alcanzar `wger.de` (política de red), así que debe correr
+desde tu máquina, que sí tiene internet abierto.
+
+Necesitas el `SERVICE_ROLE_KEY` de Supabase (Studio → Project Settings → API → service_role):
 
 ```bash
 cd apps/web
-
-# ~304 alimentos (USDA + LATAM). Sin red. Idempotente.
-SUPABASE_URL="https://yfrrfmankgodpepbgyvu.supabase.co" \
-SUPABASE_SERVICE_ROLE_KEY="TU_SERVICE_ROLE_KEY" \
-node --experimental-strip-types scripts/seed-alimentos.ts
 
 # ~150-200 ejercicios desde wger (hace llamadas de red). Idempotente por wger_id.
 SUPABASE_URL="https://yfrrfmankgodpepbgyvu.supabase.co" \
@@ -60,7 +75,8 @@ SUPABASE_SERVICE_ROLE_KEY="TU_SERVICE_ROLE_KEY" \
 node --experimental-strip-types scripts/seed-ejercicios.ts
 ```
 
-Cada script imprime cuántos insertó y cuántos ya existían.
+Imprime cuántos insertó. No es bloqueante: la app ya funciona con los 4 ejercicios de peso
+corporal de "Full Body Casa" y puedes agregar ejercicios a mano. wger solo suma una biblioteca grande.
 
 ## PASO 3 — Variables de entorno nuevas (Vercel + local)
 
