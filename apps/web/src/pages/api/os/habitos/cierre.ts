@@ -45,7 +45,7 @@ async function cerrarDia(sb: SB, dia: string): Promise<{ resumen: Record<string,
 
   const { data: habitosData, error: errHabitos } = await sb
     .from('habitos')
-    .select('id, nombre, dificultad, valor, dias_semana, created_at')
+    .select('id, nombre, dificultad, valor, dias_semana, created_at, es_core')
     .eq('tipo', 'diaria')
     .eq('estado', 'activo');
   if (errHabitos) throw errHabitos;
@@ -54,7 +54,17 @@ async function cerrarDia(sb: SB, dia: string): Promise<{ resumen: Record<string,
     (h) => (h.dias_semana ?? []).includes(diaIso(dia)) && (h.created_at ?? '').slice(0, 10) <= dia,
   );
 
+  // falladas: nombres (compat con resúmenes viejos que solo listaban strings) +
+  // falladasDetalle: shape completo ({id, nombre, dificultad, valor, es_core}) que el
+  // motor B necesita para calcular daño HP sin tener que releer la tabla habitos.
   const falladas: string[] = [];
+  const falladasDetalle: Array<{
+    id: string;
+    nombre: string;
+    dificultad: Dificultad;
+    valor: number;
+    es_core: boolean;
+  }> = [];
   if (programadas.length) {
     const ids = programadas.map((h) => h.id);
     const { data: checksData, error: errChecks } = await sb
@@ -69,6 +79,13 @@ async function cerrarDia(sb: SB, dia: string): Promise<{ resumen: Record<string,
     for (const h of programadas) {
       if (hechos.has(h.id)) continue;
       falladas.push(h.nombre);
+      falladasDetalle.push({
+        id: h.id,
+        nombre: h.nombre,
+        dificultad: h.dificultad as Dificultad,
+        valor: h.valor ?? 0,
+        es_core: !!h.es_core,
+      });
       const valorNuevo = penalizacionFallo(h.valor ?? 0, h.dificultad as Dificultad);
       const { error: errUpdate } = await sb
         .from('habitos')
@@ -80,7 +97,12 @@ async function cerrarDia(sb: SB, dia: string): Promise<{ resumen: Record<string,
 
   // Día perfecto: hubo al menos una diaria programada y ninguna falló.
   const diaPerfecto = programadas.length > 0 && falladas.length === 0;
-  const resumen = { diarias_falladas: falladas, dia_perfecto: diaPerfecto, programadas: programadas.length };
+  const resumen = {
+    diarias_falladas: falladas,
+    diarias_falladas_detalle: falladasDetalle,
+    dia_perfecto: diaPerfecto,
+    programadas: programadas.length,
+  };
 
   const { error: errInsert } = await sb.from('habito_cierres').insert([{ fecha: dia, resumen }]);
   if (errInsert) {
