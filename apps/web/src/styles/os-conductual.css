@@ -1,0 +1,397 @@
+/* ============================================================================
+   Modulo Habitos — capa "Telemetria Tactica" (brutalista, CRT oscuro)
+   Scope: [data-modulo="habitos"]. Solo se importa desde las paginas del
+   modulo (habitos.astro, habitos/journeys.astro). El resto del OS (shell,
+   nav, home) NO carga este archivo y sigue en Ultramarine v5.
+   Canon: apps/web/docs/os-diseno-conductual.md
+   ========================================================================== */
+
+[data-modulo="habitos"] {
+  --m-bg:      #0A0A0A;
+  --m-surface: #121212;
+  --m-surface-2: #161616;
+  --m-fg:      #EAEAEA;
+  --m-muted:   #8A8A8A;
+  --m-accent:  #FF2A2A;
+  --m-ok:      #4AF626;
+  --m-line:    rgba(234, 234, 234, 0.18);
+  --m-line-soft: rgba(234, 234, 234, 0.10);
+
+  /* Macro: se evalua Montserrat 900 antes de sumar un request nuevo a
+     Archivo Black. Montserrat ya carga en el OS (--os-font-display) y su
+     corte 900 da suficiente peso a escalas clamp grandes. */
+  --m-font-macro: 'Montserrat', sans-serif;
+  --m-font-mono:  var(--os-font-mono, 'JetBrains Mono', 'SF Mono', monospace);
+
+  background: var(--m-bg);
+  color: var(--m-fg);
+  min-height: 100%;
+  padding: 1rem;
+  margin: -1rem;
+  font-family: var(--os-font-body, 'Inter', sans-serif);
+}
+
+@media (min-width: 640px) {
+  [data-modulo="habitos"] { padding: 1.5rem; margin: -1.5rem; }
+}
+
+/* ── Header de pagina dentro del modulo ── */
+[data-modulo="habitos"] .m-eyebrow {
+  font-family: var(--m-font-mono);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--m-muted);
+  margin: 0 0 4px;
+}
+[data-modulo="habitos"] .m-h1 {
+  font-family: var(--m-font-macro);
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: -0.04em;
+  line-height: 0.92;
+  color: var(--m-fg);
+  margin: 0;
+  font-size: clamp(1.75rem, 6vw, 2.75rem);
+}
+
+/* ── HUD de racha (macro-tipografia gigante) ── */
+[data-modulo="habitos"] .m-hud {
+  border: 1px solid var(--m-line);
+  background: var(--m-surface);
+  padding: 1rem 1.1rem;
+}
+[data-modulo="habitos"] .m-hud-label {
+  font-family: var(--m-font-mono);
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--m-muted);
+  margin: 0 0 2px;
+}
+[data-modulo="habitos"] .m-hud-num {
+  font-family: var(--m-font-macro);
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: -0.04em;
+  line-height: 0.85;
+  color: var(--m-fg);
+  font-size: clamp(3rem, 22vw, 7rem);
+  margin: 0;
+  word-break: break-all;
+}
+[data-modulo="habitos"] .m-hud-num.is-riesgo { color: var(--m-accent); }
+
+/* ── Linea de telemetria XP/nivel ── */
+[data-modulo="habitos"] .m-telemetria {
+  font-family: var(--m-font-mono);
+  font-size: clamp(10px, 3vw, 12px);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--m-muted);
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  align-items: center;
+}
+[data-modulo="habitos"] .m-telemetria strong { color: var(--m-fg); font-weight: 700; }
+[data-modulo="habitos"] .m-bar {
+  height: 4px;
+  width: 100%;
+  background: var(--m-line-soft);
+  border-radius: 0;
+  overflow: hidden;
+  margin-top: 8px;
+}
+[data-modulo="habitos"] .m-bar-fill {
+  height: 100%;
+  background: var(--m-fg);
+  border-radius: 0;
+  transition: width 0.3s;
+}
+
+/* ── Banda de advertencia (stripes diagonales) ── */
+[data-modulo="habitos"] .m-banda-alerta {
+  position: relative;
+  border: 1px solid var(--m-accent);
+  background:
+    repeating-linear-gradient(
+      -45deg,
+      rgba(255, 42, 42, 0.16),
+      rgba(255, 42, 42, 0.16) 8px,
+      rgba(255, 42, 42, 0.04) 8px,
+      rgba(255, 42, 42, 0.04) 16px
+    );
+  padding: 0.7rem 0.9rem;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+[data-modulo="habitos"] .m-banda-alerta p {
+  font-family: var(--m-font-mono);
+  font-size: 11.5px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--m-fg);
+  margin: 0;
+  line-height: 1.4;
+}
+
+/* ── Compartimentos / misiones ── */
+[data-modulo="habitos"] .m-section-title {
+  font-family: var(--m-font-mono);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--m-muted);
+  margin: 0 0 10px;
+}
+[data-modulo="habitos"] .m-mission {
+  border: 1px solid var(--m-line);
+  background: var(--m-surface);
+  padding: 0.75rem;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+/* ── Checkbox industrial ── */
+[data-modulo="habitos"] .m-checkbox {
+  width: 20px;
+  height: 20px;
+  min-width: 44px;
+  min-height: 44px;
+  border: none;
+  background: transparent;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  flex-shrink: 0;
+  padding: 0;
+}
+[data-modulo="habitos"] .m-checkbox-box {
+  width: 20px;
+  height: 20px;
+  border: 2px solid var(--m-line);
+  background: transparent;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--m-bg);
+  font-family: var(--m-font-mono);
+  font-weight: 700;
+  font-size: 13px;
+  transition: background 0.15s, border-color 0.15s;
+}
+[data-modulo="habitos"] .m-checkbox-box.is-checked {
+  background: var(--m-fg);
+  border-color: var(--m-fg);
+}
+
+/* ── Estado [ OK ] / [ -- ] ── */
+[data-modulo="habitos"] .m-estado {
+  font-family: var(--m-font-mono);
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  color: var(--m-muted);
+  white-space: nowrap;
+}
+[data-modulo="habitos"] .m-estado.is-ok { color: var(--m-ok); }
+
+/* ── Botones cuadrados +/- ── */
+[data-modulo="habitos"] .m-glyph-btn {
+  width: 44px;
+  height: 44px;
+  border: 1px solid var(--m-line);
+  background: transparent;
+  color: var(--m-fg);
+  font-family: var(--m-font-mono);
+  font-size: 22px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  border-radius: 0;
+  transition: background 0.12s, border-color 0.12s;
+}
+[data-modulo="habitos"] .m-glyph-btn.is-mas:hover { border-color: var(--m-ok); }
+[data-modulo="habitos"] .m-glyph-btn.is-menos:hover { border-color: var(--m-accent); }
+[data-modulo="habitos"] .m-glyph-count {
+  font-family: var(--m-font-mono);
+  font-size: 10px;
+  color: var(--m-muted);
+  text-align: center;
+}
+
+/* ── Feedback terminal de registro ── */
+[data-modulo="habitos"] .m-terminal-line {
+  font-family: var(--m-font-mono);
+  font-size: 11px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--m-ok);
+  margin: 6px 0 0;
+}
+@keyframes m-flash {
+  0%   { background: var(--m-fg); color: var(--m-bg); }
+  100% { background: transparent; color: var(--m-ok); }
+}
+[data-modulo="habitos"] .m-terminal-line.is-flash {
+  animation: m-flash 0.4s steps(1, end) 1;
+}
+
+/* ── Botones estandar del modulo ── */
+[data-modulo="habitos"] .m-btn {
+  background: var(--m-fg);
+  color: var(--m-bg);
+  border: none;
+  border-radius: 0;
+  padding: 0.75rem 1.1rem;
+  min-height: 44px;
+  font-family: var(--m-font-mono);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+[data-modulo="habitos"] .m-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+[data-modulo="habitos"] .m-btn-ghost {
+  background: transparent;
+  color: var(--m-muted);
+  border: 1px solid var(--m-line);
+  border-radius: 0;
+  padding: 0.6rem 0.9rem;
+  min-height: 44px;
+  font-family: var(--m-font-mono);
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+[data-modulo="habitos"] .m-btn-ghost.is-danger { color: var(--m-accent); border-color: var(--m-accent); }
+
+/* ── Inputs rectangulares ── */
+[data-modulo="habitos"] .m-label {
+  font-family: var(--m-font-mono);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--m-muted);
+  margin-bottom: 6px;
+  display: block;
+}
+[data-modulo="habitos"] .m-input {
+  background: var(--m-surface);
+  border: 1px solid var(--m-line);
+  border-radius: 0;
+  padding: 0.65rem 0.7rem;
+  min-height: 44px;
+  font-size: 14px;
+  color: var(--m-fg);
+  font-family: var(--os-font-body, 'Inter', sans-serif);
+  outline: none;
+  width: 100%;
+}
+[data-modulo="habitos"] .m-input:focus { border-color: var(--m-fg); }
+
+/* ── Pills toggle (dificultad / dias) ── */
+[data-modulo="habitos"] .m-pill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  padding: 0.5rem 0.9rem;
+  border-radius: 0;
+  font-family: var(--m-font-mono);
+  font-size: 11.5px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  cursor: pointer;
+  border: 1px solid var(--m-line);
+  background: transparent;
+  color: var(--m-muted);
+  transition: background 0.12s, color 0.12s, border-color 0.12s;
+}
+[data-modulo="habitos"] .m-pill.is-activo {
+  background: var(--m-accent);
+  border-color: var(--m-accent);
+  color: var(--m-fg);
+}
+
+/* ── Journeys: montanas, cards, estado como codigo ── */
+[data-modulo="habitos"] .m-montana-title {
+  font-family: var(--m-font-mono);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--m-muted);
+  margin: 0 0 10px;
+}
+[data-modulo="habitos"] .m-journey-card {
+  border: 1px solid var(--m-line);
+  background: var(--m-surface);
+  padding: 1rem;
+}
+[data-modulo="habitos"] .m-journey-estado {
+  font-family: var(--m-font-mono);
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  padding: 2px 8px;
+  border: 1px solid currentColor;
+}
+[data-modulo="habitos"] .m-journey-estado.en-curso { color: var(--m-accent); }
+[data-modulo="habitos"] .m-journey-estado.bloqueado {
+  color: var(--m-muted);
+  background: repeating-linear-gradient(
+    -45deg, rgba(138,138,138,0.12), rgba(138,138,138,0.12) 5px,
+    transparent 5px, transparent 10px
+  );
+}
+[data-modulo="habitos"] .m-journey-estado.completo { color: var(--m-ok); }
+[data-modulo="habitos"] .m-journey-estado.disponible { color: var(--m-fg); }
+
+[data-modulo="habitos"] details.m-carta summary {
+  font-family: var(--m-font-mono);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--m-fg);
+  cursor: pointer;
+}
+[data-modulo="habitos"] details.m-carta {
+  border: 1px solid var(--m-line);
+  background: var(--m-surface);
+  padding: 0.75rem 1rem;
+}
+
+/* ============================================================================
+   Scanlines CRT — solo desktop, opacidad muy baja (bateria en movil)
+   ========================================================================== */
+@media (min-width: 821px) {
+  [data-modulo="habitos"]::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 1;
+    background: repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 2px,
+      rgba(234, 234, 234, 0.015) 2px,
+      rgba(234, 234, 234, 0.015) 4px
+    );
+  }
+}
