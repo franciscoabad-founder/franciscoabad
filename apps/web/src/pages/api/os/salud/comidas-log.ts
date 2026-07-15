@@ -77,7 +77,8 @@ export const POST: APIRoute = async (context) => {
     if (!MOMENTOS.includes(momento)) {
       return json({ error: `momento debe ser uno de: ${MOMENTOS.join(', ')}` }, 400);
     }
-    if (!body.alimento_id && !body.descripcion_libre?.trim() && body.kcal == null) {
+    const hayMacro = ['kcal', 'proteina_g', 'carbos_g', 'grasa_g'].some((k) => numOrNull(body[k]) != null);
+    if (!body.alimento_id && !body.descripcion_libre?.trim() && !hayMacro) {
       return json({ error: 'alimento_id, descripcion_libre o macros requeridos' }, 400);
     }
     const tipo_dia = body.tipo_dia?.trim() || 'normal';
@@ -122,28 +123,36 @@ export const PATCH: APIRoute = async (context) => {
   if (!id) return json({ error: 'id requerido' }, 400);
   try {
     const body = await context.request.json();
+    if ('momento' in body && !MOMENTOS.includes(body.momento?.trim())) {
+      return json({ error: `momento debe ser uno de: ${MOMENTOS.join(', ')}` }, 400);
+    }
+    if ('tipo_dia' in body && !TIPOS_DIA.includes(body.tipo_dia?.trim())) {
+      return json({ error: 'tipo_dia inválido' }, 400);
+    }
     const patch: Record<string, unknown> = { updated_at: new Date().toISOString() };
 
-    // Si cambia alimento/cantidad, recalcular macros. Se reobtiene el alimento_id y la
-    // cantidad actuales de la fila para no perderlos al editar solo uno de los dos.
+    // Si cambia alimento/cantidad, recalcular macros SOLO cuando hay alimento referenciado.
+    // Se reobtiene el alimento_id y la cantidad actuales de la fila para no perderlos al editar
+    // solo uno de los dos. Sin alimento (entrada libre) NO se tocan los macros salvo override.
+    let recalculado = false;
     if ('alimento_id' in body || 'cantidad_g' in body) {
       const sbCur = getSupabaseServer();
       const { data: actual } = await sbCur
         .from('comidas_log').select('alimento_id, cantidad_g').eq('id', id).single();
       const alimentoId = 'alimento_id' in body ? (body.alimento_id || null) : (actual?.alimento_id ?? null);
       const cantidad = 'cantidad_g' in body ? numOrNull(body.cantidad_g) : numOrNull(actual?.cantidad_g);
-      const macros = await resolverMacros({
-        alimento_id: alimentoId, cantidad_g: cantidad,
-        kcal: body.kcal, proteina_g: body.proteina_g, carbos_g: body.carbos_g,
-        grasa_g: body.grasa_g, fibra_g: body.fibra_g,
-      });
-      Object.assign(patch, macros, { alimento_id: alimentoId, cantidad_g: cantidad });
+      if ('alimento_id' in body) patch.alimento_id = alimentoId;
+      if ('cantidad_g' in body) patch.cantidad_g = cantidad;
+      if (alimentoId != null && cantidad != null) {
+        Object.assign(patch, await resolverMacros({ alimento_id: alimentoId, cantidad_g: cantidad }));
+        recalculado = true;
+      }
     }
     for (const c of ['momento', 'descripcion_libre', 'foto_url', 'tipo_dia', 'notas', 'fecha']) {
       if (c in body) patch[c] = typeof body[c] === 'string' ? body[c].trim() || null : body[c];
     }
-    // Permitir override manual de macros si vienen sin alimento.
-    if (!('alimento_id' in body) && !('cantidad_g' in body)) {
+    // Override manual de macros cuando no hubo recálculo por alimento (entrada libre).
+    if (!recalculado) {
       for (const c of ['kcal', 'proteina_g', 'carbos_g', 'grasa_g', 'fibra_g']) {
         if (c in body) patch[c] = numOrNull(body[c]);
       }
