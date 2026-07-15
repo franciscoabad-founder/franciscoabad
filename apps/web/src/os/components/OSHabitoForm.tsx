@@ -20,35 +20,38 @@ const TIPO_EXPL: Record<string, string> = {
   habito: 'Se registra cuantas veces quieras con + o −, sin horario fijo.',
 };
 
+// ── Estilos (Telemetria Tactica: tokens --m-* del modulo Habitos) ───────────
 const card: React.CSSProperties = {
-  background: 'var(--os-surface-2)', border: '1px solid var(--os-line-soft)',
-  borderRadius: 'var(--os-r-card)', padding: '1rem',
+  background: 'var(--m-surface)', border: '1px solid var(--m-line)', borderRadius: 0, padding: '1rem',
 };
 const input: React.CSSProperties = {
-  background: 'rgba(232,234,240,0.05)', border: '1px solid var(--os-line)',
-  borderRadius: 6, padding: '9px 11px', fontSize: 14, color: 'var(--os-text)',
+  background: 'var(--m-surface)', border: '1px solid var(--m-line)',
+  borderRadius: 0, padding: '0.65rem 0.7rem', minHeight: 44, fontSize: 14, color: 'var(--m-fg)',
   fontFamily: 'var(--os-font-body)', outline: 'none', width: '100%',
 };
 const inputTime: React.CSSProperties = { ...input, colorScheme: 'dark' };
 const btn: React.CSSProperties = {
-  background: 'var(--os-accent)', color: '#fff', border: 'none', borderRadius: 6,
-  padding: '10px 18px', fontSize: 14, fontFamily: 'var(--os-font-display)', fontWeight: 700, cursor: 'pointer',
+  background: 'var(--m-fg)', color: 'var(--m-bg)', border: 'none', borderRadius: 0,
+  padding: '0.75rem 1.1rem', minHeight: 44, fontSize: 12, fontFamily: 'var(--m-font-mono)', fontWeight: 700,
+  letterSpacing: '0.06em', textTransform: 'uppercase', cursor: 'pointer',
 };
 const btnGhost: React.CSSProperties = {
-  background: 'transparent', color: 'var(--os-muted)', border: '1px solid var(--os-line)',
-  borderRadius: 6, padding: '9px 16px', fontSize: 13, cursor: 'pointer',
+  background: 'transparent', color: 'var(--m-muted)', border: '1px solid var(--m-line)',
+  borderRadius: 0, padding: '0.6rem 0.9rem', minHeight: 44, fontSize: 11, fontFamily: 'var(--m-font-mono)',
+  letterSpacing: '0.06em', textTransform: 'uppercase', cursor: 'pointer',
 };
 const label: React.CSSProperties = {
-  fontFamily: 'var(--os-font-display)', fontSize: 10, fontWeight: 700, letterSpacing: '0.08em',
-  textTransform: 'uppercase', color: 'var(--os-muted)', marginBottom: 6, display: 'block',
+  fontFamily: 'var(--m-font-mono)', fontSize: 10, fontWeight: 700, letterSpacing: '0.08em',
+  textTransform: 'uppercase', color: 'var(--m-muted)', marginBottom: 6, display: 'block',
 };
 function pill(activo: boolean): React.CSSProperties {
   return {
-    display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
-    padding: '7px 13px', borderRadius: 999, fontSize: 12.5, fontFamily: 'var(--os-font-display)', fontWeight: 700,
-    cursor: 'pointer', border: activo ? '1px solid var(--os-accent)' : '1px solid var(--os-line)',
-    background: activo ? 'var(--os-accent)' : 'rgba(232,234,240,0.04)',
-    color: activo ? '#fff' : 'var(--os-muted)', transition: 'background .14s, color .14s, border-color .14s',
+    display: 'inline-flex', alignItems: 'center', justifyContent: 'center', minHeight: 44,
+    padding: '0.5rem 0.9rem', borderRadius: 0, fontSize: 12, fontFamily: 'var(--m-font-mono)', fontWeight: 700,
+    letterSpacing: '0.04em', textTransform: 'uppercase',
+    cursor: 'pointer', border: activo ? '1px solid var(--m-accent)' : '1px solid var(--m-line)',
+    background: activo ? 'var(--m-accent)' : 'transparent',
+    color: activo ? 'var(--m-fg)' : 'var(--m-muted)', transition: 'background .14s, color .14s, border-color .14s',
   };
 }
 
@@ -56,17 +59,17 @@ function Toggle({ checked, onChange, titulo, hint }: { checked: boolean; onChang
   return (
     <div style={{ display: 'flex', alignItems: 'flex-start', gap: 12, cursor: 'pointer' }} onClick={() => onChange(!checked)}>
       <span style={{
-        width: 40, height: 23, borderRadius: 999, flexShrink: 0, marginTop: 1, position: 'relative',
-        background: checked ? 'var(--os-accent)' : 'rgba(232,234,240,0.14)', transition: 'background .15s',
+        width: 44, height: 24, flexShrink: 0, marginTop: 1, position: 'relative', border: '1px solid var(--m-line)',
+        background: checked ? 'var(--m-accent)' : 'transparent', transition: 'background .15s',
       }}>
         <span style={{
-          position: 'absolute', top: 2, left: checked ? 19 : 2, width: 19, height: 19, borderRadius: '50%',
-          background: '#fff', transition: 'left .15s',
+          position: 'absolute', top: 2, left: checked ? 21 : 2, width: 19, height: 19,
+          background: 'var(--m-fg)', transition: 'left .15s',
         }} />
       </span>
       <span>
-        <span style={{ fontSize: 13, color: 'var(--os-text)', fontWeight: 600 }}>{titulo}</span>
-        {hint && <p style={{ fontSize: 11, color: 'var(--os-muted)', margin: '2px 0 0', lineHeight: 1.4 }}>{hint}</p>}
+        <span style={{ fontSize: 13, color: 'var(--m-fg)', fontWeight: 700, textTransform: 'uppercase' }}>{titulo}</span>
+        {hint && <p style={{ fontSize: 11, color: 'var(--m-muted)', margin: '2px 0 0', lineHeight: 1.4, fontFamily: 'var(--m-font-mono)' }}>{hint}</p>}
       </span>
     </div>
   );
@@ -126,11 +129,11 @@ export default function OSHabitoForm({ habito, onCerrar, onGuardado }: Props) {
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '1.1rem', maxWidth: 480, margin: '0 auto' }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <span style={{ fontSize: 16, fontWeight: 700, color: 'var(--os-text)' }}>{habito ? 'Editar hábito' : 'Nuevo hábito'}</span>
-        <button style={btnGhost} onClick={onCerrar}>← Volver</button>
+        <span className="m-h1" style={{ fontSize: 'clamp(1.1rem, 5vw, 1.5rem)' }}>{habito ? 'Editar hábito' : 'Nuevo hábito'}</span>
+        <button style={btnGhost} onClick={onCerrar}>[ ← Volver ]</button>
       </div>
 
-      {error && <div style={{ color: 'var(--os-error)', fontSize: 13 }}>{error}</div>}
+      {error && <div style={{ color: 'var(--m-accent)', fontSize: 13, fontFamily: 'var(--m-font-mono)' }}>{error}</div>}
 
       <div>
         <span style={label}>Nombre *</span>
@@ -193,7 +196,7 @@ export default function OSHabitoForm({ habito, onCerrar, onGuardado }: Props) {
         <button style={btn} disabled={guardando} onClick={guardar}>{guardando ? 'Guardando...' : 'Guardar hábito'}</button>
         <button style={btnGhost} onClick={onCerrar}>Cancelar</button>
         {habito && (
-          <button style={{ ...btnGhost, color: 'var(--os-error)', borderColor: 'rgba(248,113,113,0.4)' }} onClick={archivar}>Archivar</button>
+          <button style={{ ...btnGhost, color: 'var(--m-accent)', borderColor: 'var(--m-accent)' }} onClick={archivar}>Archivar</button>
         )}
       </div>
     </div>

@@ -3,6 +3,7 @@ export const prerender = false;
 import { getCollection, render } from 'astro:content';
 import OSLayout from '../../../layouts/OSLayout.astro';
 import OSJourneys from '../../../os/components/OSJourneys';
+import '../../../styles/os-conductual.css';
 
 // Cartas de journeys: colección MDX en src/content/journeys/<journey>/<etapa-slug>.mdx.
 // entry.id = '<journey>/<etapa-slug>' (glob loader con base en ./src/content/journeys),
@@ -41,35 +42,32 @@ cartasRenderizadas.sort((a, b) => a.journey.localeCompare(b.journey) || a.etapa 
 ---
 
 <OSLayout title="Journeys">
-  <div class="os-fade-up">
-    <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:1rem;">
+  <div class="os-fade-up" data-modulo="habitos">
+    <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:1rem;position:relative;z-index:2;">
       <div>
-        <p class="os-eyebrow" style="margin-bottom:6px;">Hábitos · Journeys</p>
-        <h1 class="os-h1">Journeys</h1>
+        <p class="m-eyebrow">Hábitos // Journeys</p>
+        <h1 class="m-h1">Journeys</h1>
       </div>
       <a
         href="/os/habitos"
-        style="font-size:12px;color:var(--os-accent-light);text-decoration:none;font-family:var(--os-font-display);font-weight:600;white-space:nowrap;"
+        style="font-size:11px;color:var(--m-muted);text-decoration:none;font-family:var(--m-font-mono);font-weight:700;text-transform:uppercase;letter-spacing:0.06em;white-space:nowrap;"
       >
-        ← Hábitos
+        [ ← Hábitos ]
       </a>
     </div>
 
-    <OSJourneys client:load cartas={cartasResumen} />
+    <div style="position:relative;z-index:2;">
+      <OSJourneys client:load cartas={cartasResumen} />
+    </div>
 
     {cartasRenderizadas.length > 0 && (
-      <div style="margin-top:2rem;">
-        <p class="os-eyebrow os-eyebrow-muted" style="margin-bottom:10px;">Cartas de contenido</p>
+      <div style="margin-top:2rem;position:relative;z-index:2;">
+        <p class="m-eyebrow" style="margin-bottom:10px;">[ Cartas de contenido ]</p>
         <div style="display:flex;flex-direction:column;gap:8px;">
           {cartasRenderizadas.map(({ id, title, Content }) => (
-            <details
-              id={`carta-${id}`}
-              style="background:var(--os-surface-2);border:1px solid var(--os-line-soft);border-radius:var(--os-r-card);padding:0.75rem 1rem;"
-            >
-              <summary style="cursor:pointer;font-family:var(--os-font-display);font-size:13px;font-weight:700;color:var(--os-text);">
-                {title}
-              </summary>
-              <div style="margin-top:10px;font-size:13.5px;line-height:1.7;color:var(--os-text-2);">
+            <details id={`carta-${id}`} class="m-carta">
+              <summary>{title}</summary>
+              <div style="margin-top:10px;font-size:13.5px;line-height:1.7;color:var(--m-muted);font-family:var(--os-font-body);">
                 <Content />
               </div>
             </details>

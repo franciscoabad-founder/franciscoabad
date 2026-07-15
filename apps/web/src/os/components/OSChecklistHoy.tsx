@@ -1,5 +1,14 @@
 import { useEffect, useState } from 'react';
 
+// NOTA de diseño (rebrand brutalista de Habitos, rama feat/habitos-brutal):
+// este componente vive en el HOME del OS (Ultramarine v5), NO dentro de
+// [data-modulo="habitos"]. El home no carga src/styles/os-conductual.css,
+// asi que este checklist conserva intencionalmente la marca personal
+// Ultramarine (colores hex directos, radios redondeados) y NO usa tokens
+// --m-*. Es la unica excepcion documentada en el canon de diseno conductual
+// (apps/web/docs/os-diseno-conductual.md): el modulo Habitos vive en su
+// zona brutalista solo dentro de /os/habitos y /os/habitos/journeys.
+
 interface HabitoDiaria {
   id: string;
   nombre: string;

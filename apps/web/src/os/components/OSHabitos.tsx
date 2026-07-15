@@ -38,38 +38,29 @@ function isoWeekdayHoy(): number {
 }
 const DIA_LABEL: Record<number, string> = { 1: 'L', 2: 'M', 3: 'X', 4: 'J', 5: 'V', 6: 'S', 7: 'D' };
 
-// ── Estilos (mismo molde que OSSaludAyuno / OSSaludNutricion) ───────────────
+// ── Estilos (Telemetria Tactica: tokens --m-* del modulo Habitos) ───────────
 const card: React.CSSProperties = {
-  background: 'var(--os-surface-2)', border: '1px solid var(--os-line-soft)',
-  borderRadius: 'var(--os-r-card)', padding: '1rem',
-};
-const btn: React.CSSProperties = {
-  background: 'var(--os-accent)', color: '#fff', border: 'none', borderRadius: 6,
-  padding: '10px 18px', fontSize: 14, fontFamily: 'var(--os-font-display)', fontWeight: 700, cursor: 'pointer',
+  background: 'var(--m-surface)', border: '1px solid var(--m-line)', borderRadius: 0, padding: '1rem',
 };
 const btnGhost: React.CSSProperties = {
-  background: 'transparent', color: 'var(--os-muted)', border: '1px solid var(--os-line)',
-  borderRadius: 6, padding: '8px 14px', fontSize: 13, cursor: 'pointer',
+  background: 'transparent', color: 'var(--m-muted)', border: '1px solid var(--m-line)',
+  borderRadius: 0, padding: '10px 14px', minHeight: 44, fontSize: 11, fontFamily: 'var(--m-font-mono)',
+  fontWeight: 700, letterSpacing: '0.06em', textTransform: 'uppercase', cursor: 'pointer',
 };
 const sectionTitle: React.CSSProperties = {
-  fontFamily: 'var(--os-font-display)', fontSize: 11, fontWeight: 700,
-  letterSpacing: '0.1em', textTransform: 'uppercase', color: 'var(--os-muted)', margin: '0 0 10px',
-};
-const circleBtn: React.CSSProperties = {
-  width: 40, height: 40, borderRadius: '50%', border: '1px solid var(--os-line)',
-  background: 'rgba(232,234,240,0.05)', color: 'var(--os-text)', fontSize: 20, fontWeight: 700,
-  display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer',
+  fontFamily: 'var(--m-font-mono)', fontSize: 11, fontWeight: 700,
+  letterSpacing: '0.1em', textTransform: 'uppercase', color: 'var(--m-muted)', margin: '0 0 10px',
 };
 
-// ── Anillo EMA mini (mismo patrón SVG que OSSaludAyuno:151-161) ─────────────
+// ── Anillo EMA mini (mismo patrón SVG, recoloreado a fósforo/mono) ──────────
 function AnilloEma({ valor, size = 30 }: { valor: number | null; size?: number }) {
   const r = (size - 6) / 2;
   const C = 2 * Math.PI * r;
   const pct = valor == null ? 0 : Math.max(0, Math.min(1, valor));
   return (
     <svg viewBox={`0 0 ${size} ${size}`} width={size} height={size} style={{ transform: 'rotate(-90deg)', flexShrink: 0 }}>
-      <circle cx={size / 2} cy={size / 2} r={r} fill="none" stroke="var(--os-line)" strokeWidth="3" />
-      <circle cx={size / 2} cy={size / 2} r={r} fill="none" stroke="var(--os-accent)" strokeWidth="3" strokeLinecap="round"
+      <circle cx={size / 2} cy={size / 2} r={r} fill="none" stroke="var(--m-line)" strokeWidth="3" />
+      <circle cx={size / 2} cy={size / 2} r={r} fill="none" stroke="var(--m-fg)" strokeWidth="3" strokeLinecap="round"
         strokeDasharray={`${pct * C} ${C}`} style={{ transition: 'stroke-dasharray .4s' }} />
     </svg>
   );
@@ -83,7 +74,7 @@ export default function OSHabitos() {
   const [formAbierto, setFormAbierto] = useState<'nuevo' | Habito | null>(null);
   const [mostrarOtras, setMostrarOtras] = useState(false);
   const [mostrarPausados, setMostrarPausados] = useState(false);
-  const [toast, setToast] = useState<{ id: number; texto: string } | null>(null);
+  const [feedback, setFeedback] = useState<Record<string, { texto: string; ts: number }>>({});
   const [nivelUp, setNivelUp] = useState<number | null>(null);
   const [enviando, setEnviando] = useState<Set<string>>(new Set());
 
@@ -104,12 +95,19 @@ export default function OSHabitos() {
   }
   useEffect(() => { cargar(); }, []);
 
-  function mostrarToast(xp?: number, oro?: number) {
+  function mostrarFeedback(habitoId: string, xp?: number, oro?: number) {
     if (!xp && !oro) return;
-    const partes = [xp ? `+${xp} XP` : null, oro ? `+${oro} oro` : null].filter(Boolean);
-    const id = Date.now();
-    setToast({ id, texto: partes.join(' · ') });
-    setTimeout(() => setToast((t) => (t?.id === id ? null : t)), 1500);
+    const partes = [xp ? `+${xp} XP` : null, oro ? `+${oro} ORO` : null].filter(Boolean);
+    const ts = Date.now();
+    setFeedback((cur) => ({ ...cur, [habitoId]: { texto: `>>> ${partes.join(' /// ')} /// REGISTRADO`, ts } }));
+    setTimeout(() => {
+      setFeedback((cur) => {
+        if (cur[habitoId]?.ts !== ts) return cur;
+        const next = { ...cur };
+        delete next[habitoId];
+        return next;
+      });
+    }, 2000);
   }
   function mostrarNivelUp(n: number) {
     setNivelUp(n);
@@ -128,7 +126,7 @@ export default function OSHabitos() {
       const data: CheckResponse = await res.json();
       if (res.status === 409) { setError('Esta diaria ya fue registrada hoy.'); await cargar(false); return; }
       if (data.error) throw new Error(data.error);
-      mostrarToast(data.xp, data.oro);
+      mostrarFeedback(habitoId, data.xp, data.oro);
       if (data.subioNivel && data.nivel) mostrarNivelUp(data.nivel.nivel);
       await cargar(false);
     } catch (e) {
@@ -192,6 +190,17 @@ export default function OSHabitos() {
     const extra = fallados.length > 1 ? ` y ${fallados.length - 1} más` : '';
     return `Ayer fallaste ${fallados[0].nombre}${extra}. Hoy no se falla dos veces.`;
   }, [habitos]);
+  const hayRiesgo = useMemo(() => habitos.some((h) => h.falloAyer), [habitos]);
+
+  // HUD de racha: la mejor racha activa entre los hábitos activos (loss aversion:
+  // esto es lo primero que se ve, es lo que se pierde si se falla hoy).
+  const mejorRacha = useMemo(() => {
+    let mejor = 0;
+    for (const h of activos) {
+      if (h.racha && h.racha.actual > mejor) mejor = h.racha.actual;
+    }
+    return mejor;
+  }, [activos]);
 
   const progresoPct = useMemo(() => {
     const p = perfil?.nivel.progreso ?? 0;
@@ -211,87 +220,78 @@ export default function OSHabitos() {
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
-      {/* Header: nivel + XP */}
-      <div style={card}>
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12, flexWrap: 'wrap' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-            <span className="os-pill os-pill-gold">Nv {perfil?.nivel.nivel ?? 1}</span>
-            <span style={{ fontFamily: 'var(--os-font-mono)', fontSize: 15, color: 'var(--os-champagne)', fontWeight: 700 }}>
-              {perfil?.xp_total ?? 0} XP
-            </span>
-          </div>
-          <span style={{ fontSize: 11, color: 'var(--os-muted)' }}>
-            {perfil ? `${perfil.nivel.xpEnNivel} / ${perfil.nivel.xpSiguiente} XP` : '—'}
-          </span>
+      {/* HUD de racha: primero lo que se pierde (loss aversion) */}
+      <div className="m-hud">
+        <p className="m-hud-label">[ Racha activa / Dias ]</p>
+        <p className={`m-hud-num${hayRiesgo ? ' is-riesgo' : ''}`}>{String(mejorRacha).padStart(2, '0')}</p>
+        <div className="m-telemetria" style={{ marginTop: 10 }}>
+          <span>Nv.{String(perfil?.nivel.nivel ?? 1).padStart(2, '0')}</span>
+          <span>///</span>
+          <strong>{String(perfil?.xp_total ?? 0).padStart(4, '0')} XP</strong>
+          <span>&gt;&gt;&gt;</span>
+          <span>{String(perfil?.nivel.xpSiguiente ?? 0).padStart(4, '0')} AL SIGUIENTE</span>
         </div>
-        <div style={{ height: 6, background: 'rgba(232,234,240,0.08)', borderRadius: 3, overflow: 'hidden', marginTop: 10 }}>
-          <div style={{ height: '100%', width: `${progresoPct}%`, background: 'var(--os-accent)', borderRadius: 3, transition: 'width .3s' }} />
-        </div>
+        <div className="m-bar"><div className="m-bar-fill" style={{ width: `${progresoPct}%` }} /></div>
       </div>
 
       {error && (
-        <div style={{ display: 'flex', alignItems: 'center', gap: 10, color: 'var(--os-error)', fontSize: 13 }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 10, color: 'var(--m-accent)', fontSize: 13, fontFamily: 'var(--m-font-mono)' }}>
           <span>{error}</span>
-          <button style={{ ...btnGhost, padding: '3px 10px', fontSize: 11 }} onClick={() => cargar()}>Reintentar</button>
+          <button style={{ ...btnGhost, padding: '6px 10px', fontSize: 11, minHeight: 0 }} onClick={() => cargar()}>Reintentar</button>
         </div>
       )}
 
       {alertaFalloAyer && (
-        <div style={{ ...card, borderColor: 'rgba(255,180,171,0.3)', background: 'rgba(147,0,10,0.08)', padding: '10px 12px' }}>
-          <p style={{ fontSize: 12, color: 'var(--os-warn)', margin: 0 }}>⚠️ {alertaFalloAyer}</p>
+        <div className="m-banda-alerta">
+          <p>[ NO SE FALLA DOS VECES ] {alertaFalloAyer}</p>
         </div>
       )}
 
       {loading ? (
-        <p style={{ fontSize: 13, color: 'var(--os-muted)' }}>Cargando...</p>
+        <p style={{ fontSize: 13, color: 'var(--m-muted)', fontFamily: 'var(--m-font-mono)' }}>Cargando...</p>
       ) : habitos.length === 0 ? (
         <div style={{ ...card, display: 'flex', flexDirection: 'column', gap: 10, alignItems: 'center', textAlign: 'center', padding: '2rem 1rem' }}>
-          <p style={{ fontSize: 14, color: 'var(--os-text-2)', margin: 0 }}>
+          <p style={{ fontSize: 14, color: 'var(--m-muted)', margin: 0 }}>
             Sin hábitos aún. Crea el primero o{' '}
-            <a href="/os/habitos/journeys" style={{ color: 'var(--os-accent-light)' }}>inicia un journey</a>.
+            <a href="/os/habitos/journeys" style={{ color: 'var(--m-fg)' }}>inicia un journey</a>.
           </p>
-          <button style={btn} onClick={() => setFormAbierto('nuevo')}>+ Crear primer hábito</button>
+          <button className="m-btn" onClick={() => setFormAbierto('nuevo')}>+ Crear primer hábito</button>
         </div>
       ) : (
         <>
-          {/* Diarias de hoy */}
+          {/* Diarias de hoy: lista de misiones */}
           <div>
-            <p style={sectionTitle}>Diarias de hoy</p>
+            <p className="m-section-title">[ Diarias de hoy ]</p>
             {diariasHoy.length === 0 ? (
-              <p style={{ fontSize: 13, color: 'var(--os-muted)' }}>Nada programado para hoy.</p>
+              <p style={{ fontSize: 13, color: 'var(--m-muted)', fontFamily: 'var(--m-font-mono)' }}>Nada programado para hoy.</p>
             ) : (
               <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
                 {diariasHoy.map((h) => {
                   const hecho = !!h.hecho_hoy;
                   const enVuelo = enviando.has(h.id);
+                  const fb = feedback[h.id];
                   return (
-                    <div key={h.id} style={{ ...card, display: 'flex', alignItems: 'center', gap: 12, padding: '0.75rem' }}>
+                    <div key={h.id} className="m-mission" style={{ flexWrap: 'wrap' }}>
                       <button
                         onClick={() => toggleDiaria(h)}
                         disabled={enVuelo}
                         aria-label={hecho ? 'Deshacer' : 'Marcar hecho'}
-                        style={{
-                          width: 44, height: 44, borderRadius: '50%', flexShrink: 0,
-                          border: hecho ? 'none' : '2px solid var(--os-line)',
-                          background: hecho ? 'var(--os-ok)' : 'transparent',
-                          color: hecho ? '#06210f' : 'transparent',
-                          fontSize: 20, fontWeight: 700, display: 'flex', alignItems: 'center', justifyContent: 'center',
-                          cursor: enVuelo ? 'not-allowed' : 'pointer', opacity: enVuelo ? 0.5 : 1,
-                          transition: 'background .15s, border-color .15s',
-                        }}
-                      >✓</button>
+                        className="m-checkbox"
+                        style={{ opacity: enVuelo ? 0.5 : 1 }}
+                      >
+                        <span className={`m-checkbox-box${hecho ? ' is-checked' : ''}`}>{hecho ? 'X' : ''}</span>
+                      </button>
                       <div style={{ flex: 1, minWidth: 0 }}>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexWrap: 'wrap' }}>
-                          <span style={{ fontSize: 14, fontWeight: 600, color: 'var(--os-text)' }}>{h.nombre}</span>
-                          {h.es_core && <span className="os-pill os-pill-accent" style={{ fontSize: 9, padding: '1px 7px' }}>core</span>}
-                          {h.racha && h.racha.actual >= 2 && (
-                            <span style={{ fontSize: 12, fontFamily: 'var(--os-font-mono)', color: 'var(--os-champagne)' }}>🔥{h.racha.actual}</span>
-                          )}
+                        <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
+                          <span style={{ fontSize: 14, fontWeight: 700, color: 'var(--m-fg)', textTransform: 'uppercase' }}>{h.nombre}</span>
+                          {h.es_core && <span className="m-estado" style={{ color: 'var(--m-accent)' }}>[ CORE ]</span>}
                         </div>
-                        {h.intencion && <p style={{ fontSize: 11, color: 'var(--os-muted)', margin: '2px 0 0' }}>{h.intencion}</p>}
+                        {h.intencion && <p style={{ fontSize: 11, color: 'var(--m-muted)', margin: '2px 0 0', fontFamily: 'var(--m-font-mono)' }}>{h.intencion}</p>}
+                        {fb && <p className="m-terminal-line is-flash">{fb.texto}</p>}
                       </div>
+                      <span className={`m-estado${hecho ? ' is-ok' : ''}`}>{hecho ? '[ OK ]' : '[ -- ]'}</span>
                       <AnilloEma valor={h.ema} size={30} />
-                      <button style={{ ...btnGhost, padding: '4px 8px', flexShrink: 0 }} onClick={() => setFormAbierto(h)} title="Editar">✎</button>
+                      <button style={{ ...btnGhost, padding: '8px 10px', minHeight: 0, flexShrink: 0 }} onClick={() => setFormAbierto(h)} title="Editar">✎</button>
                     </div>
                   );
                 })}
@@ -301,9 +301,9 @@ export default function OSHabitos() {
 
           {/* Hábitos +/- */}
           <div>
-            <p style={sectionTitle}>Hábitos</p>
+            <p className="m-section-title">[ Hábitos ]</p>
             {habitosMasMenos.length === 0 ? (
-              <p style={{ fontSize: 13, color: 'var(--os-muted)' }}>Sin hábitos +/- activos.</p>
+              <p style={{ fontSize: 13, color: 'var(--m-muted)', fontFamily: 'var(--m-font-mono)' }}>Sin hábitos +/- activos.</p>
             ) : (
               <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
                 {habitosMasMenos.map((h) => {
@@ -311,43 +311,44 @@ export default function OSHabitos() {
                   const permiteMas = h.permite_mas ?? true;
                   const permiteMenos = h.permite_menos ?? false;
                   const enVuelo = enviando.has(h.id);
+                  const fb = feedback[h.id];
                   return (
-                    <div key={h.id} style={{ ...card, display: 'flex', alignItems: 'center', gap: 12, padding: '0.75rem' }}>
+                    <div key={h.id} className="m-mission" style={{ flexWrap: 'wrap' }}>
                       <div style={{ flex: 1, minWidth: 0 }}>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexWrap: 'wrap' }}>
-                          <span style={{ fontSize: 14, fontWeight: 600, color: 'var(--os-text)' }}>{h.nombre}</span>
-                          {h.racha && h.racha.actual >= 2 && (
-                            <span style={{ fontSize: 12, fontFamily: 'var(--os-font-mono)', color: 'var(--os-champagne)' }}>🔥{h.racha.actual}</span>
-                          )}
+                        <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
+                          <span style={{ fontSize: 14, fontWeight: 700, color: 'var(--m-fg)', textTransform: 'uppercase' }}>{h.nombre}</span>
                         </div>
-                        {h.intencion && <p style={{ fontSize: 11, color: 'var(--os-muted)', margin: '2px 0 0' }}>{h.intencion}</p>}
+                        {h.intencion && <p style={{ fontSize: 11, color: 'var(--m-muted)', margin: '2px 0 0', fontFamily: 'var(--m-font-mono)' }}>{h.intencion}</p>}
+                        {fb && <p className="m-terminal-line is-flash">{fb.texto}</p>}
                       </div>
                       <AnilloEma valor={h.ema} size={28} />
                       <div style={{ display: 'flex', gap: 10, alignItems: 'center', flexShrink: 0 }}>
                         {permiteMenos && (
                           <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 2 }}>
                             <button
-                              style={{ ...circleBtn, borderColor: 'rgba(248,113,113,0.4)', opacity: enVuelo ? 0.5 : 1, cursor: enVuelo ? 'not-allowed' : 'pointer' }}
+                              className="m-glyph-btn is-menos"
+                              style={{ opacity: enVuelo ? 0.5 : 1 }}
                               disabled={enVuelo}
                               onClick={() => registrarCheck(h.id, 'menos')}
                               aria-label="Registrar fallo/menos"
                             >−</button>
-                            <span style={{ fontSize: 10, fontFamily: 'var(--os-font-mono)', color: 'var(--os-muted)' }}>{contadores.menos}</span>
+                            <span className="m-glyph-count">{String(contadores.menos).padStart(2, '0')}</span>
                           </div>
                         )}
                         {permiteMas && (
                           <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 2 }}>
                             <button
-                              style={{ ...circleBtn, borderColor: 'rgba(34,197,94,0.4)', opacity: enVuelo ? 0.5 : 1, cursor: enVuelo ? 'not-allowed' : 'pointer' }}
+                              className="m-glyph-btn is-mas"
+                              style={{ opacity: enVuelo ? 0.5 : 1 }}
                               disabled={enVuelo}
                               onClick={() => registrarCheck(h.id, 'mas')}
                               aria-label="Registrar hecho"
                             >+</button>
-                            <span style={{ fontSize: 10, fontFamily: 'var(--os-font-mono)', color: 'var(--os-muted)' }}>{contadores.mas}</span>
+                            <span className="m-glyph-count">{String(contadores.mas).padStart(2, '0')}</span>
                           </div>
                         )}
                       </div>
-                      <button style={{ ...btnGhost, padding: '4px 8px', flexShrink: 0 }} onClick={() => setFormAbierto(h)} title="Editar">✎</button>
+                      <button style={{ ...btnGhost, padding: '8px 10px', minHeight: 0, flexShrink: 0 }} onClick={() => setFormAbierto(h)} title="Editar">✎</button>
                     </div>
                   );
                 })}
@@ -364,9 +365,9 @@ export default function OSHabitos() {
               {mostrarOtras && (
                 <div style={{ display: 'flex', flexDirection: 'column', gap: 6, marginTop: 8 }}>
                   {diariasOtras.map((h) => (
-                    <div key={h.id} style={{ ...card, display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '8px 12px', opacity: 0.6 }}>
-                      <span style={{ fontSize: 13, color: 'var(--os-text-2)' }}>{h.nombre}</span>
-                      <span style={{ fontSize: 11, fontFamily: 'var(--os-font-mono)', color: 'var(--os-muted)' }}>
+                    <div key={h.id} className="m-mission" style={{ justifyContent: 'space-between', padding: '8px 12px', opacity: 0.6 }}>
+                      <span style={{ fontSize: 13, color: 'var(--m-fg)' }}>{h.nombre}</span>
+                      <span className="m-estado">
                         {h.dias_semana.map((d) => DIA_LABEL[d]).join(' ')}
                       </span>
                     </div>
@@ -385,9 +386,9 @@ export default function OSHabitos() {
               {mostrarPausados && (
                 <div style={{ display: 'flex', flexDirection: 'column', gap: 6, marginTop: 8 }}>
                   {pausados.map((h) => (
-                    <div key={h.id} style={{ ...card, display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '8px 12px', opacity: 0.6 }}>
-                      <span style={{ fontSize: 13, color: 'var(--os-text-2)' }}>{h.nombre}</span>
-                      <button style={{ ...btnGhost, padding: '4px 10px' }} onClick={() => reactivar(h)}>Reactivar</button>
+                    <div key={h.id} className="m-mission" style={{ justifyContent: 'space-between', padding: '8px 12px', opacity: 0.6 }}>
+                      <span style={{ fontSize: 13, color: 'var(--m-fg)' }}>{h.nombre}</span>
+                      <button style={{ ...btnGhost, padding: '6px 10px', minHeight: 0 }} onClick={() => reactivar(h)}>Reactivar</button>
                     </div>
                   ))}
                 </div>
@@ -397,40 +398,23 @@ export default function OSHabitos() {
         </>
       )}
 
-      <button style={btn} onClick={() => setFormAbierto('nuevo')}>+ Nuevo hábito</button>
+      <button className="m-btn" onClick={() => setFormAbierto('nuevo')}>+ Nuevo hábito</button>
 
-      {/* Feedback flotante de XP/oro */}
-      {toast && (
-        <div key={toast.id} className="habito-toast" style={{ position: 'fixed', left: '50%', bottom: 'calc(88px + env(safe-area-inset-bottom, 0px))', zIndex: 180, pointerEvents: 'none' }}>
-          <div style={{ background: 'var(--os-accent)', color: '#fff', fontFamily: 'var(--os-font-display)', fontWeight: 700, fontSize: 14, padding: '8px 18px', borderRadius: 999, boxShadow: 'var(--os-shadow-accent)', whiteSpace: 'nowrap' }}>
-            {toast.texto}
-          </div>
-        </div>
-      )}
-
-      {/* Celebración de subida de nivel */}
+      {/* Celebración de subida de nivel: terminal, sin gradientes ni sombras suaves */}
       {nivelUp != null && (
         <div className="habito-levelup" style={{ position: 'fixed', left: '50%', top: '90px', zIndex: 190, pointerEvents: 'none' }}>
-          <div style={{ background: 'var(--os-champagne)', color: '#1A1A1A', fontFamily: 'var(--os-font-display)', fontWeight: 800, fontSize: 16, padding: '10px 24px', borderRadius: 12, boxShadow: 'var(--os-shadow-modal)', whiteSpace: 'nowrap' }}>
-            ¡Nivel {nivelUp}!
+          <div style={{ background: 'var(--m-fg)', color: 'var(--m-bg)', fontFamily: 'var(--m-font-mono)', fontWeight: 700, fontSize: 13, letterSpacing: '0.06em', textTransform: 'uppercase', padding: '10px 20px', border: '1px solid var(--m-fg)', whiteSpace: 'nowrap' }}>
+            &gt;&gt;&gt; Nivel {nivelUp} /// Subida confirmada
           </div>
         </div>
       )}
 
       <style>{`
-        @keyframes habito-toast-float {
-          0%   { opacity: 0; transform: translate(-50%, 10px); }
-          15%  { opacity: 1; transform: translate(-50%, 0); }
-          80%  { opacity: 1; transform: translate(-50%, 0); }
-          100% { opacity: 0; transform: translate(-50%, -14px); }
-        }
-        .habito-toast { animation: habito-toast-float 1.5s ease-out forwards; }
         @keyframes habito-levelup-pop {
-          0%   { opacity: 0; transform: translate(-50%, -10px) scale(0.9); }
-          12%  { opacity: 1; transform: translate(-50%, 0) scale(1.04); }
-          20%  { transform: translate(-50%, 0) scale(1); }
+          0%   { opacity: 0; transform: translate(-50%, -10px) scale(0.96); }
+          12%  { opacity: 1; transform: translate(-50%, 0) scale(1); }
           85%  { opacity: 1; }
-          100% { opacity: 0; transform: translate(-50%, -8px) scale(0.96); }
+          100% { opacity: 0; transform: translate(-50%, -8px) scale(0.98); }
         }
         .habito-levelup { animation: habito-levelup-pop 2.4s ease-out forwards; }
       `}</style>

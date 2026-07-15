@@ -44,47 +44,38 @@ interface Props {
 }
 
 const MONTANAS: Array<{ key: Journey['montana']; label: string }> = [
-  { key: 'foundations', label: 'Montaña 1 · Foundations' },
-  { key: 'struggle', label: 'Montaña 2 · Struggle' },
-  { key: 'mastery', label: 'Montaña 3 · Mastery' },
+  { key: 'foundations', label: '[ MONTAÑA 01 / FOUNDATIONS ]' },
+  { key: 'struggle', label: '[ MONTAÑA 02 / STRUGGLE ]' },
+  { key: 'mastery', label: '[ MONTAÑA 03 / MASTERY ]' },
 ];
 
-// ── Estilos (mismo molde que OSHabitos.tsx) ─────────────────────────────────
+// ── Estilos (Telemetria Tactica: tokens --m-* del modulo Habitos) ───────────
 const card: React.CSSProperties = {
-  background: 'var(--os-surface-2)', border: '1px solid var(--os-line-soft)',
-  borderRadius: 'var(--os-r-card)', padding: '1rem',
+  background: 'var(--m-surface)', border: '1px solid var(--m-line)', borderRadius: 0, padding: '1rem',
 };
 const btn: React.CSSProperties = {
-  background: 'var(--os-accent)', color: '#fff', border: 'none', borderRadius: 6,
-  padding: '10px 18px', fontSize: 14, fontFamily: 'var(--os-font-display)', fontWeight: 700, cursor: 'pointer',
+  background: 'var(--m-fg)', color: 'var(--m-bg)', border: 'none', borderRadius: 0,
+  padding: '0.75rem 1.1rem', minHeight: 44, fontSize: 12, fontFamily: 'var(--m-font-mono)', fontWeight: 700,
+  letterSpacing: '0.06em', textTransform: 'uppercase', cursor: 'pointer',
 };
 const btnDisabled: React.CSSProperties = {
-  ...btn, background: 'rgba(232,234,240,0.08)', color: 'var(--os-muted)', cursor: 'not-allowed',
+  ...btn, background: 'transparent', color: 'var(--m-muted)', border: '1px solid var(--m-line)', cursor: 'not-allowed',
 };
 const btnGhost: React.CSSProperties = {
-  background: 'transparent', color: 'var(--os-muted)', border: '1px solid var(--os-line)',
-  borderRadius: 6, padding: '8px 14px', fontSize: 13, cursor: 'pointer',
+  background: 'transparent', color: 'var(--m-muted)', border: '1px solid var(--m-line)',
+  borderRadius: 0, padding: '0.6rem 0.9rem', minHeight: 44, fontSize: 11, fontFamily: 'var(--m-font-mono)',
+  letterSpacing: '0.06em', textTransform: 'uppercase', cursor: 'pointer',
 };
 const sectionTitle: React.CSSProperties = {
-  fontFamily: 'var(--os-font-display)', fontSize: 11, fontWeight: 700,
-  letterSpacing: '0.1em', textTransform: 'uppercase', color: 'var(--os-muted)', margin: '0 0 10px',
+  fontFamily: 'var(--m-font-mono)', fontSize: 12, fontWeight: 700,
+  letterSpacing: '0.08em', textTransform: 'uppercase', color: 'var(--m-muted)', margin: '0 0 10px',
 };
 
 function Badge({ estado }: { estado: Journey['estado'] }) {
-  if (estado === 'en_curso') return <span className="os-pill os-pill-accent">En curso</span>;
-  if (estado === 'completado') return <span className="os-pill os-pill-gold">✓ Completado</span>;
-  if (estado === 'bloqueado') {
-    return (
-      <span className="os-pill" style={{ background: 'rgba(232,234,240,0.06)', color: 'var(--os-muted)' }}>
-        🔒 Bloqueado
-      </span>
-    );
-  }
-  return (
-    <span className="os-pill" style={{ background: 'rgba(232,234,240,0.08)', color: 'var(--os-text-2)' }}>
-      Disponible
-    </span>
-  );
+  if (estado === 'en_curso') return <span className="m-journey-estado en-curso">[ EN CURSO ]</span>;
+  if (estado === 'completado') return <span className="m-journey-estado completo">[ COMPLETO ]</span>;
+  if (estado === 'bloqueado') return <span className="m-journey-estado bloqueado">[ BLOQUEADO ///]</span>;
+  return <span className="m-journey-estado disponible">[ DISPONIBLE ]</span>;
 }
 
 export default function OSJourneys({ cartas }: Props) {
@@ -158,12 +149,12 @@ export default function OSJourneys({ cartas }: Props) {
     }
   }
 
-  if (loading) return <p style={{ fontSize: 13, color: 'var(--os-muted)' }}>Cargando journeys...</p>;
+  if (loading) return <p style={{ fontSize: 13, color: 'var(--m-muted)', fontFamily: 'var(--m-font-mono)' }}>Cargando journeys...</p>;
 
   if (!journeys.length && !error) {
     return (
       <div style={{ ...card, textAlign: 'center', padding: '2rem 1rem' }}>
-        <p style={{ fontSize: 14, color: 'var(--os-text-2)', margin: 0 }}>
+        <p style={{ fontSize: 14, color: 'var(--m-muted)', margin: 0 }}>
           Aún no hay journeys sembrados. Vuelve luego de aplicar el seed inicial.
         </p>
       </div>
@@ -173,9 +164,9 @@ export default function OSJourneys({ cartas }: Props) {
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '1.75rem' }}>
       {error && (
-        <div style={{ display: 'flex', alignItems: 'center', gap: 10, color: 'var(--os-error)', fontSize: 13 }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 10, color: 'var(--m-accent)', fontSize: 13, fontFamily: 'var(--m-font-mono)' }}>
           <span>{error}</span>
-          <button style={{ ...btnGhost, padding: '3px 10px', fontSize: 11 }} onClick={() => cargar()}>Reintentar</button>
+          <button style={{ ...btnGhost, padding: '6px 10px', fontSize: 11, minHeight: 0 }} onClick={() => cargar()}>Reintentar</button>
         </div>
       )}
 
@@ -184,7 +175,7 @@ export default function OSJourneys({ cartas }: Props) {
         if (!grupo.length) return null;
         return (
           <div key={key}>
-            <p style={sectionTitle}>{label}</p>
+            <p className="m-montana-title">{label}</p>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
               {grupo.map((j) => {
                 const etapaActual = j.etapas.find((e) => e.orden === j.etapa_actual);
@@ -195,15 +186,15 @@ export default function OSJourneys({ cartas }: Props) {
                 const aviso = avisoAvance[j.id];
 
                 return (
-                  <div key={j.id} style={{ ...card, opacity: j.estado === 'bloqueado' ? 0.65 : 1 }}>
+                  <div key={j.id} className="m-journey-card" style={{ opacity: j.estado === 'bloqueado' ? 0.65 : 1 }}>
                     <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 12, flexWrap: 'wrap' }}>
                       <div style={{ minWidth: 0 }}>
                         <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
-                          <span style={{ fontSize: 15, fontWeight: 700, color: 'var(--os-text)', fontFamily: 'var(--os-font-display)' }}>{j.nombre}</span>
+                          <span style={{ fontSize: 15, fontWeight: 900, color: 'var(--m-fg)', fontFamily: 'var(--m-font-macro)', textTransform: 'uppercase', letterSpacing: '-0.02em' }}>{j.nombre}</span>
                           <Badge estado={j.estado} />
                         </div>
                         {j.descripcion && (
-                          <p style={{ fontSize: 12.5, color: 'var(--os-text-2)', margin: '6px 0 0', maxWidth: 560 }}>{j.descripcion}</p>
+                          <p style={{ fontSize: 12.5, color: 'var(--m-muted)', margin: '6px 0 0', maxWidth: 560 }}>{j.descripcion}</p>
                         )}
                       </div>
                       {j.estado === 'disponible' && (
@@ -214,29 +205,29 @@ export default function OSJourneys({ cartas }: Props) {
                     </div>
 
                     {j.estado === 'en_curso' && etapaActual && (
-                      <div style={{ marginTop: 14, paddingTop: 14, borderTop: '1px solid var(--os-line-soft)' }}>
+                      <div style={{ marginTop: 14, paddingTop: 14, borderTop: '1px solid var(--m-line)' }}>
                         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 8, flexWrap: 'wrap' }}>
-                          <span style={{ fontSize: 12.5, fontWeight: 600, color: 'var(--os-text)' }}>
+                          <span style={{ fontSize: 12.5, fontWeight: 700, color: 'var(--m-fg)', textTransform: 'uppercase' }}>
                             Etapa {j.etapa_actual} de {j.etapas.length}: {etapaActual.nombre}
                           </span>
                           {progreso && (
-                            <span style={{ fontSize: 11, fontFamily: 'var(--os-font-mono)', color: 'var(--os-champagne)' }}>
+                            <span style={{ fontSize: 11, fontFamily: 'var(--m-font-mono)', color: 'var(--m-fg)' }}>
                               {progreso.hechos} / {progreso.meta}
                             </span>
                           )}
                         </div>
 
                         {progreso && (
-                          <div style={{ height: 6, background: 'rgba(232,234,240,0.08)', borderRadius: 3, overflow: 'hidden', margin: '8px 0 10px' }}>
-                            <div style={{ height: '100%', width: `${pct}%`, background: 'var(--os-accent)', borderRadius: 3, transition: 'width .3s' }} />
+                          <div className="m-bar" style={{ margin: '8px 0 10px' }}>
+                            <div className="m-bar-fill" style={{ width: `${pct}%` }} />
                           </div>
                         )}
 
                         {carta && (
-                          <div style={{ background: 'rgba(232,234,240,0.04)', border: '1px solid var(--os-line-soft)', borderRadius: 8, padding: '10px 12px', margin: '4px 0 10px' }}>
-                            <p style={{ fontSize: 11, fontWeight: 700, color: 'var(--os-accent-light)', margin: '0 0 4px', textTransform: 'uppercase', letterSpacing: '0.06em' }}>{carta.title}</p>
-                            <p style={{ fontSize: 12.5, color: 'var(--os-text-2)', margin: '0 0 6px' }}>{carta.resumen}</p>
-                            <a href={`#carta-${carta.id}`} style={{ fontSize: 11.5, color: 'var(--os-accent-light)', textDecoration: 'none', fontWeight: 600 }}>
+                          <div style={{ background: 'var(--m-surface-2)', border: '1px solid var(--m-line)', borderRadius: 0, padding: '10px 12px', margin: '4px 0 10px' }}>
+                            <p style={{ fontSize: 11, fontWeight: 700, color: 'var(--m-fg)', margin: '0 0 4px', textTransform: 'uppercase', letterSpacing: '0.06em', fontFamily: 'var(--m-font-mono)' }}>{carta.title}</p>
+                            <p style={{ fontSize: 12.5, color: 'var(--m-muted)', margin: '0 0 6px' }}>{carta.resumen}</p>
+                            <a href={`#carta-${carta.id}`} style={{ fontSize: 11.5, color: 'var(--m-fg)', textDecoration: 'none', fontWeight: 700, fontFamily: 'var(--m-font-mono)', textTransform: 'uppercase' }}>
                               Leer carta completa ↓
                             </a>
                           </div>
@@ -251,7 +242,7 @@ export default function OSJourneys({ cartas }: Props) {
                             {enAccion ? 'Avanzando...' : 'Avanzar de etapa'}
                           </button>
                           {!progreso?.cumplida && (
-                            <span style={{ fontSize: 11.5, color: 'var(--os-muted)' }}>
+                            <span style={{ fontSize: 11.5, color: 'var(--m-muted)', fontFamily: 'var(--m-font-mono)' }}>
                               {aviso || `Te faltan ${Math.max(0, (progreso?.meta ?? 0) - (progreso?.hechos ?? 0))} checks.`}
                             </span>
                           )}
@@ -259,8 +250,8 @@ export default function OSJourneys({ cartas }: Props) {
 
                         <ul style={{ listStyle: 'none', margin: '12px 0 0', padding: 0, display: 'flex', flexDirection: 'column', gap: 4 }}>
                           {j.etapas.map((e) => (
-                            <li key={e.id} style={{ fontSize: 12, color: e.completada_at ? 'var(--os-text-2)' : 'var(--os-muted)', display: 'flex', alignItems: 'center', gap: 6 }}>
-                              <span style={{ color: e.completada_at ? 'var(--os-ok)' : 'var(--os-muted)' }}>{e.completada_at ? '✓' : '○'}</span>
+                            <li key={e.id} style={{ fontSize: 12, fontFamily: 'var(--m-font-mono)', color: e.completada_at ? 'var(--m-fg)' : 'var(--m-muted)', display: 'flex', alignItems: 'center', gap: 6 }}>
+                              <span style={{ color: e.completada_at ? 'var(--m-ok)' : 'var(--m-muted)' }}>{e.completada_at ? '✓' : '○'}</span>
                               {e.orden}. {e.nombre}
                             </li>
                           ))}
@@ -269,7 +260,7 @@ export default function OSJourneys({ cartas }: Props) {
                     )}
 
                     {j.estado === 'completado' && (
-                      <p style={{ fontSize: 11.5, color: 'var(--os-muted)', margin: '10px 0 0' }}>
+                      <p style={{ fontSize: 11.5, color: 'var(--m-ok)', margin: '10px 0 0', fontFamily: 'var(--m-font-mono)' }}>
                         {j.etapas.length} etapa{j.etapas.length === 1 ? '' : 's'} completadas.
                       </p>
                     )}

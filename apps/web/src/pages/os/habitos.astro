@@ -2,22 +2,25 @@
 export const prerender = false;
 import OSLayout from '../../layouts/OSLayout.astro';
 import OSHabitos from '../../os/components/OSHabitos';
+import '../../styles/os-conductual.css';
 ---
 
 <OSLayout title="Hábitos">
-  <div class="os-fade-up">
-    <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:1rem;">
+  <div class="os-fade-up" data-modulo="habitos">
+    <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:1rem;position:relative;z-index:2;">
       <div>
-        <p class="os-eyebrow" style="margin-bottom:6px;">Sistema · Hábitos</p>
-        <h1 class="os-h1">Hábitos</h1>
+        <p class="m-eyebrow">Sistema // Hábitos</p>
+        <h1 class="m-h1">Hábitos</h1>
       </div>
       <a
         href="/os/habitos/journeys"
-        style="font-size:12px;color:var(--os-accent-light);text-decoration:none;font-family:var(--os-font-display);font-weight:600;white-space:nowrap;"
+        style="font-size:11px;color:var(--m-muted);text-decoration:none;font-family:var(--m-font-mono);font-weight:700;text-transform:uppercase;letter-spacing:0.06em;white-space:nowrap;"
       >
-        Ver journeys →
+        [ Ver journeys → ]
       </a>
     </div>
-    <OSHabitos client:load />
+    <div style="position:relative;z-index:2;">
+      <OSHabitos client:load />
+    </div>
   </div>
 </OSLayout>
