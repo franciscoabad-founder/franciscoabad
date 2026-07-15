@@ -260,6 +260,19 @@ export const PATCH: APIRoute = async (context) => {
       }
       patch.dias_semana = body.dias_semana;
     }
+    if ('tipo' in body) {
+      const tipo = body.tipo?.toString();
+      if (!TIPOS.includes(tipo)) return json({ error: `tipo debe ser uno de: ${TIPOS.join(', ')}` }, 400);
+      patch.tipo = tipo;
+    }
+    if ('permite_mas' in body) {
+      if (typeof body.permite_mas !== 'boolean') return json({ error: 'permite_mas debe ser booleano' }, 400);
+      patch.permite_mas = body.permite_mas;
+    }
+    if ('permite_menos' in body) {
+      if (typeof body.permite_menos !== 'boolean') return json({ error: 'permite_menos debe ser booleano' }, 400);
+      patch.permite_menos = body.permite_menos;
+    }
     if ('intencion' in body) patch.intencion = body.intencion?.toString().trim() || null;
     if ('hora_recordatorio' in body) {
       if (body.hora_recordatorio && !HORA_RE.test(body.hora_recordatorio)) {

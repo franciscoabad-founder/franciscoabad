@@ -23,9 +23,11 @@ function diasSemanaValidos(v: unknown): v is number[] {
 }
 
 // Progreso del criterio (tipo 'checks') de una etapa: busca el hábito que el criterio
-// referencia (por journey_id + nombre) y evalúa sus checks de la ventana móvil con la
-// lib pura evaluarEtapa. null si el criterio no es de tipo 'checks' o el hábito aún no
-// existe (no debería pasar en operación normal: el hábito se crea al entrar a la etapa).
+// referencia (por criterio.habito_id si está presente; si no, por journey_id + nombre
+// como fallback para etapas sembradas antes de que se guardara el habito_id) y evalúa
+// sus checks de la ventana móvil con la lib pura evaluarEtapa. null si el criterio no
+// es de tipo 'checks' o el hábito aún no existe (no debería pasar en operación normal:
+// el hábito se crea al entrar a la etapa).
 async function evaluarProgresoEtapa(
   sb: SB,
   journeyId: string,
@@ -33,15 +35,28 @@ async function evaluarProgresoEtapa(
   hoy: string,
 ): Promise<(ResultadoEtapa & { meta: number }) | null> {
   const criterio = etapa.criterio;
-  if (!criterio || criterio.tipo !== 'checks' || !criterio.habito_nombre) return null;
+  if (!criterio || criterio.tipo !== 'checks') return null;
 
-  const { data: habito, error: errHabito } = await sb
-    .from('habitos')
-    .select('id')
-    .eq('journey_id', journeyId)
-    .eq('nombre', criterio.habito_nombre)
-    .maybeSingle();
-  if (errHabito) throw errHabito;
+  let habito: { id: string } | null = null;
+  if (criterio.habito_id) {
+    const { data, error: errHabito } = await sb
+      .from('habitos')
+      .select('id')
+      .eq('id', criterio.habito_id)
+      .maybeSingle();
+    if (errHabito) throw errHabito;
+    habito = data;
+  }
+  if (!habito && criterio.habito_nombre) {
+    const { data, error: errHabito } = await sb
+      .from('habitos')
+      .select('id')
+      .eq('journey_id', journeyId)
+      .eq('nombre', criterio.habito_nombre)
+      .maybeSingle();
+    if (errHabito) throw errHabito;
+    habito = data;
+  }
   if (!habito) return null;
 
   const ventana = criterio.ventana_dias > 0 ? criterio.ventana_dias : 1;
@@ -61,10 +76,15 @@ async function evaluarProgresoEtapa(
 // Crea los hábitos que una etapa desbloquea (etapa.habitos_desbloquea, specs sembradas
 // en la migración/seed). Idempotente: no crea si ya existe un hábito con ese nombre
 // dentro del mismo journey. Devuelve solo los hábitos recién creados.
+//
+// Si el criterio de la etapa referencia al hábito recién creado por nombre
+// (criterio.habito_nombre), guarda su id en journey_etapas.criterio.habito_id: así el
+// criterio queda anclado por id y renombrar el hábito después no rompe la evaluación
+// del progreso (ver evaluarProgresoEtapa / progresoEtapaActual en brief.ts).
 async function crearHabitosEtapa(
   sb: SB,
   journeyId: string,
-  etapa: { habitos_desbloquea: unknown },
+  etapa: { id: string; criterio: Criterio | null; habitos_desbloquea: unknown },
 ): Promise<unknown[]> {
   const specs = Array.isArray(etapa.habitos_desbloquea) ? etapa.habitos_desbloquea : [];
   const creados: unknown[] = [];
@@ -100,6 +120,14 @@ async function crearHabitosEtapa(
     const { data: nuevo, error: errInsert } = await sb.from('habitos').insert([insert]).select().single();
     if (errInsert) throw errInsert;
     creados.push(nuevo);
+
+    if (etapa.criterio && etapa.criterio.habito_nombre === nombre && !etapa.criterio.habito_id) {
+      const { error: errCriterio } = await sb
+        .from('journey_etapas')
+        .update({ criterio: { ...etapa.criterio, habito_id: nuevo.id }, updated_at: new Date().toISOString() })
+        .eq('id', etapa.id);
+      if (errCriterio) throw errCriterio;
+    }
   }
 
   return creados;

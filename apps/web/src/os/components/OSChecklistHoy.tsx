@@ -27,6 +27,7 @@ export default function OSChecklistHoy({ title }: Props) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [xpFlash, setXpFlash] = useState<{ id: string; xp: number } | null>(null);
+  const [enviando, setEnviando] = useState<Set<string>>(new Set());
 
   async function cargar(mostrarLoading = true) {
     if (mostrarLoading) setLoading(true);
@@ -51,39 +52,49 @@ export default function OSChecklistHoy({ title }: Props) {
   }, []);
 
   async function toggle(h: HabitoDiaria) {
-    if (h.hecho_hoy) {
-      if (!confirm('¿Deshacer?')) return;
-      try {
-        const res = await fetch(`/api/os/habitos/checks?habito_id=${h.id}&fecha=${hoyISO()}`, {
-          method: 'DELETE',
-        });
-        if (!res.ok) throw new Error('No se pudo deshacer');
-        await cargar(false);
-      } catch (e) {
-        setError(e instanceof Error ? e.message : 'Error');
-      }
-      return;
-    }
-
+    if (enviando.has(h.id)) return;
+    setEnviando((cur) => new Set(cur).add(h.id));
     try {
-      const res = await fetch('/api/os/habitos/checks', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ habito_id: h.id }),
-      });
-      const data: CheckResponse = await res.json();
-      if (res.status === 409) {
-        await cargar(false);
+      if (h.hecho_hoy) {
+        if (!confirm('¿Deshacer?')) return;
+        try {
+          const res = await fetch(`/api/os/habitos/checks?habito_id=${h.id}&fecha=${hoyISO()}`, {
+            method: 'DELETE',
+          });
+          if (!res.ok) throw new Error('No se pudo deshacer');
+          await cargar(false);
+        } catch (e) {
+          setError(e instanceof Error ? e.message : 'Error');
+        }
         return;
       }
-      if (data.error) throw new Error(data.error);
-      if (data.xp) {
-        setXpFlash({ id: h.id, xp: data.xp });
-        setTimeout(() => setXpFlash((cur) => (cur?.id === h.id ? null : cur)), 1500);
+
+      try {
+        const res = await fetch('/api/os/habitos/checks', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ habito_id: h.id }),
+        });
+        const data: CheckResponse = await res.json();
+        if (res.status === 409) {
+          await cargar(false);
+          return;
+        }
+        if (data.error) throw new Error(data.error);
+        if (data.xp) {
+          setXpFlash({ id: h.id, xp: data.xp });
+          setTimeout(() => setXpFlash((cur) => (cur?.id === h.id ? null : cur)), 1500);
+        }
+        await cargar(false);
+      } catch (e) {
+        setError(e instanceof Error ? e.message : 'Error al registrar');
       }
-      await cargar(false);
-    } catch (e) {
-      setError(e instanceof Error ? e.message : 'Error al registrar');
+    } finally {
+      setEnviando((cur) => {
+        const next = new Set(cur);
+        next.delete(h.id);
+        return next;
+      });
     }
   }
 
@@ -140,15 +151,18 @@ export default function OSChecklistHoy({ title }: Props) {
         <ul style={{ listStyle: 'none', margin: 0, padding: 0, display: 'flex', flexDirection: 'column', gap: '4px' }}>
           {habitos.map((h) => {
             const completado = !!h.hecho_hoy;
+            const enVuelo = enviando.has(h.id);
             return (
               <li key={h.id}>
                 <button
                   onClick={() => toggle(h)}
+                  disabled={enVuelo}
                   style={{
                     display: 'flex', alignItems: 'flex-start', gap: '10px',
-                    width: '100%', border: 'none', cursor: 'pointer',
+                    width: '100%', border: 'none', cursor: enVuelo ? 'not-allowed' : 'pointer',
                     padding: '8px 10px', borderRadius: '6px', textAlign: 'left',
                     background: completado ? 'rgba(59,78,217,0.1)' : 'rgba(232,234,240,0.04)',
+                    opacity: enVuelo ? 0.5 : 1,
                     transition: 'background 0.16s',
                   }}
                 >

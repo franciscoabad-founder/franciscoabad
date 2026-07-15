@@ -18,6 +18,8 @@ const errMsg = (err: unknown) =>
 // Deliberadamente NO lee el contenido MDX (el campo `resumen` del frontmatter no vive
 // en DB y este endpoint es de solo lectura de datos): el micro_contenido se arma desde
 // journey_etapas.nombre + el criterio evaluado contra habito_checks.
+// Busca el hábito por criterio.habito_id si está presente; si no, cae al fallback por
+// journey_id + nombre (etapas sembradas antes de que se guardara el habito_id).
 async function progresoEtapaActual(
   sb: SB,
   journeyId: string,
@@ -25,17 +27,30 @@ async function progresoEtapaActual(
   hoy: string,
 ): Promise<{ hechos: number; meta: number; microContenido: string }> {
   const criterio = etapa.criterio;
-  if (!criterio || criterio.tipo !== 'checks' || !criterio.habito_nombre) {
+  if (!criterio || criterio.tipo !== 'checks') {
     return { hechos: 0, meta: criterio?.meta ?? 0, microContenido: etapa.nombre };
   }
 
-  const { data: habito, error: errHabito } = await sb
-    .from('habitos')
-    .select('id')
-    .eq('journey_id', journeyId)
-    .eq('nombre', criterio.habito_nombre)
-    .maybeSingle();
-  if (errHabito) throw errHabito;
+  let habito: { id: string } | null = null;
+  if (criterio.habito_id) {
+    const { data, error: errHabito } = await sb
+      .from('habitos')
+      .select('id')
+      .eq('id', criterio.habito_id)
+      .maybeSingle();
+    if (errHabito) throw errHabito;
+    habito = data;
+  }
+  if (!habito && criterio.habito_nombre) {
+    const { data, error: errHabito } = await sb
+      .from('habitos')
+      .select('id')
+      .eq('journey_id', journeyId)
+      .eq('nombre', criterio.habito_nombre)
+      .maybeSingle();
+    if (errHabito) throw errHabito;
+    habito = data;
+  }
   if (!habito) return { hechos: 0, meta: criterio.meta, microContenido: etapa.nombre };
 
   const ventana = criterio.ventana_dias > 0 ? criterio.ventana_dias : 1;

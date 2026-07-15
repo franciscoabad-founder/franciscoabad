@@ -31,7 +31,9 @@ function hoyISO(): string {
   return new Date().toLocaleDateString('en-CA', { timeZone: TZ });
 }
 function isoWeekdayHoy(): number {
-  const d = new Date().getDay(); // 0=domingo..6=sabado
+  // Deriva el día ISO de la fecha de hoy en America/Guayaquil (no del navegador),
+  // consistente con diaIso() de lib/habitos/fechas.ts.
+  const d = new Date(`${hoyISO()}T12:00:00`).getDay(); // 0=domingo..6=sabado
   return d === 0 ? 7 : d;
 }
 const DIA_LABEL: Record<number, string> = { 1: 'L', 2: 'M', 3: 'X', 4: 'J', 5: 'V', 6: 'S', 7: 'D' };
@@ -83,6 +85,7 @@ export default function OSHabitos() {
   const [mostrarPausados, setMostrarPausados] = useState(false);
   const [toast, setToast] = useState<{ id: number; texto: string } | null>(null);
   const [nivelUp, setNivelUp] = useState<number | null>(null);
+  const [enviando, setEnviando] = useState<Set<string>>(new Set());
 
   async function cargar(mostrarLoading = true) {
     if (mostrarLoading) setLoading(true);
@@ -114,6 +117,8 @@ export default function OSHabitos() {
   }
 
   async function registrarCheck(habitoId: string, signo?: 'mas' | 'menos') {
+    if (enviando.has(habitoId)) return;
+    setEnviando((cur) => new Set(cur).add(habitoId));
     setError('');
     try {
       const res = await fetch('/api/os/habitos/checks', {
@@ -128,17 +133,32 @@ export default function OSHabitos() {
       await cargar(false);
     } catch (e) {
       setError(e instanceof Error ? e.message : 'Error al registrar');
+    } finally {
+      setEnviando((cur) => {
+        const next = new Set(cur);
+        next.delete(habitoId);
+        return next;
+      });
     }
   }
 
   async function toggleDiaria(h: Habito) {
+    if (enviando.has(h.id)) return;
     if (h.hecho_hoy) {
       if (!confirm('¿Deshacer este check de hoy?')) return;
+      setEnviando((cur) => new Set(cur).add(h.id));
       try {
         const res = await fetch(`/api/os/habitos/checks?habito_id=${h.id}&fecha=${hoyISO()}`, { method: 'DELETE' });
         if (!res.ok) throw new Error('No se pudo deshacer');
         await cargar(false);
       } catch (e) { setError(e instanceof Error ? e.message : 'Error'); }
+      finally {
+        setEnviando((cur) => {
+          const next = new Set(cur);
+          next.delete(h.id);
+          return next;
+        });
+      }
       return;
     }
     await registrarCheck(h.id);
@@ -243,10 +263,12 @@ export default function OSHabitos() {
               <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
                 {diariasHoy.map((h) => {
                   const hecho = !!h.hecho_hoy;
+                  const enVuelo = enviando.has(h.id);
                   return (
                     <div key={h.id} style={{ ...card, display: 'flex', alignItems: 'center', gap: 12, padding: '0.75rem' }}>
                       <button
                         onClick={() => toggleDiaria(h)}
+                        disabled={enVuelo}
                         aria-label={hecho ? 'Deshacer' : 'Marcar hecho'}
                         style={{
                           width: 44, height: 44, borderRadius: '50%', flexShrink: 0,
@@ -254,7 +276,8 @@ export default function OSHabitos() {
                           background: hecho ? 'var(--os-ok)' : 'transparent',
                           color: hecho ? '#06210f' : 'transparent',
                           fontSize: 20, fontWeight: 700, display: 'flex', alignItems: 'center', justifyContent: 'center',
-                          cursor: 'pointer', transition: 'background .15s, border-color .15s',
+                          cursor: enVuelo ? 'not-allowed' : 'pointer', opacity: enVuelo ? 0.5 : 1,
+                          transition: 'background .15s, border-color .15s',
                         }}
                       >✓</button>
                       <div style={{ flex: 1, minWidth: 0 }}>
@@ -287,6 +310,7 @@ export default function OSHabitos() {
                   const contadores = h.conteo_hoy ?? { mas: 0, menos: 0 };
                   const permiteMas = h.permite_mas ?? true;
                   const permiteMenos = h.permite_menos ?? false;
+                  const enVuelo = enviando.has(h.id);
                   return (
                     <div key={h.id} style={{ ...card, display: 'flex', alignItems: 'center', gap: 12, padding: '0.75rem' }}>
                       <div style={{ flex: 1, minWidth: 0 }}>
@@ -302,13 +326,23 @@ export default function OSHabitos() {
                       <div style={{ display: 'flex', gap: 10, alignItems: 'center', flexShrink: 0 }}>
                         {permiteMenos && (
                           <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 2 }}>
-                            <button style={{ ...circleBtn, borderColor: 'rgba(248,113,113,0.4)' }} onClick={() => registrarCheck(h.id, 'menos')} aria-label="Registrar fallo/menos">−</button>
+                            <button
+                              style={{ ...circleBtn, borderColor: 'rgba(248,113,113,0.4)', opacity: enVuelo ? 0.5 : 1, cursor: enVuelo ? 'not-allowed' : 'pointer' }}
+                              disabled={enVuelo}
+                              onClick={() => registrarCheck(h.id, 'menos')}
+                              aria-label="Registrar fallo/menos"
+                            >−</button>
                             <span style={{ fontSize: 10, fontFamily: 'var(--os-font-mono)', color: 'var(--os-muted)' }}>{contadores.menos}</span>
                           </div>
                         )}
                         {permiteMas && (
                           <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 2 }}>
-                            <button style={{ ...circleBtn, borderColor: 'rgba(34,197,94,0.4)' }} onClick={() => registrarCheck(h.id, 'mas')} aria-label="Registrar hecho">+</button>
+                            <button
+                              style={{ ...circleBtn, borderColor: 'rgba(34,197,94,0.4)', opacity: enVuelo ? 0.5 : 1, cursor: enVuelo ? 'not-allowed' : 'pointer' }}
+                              disabled={enVuelo}
+                              onClick={() => registrarCheck(h.id, 'mas')}
+                              aria-label="Registrar hecho"
+                            >+</button>
                             <span style={{ fontSize: 10, fontFamily: 'var(--os-font-mono)', color: 'var(--os-muted)' }}>{contadores.mas}</span>
                           </div>
                         )}
