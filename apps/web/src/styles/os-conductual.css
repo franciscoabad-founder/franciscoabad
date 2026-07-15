@@ -376,6 +376,75 @@
   padding: 0.75rem 1rem;
 }
 
+/* ── Modulo Juego: HP segmentado, switches industriales, filas de tienda ── */
+[data-modulo="habitos"] .m-hp-bar {
+  display: flex;
+  gap: 3px;
+  height: 14px;
+}
+[data-modulo="habitos"] .m-hp-seg {
+  flex: 1;
+  background: var(--m-line-soft);
+  border: 1px solid var(--m-line);
+}
+[data-modulo="habitos"] .m-hp-seg.is-lleno { background: var(--m-fg); border-color: var(--m-fg); }
+[data-modulo="habitos"] .m-hp-seg.is-critico { background: var(--m-accent); border-color: var(--m-accent); }
+
+[data-modulo="habitos"] .m-switch-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  border: 1px solid var(--m-line);
+  background: var(--m-surface);
+  padding: 0.75rem;
+}
+[data-modulo="habitos"] .m-switch {
+  position: relative;
+  width: 52px;
+  height: 28px;
+  min-width: 52px;
+  border: 1px solid var(--m-line);
+  background: transparent;
+  border-radius: 0;
+  cursor: pointer;
+  flex-shrink: 0;
+  padding: 0;
+}
+[data-modulo="habitos"] .m-switch-knob {
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 20px;
+  height: 20px;
+  background: var(--m-muted);
+  transition: transform 0.15s, background 0.15s;
+}
+[data-modulo="habitos"] .m-switch.is-on { border-color: var(--m-fg); }
+[data-modulo="habitos"] .m-switch.is-on .m-switch-knob {
+  background: var(--m-fg);
+  transform: translateX(24px);
+}
+[data-modulo="habitos"] .m-switch:disabled { opacity: 0.5; cursor: not-allowed; }
+
+[data-modulo="habitos"] .m-tienda-row {
+  border: 1px solid var(--m-line);
+  background: var(--m-surface);
+  padding: 0.75rem;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+[data-modulo="habitos"] .m-precio {
+  font-family: var(--m-font-mono);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  color: var(--m-fg);
+  white-space: nowrap;
+}
+
 /* ============================================================================
    Scanlines CRT — solo desktop, opacidad muy baja (bateria en movil)
    ========================================================================== */
