@@ -1,0 +1,17 @@
+---
+export const prerender = false;
+import OSLayout from '../../../layouts/OSLayout.astro';
+import OSSaludCuerpo from '../../../os/components/salud/OSSaludCuerpo';
+import OSSaludNav from '../../../os/components/salud/OSSaludNav.astro';
+---
+
+<OSLayout title="Cuerpo">
+  <div class="os-fade-up">
+    <div style="margin-bottom:1rem;">
+      <p class="os-eyebrow" style="margin-bottom:6px;">Salud · Cuerpo</p>
+      <h1 class="os-h1">Cuerpo</h1>
+    </div>
+    <OSSaludNav activo="cuerpo" />
+    <OSSaludCuerpo client:load />
+  </div>
+</OSLayout>
