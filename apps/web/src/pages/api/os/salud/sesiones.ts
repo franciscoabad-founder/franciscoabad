@@ -4,6 +4,7 @@ import type { APIRoute } from 'astro';
 import { getSupabaseServer } from '../../../../lib/supabase';
 import { isOsAuthorized, json } from '../../../../os/lib/osAuth';
 import { errMsg, numOrNull, hoyGuayaquil, isExternalTokenAuthorized } from '../../../../lib/salud/apiHelpers';
+import { registrarEvento } from '../../../../lib/juego/motor';
 
 const TIPOS = ['gym', 'caminata', 'cardio', 'movilidad', 'estiramiento'];
 const TIPOS_SET = ['warmup', 'working', 'dropset', 'superset', 'amrap', 'failure'];
@@ -78,6 +79,7 @@ export const POST: APIRoute = async (context) => {
       .single();
     if (error) throw error;
     await guardarSets(sb, data.id, body.sets);
+    registrarEvento(sb, { tipo: 'sesion_gym', ref_tabla: 'sesiones', ref_id: data.id }).catch(() => null);
     const { data: full } = await sb
       .from('sesiones')
       .select('*, sets_log(*, ejercicio:ejercicios(id,nombre,patron,grupo_muscular_primario))')

@@ -4,6 +4,7 @@ import type { APIRoute } from 'astro';
 import { getSupabaseServer } from '../../../../lib/supabase';
 import { isOsAuthorized, json } from '../../../../os/lib/osAuth';
 import { errMsg, numOrNull, hoyGuayaquil, isExternalTokenAuthorized } from '../../../../lib/salud/apiHelpers';
+import { registrarEvento } from '../../../../lib/juego/motor';
 
 const SOURCES = ['manual', 'renpho', 'fitbit'];
 
@@ -54,6 +55,7 @@ export const POST: APIRoute = async (context) => {
       .select()
       .single();
     if (error) throw error;
+    registrarEvento(sb, { tipo: 'registro_cuerpo', ref_tabla: 'cuerpo_log', ref_id: data.id }).catch(() => null);
     return json({ medicion: data }, 201);
   } catch (err) {
     return json({ error: errMsg(err) }, 502);

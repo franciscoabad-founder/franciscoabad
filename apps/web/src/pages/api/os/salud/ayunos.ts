@@ -4,6 +4,7 @@ import type { APIRoute } from 'astro';
 import { getSupabaseServer } from '../../../../lib/supabase';
 import { isOsAuthorized, json } from '../../../../os/lib/osAuth';
 import { errMsg, numOrNull, isExternalTokenAuthorized } from '../../../../lib/salud/apiHelpers';
+import { registrarEvento } from '../../../../lib/juego/motor';
 
 const PROTOCOLOS = ['16_8', '18_6', '20_4', 'omad', 'extendido', 'custom'];
 // Horas objetivo por defecto según protocolo.
@@ -98,6 +99,9 @@ export const PATCH: APIRoute = async (context) => {
     const sb = getSupabaseServer();
     const { data, error } = await sb.from('ayunos').update(patch).eq('id', id).select().single();
     if (error) throw error;
+    if ('fin' in patch && patch.fin) {
+      registrarEvento(sb, { tipo: 'ayuno_fin', ref_tabla: 'ayunos', ref_id: id }).catch(() => null);
+    }
     return json({ ayuno: data });
   } catch (err) {
     return json({ error: errMsg(err) }, 502);

@@ -5,6 +5,8 @@ import { getSupabaseServer } from '../../../../lib/supabase';
 import { isOsAuthorized, json } from '../../../../os/lib/osAuth';
 import { errMsg, numOrNull, hoyGuayaquil, isExternalTokenAuthorized } from '../../../../lib/salud/apiHelpers';
 import { calcularMacros, sumarMacros } from '../../../../lib/salud/macros';
+import { registrarEvento } from '../../../../lib/juego/motor';
+import { hoyLocal } from '../../../../lib/habitos/fechas';
 
 const MOMENTOS = ['desayuno', 'almuerzo', 'cena', 'snack'];
 const TIPOS_DIA = ['normal', 'leg_day', 'refeed', 'keto_light', 'keto'];
@@ -111,6 +113,14 @@ export const POST: APIRoute = async (context) => {
       .select()
       .single();
     if (error) throw error;
+    // Anti-farming (plan B): cap de 4 eventos comida_log/día antes de dejar de otorgar XP.
+    sb.from('xp_events').select('id', { count: 'exact', head: true }).eq('tipo', 'comida_log').eq('fecha', hoyLocal())
+      .then(({ count }) => {
+        if ((count ?? 0) < 4) {
+          registrarEvento(sb, { tipo: 'comida_log', ref_tabla: 'comidas_log', ref_id: data.id }).catch(() => null);
+        }
+      })
+      .catch(() => null);
     return json({ comida: data }, 201);
   } catch (err) {
     return json({ error: errMsg(err) }, 502);

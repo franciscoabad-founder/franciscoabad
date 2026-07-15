@@ -3,6 +3,7 @@ export const prerender = false;
 import type { APIRoute } from 'astro';
 import { getSupabaseServer } from '../../../lib/supabase';
 import { isOsAuthorized, json } from '../../../os/lib/osAuth';
+import { registrarEvento } from '../../../lib/juego/motor';
 
 const PRIORIDADES = ['low', 'medium', 'high', 'critical'];
 
@@ -141,6 +142,9 @@ export const PATCH: APIRoute = async (context) => {
       .select()
       .single();
     if (error) throw error;
+    if (patch.estado === 'hecho') {
+      registrarEvento(sb, { tipo: 'tarea_hecha', ref_tabla: 'tareas', ref_id: id, meta: { prioridad: data.prioridad } }).catch(() => null);
+    }
     return json({ ok: true, tarea: data });
   } catch (err) {
     const msg = err instanceof Error ? err.message : (err as any)?.message ?? JSON.stringify(err);

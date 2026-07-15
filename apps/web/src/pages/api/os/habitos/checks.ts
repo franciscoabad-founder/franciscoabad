@@ -7,6 +7,7 @@ import { hoyLocal } from '../../../../lib/habitos/fechas';
 import { nuevoValor, recompensaCheck, type Dificultad } from '../../../../lib/habitos/scoring';
 import { rachaDiaria } from '../../../../lib/habitos/racha';
 import { nivelDesdeXp } from '../../../../lib/juego/nivel';
+import { registrarEvento } from '../../../../lib/juego/motor';
 
 const errMsg = (err: unknown) =>
   err instanceof Error ? err.message : (err as any)?.message ?? JSON.stringify(err);
@@ -75,7 +76,7 @@ export const POST: APIRoute = async (context) => {
     const valorNuevo = nuevoValor(valorActual, signo, dificultad);
     const recompensa = signo === 'mas' ? recompensaCheck(valorActual, dificultad) : { xp: 0, oro: 0 };
 
-    const { error: errCheck } = await sb.from('habito_checks').insert([{
+    const { data: checkInsertado, error: errCheck } = await sb.from('habito_checks').insert([{
       habito_id: habito.id,
       fecha,
       signo,
@@ -83,7 +84,7 @@ export const POST: APIRoute = async (context) => {
       xp: recompensa.xp,
       oro: recompensa.oro,
       source: 'manual',
-    }]);
+    }]).select().single();
     if (errCheck) throw errCheck;
 
     const { error: errUpdateHabito } = await sb
@@ -92,21 +93,57 @@ export const POST: APIRoute = async (context) => {
       .eq('id', habito.id);
     if (errUpdateHabito) throw errUpdateHabito;
 
-    const { data: perfil, error: errPerfil } = await sb
-      .from('habitos_perfil')
-      .select('id, xp_total')
-      .limit(1)
-      .maybeSingle();
-    if (errPerfil) throw errPerfil;
+    // Motor transversal (Version B): registra el evento gamificable y devuelve el
+    // estado agregado (xp/oro/nivel) a través de `jugador`. Si el motor no puede
+    // operar (tabla `jugador` aún no migrada), cae de vuelta a `habitos_perfil`
+    // para no romper la rama A mientras B no se ha aplicado en Supabase.
+    const tipoEvento = habito.tipo === 'diaria' ? 'diaria_check' : 'habito_check';
+    let resultadoMotor: Awaited<ReturnType<typeof registrarEvento>> = null;
+    try {
+      resultadoMotor = await registrarEvento(sb, {
+        tipo: tipoEvento,
+        ref_tabla: 'habito_checks',
+        ref_id: checkInsertado?.id,
+        fecha,
+        meta: { dificultad, valor: valorActual },
+        xp: recompensa.xp,
+        oro: recompensa.oro,
+      });
+    } catch {
+      resultadoMotor = null;
+    }
 
-    const xpAntes = perfil?.xp_total ?? 0;
-    const xpDespues = xpAntes + recompensa.xp;
-    if (perfil?.id) {
-      const { error: errUpdatePerfil } = await sb
+    let nivelDespues: ReturnType<typeof nivelDesdeXp>;
+    let subioNivel: boolean;
+
+    if (resultadoMotor) {
+      // El motor ya actualizó `jugador`; releemos xp_total para armar el NivelInfo
+      // completo (xpEnNivel/xpSiguiente/progreso) que la UI espera.
+      const { data: jugadorFila } = await sb.from('jugador').select('xp_total').limit(1).maybeSingle();
+      nivelDespues = nivelDesdeXp(jugadorFila?.xp_total ?? 0);
+      subioNivel = resultadoMotor.subioNivel;
+    } else {
+      // Fallback: motor no disponible (tabla `jugador` aún no migrada). Mantiene el
+      // comportamiento previo escribiendo en `habitos_perfil` directamente.
+      const { data: perfil, error: errPerfil } = await sb
         .from('habitos_perfil')
-        .update({ xp_total: xpDespues, updated_at: new Date().toISOString() })
-        .eq('id', perfil.id);
-      if (errUpdatePerfil) throw errUpdatePerfil;
+        .select('id, xp_total')
+        .limit(1)
+        .maybeSingle();
+      if (errPerfil) throw errPerfil;
+
+      const xpAntes = perfil?.xp_total ?? 0;
+      const xpDespues = xpAntes + recompensa.xp;
+      if (perfil?.id) {
+        const { error: errUpdatePerfil } = await sb
+          .from('habitos_perfil')
+          .update({ xp_total: xpDespues, updated_at: new Date().toISOString() })
+          .eq('id', perfil.id);
+        if (errUpdatePerfil) throw errUpdatePerfil;
+      }
+      const nivelAntesFallback = nivelDesdeXp(xpAntes);
+      nivelDespues = nivelDesdeXp(xpDespues);
+      subioNivel = nivelDespues.nivel > nivelAntesFallback.nivel;
     }
 
     let racha = null;
@@ -121,9 +158,6 @@ export const POST: APIRoute = async (context) => {
       racha = rachaDiaria(fechasHechas, habito.dias_semana ?? [], hoyLocal());
     }
 
-    const nivelAntes = nivelDesdeXp(xpAntes);
-    const nivelDespues = nivelDesdeXp(xpDespues);
-
     return json({
       ok: true,
       xp: recompensa.xp,
@@ -131,7 +165,7 @@ export const POST: APIRoute = async (context) => {
       valor: valorNuevo,
       racha,
       nivel: nivelDespues,
-      subioNivel: nivelDespues.nivel > nivelAntes.nivel,
+      subioNivel,
     }, 201);
   } catch (err) {
     return json({ error: errMsg(err) }, 502);
@@ -195,18 +229,36 @@ export const DELETE: APIRoute = async (context) => {
       .eq('id', habitoId);
     if (errUpdateHabito) throw errUpdateHabito;
 
-    const { data: perfil, error: errPerfil } = await sb
-      .from('habitos_perfil')
-      .select('id, xp_total')
-      .limit(1)
-      .maybeSingle();
-    if (errPerfil) throw errPerfil;
-    if (perfil?.id) {
-      const { error: errUpdatePerfil } = await sb
+    // Motor transversal: revierte el xp/oro otorgado con un evento 'ajuste' negativo
+    // en vez de tocar habitos_perfil directamente. ref_id null (el check.id borrado
+    // no sirve por la unicidad tipo+ref_id), la referencia queda en meta.
+    let revertidoPorMotor = false;
+    try {
+      const resultado = await registrarEvento(sb, {
+        tipo: 'ajuste',
+        xp: -(ultimo.xp ?? 0),
+        oro: -(ultimo.oro ?? 0),
+        meta: { revierte_check: ultimo.id },
+      });
+      revertidoPorMotor = resultado != null;
+    } catch {
+      revertidoPorMotor = false;
+    }
+
+    if (!revertidoPorMotor) {
+      const { data: perfil, error: errPerfil } = await sb
         .from('habitos_perfil')
-        .update({ xp_total: (perfil.xp_total ?? 0) - (ultimo.xp ?? 0), updated_at: new Date().toISOString() })
-        .eq('id', perfil.id);
-      if (errUpdatePerfil) throw errUpdatePerfil;
+        .select('id, xp_total')
+        .limit(1)
+        .maybeSingle();
+      if (errPerfil) throw errPerfil;
+      if (perfil?.id) {
+        const { error: errUpdatePerfil } = await sb
+          .from('habitos_perfil')
+          .update({ xp_total: (perfil.xp_total ?? 0) - (ultimo.xp ?? 0), updated_at: new Date().toISOString() })
+          .eq('id', perfil.id);
+        if (errUpdatePerfil) throw errUpdatePerfil;
+      }
     }
 
     return json({ ok: true });

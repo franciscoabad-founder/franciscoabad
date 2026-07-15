@@ -160,14 +160,27 @@ export const GET: APIRoute = async (context) => {
         )
       : resultado;
 
-    const { data: perfil, error: errPerfil } = await sb
-      .from('habitos_perfil')
-      .select('xp_total')
-      .limit(1)
-      .maybeSingle();
-    if (errPerfil) throw errPerfil;
+    // Lee el estado agregado desde `jugador` (motor B); si la tabla aún no existe
+    // (B no migrado), cae a `habitos_perfil` (A) para no romper mientras tanto.
+    let xpTotal = 0;
+    try {
+      const { data: jugadorRows, error: errJugador } = await sb.from('jugador').select('xp_total').limit(1);
+      if (errJugador) throw errJugador;
+      if (jugadorRows && jugadorRows.length > 0) {
+        xpTotal = jugadorRows[0].xp_total ?? 0;
+      } else {
+        throw new Error('sin fila de jugador');
+      }
+    } catch {
+      const { data: perfil, error: errPerfil } = await sb
+        .from('habitos_perfil')
+        .select('xp_total')
+        .limit(1)
+        .maybeSingle();
+      if (errPerfil) throw errPerfil;
+      xpTotal = perfil?.xp_total ?? 0;
+    }
 
-    const xpTotal = perfil?.xp_total ?? 0;
     return json({ habitos: filtrado, perfil: { xp_total: xpTotal, nivel: nivelDesdeXp(xpTotal) } });
   } catch (err) {
     return json({ error: errMsg(err) }, 502);

@@ -3,6 +3,7 @@ export const prerender = false;
 import type { APIRoute } from 'astro';
 import { getSupabaseServer } from '../../../lib/supabase';
 import { isOsAuthorized, json } from '../../../os/lib/osAuth';
+import { registrarEvento } from '../../../lib/juego/motor';
 
 const ESTADOS = ['abierto', 'convertido', 'descartado', 'hecho'];
 
@@ -81,6 +82,9 @@ export const PATCH: APIRoute = async (context) => {
       .select()
       .single();
     if (error) throw error;
+    if (patch.estado === 'hecho') {
+      registrarEvento(sb, { tipo: 'pendiente_hecho', ref_tabla: 'pendientes', ref_id: id }).catch(() => null);
+    }
     return json({ ok: true, pendiente: data });
   } catch (err) {
     const msg = err instanceof Error ? err.message : (err as any)?.message ?? JSON.stringify(err);
