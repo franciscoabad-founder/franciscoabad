@@ -51,8 +51,10 @@ export const GET: APIRoute = async (context) => {
       if (error) throw error;
       if (local && local.length) return json({ alimentos: local, fuente: 'local' });
 
-      // Consulta Open Food Facts server-side.
+      // Consulta Open Food Facts server-side. El try/catch solo cubre la red de OFF;
+      // el insert local queda FUERA para que un error de DB no se disfrace de "no encontrado".
       const contacto = import.meta.env.OFF_CONTACT_EMAIL || 'contacto-no-configurado';
+      let producto: OffProduct | null = null;
       try {
         const res = await fetch(
           `https://world.openfoodfacts.org/api/v2/product/${encodeURIComponent(barcode)}.json`,
@@ -60,29 +62,27 @@ export const GET: APIRoute = async (context) => {
         );
         if (res.ok) {
           const data = await res.json();
-          if (data?.status === 1 && data?.product) {
-            const nuevo = normalizarOff(barcode, data.product);
-            const { data: guardado, error: insErr } = await sb
-              .from('alimentos')
-              .insert([nuevo])
-              .select()
-              .single();
-            if (insErr) throw insErr;
-            return json({ alimentos: [guardado], fuente: 'off' });
-          }
+          if (data?.status === 1 && data?.product) producto = data.product as OffProduct;
         }
       } catch {
         // OFF no disponible: devolvemos vacío sin crashear.
       }
+      if (producto) {
+        const nuevo = normalizarOff(barcode, producto);
+        const { data: guardado, error: insErr } = await sb
+          .from('alimentos')
+          .insert([nuevo])
+          .select()
+          .single();
+        if (insErr) throw insErr;
+        return json({ alimentos: [guardado], fuente: 'off' });
+      }
       return json({ alimentos: [], fuente: 'off_no_encontrado' });
     }
 
-    // 2. Búsqueda por texto: ilike sobre nombre y marca. Tabla vacía => [].
-    // Se escapan comas y paréntesis que romperían la sintaxis del filtro .or() de PostgREST.
-    let query = sb.from('alimentos').select('*').order('nombre', { ascending: true }).limit(40);
-    const qSafe = q.replace(/[,()*]/g, ' ').trim();
-    if (qSafe) query = query.or(`nombre.ilike.%${qSafe}%,marca.ilike.%${qSafe}%`);
-    const { data, error } = await query;
+    // 2. Búsqueda por texto: RPC buscar_alimentos (unaccent, parametrizado). Insensible a
+    // acentos y sin romper términos con paréntesis. term vacío/null => primeros 40 por nombre.
+    const { data, error } = await sb.rpc('buscar_alimentos', { term: q || null, lim: 40 });
     if (error) throw error;
     return json({ alimentos: data ?? [], fuente: 'local' });
   } catch (err) {

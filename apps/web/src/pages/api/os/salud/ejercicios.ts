@@ -12,15 +12,14 @@ export const GET: APIRoute = async (context) => {
   const { url } = context;
   try {
     const sb = getSupabaseServer();
-    let q = sb.from('ejercicios').select('*').order('nombre', { ascending: true });
-    const texto = url.searchParams.get('q')?.trim();
-    const grupo = url.searchParams.get('grupo')?.trim();
-    const patron = url.searchParams.get('patron')?.trim();
-    const textoSafe = texto ? texto.replace(/[,()*]/g, ' ').trim() : '';
-    if (textoSafe) q = q.or(`nombre.ilike.%${textoSafe}%,nombre_en.ilike.%${textoSafe}%`);
-    if (grupo) q = q.eq('grupo_muscular_primario', grupo);
-    if (patron) q = q.eq('patron', patron);
-    const { data, error } = await q.limit(500);
+    // RPC buscar_ejercicios (unaccent, parametrizado): busca en nombre/nombre_en y filtra
+    // por grupo/patrón. Insensible a acentos y sin romper términos con paréntesis.
+    const texto = url.searchParams.get('q')?.trim() || null;
+    const grupo = url.searchParams.get('grupo')?.trim() || null;
+    const patron = url.searchParams.get('patron')?.trim() || null;
+    const { data, error } = await sb.rpc('buscar_ejercicios', {
+      term: texto, p_grupo: grupo, p_patron: patron, lim: 500,
+    });
     if (error) throw error;
     return json({ ejercicios: data ?? [] });
   } catch (err) {
