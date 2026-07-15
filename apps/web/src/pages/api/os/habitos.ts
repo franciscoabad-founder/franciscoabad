@@ -85,6 +85,7 @@ export const GET: APIRoute = async (context) => {
     }
 
     const desde60 = addDias(hoy, -60);
+    const ayer = addDias(hoy, -1);
     const resultado = habitos.map((h) => {
       const checks = checksPorHabito.get(h.id) ?? [];
       const fechasMas = new Set(checks.filter((c) => c.signo === 'mas').map((c) => c.fecha));
@@ -98,13 +99,16 @@ export const GET: APIRoute = async (context) => {
           const fecha = addDias(hoy, -i);
           ultimos7.push(diasSemana.includes(diaIso(fecha)) && fechasMas.has(fecha));
         }
+        // El hábito debe haber existido ayer (created_at <= ayer) para que un "no
+        // hecho" cuente como fallo: un hábito creado hoy no pudo fallar ayer.
+        const existiaAyer = (h.created_at ?? '').slice(0, 10) <= ayer;
         return {
           ...h,
           hecho_hoy: fechasMas.has(hoy),
           conteo_hoy: null,
           racha,
           ema,
-          falloAyer: falloAyer(fechasMas, diasSemana, hoy),
+          falloAyer: existiaAyer && falloAyer(fechasMas, diasSemana, hoy),
           ultimos7,
         };
       }
