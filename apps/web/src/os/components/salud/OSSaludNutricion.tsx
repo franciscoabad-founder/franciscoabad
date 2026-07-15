@@ -252,14 +252,24 @@ export default function OSSaludNutricion() {
   }
 
   async function cambiarTipoDia(nuevo: string) {
+    const prev = tipoDia;
     setTipoDia(nuevo);
+    // Sin entradas no hay nada persistente que actualizar: los nuevos registros ya usan tipoDia.
+    if (comidas.length === 0) return;
     // Actualiza el tipo_dia de las entradas del día para que el histórico sea coherente.
-    await Promise.all(comidas.map((c) =>
-      fetch(`/api/os/salud/comidas-log?id=${c.id}`, {
-        method: 'PATCH', headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ tipo_dia: nuevo }),
-      })
-    ));
+    try {
+      const res = await Promise.all(comidas.map((c) =>
+        fetch(`/api/os/salud/comidas-log?id=${encodeURIComponent(c.id)}`, {
+          method: 'PATCH', headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ tipo_dia: nuevo }),
+        })
+      ));
+      if (res.some((r) => !r.ok)) throw new Error('No se pudieron actualizar todas las entradas');
+      await cargarDia(dia);
+    } catch (e) {
+      setTipoDia(prev);
+      setError(e instanceof Error ? e.message : 'Error al cambiar tipo de día');
+    }
   }
 
   const porMomento = useMemo(() => {
