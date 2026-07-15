@@ -77,5 +77,3 @@ del script (seed) o del endpoint, nunca durante `astro build`.
 Los ~40 platos/ingredientes latinoamericanos del seed llevan macros razonables por 100 g con
 la fuente anotada en el propio registro (`fuente: 'latam'` + nota). Son estimaciones de
 dominio público (tablas de composición de alimentos de Ecuador/INCAP) redondeadas.
-</content>
-</invoke>

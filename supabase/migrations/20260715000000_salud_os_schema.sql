@@ -251,4 +251,3 @@ grant all on
 to service_role;
 
 notify pgrst, 'reload schema';
-</content>

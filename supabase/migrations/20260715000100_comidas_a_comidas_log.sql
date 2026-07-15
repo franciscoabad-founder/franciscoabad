@@ -35,4 +35,3 @@ where not exists (
 );
 
 notify pgrst, 'reload schema';
-</content>
