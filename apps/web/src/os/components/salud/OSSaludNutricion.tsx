@@ -196,6 +196,7 @@ export default function OSSaludNutricion() {
 
   async function agregar() {
     setGuardando(true); setError('');
+    const esPrimeraDelDia = comidas.length === 0;
     try {
       let body: Record<string, unknown> = { momento, fecha: dia, tipo_dia: tipoDia };
       if (modo === 'buscar' && sel) {
@@ -219,8 +220,8 @@ export default function OSSaludNutricion() {
       setSel(null); setQ(''); setResultados([]); setCantidad('100'); setPorcionIdx(-1);
       setLibre({ descripcion: '', kcal: '', proteina: '', carbos: '', grasa: '' });
       await cargarDia(dia); cargarSemana();
-      // Integración ayuno: si hay ayuno abierto, ofrecer cerrarlo con esta comida (primera del día).
-      ofrecerCerrarAyuno();
+      // Integración ayuno: solo en la primera comida del día, si hay ayuno abierto, ofrecer cerrarlo.
+      if (esPrimeraDelDia) ofrecerCerrarAyuno();
     } catch (e) {
       setError(e instanceof Error ? e.message : 'Error al guardar');
     } finally {

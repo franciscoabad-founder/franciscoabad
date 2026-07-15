@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { sugerenciaOverload, type SetHist } from '../../../lib/salud/progresion';
+import { sugerenciaOverload, ajusteRecuperacion, type SetHist } from '../../../lib/salud/progresion';
 
 // ── Tipos ──────────────────────────────────────────────────────────────────
 interface Ejercicio {
@@ -392,6 +392,7 @@ function ModoSesion({ sets, setSets, meta, onSalir }: {
   const [notas, setNotas] = useState('');
   const [guardando, setGuardando] = useState(false);
   const [sugerencias, setSugerencias] = useState<Record<string, string>>({});
+  const [avisoRecup, setAvisoRecup] = useState<string | null>(null);
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   const actual = sets[idx];
@@ -402,6 +403,13 @@ function ModoSesion({ sets, setSets, meta, onSalir }: {
     fetch('/api/os/salud/progreso')
       .then((r) => r.json())
       .then((d) => {
+        // Regla de recuperación: usa el sueño más reciente registrado en cuerpo_log.
+        const cuerpo = (d.cuerpo ?? []) as Array<{ fecha: string; sueno_horas: number | null }>;
+        const conSueno = cuerpo.filter((c) => c.sueno_horas != null).sort((a, b) => (a.fecha < b.fecha ? 1 : -1));
+        if (conSueno.length) {
+          const aj = ajusteRecuperacion(conSueno[0].sueno_horas);
+          if (aj.aviso) setAvisoRecup(aj.aviso);
+        }
         if (!d.sets) return;
         const porEjercicio: Record<string, SetHist[]> = {};
         for (const s of d.sets as any[]) {
@@ -432,7 +440,7 @@ function ModoSesion({ sets, setSets, meta, onSalir }: {
     return () => { if (timerRef.current) clearInterval(timerRef.current); };
   }, [descanso > 0]);
 
-  // Vibración/beep al terminar el descanso.
+  // Vibración al terminar el descanso (si el navegador lo permite).
   useEffect(() => {
     if (descanso === 0 && timerRef.current) {
       if (navigator.vibrate) navigator.vibrate(200);
@@ -500,6 +508,13 @@ function ModoSesion({ sets, setSets, meta, onSalir }: {
         </div>
         <span style={{ fontSize: 12, fontFamily: 'var(--os-font-mono)', color: 'var(--os-muted)' }}>{idx + 1}/{sets.length}</span>
       </div>
+
+      {/* Aviso de recuperación (regla de sueño) */}
+      {avisoRecup && (
+        <div style={{ ...card, borderColor: 'rgba(255,180,171,0.3)', background: 'rgba(147,0,10,0.08)', padding: '10px 12px' }}>
+          <p style={{ fontSize: 12, color: 'var(--os-warn)', margin: 0 }}>😴 {avisoRecup}</p>
+        </div>
+      )}
 
       {/* Timer de descanso */}
       {descanso > 0 && (

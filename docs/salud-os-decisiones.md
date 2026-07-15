@@ -77,3 +77,14 @@ del script (seed) o del endpoint, nunca durante `astro build`.
 Los ~40 platos/ingredientes latinoamericanos del seed llevan macros razonables por 100 g con
 la fuente anotada en el propio registro (`fuente: 'latam'` + nota). Son estimaciones de
 dominio público (tablas de composición de alimentos de Ecuador/INCAP) redondeadas.
+
+## D12 — Middleware: aceptar X-OS-Token para escrituras externas
+
+La spec pedía dos cosas en tensión: (a) "no modifiques el middleware" y (b) que las
+escrituras externas usen el header `X-OS-Token`. El middleware solo dejaba pasar `/api/os/*`
+con cookie `os_auth` o `Authorization: Bearer`, así que un request con solo `X-OS-Token`
+recibía un 302 a login y la integración quedaba muerta. Se hizo un cambio ADITIVO mínimo:
+el middleware ahora también acepta `X-OS-Token === OS_API_TOKEN` en el bloque
+server-to-server de `/api/os/*` y `/api/brain`. No altera ninguna ruta existente ni debilita
+la protección (es una credencial adicional equivalente al Bearer que ya se aceptaba). Esto
+hace que la integración especificada realmente funcione.

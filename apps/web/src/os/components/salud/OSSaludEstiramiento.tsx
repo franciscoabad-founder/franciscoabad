@@ -84,18 +84,19 @@ function Reproductor({ rutina, onSalir }: { rutina: RutinaEstiramiento; onSalir:
 
   const actual = pasos[idx];
 
-  // Cuenta regresiva del paso actual.
+  // Cuenta regresiva del paso actual: el intervalo solo decrementa (updater puro).
   useEffect(() => {
     if (pausado || terminado) return;
-    timerRef.current = setInterval(() => {
-      setRestante((r) => {
-        if (r <= 1) { avanzar(); return 0; }
-        return r - 1;
-      });
-    }, 1000);
+    timerRef.current = setInterval(() => setRestante((r) => (r > 0 ? r - 1 : 0)), 1000);
     return () => { if (timerRef.current) clearInterval(timerRef.current); };
-    // eslint-disable-next-line
   }, [idx, pausado, terminado]);
+
+  // El avance (side-effect: beep/vibrar/cambiar de paso) ocurre en un efecto, no en el updater.
+  useEffect(() => {
+    if (pausado || terminado) return;
+    if (restante === 0 && actual) avanzar();
+    // eslint-disable-next-line
+  }, [restante]);
 
   function avanzar() {
     if (timerRef.current) clearInterval(timerRef.current);

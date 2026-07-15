@@ -124,13 +124,20 @@ export const PATCH: APIRoute = async (context) => {
     const body = await context.request.json();
     const patch: Record<string, unknown> = { updated_at: new Date().toISOString() };
 
-    // Si cambia alimento/cantidad, recalcular macros.
+    // Si cambia alimento/cantidad, recalcular macros. Se reobtiene el alimento_id y la
+    // cantidad actuales de la fila para no perderlos al editar solo uno de los dos.
     if ('alimento_id' in body || 'cantidad_g' in body) {
-      const macros = await resolverMacros(body);
-      Object.assign(patch, macros, {
-        alimento_id: body.alimento_id ?? null,
-        cantidad_g: numOrNull(body.cantidad_g),
+      const sbCur = getSupabaseServer();
+      const { data: actual } = await sbCur
+        .from('comidas_log').select('alimento_id, cantidad_g').eq('id', id).single();
+      const alimentoId = 'alimento_id' in body ? (body.alimento_id || null) : (actual?.alimento_id ?? null);
+      const cantidad = 'cantidad_g' in body ? numOrNull(body.cantidad_g) : numOrNull(actual?.cantidad_g);
+      const macros = await resolverMacros({
+        alimento_id: alimentoId, cantidad_g: cantidad,
+        kcal: body.kcal, proteina_g: body.proteina_g, carbos_g: body.carbos_g,
+        grasa_g: body.grasa_g, fibra_g: body.fibra_g,
       });
+      Object.assign(patch, macros, { alimento_id: alimentoId, cantidad_g: cantidad });
     }
     for (const c of ['momento', 'descripcion_libre', 'foto_url', 'tipo_dia', 'notas', 'fecha']) {
       if (c in body) patch[c] = typeof body[c] === 'string' ? body[c].trim() || null : body[c];
