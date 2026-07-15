@@ -1,6 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { diaIso, addDias, proximaOcurrencia } from './fechas.ts';
+import { diaIso, addDias, proximaOcurrencia, timestampGuayaquil } from './fechas.ts';
 
 test('diaIso: correcto para fechas conocidas (ISO 1=lunes)', () => {
   assert.equal(diaIso('2026-07-13'), 1); // lunes
@@ -38,4 +38,15 @@ test('proximaOcurrencia: si hoy es programado pero ya pasó la hora, salta al si
   const desde = new Date('2026-07-13T13:00:00Z'); // 08:00 Guayaquil
   const r = proximaOcurrencia([1, 3, 5], '07:00', desde);
   assert.equal(r.toISOString(), '2026-07-15T12:00:00.000Z'); // miércoles 07:00 Guayaquil
+});
+
+test('timestampGuayaquil: construye el timestamp exacto de una fecha+hora dadas', () => {
+  const r = timestampGuayaquil('2026-07-14', '20:30');
+  assert.equal(r.toISOString(), '2026-07-15T01:30:00.000Z'); // 20:30 Guayaquil = 01:30 UTC (+1 día)
+});
+
+test('timestampGuayaquil: NO avanza al día siguiente aunque la hora ya haya pasado', () => {
+  // A diferencia de proximaOcurrencia, siempre usa la fecha dada tal cual.
+  const r = timestampGuayaquil('2026-07-13', '00:01');
+  assert.equal(r.toISOString(), '2026-07-13T05:01:00.000Z');
 });

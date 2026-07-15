@@ -7,6 +7,7 @@ import { hoyLocal, addDias, diaIso, proximaOcurrencia } from '../../../lib/habit
 import { rachaDiaria, falloAyer } from '../../../lib/habitos/racha';
 import { scoreEma, diasProgramados } from '../../../lib/habitos/ema';
 import { nivelDesdeXp } from '../../../lib/juego/nivel';
+import { cerrarPendientes } from './habitos/cierre';
 
 const TIPOS = ['habito', 'diaria'];
 const DIFICULTADES = ['trivial', 'facil', 'media', 'dificil'];
@@ -56,6 +57,25 @@ export const GET: APIRoute = async (context) => {
     const hoy = hoyLocal();
     const vistaHoy = context.url.searchParams.get('vista') === 'hoy';
 
+    // Fallback lazy del cierre diario: si n8n no corrió a las 00:05 (o aún no hay
+    // ningún cierre), lo procesa aquí antes de listar. Query barata primero (max fecha);
+    // si ya está al día, no hace nada. Silencioso: un fallo del cierre no debe romper
+    // el listado de hábitos.
+    const ayer = addDias(hoy, -1);
+    const { data: ultimoCierre } = await sb
+      .from('habito_cierres')
+      .select('fecha')
+      .order('fecha', { ascending: false })
+      .limit(1)
+      .maybeSingle();
+    if (!ultimoCierre || ultimoCierre.fecha < ayer) {
+      try {
+        await cerrarPendientes(sb);
+      } catch {
+        // best-effort: se reintentará en la próxima llamada.
+      }
+    }
+
     const { data: habitosData, error: errHabitos } = await sb
       .from('habitos')
       .select('*')
@@ -85,7 +105,6 @@ export const GET: APIRoute = async (context) => {
     }
 
     const desde60 = addDias(hoy, -60);
-    const ayer = addDias(hoy, -1);
     const resultado = habitos.map((h) => {
       const checks = checksPorHabito.get(h.id) ?? [];
       const fechasMas = new Set(checks.filter((c) => c.signo === 'mas').map((c) => c.fecha));

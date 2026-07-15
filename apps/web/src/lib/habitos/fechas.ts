@@ -55,3 +55,14 @@ export function proximaOcurrencia(diasSemana: number[], hora: string, desde: Dat
   // No debería alcanzarse con un diasSemana válido (algún valor entre 1 y 7).
   return desde;
 }
+
+/**
+ * Construye el timestamp de una fecha (YYYY-MM-DD) a una hora (HH:MM) en la zona
+ * horaria de Guayaquil (UTC-5 fijo, sin DST), SIN buscar el próximo día programado
+ * como hace proximaOcurrencia. Útil para agendar el recordatorio one-shot de HOY
+ * (el cierre diario ya sabe que hoy es un día programado antes de llamar a esto).
+ */
+export function timestampGuayaquil(fecha: string, hora: string): Date {
+  const [hh, mm] = hora.split(':').map((x) => parseInt(x, 10));
+  return new Date(`${fecha}T${String(hh).padStart(2, '0')}:${String(mm).padStart(2, '0')}:00-05:00`);
+}
