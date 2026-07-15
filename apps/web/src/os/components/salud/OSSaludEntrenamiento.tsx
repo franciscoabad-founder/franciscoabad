@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
+import { sugerenciaOverload, type SetHist } from '../../../lib/salud/progresion';
 
 // ── Tipos ──────────────────────────────────────────────────────────────────
 interface Ejercicio {
@@ -21,7 +22,8 @@ interface Rutina {
 // Set en curso durante la sesión.
 interface SetVivo {
   key: string; ejercicio_id: string; ejercicio_nombre: string; orden: number;
-  tipo_set: string; reps_objetivo: string; peso_objetivo: number; descanso_seg: number;
+  tipo_set: string; reps_objetivo: string; reps_min: number; reps_max: number;
+  patron: string | null; peso_objetivo: number; descanso_seg: number;
   reps: string; peso_kg: string; rpe: string; completado: boolean; sugerencia?: string | null;
 }
 
@@ -194,6 +196,8 @@ function Rutinas({ onIniciar }: { onIniciar: (sets: SetVivo[], meta: { rutinaId:
           key: `${re.id}-${i}`, ejercicio_id: re.ejercicio_id, ejercicio_nombre: re.ejercicio?.nombre ?? 'Ejercicio',
           orden: sets.length, tipo_set: sp.tipo || 'working',
           reps_objetivo: sp.reps_min != null && sp.reps_max != null ? `${sp.reps_min}-${sp.reps_max}` : (sp.reps_min != null ? `${sp.reps_min}` : ''),
+          reps_min: sp.reps_min ?? 0, reps_max: sp.reps_max ?? (sp.reps_min ?? 0),
+          patron: re.ejercicio?.patron ?? null,
           peso_objetivo: sp.peso_objetivo ?? 0, descanso_seg: sp.descanso_seg ?? 90,
           reps: '', peso_kg: sp.peso_objetivo ? String(sp.peso_objetivo) : '', rpe: '', completado: false,
         });
@@ -392,12 +396,32 @@ function ModoSesion({ sets, setSets, meta, onSalir }: {
 
   const actual = sets[idx];
 
-  // Sugerencias de peso del motor de progresión (M5) por ejercicio.
+  // Sugerencias de peso del motor de progresión (M5), computadas localmente con la
+  // lib testeada a partir del historial de sets del endpoint de progreso.
   useEffect(() => {
-    const ids = Array.from(new Set(sets.map((s) => s.ejercicio_id)));
-    fetch('/api/os/salud/progreso?sugerencias=' + ids.join(','))
+    fetch('/api/os/salud/progreso')
       .then((r) => r.json())
-      .then((d) => { if (d.sugerencias) setSugerencias(d.sugerencias); })
+      .then((d) => {
+        if (!d.sets) return;
+        const porEjercicio: Record<string, SetHist[]> = {};
+        for (const s of d.sets as any[]) {
+          (porEjercicio[s.ejercicio_id] ??= []).push({
+            fecha: s.fecha, reps: s.reps, peso_kg: s.peso_kg, tipo_set: s.tipo_set,
+          });
+        }
+        const textos: Record<string, string> = {};
+        const vistos = new Set<string>();
+        for (const sv of sets) {
+          if (vistos.has(sv.ejercicio_id)) continue;
+          vistos.add(sv.ejercicio_id);
+          const hist = porEjercicio[sv.ejercicio_id] ?? [];
+          const sug = sugerenciaOverload(hist, { repsMin: sv.reps_min, repsMax: sv.reps_max, patron: sv.patron });
+          if (sug.accion !== 'mantener' && sug.pesoSugerido != null) {
+            textos[sv.ejercicio_id] = `${sug.pesoSugerido} kg — ${sug.razon}`;
+          }
+        }
+        setSugerencias(textos);
+      })
       .catch(() => { /* motor opcional */ });
   }, []);
 
