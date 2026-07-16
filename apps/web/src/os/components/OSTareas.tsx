@@ -25,7 +25,7 @@ const PRIORIDAD_META: Record<string, { label: string; color: string; bg: string 
 const ESTADO_META: Record<string, { label: string; color: string; bg: string }> = {
   pendiente:   { label: 'Pendiente',   color: '#C5C5D7', bg: 'rgba(197,197,215,0.10)' },
   en_progreso: { label: 'En progreso', color: '#6B7AE8', bg: 'rgba(107,122,232,0.16)' },
-  hecho:       { label: 'Hecho',       color: '#22c55e', bg: 'rgba(34,197,94,0.14)' },
+  hecho:       { label: 'Hecho',       color: 'var(--os-champagne)', bg: 'rgba(181,152,90,0.14)' },
 };
 
 const GRUPO_ACCENT: Record<string, string> = {
@@ -278,7 +278,7 @@ export default function OSTareas() {
               title={isDone ? 'Reabrir' : 'Marcar hecha'}
               style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0, lineHeight: 1, flexShrink: 0 }}
             >
-              <span className="material-symbols-outlined" style={{ fontSize: 18, color: isDone ? '#22c55e' : 'rgba(107,114,128,0.6)' }}>
+              <span className="material-symbols-outlined" style={{ fontSize: 18, color: isDone ? 'var(--os-champagne)' : 'rgba(107,114,128,0.6)' }}>
                 {isDone ? 'check_circle' : 'radio_button_unchecked'}
               </span>
             </button>

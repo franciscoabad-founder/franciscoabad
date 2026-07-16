@@ -196,7 +196,7 @@ export default function OSNotas() {
                   {new Date(n.created_at).toLocaleDateString('es', { day: 'numeric', month: 'short' })}
                 </span>
                 {n.estado === 'convertida' && (
-                  <span style={{ fontSize: 10, color: '#22c55e', fontFamily: 'var(--os-font-display)', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em' }}>
+                  <span style={{ fontSize: 10, color: 'var(--os-champagne)', fontFamily: 'var(--os-font-display)', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em' }}>
                     Convertida a {n.convertida_a}
                   </span>
                 )}

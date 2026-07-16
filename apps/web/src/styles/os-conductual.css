@@ -1,18 +1,20 @@
 /* ============================================================================
-   Modulo Habitos — capa "Clay" (claymorphism suave) con TRES paletas
-   intercambiables via [data-palette]: "pastel", "marca-light", "marca-dark".
+   Modulo Habitos — capa "Clay" (claymorphism suave). Sigue el tema global del
+   OS: valores "marca-light" por defecto, override "marca-dark" bajo
+   [data-theme="dark"] (el mismo atributo que fija OSLayout.astro en <html>).
    Scope: [data-modulo="habitos"]. Solo se importa desde las paginas del
-   modulo (habitos.astro, habitos/journeys.astro). El resto del OS (shell,
-   nav, home) NO carga este archivo y sigue en Ultramarine v5.
+   modulo (habitos.astro, habitos/journeys.astro, juego.astro). El resto del
+   OS (shell, nav, home) NO carga este archivo y sigue en Ultramarine v5.
    La ESTRUCTURA clay (radios, forma de sombra, fuente Nunito, sentence case)
-   es identica en las tres paletas; solo cambian los VALORES de los tokens.
+   es identica en ambos temas; solo cambian los VALORES de los tokens.
+   Los bloques [data-palette] siguen abajo por compatibilidad (inofensivos:
+   ningun control los setea ya), pero ya no son la fuente de verdad.
    Canon: apps/web/docs/os-diseno-conductual.md
    ========================================================================== */
 
 [data-modulo="habitos"] {
-  /* Tokens por defecto = paleta "marca-light" (Linen + Ultramarine). Sirven
-     de fallback mientras el JS del selector de paleta aplica [data-palette]
-     (o si el atributo no llega a existir por algun motivo). */
+  /* Tokens por defecto = "marca-light" (Linen + Ultramarine), tema claro
+     del OS. Se sobreescriben en el bloque [data-theme="dark"] mas abajo. */
   --m-bg:        #FAFAF7;
   --m-surface:   #FFFFFF;
   --m-surface-2: #F1F3F8;
@@ -55,9 +57,23 @@
   [data-modulo="habitos"] { padding: 1.5rem; margin: -1.5rem; }
 }
 
-/* ── Paletas intercambiables ──
-   Cada scope redefine EL MISMO set completo de tokens de color/sombra.
-   La estructura (selectores, radios, tipografia) vive arriba y no se toca. */
+/* ── Tema oscuro del OS: "marca-dark" (Ink + Ultramarine) ──
+   Se activa junto con el resto del shell via [data-theme="dark"] en <html>,
+   fijado por el script no-flash de OSLayout.astro. Mismo set completo de
+   tokens que la base; solo cambian los valores. */
+[data-theme="dark"] [data-modulo="habitos"] {
+  --m-bg: #0E1738; --m-surface: #1A2B6B; --m-surface-2: #131F4A; --m-fg: #E8EAF0; --m-muted: #9AA0BE;
+  --m-accent: #3B4ED9; --m-accent-text: #6B7AE8; --m-ok: #35C79A; --m-warn: #EF9F27; --m-danger: #E8709A;
+  --m-champagne: #B5985A; --m-line: rgba(232, 234, 240, 0.12); --m-line-soft: rgba(232, 234, 240, 0.07);
+  --m-warn-bg: rgba(239, 159, 39, 0.16); --m-warn-fg: #F0C070;
+  --m-shadow: 0 8px 18px rgba(0, 0, 0, 0.45), inset 0 -3px 6px rgba(0, 0, 0, 0.30), inset 0 2px 3px rgba(255, 255, 255, 0.05);
+  --m-shadow-sm: 0 4px 10px rgba(0, 0, 0, 0.40);
+}
+
+/* ── Paletas [data-palette] (legado) ──
+   Ya no las setea ningun control (el selector de prueba se retiro). Se dejan
+   definidas por compatibilidad: si algo llegara a fijar el atributo a mano,
+   la superficie no se rompe. La fuente de verdad es [data-theme] arriba. */
 
 /* Pastel: violeta claro (paleta original del modulo). */
 [data-modulo="habitos"][data-palette="pastel"] {
@@ -516,45 +532,4 @@
   letter-spacing: normal;
   color: var(--m-fg);
   white-space: nowrap;
-}
-
-/* ── Selector de paleta flotante ──
-   Vive dentro del scope del modulo para heredar surface/shadow de la paleta
-   activa. El control (botones que setean [data-palette]) lo agrega otra
-   pieza; aqui solo el estilo clay del contenedor. */
-[data-modulo="habitos"] .m-palette-switch {
-  position: fixed;
-  bottom: 16px;
-  left: 50%;
-  transform: translateX(-50%);
-  z-index: 50;
-  display: flex;
-  gap: 4px;
-  padding: 5px;
-  border-radius: 999px;
-  background: var(--m-surface);
-  box-shadow: var(--m-shadow);
-  font-family: var(--m-font-rounded);
-}
-[data-modulo="habitos"] .m-palette-switch button {
-  border: none;
-  background: transparent;
-  color: var(--m-muted);
-  font-family: var(--m-font-rounded);
-  font-weight: 700;
-  font-size: 12px;
-  padding: 7px 12px;
-  border-radius: 999px;
-  cursor: pointer;
-  min-height: 36px;
-}
-[data-modulo="habitos"] .m-palette-switch button.is-active {
-  background: var(--m-accent);
-  color: #fff;
-}
-[data-modulo="habitos"] .m-palette-switch .lbl {
-  color: var(--m-muted);
-  font-size: 11px;
-  padding: 0 6px;
-  align-self: center;
 }

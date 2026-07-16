@@ -10,7 +10,7 @@ const redIcon: Record<string, string>  = { instagram: 'photo_camera', facebook: 
 const PLATAFORMAS = ['instagram', 'tiktok', 'linkedin', 'facebook', 'youtube', 'x'];
 
 const trendIcon: Record<string, string> = {
-  up:   '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg>',
+  up:   '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--os-champagne)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg>',
   down: '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 17 13.5 8.5 8.5 13.5 2 7"/><polyline points="16 17 22 17 22 11"/></svg>',
   flat: '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#6B7280" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/></svg>',
 };
@@ -54,7 +54,7 @@ const trendIcon: Record<string, string> = {
 
 <script is:inline define:vars={{ redLabel, redColor, redIcon, PLATAFORMAS }}>
 var trendIconMap = {
-  up:   '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg>',
+  up:   '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--os-champagne)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg>',
   down: '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 17 13.5 8.5 8.5 13.5 2 7"/><polyline points="16 17 22 17 22 11"/></svg>',
   flat: '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#6B7280" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/></svg>',
 };
@@ -107,7 +107,7 @@ function cardRed(red, info) {
   var color = redColor[red];
   var actual = info.actual || {};
   var delta = deltaVs7dias(info.serie);
-  var deltaColor = delta.tendencia === 'up' ? '#22c55e' : (delta.tendencia === 'down' ? '#ef4444' : 'var(--os-muted)');
+  var deltaColor = delta.tendencia === 'up' ? 'var(--os-champagne)' : (delta.tendencia === 'down' ? '#ef4444' : 'var(--os-muted)');
   var deltaSigno = delta.valor > 0 ? '+' : '';
   return '<div class="os-card-2" style="border-top:2px solid ' + color + ';">'
     + '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:0.875rem;">'

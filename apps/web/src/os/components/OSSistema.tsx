@@ -12,7 +12,7 @@ function cloneState(state: SistemaState): SistemaState {
 }
 
 function statusColor(status: string) {
-  if (status === 'activo') return '#22c55e';
+  if (status === 'activo') return 'var(--os-champagne)';
   if (status === 'error') return '#F87171';
   return '#B5985A';
 }

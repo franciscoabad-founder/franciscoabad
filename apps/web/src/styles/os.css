@@ -1,54 +1,100 @@
 /* ============================================================================
-   Growth OS — capa de estilos compartida ("Ultramarine v5 · Stitch")
+   Growth OS — capa de estilos compartida ("Ultramarine v5 · Clay")
    Lenguaje visual unificado para todo lo que vive detras de /os.
    Importado una sola vez desde OSLayout.astro.
+
+   Tema por defecto: CLARO (marca-claro, claymorphism). El tema oscuro se activa
+   con [data-theme="dark"] en <html> (ver script no-flash en OSLayout.astro).
+   Los NOMBRES de los tokens --os-* no cambian: 30 paginas del OS los consumen.
+   Solo cambian los VALORES entre :root (claro) y [data-theme="dark"] (oscuro).
    ========================================================================== */
 
 :root {
-  /* ── Grounds ── */
-  --os-bg:           #071132;   /* fondo base (Stitch ink) */
-  --os-bg-sunken:    #060C1E;   /* command bar, sidebar, bottom-nav */
-  --os-surface:      #1A2B6B;   /* royal — cards primarias */
-  --os-surface-2:    #131F4A;   /* elevated — KPIs */
-  --os-surface-3:    #151D3F;   /* containers */
-  --os-surface-hi:   #1F284A;   /* hover de superficies */
+  /* ── Grounds (claro / Linen) ── */
+  --os-bg:           #FAFAF7;   /* fondo base */
+  --os-bg-sunken:    #F1F2F6;   /* command bar, sidebar, bottom-nav */
+  --os-surface:      #FFFFFF;   /* cards primarias */
+  --os-surface-2:    #F4F5F9;   /* elevated — KPIs */
+  --os-surface-3:    #EEF0F6;   /* containers */
+  --os-surface-hi:   #E8EAF4;   /* hover de superficies */
 
   /* ── Lineas ── */
-  --os-line:         rgba(255, 255, 255, 0.12);
-  --os-line-soft:    rgba(232, 234, 240, 0.07);
-  --os-line-accent:  rgba(59, 78, 217, 0.30);
+  --os-line:         rgba(45, 55, 72, 0.12);
+  --os-line-soft:    rgba(45, 55, 72, 0.06);
+  --os-line-accent:  rgba(59, 78, 217, 0.25);
 
   /* ── Acentos ── */
   --os-accent:       #3B4ED9;   /* ultramarine — CTAs, activos, links */
-  --os-accent-light: #6B7AE8;   /* ultra-light — hover, eyebrows sobre dark */
-  --os-champagne:    #B5985A;   /* SOLO numeros / metricas / KPIs */
+  --os-accent-hover: #2F3FC0;   /* hover de accent sobre fondo claro (mas oscuro) */
+  --os-accent-light: #3B4ED9;   /* sobre fondo claro el accent ya es legible */
+  --os-champagne:    #8A6F3D;   /* bronze — legible sobre fondo claro */
   --os-bronze:       #8A6F3D;
-  --os-ok:           #22c55e;
-  --os-warn:         #ffb4ab;
-  --os-error:        #F87171;
+  --os-ok:           #8A6F3D;   /* champagne = hecho/positivo (sin verde) */
+  --os-warn:         #B45309;
+  --os-error:        #B3261E;
 
   /* ── Texto ── */
-  --os-text:         #E8EAF0;
-  --os-text-2:       #C5C5D7;
+  --os-text:         #2D3748;
+  --os-text-2:       #4A5568;
   --os-muted:        #6B7280;
 
-  /* ── Forma ── */
-  --os-r-sm: 6px;
-  --os-r-md: 10px;
-  --os-r-card: 12px;
-  --os-r-lg: 16px;
+  /* ── Rellenos utilitarios (hover / fondos sutiles) ── */
+  --os-hover:        rgba(45, 55, 72, 0.05);
+  --os-fill-subtle:  rgba(45, 55, 72, 0.04);
+  --os-glass-bg:     rgba(255, 255, 255, 0.55);
+
+  /* ── Forma (radios clay: cards 16-20px, botones 12-14px) ── */
+  --os-r-sm: 12px;
+  --os-r-md: 14px;
+  --os-r-card: 18px;
+  --os-r-lg: 20px;
   --os-r-full: 999px;
 
-  /* ── Sombra (siempre tintada en azul, nunca gris neutro) ── */
-  --os-shadow-card:   0 6px 20px rgba(14, 23, 56, 0.28);
-  --os-shadow-modal:  0 18px 48px rgba(14, 23, 56, 0.40);
-  --os-shadow-accent: 0 8px 28px rgba(59, 78, 217, 0.36);
+  /* ── Sombra clay (doble sombra suave: elevacion + relieve) ── */
+  --os-shadow-card:   0 6px 14px rgba(45, 55, 72, 0.10), inset 0 -3px 6px rgba(45, 55, 72, 0.05), inset 0 2px 3px rgba(255, 255, 255, 0.9);
+  --os-shadow-modal:  0 18px 40px rgba(45, 55, 72, 0.16), inset 0 -3px 6px rgba(45, 55, 72, 0.05), inset 0 2px 3px rgba(255, 255, 255, 0.9);
+  --os-shadow-accent: 0 8px 22px rgba(59, 78, 217, 0.28), inset 0 -3px 6px rgba(45, 55, 72, 0.05), inset 0 2px 3px rgba(255, 255, 255, 0.9);
 
   /* ── Fuentes ── */
   --os-font-display: 'Montserrat', sans-serif;
   --os-font-body:    'Inter', sans-serif;
   --os-font-mono:    'JetBrains Mono', 'SF Mono', monospace;
   --os-font-rounded: 'Nunito', 'Inter', sans-serif;
+}
+
+/* ── Tema oscuro ── */
+[data-theme="dark"] {
+  --os-bg:           #071132;
+  --os-bg-sunken:    #060C1E;
+  --os-surface:      #1A2B6B;
+  --os-surface-2:    #131F4A;
+  --os-surface-3:    #151D3F;
+  --os-surface-hi:   #1F284A;
+
+  --os-line:         rgba(255, 255, 255, 0.12);
+  --os-line-soft:    rgba(232, 234, 240, 0.07);
+  --os-line-accent:  rgba(59, 78, 217, 0.30);
+
+  --os-accent:       #3B4ED9;
+  --os-accent-hover: #4A5FEA;
+  --os-accent-light: #6B7AE8;
+  --os-champagne:    #B5985A;
+  --os-bronze:       #8A6F3D;
+  --os-ok:           #B5985A;
+  --os-warn:         #ffb4ab;
+  --os-error:        #F87171;
+
+  --os-text:         #E8EAF0;
+  --os-text-2:       #C5C5D7;
+  --os-muted:        #6B7280;
+
+  --os-hover:        rgba(232, 234, 240, 0.09);
+  --os-fill-subtle:  rgba(232, 234, 240, 0.05);
+  --os-glass-bg:     rgba(26, 43, 107, 0.40);
+
+  --os-shadow-card:   0 8px 18px rgba(0, 0, 0, 0.45), inset 0 -3px 6px rgba(0, 0, 0, 0.30), inset 0 2px 3px rgba(255, 255, 255, 0.05);
+  --os-shadow-modal:  0 20px 50px rgba(0, 0, 0, 0.55), inset 0 -3px 6px rgba(0, 0, 0, 0.30), inset 0 2px 3px rgba(255, 255, 255, 0.05);
+  --os-shadow-accent: 0 8px 28px rgba(59, 78, 217, 0.36), inset 0 -3px 6px rgba(0, 0, 0, 0.30), inset 0 2px 3px rgba(255, 255, 255, 0.05);
 }
 
 /* ── Material Symbols ── */
@@ -104,6 +150,7 @@
   border: 1px solid var(--os-line);
   border-radius: var(--os-r-card);
   padding: 1.25rem;
+  box-shadow: var(--os-shadow-card);
 }
 .os-card-2 {
   background: var(--os-surface-2);
@@ -118,7 +165,7 @@
 
 /* Glass panel (Stitch) */
 .os-glass {
-  background: rgba(26, 43, 107, 0.40);
+  background: var(--os-glass-bg);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
   border: 1px solid var(--os-line);
@@ -198,7 +245,7 @@
 .os-tag {
   font-size: 10px;
   color: var(--os-muted);
-  background: rgba(232, 234, 240, 0.06);
+  background: var(--os-fill-subtle);
   padding: 2px 7px;
   border-radius: 4px;
 }
@@ -245,17 +292,17 @@
   white-space: nowrap;
   transition: background 0.15s, transform 0.12s;
 }
-.os-btn:hover { background: #4a5fea; }
+.os-btn:hover { background: var(--os-accent-hover); }
 .os-btn:active { transform: scale(0.97); }
 .os-btn-ghost {
-  background: rgba(232, 234, 240, 0.05);
+  background: var(--os-fill-subtle);
   border: 1px solid var(--os-line);
   color: var(--os-text-2);
 }
-.os-btn-ghost:hover { background: rgba(232, 234, 240, 0.09); color: var(--os-text); }
+.os-btn-ghost:hover { background: var(--os-hover); color: var(--os-text); }
 
 .os-input {
-  background: rgba(232, 234, 240, 0.05);
+  background: var(--os-fill-subtle);
   border: 1px solid var(--os-line);
   border-radius: var(--os-r-sm);
   padding: 0.5rem 0.75rem;

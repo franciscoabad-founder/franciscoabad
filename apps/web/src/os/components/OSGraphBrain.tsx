@@ -33,9 +33,9 @@ interface RawData {
 
 const GROUP_COLORS: Record<string, string> = {
   braintech: '#6B7AE8',
-  codeis:    '#34D399',
+  codeis:    '#EF9F27',
   taskr:     '#FB923C',
-  arazza:    '#4ADE80',
+  arazza:    '#B5985A',
   rafik:     '#FBBF24',
   marca:     '#C084FC',
   sistema:   '#94A3B8',

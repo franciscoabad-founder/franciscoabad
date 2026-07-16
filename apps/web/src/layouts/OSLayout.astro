@@ -99,6 +99,16 @@ const anyBottomActive = bottomNav.some(i => isActive(i.href));
 <!doctype html>
 <html lang="es">
   <head>
+    <script is:inline>
+      // Prevencion de FOUC: aplica el tema guardado antes del primer paint.
+      // Clave 'os-theme' (independiente del tema del sitio publico, que usa 'theme').
+      // Por defecto SIEMPRE claro: oscuro solo si el usuario lo eligio con el toggle.
+      // No se consulta prefers-color-scheme a proposito.
+      (function() {
+        var t = localStorage.getItem('os-theme') === 'dark' ? 'dark' : 'light';
+        document.documentElement.setAttribute('data-theme', t);
+      })();
+    </script>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
     <title>{title} — OS · Francisco Abad</title>
@@ -106,7 +116,7 @@ const anyBottomActive = bottomNav.some(i => isActive(i.href));
 
     <!-- PWA -->
     <link rel="manifest" href="/manifest.webmanifest" />
-    <meta name="theme-color" content="#060C1E" />
+    <meta id="os-theme-color-meta" name="theme-color" content="#FAFAF7" />
     <meta name="mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
@@ -191,8 +201,8 @@ const anyBottomActive = bottomNav.some(i => isActive(i.href));
       .cmd-right { display: flex; align-items: center; gap: 10px; padding: 0 0.875rem; height: 100%; flex-shrink: 0; }
       .cmd-capture {
         display: flex; align-items: center;
-        background: rgba(232,234,240,0.04);
-        border: 1px solid rgba(232,234,240,0.09);
+        background: var(--os-fill-subtle);
+        border: 1px solid var(--os-line-soft);
         border-radius: 5px; overflow: hidden;
       }
       .cmd-capture input {
@@ -202,14 +212,25 @@ const anyBottomActive = bottomNav.some(i => isActive(i.href));
       }
       .cmd-capture input::placeholder { color: var(--os-muted); }
       .cmd-status { display: flex; align-items: center; gap: 5px; font-size: 10px; color: var(--os-muted); font-family: var(--os-font-display); letter-spacing: 0.06em; }
-      .cmd-status-dot { width: 5px; height: 5px; border-radius: 50%; background: var(--os-ok); box-shadow: 0 0 5px rgba(34,197,94,0.5); flex-shrink: 0; }
+      .cmd-status-dot { width: 5px; height: 5px; border-radius: 50%; background: var(--os-ok); box-shadow: 0 0 5px rgba(181,152,90,0.5); flex-shrink: 0; }
       .cmd-logout {
         font-size: 10px; color: var(--os-muted); text-decoration: none;
         font-family: var(--os-font-display); letter-spacing: 0.06em;
         text-transform: uppercase; font-weight: 600; transition: color 0.14s;
-        padding: 3px 6px; border-radius: 4px; border: 1px solid rgba(232,234,240,0.08);
+        padding: 3px 6px; border-radius: 4px; border: 1px solid var(--os-line-soft);
       }
-      .cmd-logout:hover { color: var(--os-text); border-color: rgba(232,234,240,0.18); }
+      .cmd-logout:hover { color: var(--os-text); border-color: var(--os-line); }
+
+      /* ── Theme toggle ── */
+      .os-theme-toggle {
+        display: inline-flex; align-items: center; justify-content: center;
+        background: none; border: 1px solid var(--os-line);
+        border-radius: var(--os-r-sm); color: var(--os-muted);
+        cursor: pointer; width: 28px; height: 28px; padding: 0; flex-shrink: 0;
+        transition: background 0.14s, color 0.14s, border-color 0.14s;
+      }
+      .os-theme-toggle:hover { background: var(--os-hover); color: var(--os-text); border-color: var(--os-line-accent); }
+      .os-theme-toggle .material-symbols-outlined { font-size: 16px; }
 
       /* ── Mobile topbar ── */
       .os-topbar {
@@ -236,14 +257,23 @@ const anyBottomActive = bottomNav.some(i => isActive(i.href));
       .os-main {
         flex: 1; min-width: 0; overflow-y: auto; position: relative;
         background-image:
-          linear-gradient(rgba(59,78,217,0.022) 1px, transparent 1px),
-          linear-gradient(90deg, rgba(59,78,217,0.022) 1px, transparent 1px);
+          linear-gradient(rgba(59,78,217,0.013) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(59,78,217,0.013) 1px, transparent 1px);
         background-size: 36px 36px;
       }
       .os-glow {
         position: absolute; top: 0; left: 0; right: 0; height: 360px;
-        background: radial-gradient(ellipse 80% 100% at 50% 0%, rgba(59,78,217,0.10) 0%, transparent 70%);
+        background: radial-gradient(ellipse 80% 100% at 50% 0%, rgba(59,78,217,0.06) 0%, transparent 70%);
         pointer-events: none; z-index: 0;
+      }
+      /* En oscuro la grilla/glow recupera su intensidad original */
+      [data-theme="dark"] .os-main {
+        background-image:
+          linear-gradient(rgba(59,78,217,0.022) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(59,78,217,0.022) 1px, transparent 1px);
+      }
+      [data-theme="dark"] .os-glow {
+        background: radial-gradient(ellipse 80% 100% at 50% 0%, rgba(59,78,217,0.10) 0%, transparent 70%);
       }
       .os-content { position: relative; z-index: 1; padding: 2rem 2.5rem; max-width: 1200px; }
 
@@ -260,7 +290,7 @@ const anyBottomActive = bottomNav.some(i => isActive(i.href));
         border-left: 2px solid transparent; text-decoration: none;
         transition: color 0.14s, background 0.14s; white-space: nowrap; letter-spacing: 0.01em;
       }
-      .nav-item:hover { color: var(--os-text); background: rgba(232,234,240,0.04); }
+      .nav-item:hover { color: var(--os-text); background: var(--os-fill-subtle); }
       .nav-item.active { color: var(--os-text); font-weight: 600; background: rgba(59,78,217,0.13); border-left-color: var(--os-accent); }
       .nav-item .material-symbols-outlined { font-size: 18px; color: rgba(107,114,128,0.8); flex-shrink: 0; }
       .nav-item.active .material-symbols-outlined { color: var(--os-accent-light); }
@@ -306,6 +336,8 @@ const anyBottomActive = bottomNav.some(i => isActive(i.href));
         .os-content { padding: 1.25rem 1rem calc(72px + 1.5rem + env(safe-area-inset-bottom, 0px)); }
         .os-main { background-size: 30px 30px; }
         .os-shell { min-height: calc(100dvh - 44px); }
+        .os-theme-toggle { width: 44px; height: 44px; }
+        .os-theme-toggle .material-symbols-outlined { font-size: 20px; }
       }
     </style>
   </head>
@@ -336,6 +368,10 @@ const anyBottomActive = bottomNav.some(i => isActive(i.href));
           <input id="os-capture" type="text" placeholder="Capturar idea..." maxlength="200" />
         </div>
         <OSJugadorBar client:load />
+        <button type="button" class="os-theme-toggle" data-os-theme-toggle aria-label="Cambiar tema">
+          <span class="material-symbols-outlined" data-os-theme-icon="sun">light_mode</span>
+          <span class="material-symbols-outlined" data-os-theme-icon="moon">dark_mode</span>
+        </button>
         <div class="cmd-status"><span class="cmd-status-dot"></span><span>Activo</span></div>
         <a href="/api/os-auth?action=logout" class="cmd-logout" title="Cerrar sesion">salir</a>
       </div>
@@ -350,9 +386,15 @@ const anyBottomActive = bottomNav.some(i => isActive(i.href));
       <span class="os-topbar-title">
         <span style="font-size:12px;color:var(--os-text);font-family:var(--os-font-display);font-weight:600;">{title}</span>
       </span>
-      <button class="menu-btn" id="search-open" aria-label="Preguntar al cerebro">
-        <span class="material-symbols-outlined" style="font-size:21px;color:var(--os-muted);">search</span>
-      </button>
+      <div style="display:flex;align-items:center;gap:4px;">
+        <button type="button" class="os-theme-toggle" data-os-theme-toggle aria-label="Cambiar tema">
+          <span class="material-symbols-outlined" data-os-theme-icon="sun">light_mode</span>
+          <span class="material-symbols-outlined" data-os-theme-icon="moon">dark_mode</span>
+        </button>
+        <button class="menu-btn" id="search-open" aria-label="Preguntar al cerebro">
+          <span class="material-symbols-outlined" style="font-size:21px;color:var(--os-muted);">search</span>
+        </button>
+      </div>
     </header>
     <div class="os-topbar-jugador">
       <OSJugadorBar client:load />
@@ -390,7 +432,7 @@ const anyBottomActive = bottomNav.some(i => isActive(i.href));
     </div>
 
     <!-- Chat con el cerebro -->
-    <div id="os-pregunta-panel" style="display:none;position:fixed;top:44px;right:0;z-index:160;width:420px;max-width:100vw;background:#0E1738;border:1px solid var(--os-line-accent);border-bottom-left-radius:10px;box-shadow:var(--os-shadow-modal);flex-direction:column;max-height:calc(100dvh - 44px);">
+    <div id="os-pregunta-panel" style="display:none;position:fixed;top:44px;right:0;z-index:160;width:420px;max-width:100vw;background:var(--os-surface-2);border:1px solid var(--os-line-accent);border-bottom-left-radius:10px;box-shadow:var(--os-shadow-modal);flex-direction:column;max-height:calc(100dvh - 44px);">
       <div style="display:flex;align-items:center;justify-content:space-between;padding:0.625rem 1rem;border-bottom:1px solid var(--os-line-soft);flex-shrink:0;">
         <span class="os-eyebrow">Chat con el cerebro</span>
         <div style="display:flex;align-items:center;gap:10px;">
@@ -401,7 +443,7 @@ const anyBottomActive = bottomNav.some(i => isActive(i.href));
       <div id="os-pregunta-body" style="padding:0.875rem 1rem;font-size:13px;color:var(--os-text-2);line-height:1.65;overflow-y:auto;flex:1;min-height:120px;display:flex;flex-direction:column;gap:10px;"></div>
       <div style="display:flex;gap:6px;padding:0.625rem 0.75rem;border-top:1px solid var(--os-line-soft);flex-shrink:0;">
         <input id="os-pregunta-input" type="text" placeholder="Escribe tu pregunta..." maxlength="400"
-          style="flex:1;background:rgba(232,234,240,0.05);border:1px solid var(--os-line);border-radius:6px;padding:7px 10px;font-size:12px;color:var(--os-text);font-family:var(--os-font-body);outline:none;" />
+          style="flex:1;background:var(--os-fill-subtle);border:1px solid var(--os-line);border-radius:6px;padding:7px 10px;font-size:12px;color:var(--os-text);font-family:var(--os-font-body);outline:none;" />
         <button id="os-pregunta-send" class="os-btn">Enviar</button>
       </div>
     </div>
@@ -449,6 +491,37 @@ const anyBottomActive = bottomNav.some(i => isActive(i.href));
     </nav>
 
     <script>
+      // ── Theme toggle (os-theme) ──
+      const OS_THEME_KEY = 'os-theme';
+      const OS_LIGHT_COLOR = '#FAFAF7';
+      const OS_DARK_COLOR = '#060C1E';
+      const osThemeColorMeta = document.getElementById('os-theme-color-meta');
+
+      function getOsTheme(): string {
+        return document.documentElement.getAttribute('data-theme') || 'light';
+      }
+      function applyOsTheme(theme: string) {
+        document.documentElement.setAttribute('data-theme', theme);
+        localStorage.setItem(OS_THEME_KEY, theme);
+        if (osThemeColorMeta) osThemeColorMeta.setAttribute('content', theme === 'dark' ? OS_DARK_COLOR : OS_LIGHT_COLOR);
+        document.querySelectorAll('[data-os-theme-icon="sun"]').forEach((el) => {
+          (el as HTMLElement).style.display = theme === 'dark' ? 'flex' : 'none';
+        });
+        document.querySelectorAll('[data-os-theme-icon="moon"]').forEach((el) => {
+          (el as HTMLElement).style.display = theme === 'light' ? 'flex' : 'none';
+        });
+      }
+      // Guarda: evita doble-init si Astro reejecuta el script en navegacion client-side.
+      if (!(window as any).__osThemeToggleInit) {
+        (window as any).__osThemeToggleInit = true;
+        applyOsTheme(getOsTheme());
+        document.querySelectorAll('[data-os-theme-toggle]').forEach((btn) => {
+          btn.addEventListener('click', () => {
+            applyOsTheme(getOsTheme() === 'dark' ? 'light' : 'dark');
+          });
+        });
+      }
+
       // ── Mobile drawer (Mas) ──
       const menuClose = document.getElementById('menu-close');
       const mobileNav = document.getElementById('mobile-nav');
@@ -482,20 +555,20 @@ const anyBottomActive = bottomNav.some(i => isActive(i.href));
       function renderChat(pending = false) {
         if (!preguntaBody) return;
         if (!chatHistory.length && !pending) {
-          preguntaBody.innerHTML = '<p style="color:#6B7280;font-size:12px;margin:auto;text-align:center;">Pregunta lo que quieras. El cerebro recuerda esta conversacion.</p>';
+          preguntaBody.innerHTML = '<p style="color:var(--os-muted);font-size:12px;margin:auto;text-align:center;">Pregunta lo que quieras. El cerebro recuerda esta conversacion.</p>';
           return;
         }
         let html = chatHistory.map((t) => {
           if (t.role === 'user') {
-            return '<div style="align-self:flex-end;max-width:85%;background:#3B4ED9;color:#fff;padding:7px 11px;border-radius:10px 10px 2px 10px;font-size:13px;white-space:pre-wrap;">' + escHtml(t.text) + '</div>';
+            return '<div style="align-self:flex-end;max-width:85%;background:var(--os-accent);color:#fff;padding:7px 11px;border-radius:10px 10px 2px 10px;font-size:13px;white-space:pre-wrap;">' + escHtml(t.text) + '</div>';
           }
           if (t.role === 'error') {
-            return '<div style="align-self:flex-start;max-width:85%;color:#F87171;font-size:12px;padding:2px 0;">' + escHtml(t.text) + '</div>';
+            return '<div style="align-self:flex-start;max-width:85%;color:var(--os-error);font-size:12px;padding:2px 0;">' + escHtml(t.text) + '</div>';
           }
-          return '<div style="align-self:flex-start;max-width:90%;background:rgba(232,234,240,0.05);border:1px solid rgba(232,234,240,0.08);color:#C5C5D7;padding:8px 11px;border-radius:10px 10px 10px 2px;font-size:13px;white-space:pre-wrap;">' + escHtml(t.text) + '</div>';
+          return '<div style="align-self:flex-start;max-width:90%;background:var(--os-fill-subtle);border:1px solid var(--os-line-soft);color:var(--os-text-2);padding:8px 11px;border-radius:10px 10px 10px 2px;font-size:13px;white-space:pre-wrap;">' + escHtml(t.text) + '</div>';
         }).join('');
         if (pending) {
-          html += '<div style="align-self:flex-start;color:#6B7280;font-size:12px;padding:2px 0;">Consultando el cerebro...</div>';
+          html += '<div style="align-self:flex-start;color:var(--os-muted);font-size:12px;padding:2px 0;">Consultando el cerebro...</div>';
         }
         preguntaBody.innerHTML = html;
         preguntaBody.scrollTop = preguntaBody.scrollHeight;

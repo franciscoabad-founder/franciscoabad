@@ -201,7 +201,7 @@ import OSLayout from '../../layouts/OSLayout.astro';
 var cuentas = [], deudas = [], gastos = [], presupuestos = [], porCobrar = [];
 var pcFilter = 'todos';
 var PC_LABEL = { aplicando:'Aplicando', esperando:'Esperando', aprobado_sin_pagar:'Aprobado sin pagar', cobrado:'Cobrado' };
-var PC_COLOR = { aplicando:'#6B7280', esperando:'#6B7AE8', aprobado_sin_pagar:'#FB923C', cobrado:'#22c55e' };
+var PC_COLOR = { aplicando:'#6B7280', esperando:'#6B7AE8', aprobado_sin_pagar:'#FB923C', cobrado:'var(--os-champagne)' };
 
 function esc(s) {
   return String(s == null ? '' : s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
@@ -272,12 +272,12 @@ function renderDeudas() {
   list.innerHTML = deudas.map(function(d) {
     var pagada = d.estado === 'pagada';
     return '<div style="display:flex;align-items:center;gap:12px;background:rgba(26,43,107,0.40);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,0.12);border-radius:12px;padding:0.6rem 0.875rem;opacity:' + (pagada ? '0.55' : '1') + ';">'
-      + iconChip(pagada ? 'check_circle' : 'south_west', pagada ? '#22c55e' : '#FB923C')
+      + iconChip(pagada ? 'check_circle' : 'south_west', pagada ? 'var(--os-champagne)' : '#FB923C')
       + '<p style="font-size:13px;color:#E8EAF0;margin:0;flex:1;min-width:0;text-decoration:' + (pagada ? 'line-through' : 'none') + ';">' + esc(d.acreedor) + '</p>'
       + (d.cuota ? '<span style="font-size:11px;color:#6B7280;">cuota ' + esc(money(d.cuota)) + '</span>' : '')
       + (d.fecha_limite ? dlDisplay(d.fecha_limite) : '')
       + '<span style="font-size:13px;color:#B5985A;font-family:\'JetBrains Mono\',monospace;font-weight:700;">' + esc(money(d.monto)) + '</span>'
-      + '<button onclick="toggleDeuda(\'' + d.id + '\',\'' + esc(d.estado) + '\')" title="Marcar pagada/activa" style="font-size:10px;color:' + (pagada ? '#22c55e' : '#6B7280') + ';background:none;border:1px solid rgba(255,255,255,0.12);border-radius:6px;padding:2px 8px;cursor:pointer;font-family:Montserrat,sans-serif;font-weight:600;white-space:nowrap;">' + (pagada ? 'pagada' : 'activa') + '</button>'
+      + '<button onclick="toggleDeuda(\'' + d.id + '\',\'' + esc(d.estado) + '\')" title="Marcar pagada/activa" style="font-size:10px;color:' + (pagada ? 'var(--os-champagne)' : '#6B7280') + ';background:none;border:1px solid rgba(255,255,255,0.12);border-radius:6px;padding:2px 8px;cursor:pointer;font-family:Montserrat,sans-serif;font-weight:600;white-space:nowrap;">' + (pagada ? 'pagada' : 'activa') + '</button>'
       + delBtn('delDeuda', d.id)
       + '</div>';
   }).join('');

@@ -125,7 +125,7 @@ export default function OSSaludProgreso() {
     Object.entries(analytics.volumenPorGrupo).map(([label, valor]) => ({ label, valor })).sort((a, b) => b.valor - a.valor),
   [analytics]);
 
-  const COLORES = ['#6B7AE8', '#3B4ED9', '#B5985A', '#22c55e'];
+  const COLORES = ['#6B7AE8', '#3B4ED9', '#B5985A', '#8A6F3D'];
 
   if (loading) return <p style={{ fontSize: 13, color: 'var(--os-muted)' }}>Cargando...</p>;
 

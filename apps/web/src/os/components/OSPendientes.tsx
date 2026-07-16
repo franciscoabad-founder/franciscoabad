@@ -12,9 +12,9 @@ interface Pendiente {
 
 const ESTADO_META: Record<string, { label: string; color: string; bg: string }> = {
   abierto:    { label: 'Abierto',    color: '#6B7AE8', bg: 'rgba(107,122,232,0.14)' },
-  convertido: { label: 'Convertido', color: '#22c55e', bg: 'rgba(34,197,94,0.12)' },
+  convertido: { label: 'Convertido', color: 'var(--os-champagne)', bg: 'rgba(181,152,90,0.12)' },
   descartado: { label: 'Descartado', color: '#6B7280', bg: 'rgba(107,114,128,0.14)' },
-  hecho:      { label: 'Hecho',      color: '#22c55e', bg: 'rgba(34,197,94,0.12)' },
+  hecho:      { label: 'Hecho',      color: 'var(--os-champagne)', bg: 'rgba(181,152,90,0.12)' },
 };
 
 const inputStyle: React.CSSProperties = {
@@ -196,7 +196,7 @@ export default function OSPendientes() {
                     Tarea
                   </button>
                   <button onClick={() => marcar(p.id, 'hecho')} title="Marcar hecho"
-                    style={{ background: 'rgba(34,197,94,0.10)', border: '1px solid rgba(34,197,94,0.35)', borderRadius: 6, color: '#22c55e', cursor: 'pointer', padding: '3px 9px', fontSize: 10, fontFamily: 'var(--os-font-display)', fontWeight: 700, textTransform: 'uppercase' }}>
+                    style={{ background: 'rgba(59,78,217,0.12)', border: '1px solid rgba(59,78,217,0.35)', borderRadius: 6, color: 'var(--os-accent)', cursor: 'pointer', padding: '3px 9px', fontSize: 10, fontFamily: 'var(--os-font-display)', fontWeight: 700, textTransform: 'uppercase' }}>
                     Hecho
                   </button>
                   <button onClick={() => marcar(p.id, 'descartado')} title="Descartar"
