@@ -399,7 +399,7 @@
   border: 1px solid var(--m-line);
 }
 [data-modulo="habitos"] .m-hp-seg.is-lleno { background: var(--m-ok); border-color: var(--m-ok); }
-[data-modulo="habitos"] .m-hp-seg.is-critico { background: #E8709A; border-color: #E8709A; }
+[data-modulo="habitos"] .m-hp-seg.is-critico { background: #D4537E; border-color: #D4537E; }
 
 [data-modulo="habitos"] .m-switch-row {
   display: flex;

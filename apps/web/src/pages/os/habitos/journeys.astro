@@ -67,7 +67,7 @@ cartasRenderizadas.sort((a, b) => a.journey.localeCompare(b.journey) || a.etapa 
           {cartasRenderizadas.map(({ id, title, Content }) => (
             <details id={`carta-${id}`} class="m-carta">
               <summary>{title}</summary>
-              <div style="margin-top:10px;font-size:13.5px;line-height:1.7;color:var(--m-muted);font-family:var(--os-font-body);">
+              <div style="margin-top:10px;font-size:13.5px;line-height:1.7;color:var(--m-muted);font-family:var(--m-font-rounded);">
                 <Content />
               </div>
             </details>

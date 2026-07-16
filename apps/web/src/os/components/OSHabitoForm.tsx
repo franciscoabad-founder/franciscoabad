@@ -27,7 +27,7 @@ const card: React.CSSProperties = {
 const input: React.CSSProperties = {
   background: 'var(--m-surface)', border: '1px solid var(--m-line)',
   borderRadius: 14, padding: '0.65rem 0.7rem', minHeight: 44, fontSize: 14, color: 'var(--m-fg)',
-  fontFamily: 'var(--os-font-body)', outline: 'none', width: '100%',
+  fontFamily: 'var(--m-font-rounded)', outline: 'none', width: '100%',
 };
 const inputTime: React.CSSProperties = { ...input };
 const btn: React.CSSProperties = {
@@ -146,7 +146,7 @@ export default function OSHabitoForm({ habito, onCerrar, onGuardado }: Props) {
           <button style={pill(tipo === 'diaria')} onClick={() => setTipo('diaria')}>Diaria</button>
           <button style={pill(tipo === 'habito')} onClick={() => setTipo('habito')}>Hábito +/-</button>
         </div>
-        <p style={{ fontSize: 11.5, color: 'var(--os-muted)', margin: '6px 0 0', lineHeight: 1.4 }}>{TIPO_EXPL[tipo]}</p>
+        <p style={{ fontSize: 11.5, color: 'var(--m-muted)', margin: '6px 0 0', lineHeight: 1.4 }}>{TIPO_EXPL[tipo]}</p>
       </div>
 
       {tipo === 'habito' && (
@@ -182,7 +182,7 @@ export default function OSHabitoForm({ habito, onCerrar, onGuardado }: Props) {
       <div>
         <span style={label}>Hora de recordatorio</span>
         <input style={{ ...inputTime, maxWidth: 160 }} type="time" value={horaRecordatorio} onChange={(e) => setHoraRecordatorio(e.target.value)} />
-        <p style={{ fontSize: 11, color: 'var(--os-muted)', margin: '6px 0 0' }}>Opcional. Te llega por Telegram.</p>
+        <p style={{ fontSize: 11, color: 'var(--m-muted)', margin: '6px 0 0' }}>Opcional. Te llega por Telegram.</p>
       </div>
 
       <div style={card}>
