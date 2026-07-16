@@ -3,6 +3,7 @@ import type { UnidadPeso } from './tipos';
 import { pill } from './estilos';
 import OSGfitRutinas from './OSGfitRutinas';
 import OSGfitBiblioteca from './OSGfitBiblioteca';
+import OSGfitProgreso from './OSGfitProgreso';
 
 export default function OSGfit() {
   const [tab, setTab] = useState<'planes' | 'biblioteca' | 'progreso'>('planes');
@@ -22,10 +23,11 @@ export default function OSGfit() {
       <div className="os-hscroll" style={{ display: 'flex', gap: 6 }}>
         <button style={pill(tab === 'planes')} onClick={() => setTab('planes')}>Planes</button>
         <button style={pill(tab === 'biblioteca')} onClick={() => setTab('biblioteca')}>Biblioteca</button>
-        <button style={{ ...pill(false), opacity: 0.5, cursor: 'not-allowed' }} disabled title="Próximamente">Progreso</button>
+        <button style={pill(tab === 'progreso')} onClick={() => setTab('progreso')}>Progreso</button>
       </div>
       {tab === 'planes' && <OSGfitRutinas unidad={unidad} onUnidad={cambiarUnidad} />}
       {tab === 'biblioteca' && <OSGfitBiblioteca />}
+      {tab === 'progreso' && <OSGfitProgreso unidad={unidad} />}
     </div>
   );
 }
