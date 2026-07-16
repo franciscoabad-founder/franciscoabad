@@ -164,7 +164,7 @@ export default function OSJourneys({ cartas }: Props) {
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '1.75rem' }}>
       {error && (
-        <div style={{ display: 'flex', alignItems: 'center', gap: 10, color: 'var(--m-accent)', fontSize: 13, fontFamily: 'var(--m-font-rounded)' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 10, color: 'var(--m-accent-text)', fontSize: 13, fontFamily: 'var(--m-font-rounded)' }}>
           <span>{error}</span>
           <button style={{ ...btnGhost, padding: '6px 10px', fontSize: 11, minHeight: 0 }} onClick={() => cargar()}>Reintentar</button>
         </div>

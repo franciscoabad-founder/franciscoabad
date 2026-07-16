@@ -236,7 +236,7 @@ export default function OSHabitos() {
       </div>
 
       {error && (
-        <div style={{ display: 'flex', alignItems: 'center', gap: 10, color: 'var(--m-accent)', fontSize: 13, fontFamily: 'var(--m-font-rounded)' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 10, color: 'var(--m-accent-text)', fontSize: 13, fontFamily: 'var(--m-font-rounded)' }}>
           <span>{error}</span>
           <button style={{ ...btnGhost, padding: '6px 10px', fontSize: 11, minHeight: 0 }} onClick={() => cargar()}>Reintentar</button>
         </div>
@@ -285,7 +285,7 @@ export default function OSHabitos() {
                       <div style={{ flex: 1, minWidth: 0 }}>
                         <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
                           <span style={{ fontSize: 14, fontWeight: 700, color: 'var(--m-fg)' }}>{h.nombre}</span>
-                          {h.es_core && <span className="m-estado" style={{ color: 'var(--m-accent)' }}>Core</span>}
+                          {h.es_core && <span className="m-estado" style={{ color: 'var(--m-accent-text)' }}>Core</span>}
                         </div>
                         {h.intencion && <p style={{ fontSize: 11, color: 'var(--m-muted)', margin: '2px 0 0', fontFamily: 'var(--m-font-rounded)' }}>{h.intencion}</p>}
                         {fb && <p className="m-terminal-line is-flash">{fb.texto}</p>}

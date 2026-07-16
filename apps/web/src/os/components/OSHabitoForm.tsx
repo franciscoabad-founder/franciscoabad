@@ -133,7 +133,7 @@ export default function OSHabitoForm({ habito, onCerrar, onGuardado }: Props) {
         <button style={btnGhost} onClick={onCerrar}>← Volver</button>
       </div>
 
-      {error && <div style={{ color: 'var(--m-accent)', fontSize: 13, fontFamily: 'var(--m-font-rounded)' }}>{error}</div>}
+      {error && <div style={{ color: 'var(--m-accent-text)', fontSize: 13, fontFamily: 'var(--m-font-rounded)' }}>{error}</div>}
 
       <div>
         <span style={label}>Nombre *</span>
@@ -196,7 +196,7 @@ export default function OSHabitoForm({ habito, onCerrar, onGuardado }: Props) {
         <button style={btn} disabled={guardando} onClick={guardar}>{guardando ? 'Guardando...' : 'Guardar hábito'}</button>
         <button style={btnGhost} onClick={onCerrar}>Cancelar</button>
         {habito && (
-          <button style={{ ...btnGhost, color: 'var(--m-accent)', borderColor: 'var(--m-accent)' }} onClick={archivar}>Archivar</button>
+          <button style={{ ...btnGhost, color: 'var(--m-accent-text)', borderColor: 'var(--m-accent-text)' }} onClick={archivar}>Archivar</button>
         )}
       </div>
     </div>

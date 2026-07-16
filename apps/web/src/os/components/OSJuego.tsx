@@ -281,7 +281,7 @@ export default function OSJuego() {
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
       {error && (
-        <div style={{ display: 'flex', alignItems: 'center', gap: 10, color: 'var(--m-accent)', fontSize: 13, fontFamily: 'var(--m-font-rounded)' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 10, color: 'var(--m-accent-text)', fontSize: 13, fontFamily: 'var(--m-font-rounded)' }}>
           <span>{error}</span>
           <button style={{ ...btnGhost, padding: '6px 10px', fontSize: 11, minHeight: 0 }} onClick={() => cargar()}>Reintentar</button>
         </div>
@@ -297,7 +297,7 @@ export default function OSJuego() {
                 <span className="m-hud-label" style={{ margin: 0 }}>Vida</span>
                 <span
                   className="m-telemetria"
-                  style={{ color: hpCritico ? '#D4537E' : 'var(--m-fg)', fontWeight: 700 }}
+                  style={{ color: hpCritico ? 'var(--m-danger)' : 'var(--m-fg)', fontWeight: 700 }}
                 >
                   {jugador.hp} / {jugador.hp_max}
                 </span>
@@ -326,7 +326,7 @@ export default function OSJuego() {
 
           <div className="m-telemetria" style={{ marginTop: 14, justifyContent: 'space-between' }}>
             {jugador?.config.oro_activo && (
-              <span>Oro <strong>⛁ {jugador?.oro ?? 0}</strong></span>
+              <span>Oro <strong style={{ color: 'var(--m-champagne)' }}>⛁ {jugador?.oro ?? 0}</strong></span>
             )}
             <span>XP hoy <strong>+{eventosHoy?.xp ?? 0}</strong></span>
             {jugador?.config.oro_activo && <span>Oro hoy <strong>+{eventosHoy?.oro ?? 0}</strong></span>}
@@ -429,8 +429,8 @@ export default function OSJuego() {
                       </div>
                       {q.apuesta_oro > 0 && (
                         <div style={{ textAlign: 'right' }}>
-                          <span className="m-precio" style={{ color: 'var(--m-accent)' }}>Apuesta ⛁ {q.apuesta_oro}</span>
-                          <p style={{ fontSize: 10, color: 'var(--m-accent)', margin: '2px 0 0', fontFamily: 'var(--m-font-rounded)' }}>
+                          <span className="m-precio" style={{ color: 'var(--m-champagne)' }}>Apuesta ⛁ {q.apuesta_oro}</span>
+                          <p style={{ fontSize: 10, color: 'var(--m-accent-text)', margin: '2px 0 0', fontFamily: 'var(--m-font-rounded)' }}>
                             Si fallas la pierdes
                           </p>
                         </div>
@@ -456,7 +456,7 @@ export default function OSJuego() {
 
           {formQuestAbierto ? (
             <form onSubmit={crearQuest} style={{ ...card, display: 'flex', flexDirection: 'column', gap: 10 }}>
-              {errorQ && <p style={{ fontSize: 12, color: 'var(--m-accent)', fontFamily: 'var(--m-font-rounded)', margin: 0 }}>{errorQ}</p>}
+              {errorQ && <p style={{ fontSize: 12, color: 'var(--m-accent-text)', fontFamily: 'var(--m-font-rounded)', margin: 0 }}>{errorQ}</p>}
               <div>
                 <label className="m-label">Título</label>
                 <input className="m-input" value={tituloQ} onChange={(e) => setTituloQ(e.target.value)} placeholder="Ej. 4 sesiones de gym esta semana" required />
@@ -525,7 +525,7 @@ export default function OSJuego() {
                     <div key={q.id} className="m-mission" style={{ justifyContent: 'space-between' }}>
                       <span style={{ fontSize: 12.5, color: 'var(--m-fg)' }}>{q.titulo}</span>
                       {q.estado === 'ganada' && <span className="m-estado is-ok">Ganada</span>}
-                      {q.estado === 'perdida' && <span className="m-estado" style={{ color: 'var(--m-accent)' }}>Perdida</span>}
+                      {q.estado === 'perdida' && <span className="m-estado" style={{ color: 'var(--m-accent-text)' }}>Perdida</span>}
                       {q.estado === 'cancelada' && <span className="m-estado">Cancelada</span>}
                     </div>
                   ))}

@@ -1,30 +1,42 @@
 /* ============================================================================
-   Modulo Habitos — capa "Clay calido" (claymorphism suave, pastel claro)
+   Modulo Habitos — capa "Clay" (claymorphism suave) con TRES paletas
+   intercambiables via [data-palette]: "pastel", "marca-light", "marca-dark".
    Scope: [data-modulo="habitos"]. Solo se importa desde las paginas del
    modulo (habitos.astro, habitos/journeys.astro). El resto del OS (shell,
    nav, home) NO carga este archivo y sigue en Ultramarine v5.
-   Este modulo es una isla clara pastel que vive dentro de un shell oscuro.
+   La ESTRUCTURA clay (radios, forma de sombra, fuente Nunito, sentence case)
+   es identica en las tres paletas; solo cambian los VALORES de los tokens.
    Canon: apps/web/docs/os-diseno-conductual.md
    ========================================================================== */
 
 [data-modulo="habitos"] {
-  --m-bg:      #EEEDFE;
-  --m-surface: #FFFFFF;
-  --m-surface-2: #F6F5FE;
-  --m-fg:      #26215C;
-  --m-muted:   #6E6A8A;
-  --m-accent:  #7F77DD;
+  /* Tokens por defecto = paleta "marca-light" (Linen + Ultramarine). Sirven
+     de fallback mientras el JS del selector de paleta aplica [data-palette]
+     (o si el atributo no llega a existir por algun motivo). */
+  --m-bg:        #FAFAF7;
+  --m-surface:   #FFFFFF;
+  --m-surface-2: #F1F3F8;
+  --m-fg:        #2D3748;
+  --m-muted:     #6B7280;
+  --m-accent:      #3B4ED9;
+  --m-accent-text: #3B4ED9;
   --m-ok:      #1D9E75;
   --m-warn:    #EF9F27;
-  --m-line:    rgba(101, 90, 170, 0.14);
-  --m-line-soft: rgba(101, 90, 170, 0.08);
+  --m-danger:  #D4537E;
+  --m-champagne: #8A6F3D;
+  --m-line:      rgba(45, 55, 72, 0.12);
+  --m-line-soft: rgba(45, 55, 72, 0.06);
+  --m-warn-bg: #FBEFD9;
+  --m-warn-fg: #7A4E12;
 
   /* Clay: profundidad falsa via doble sombra suave (sin gradientes). */
-  --m-shadow: 0 6px 14px rgba(101, 90, 170, 0.18), inset 0 -3px 6px rgba(101, 90, 170, 0.10), inset 0 2px 3px rgba(255, 255, 255, 0.9);
-  --m-shadow-sm: 0 3px 8px rgba(101, 90, 170, 0.16);
+  --m-shadow: 0 6px 14px rgba(45, 55, 72, 0.13), inset 0 -3px 6px rgba(45, 55, 72, 0.07), inset 0 2px 3px rgba(255, 255, 255, 0.9);
+  --m-shadow-sm: 0 3px 8px rgba(45, 55, 72, 0.12);
 
   /* Macro: Nunito 800 cubre titulares y macro-tipografia. Fallback a las
-     fuentes ya cargadas por el OS mientras Nunito termina de resolver. */
+     fuentes ya cargadas por el OS mientras Nunito termina de resolver.
+     Estos tokens de fuente son compartidos por las tres paletas: no se
+     redefinen en los scopes [data-palette] de abajo. */
   --m-font-macro: 'Nunito', var(--os-font-display, sans-serif);
   --m-font-rounded: 'Nunito', var(--os-font-body, 'Inter', sans-serif);
   /* Alias: cualquier referencia residual a --m-font-mono cae en la fuente
@@ -41,6 +53,40 @@
 
 @media (min-width: 640px) {
   [data-modulo="habitos"] { padding: 1.5rem; margin: -1.5rem; }
+}
+
+/* ── Paletas intercambiables ──
+   Cada scope redefine EL MISMO set completo de tokens de color/sombra.
+   La estructura (selectores, radios, tipografia) vive arriba y no se toca. */
+
+/* Pastel: violeta claro (paleta original del modulo). */
+[data-modulo="habitos"][data-palette="pastel"] {
+  --m-bg: #EEEDFE; --m-surface: #FFFFFF; --m-surface-2: #F6F5FE; --m-fg: #26215C; --m-muted: #6E6A8A;
+  --m-accent: #7F77DD; --m-accent-text: #7F77DD; --m-ok: #1D9E75; --m-warn: #EF9F27; --m-danger: #D4537E;
+  --m-champagne: #8A6F3D; --m-line: rgba(101, 90, 170, 0.14); --m-line-soft: rgba(101, 90, 170, 0.08);
+  --m-warn-bg: #FDF0DA; --m-warn-fg: #7A4E12;
+  --m-shadow: 0 6px 14px rgba(101, 90, 170, 0.18), inset 0 -3px 6px rgba(101, 90, 170, 0.10), inset 0 2px 3px rgba(255, 255, 255, 0.9);
+  --m-shadow-sm: 0 3px 8px rgba(101, 90, 170, 0.16);
+}
+
+/* Marca-light: Linen + Ultramarine (brand claro, Ultramarine v5). */
+[data-modulo="habitos"][data-palette="marca-light"] {
+  --m-bg: #FAFAF7; --m-surface: #FFFFFF; --m-surface-2: #F1F3F8; --m-fg: #2D3748; --m-muted: #6B7280;
+  --m-accent: #3B4ED9; --m-accent-text: #3B4ED9; --m-ok: #1D9E75; --m-warn: #EF9F27; --m-danger: #D4537E;
+  --m-champagne: #8A6F3D; --m-line: rgba(45, 55, 72, 0.12); --m-line-soft: rgba(45, 55, 72, 0.06);
+  --m-warn-bg: #FBEFD9; --m-warn-fg: #7A4E12;
+  --m-shadow: 0 6px 14px rgba(45, 55, 72, 0.13), inset 0 -3px 6px rgba(45, 55, 72, 0.07), inset 0 2px 3px rgba(255, 255, 255, 0.9);
+  --m-shadow-sm: 0 3px 8px rgba(45, 55, 72, 0.12);
+}
+
+/* Marca-dark: Ink + Ultramarine (brand oscuro, Ultramarine v5). */
+[data-modulo="habitos"][data-palette="marca-dark"] {
+  --m-bg: #0E1738; --m-surface: #1A2B6B; --m-surface-2: #131F4A; --m-fg: #E8EAF0; --m-muted: #9AA0BE;
+  --m-accent: #3B4ED9; --m-accent-text: #6B7AE8; --m-ok: #35C79A; --m-warn: #EF9F27; --m-danger: #E8709A;
+  --m-champagne: #B5985A; --m-line: rgba(232, 234, 240, 0.12); --m-line-soft: rgba(232, 234, 240, 0.07);
+  --m-warn-bg: rgba(239, 159, 39, 0.16); --m-warn-fg: #F0C070;
+  --m-shadow: 0 8px 18px rgba(0, 0, 0, 0.45), inset 0 -3px 6px rgba(0, 0, 0, 0.30), inset 0 2px 3px rgba(255, 255, 255, 0.05);
+  --m-shadow-sm: 0 4px 10px rgba(0, 0, 0, 0.40);
 }
 
 /* ── Header de pagina dentro del modulo ── */
@@ -121,8 +167,8 @@
   position: relative;
   border: none;
   border-radius: 16px;
-  background: #FDF0DA;
-  color: #7A4E12;
+  background: var(--m-warn-bg);
+  color: var(--m-warn-fg);
   box-shadow: var(--m-shadow-sm);
   padding: 0.7rem 0.9rem;
   display: flex;
@@ -134,7 +180,7 @@
   font-size: 12px;
   font-weight: 600;
   letter-spacing: normal;
-  color: #7A4E12;
+  color: var(--m-warn-fg);
   margin: 0;
   line-height: 1.4;
 }
@@ -225,7 +271,7 @@
 }
 [data-modulo="habitos"] .m-glyph-btn:active { transform: translateY(1px); }
 [data-modulo="habitos"] .m-glyph-btn.is-mas:hover { color: var(--m-ok); }
-[data-modulo="habitos"] .m-glyph-btn.is-menos:hover { color: var(--m-accent); }
+[data-modulo="habitos"] .m-glyph-btn.is-menos:hover { color: var(--m-accent-text); }
 [data-modulo="habitos"] .m-glyph-count {
   font-family: var(--m-font-rounded);
   font-size: 11px;
@@ -272,7 +318,7 @@
 [data-modulo="habitos"] .m-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
 [data-modulo="habitos"] .m-btn-ghost {
   background: transparent;
-  color: var(--m-accent);
+  color: var(--m-accent-text);
   border: 1px solid var(--m-line);
   border-radius: 14px;
   padding: 0.6rem 0.9rem;
@@ -284,7 +330,10 @@
   transition: transform 0.1s;
 }
 [data-modulo="habitos"] .m-btn-ghost:active { transform: translateY(1px); }
-[data-modulo="habitos"] .m-btn-ghost.is-danger { color: #D4537E; border-color: rgba(212, 83, 126, 0.35); }
+[data-modulo="habitos"] .m-btn-ghost.is-danger {
+  color: var(--m-danger);
+  border-color: color-mix(in srgb, var(--m-danger) 35%, transparent);
+}
 
 /* ── Inputs redondeados ── */
 [data-modulo="habitos"] .m-label {
@@ -311,7 +360,10 @@
 }
 [data-modulo="habitos"] .m-input:focus {
   border-color: var(--m-accent);
-  box-shadow: 0 0 0 3px rgba(127, 119, 221, 0.25);
+  /* Anillo de foco derivado del accent activo (color-mix) para que se adapte
+     a cada paleta. Fallback documentado en el prompt: rgba neutro fijo si
+     color-mix no compilara, pero el build lo soporta. */
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--m-accent) 30%, transparent);
 }
 
 /* ── Pills toggle (dificultad / dias) ── */
@@ -368,7 +420,10 @@
 [data-modulo="habitos"] .m-journey-estado.en-curso { background: rgba(239, 159, 39, 0.16); color: #96650F; }
 [data-modulo="habitos"] .m-journey-estado.bloqueado { background: #EEECF4; color: var(--m-muted); }
 [data-modulo="habitos"] .m-journey-estado.completo { background: rgba(29, 158, 117, 0.16); color: var(--m-ok); }
-[data-modulo="habitos"] .m-journey-estado.disponible { background: rgba(127, 119, 221, 0.16); color: var(--m-accent); }
+[data-modulo="habitos"] .m-journey-estado.disponible {
+  background: color-mix(in srgb, var(--m-accent-text) 16%, transparent);
+  color: var(--m-accent-text);
+}
 
 [data-modulo="habitos"] details.m-carta summary {
   font-family: var(--m-font-rounded);
@@ -399,7 +454,7 @@
   border: 1px solid var(--m-line);
 }
 [data-modulo="habitos"] .m-hp-seg.is-lleno { background: var(--m-ok); border-color: var(--m-ok); }
-[data-modulo="habitos"] .m-hp-seg.is-critico { background: #D4537E; border-color: #D4537E; }
+[data-modulo="habitos"] .m-hp-seg.is-critico { background: var(--m-danger); border-color: var(--m-danger); }
 
 [data-modulo="habitos"] .m-switch-row {
   display: flex;
@@ -461,4 +516,45 @@
   letter-spacing: normal;
   color: var(--m-fg);
   white-space: nowrap;
+}
+
+/* ── Selector de paleta flotante ──
+   Vive dentro del scope del modulo para heredar surface/shadow de la paleta
+   activa. El control (botones que setean [data-palette]) lo agrega otra
+   pieza; aqui solo el estilo clay del contenedor. */
+[data-modulo="habitos"] .m-palette-switch {
+  position: fixed;
+  bottom: 16px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 50;
+  display: flex;
+  gap: 4px;
+  padding: 5px;
+  border-radius: 999px;
+  background: var(--m-surface);
+  box-shadow: var(--m-shadow);
+  font-family: var(--m-font-rounded);
+}
+[data-modulo="habitos"] .m-palette-switch button {
+  border: none;
+  background: transparent;
+  color: var(--m-muted);
+  font-family: var(--m-font-rounded);
+  font-weight: 700;
+  font-size: 12px;
+  padding: 7px 12px;
+  border-radius: 999px;
+  cursor: pointer;
+  min-height: 36px;
+}
+[data-modulo="habitos"] .m-palette-switch button.is-active {
+  background: var(--m-accent);
+  color: #fff;
+}
+[data-modulo="habitos"] .m-palette-switch .lbl {
+  color: var(--m-muted);
+  font-size: 11px;
+  padding: 0 6px;
+  align-self: center;
 }

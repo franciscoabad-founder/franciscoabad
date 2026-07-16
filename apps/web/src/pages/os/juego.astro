@@ -2,11 +2,13 @@
 export const prerender = false;
 import OSLayout from '../../layouts/OSLayout.astro';
 import OSJuego from '../../os/components/OSJuego';
+import OSPaletteSwitch from '../../os/components/OSPaletteSwitch.astro';
 import '../../styles/os-conductual.css';
 ---
 
 <OSLayout title="Juego">
-  <div class="os-fade-up" data-modulo="habitos">
+  <div class="os-fade-up" data-modulo="habitos" data-palette="marca-light">
+    <OSPaletteSwitch />
     <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:1rem;position:relative;z-index:2;">
       <div>
         <p class="m-eyebrow">Sistema // Juego</p>

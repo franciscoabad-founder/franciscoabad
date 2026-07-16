@@ -1,0 +1,50 @@
+---
+// Selector de paleta SOLO DE PRUEBA para comparar las 3 paletas del modulo
+// Habitos ("pastel" | "marca-light" | "marca-dark") en vivo, sin recargar la
+// pagina. Se retira antes del rollout real; ver instrucciones de la rama
+// feat/habitos-paletas.
+---
+
+<div class="m-palette-switch">
+  <span class="lbl">Vista de prueba</span>
+  <button type="button" data-pal="pastel">Pastel</button>
+  <button type="button" data-pal="marca-light">Marca claro</button>
+  <button type="button" data-pal="marca-dark">Marca oscuro</button>
+</div>
+
+<script>
+  const STORAGE_KEY = 'os-habitos-palette';
+  const PALETAS_VALIDAS = ['pastel', 'marca-light', 'marca-dark'];
+
+  const zona = document.querySelector('[data-modulo="habitos"]');
+
+  if (zona) {
+    const botones = document.querySelectorAll('.m-palette-switch button[data-pal]');
+
+    function marcarActivo(pal: string) {
+      botones.forEach((btn) => {
+        btn.classList.toggle('is-active', btn.getAttribute('data-pal') === pal);
+      });
+    }
+
+    function aplicarPaleta(pal: string) {
+      (zona as HTMLElement).dataset.palette = pal;
+      marcarActivo(pal);
+    }
+
+    let guardada = localStorage.getItem(STORAGE_KEY);
+    if (!guardada || !PALETAS_VALIDAS.includes(guardada)) {
+      guardada = 'marca-light';
+    }
+    aplicarPaleta(guardada);
+
+    botones.forEach((btn) => {
+      btn.addEventListener('click', () => {
+        const pal = btn.getAttribute('data-pal');
+        if (!pal || !PALETAS_VALIDAS.includes(pal)) return;
+        aplicarPaleta(pal);
+        localStorage.setItem(STORAGE_KEY, pal);
+      });
+    });
+  }
+</script>
