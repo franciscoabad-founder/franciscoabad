@@ -84,12 +84,21 @@ function showWindow() {
   mainWindow.focus();
 }
 
-app.whenReady().then(() => {
-  createWindow();
-  createTray();
-});
+// Instancia unica: si ya hay una corriendo (bandeja o taskbar), enfocar esa en
+// lugar de abrir una ventana nueva. Se comporta como la PWA: un solo Pancho OS.
+const tieneLock = app.requestSingleInstanceLock();
+if (!tieneLock) {
+  app.quit();
+} else {
+  app.on('second-instance', () => showWindow());
 
-app.on('activate', () => showWindow());
+  app.whenReady().then(() => {
+    createWindow();
+    createTray();
+  });
+
+  app.on('activate', () => showWindow());
+}
 
 app.on('before-quit', () => {
   isQuitting = true;
