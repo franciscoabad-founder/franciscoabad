@@ -38,21 +38,21 @@ function isoWeekdayHoy(): number {
 }
 const DIA_LABEL: Record<number, string> = { 1: 'L', 2: 'M', 3: 'X', 4: 'J', 5: 'V', 6: 'S', 7: 'D' };
 
-// ── Estilos (Telemetria Tactica: tokens --m-* del modulo Habitos) ───────────
+// ── Estilos (Clay calido: tokens --m-* del modulo Habitos) ──────────────────
 const card: React.CSSProperties = {
-  background: 'var(--m-surface)', border: '1px solid var(--m-line)', borderRadius: 0, padding: '1rem',
+  background: 'var(--m-surface)', border: 'none', boxShadow: 'var(--m-shadow)', borderRadius: 20, padding: '1rem',
 };
 const btnGhost: React.CSSProperties = {
   background: 'transparent', color: 'var(--m-muted)', border: '1px solid var(--m-line)',
-  borderRadius: 0, padding: '10px 14px', minHeight: 44, fontSize: 11, fontFamily: 'var(--m-font-mono)',
-  fontWeight: 700, letterSpacing: '0.06em', textTransform: 'uppercase', cursor: 'pointer',
+  borderRadius: 14, padding: '10px 14px', minHeight: 44, fontSize: 11, fontFamily: 'var(--m-font-rounded)',
+  fontWeight: 700, cursor: 'pointer',
 };
 const sectionTitle: React.CSSProperties = {
-  fontFamily: 'var(--m-font-mono)', fontSize: 11, fontWeight: 700,
-  letterSpacing: '0.1em', textTransform: 'uppercase', color: 'var(--m-muted)', margin: '0 0 10px',
+  fontFamily: 'var(--m-font-rounded)', fontSize: 11, fontWeight: 700,
+  color: 'var(--m-muted)', margin: '0 0 10px',
 };
 
-// ── Anillo EMA mini (mismo patrón SVG, recoloreado a fósforo/mono) ──────────
+// ── Anillo EMA mini (mismo patrón SVG, recoloreado a clay) ──────────────────
 function AnilloEma({ valor, size = 30 }: { valor: number | null; size?: number }) {
   const r = (size - 6) / 2;
   const C = 2 * Math.PI * r;
@@ -60,7 +60,7 @@ function AnilloEma({ valor, size = 30 }: { valor: number | null; size?: number }
   return (
     <svg viewBox={`0 0 ${size} ${size}`} width={size} height={size} style={{ transform: 'rotate(-90deg)', flexShrink: 0 }}>
       <circle cx={size / 2} cy={size / 2} r={r} fill="none" stroke="var(--m-line)" strokeWidth="3" />
-      <circle cx={size / 2} cy={size / 2} r={r} fill="none" stroke="var(--m-fg)" strokeWidth="3" strokeLinecap="round"
+      <circle cx={size / 2} cy={size / 2} r={r} fill="none" stroke="var(--m-accent)" strokeWidth="3" strokeLinecap="round"
         strokeDasharray={`${pct * C} ${C}`} style={{ transition: 'stroke-dasharray .4s' }} />
     </svg>
   );
@@ -99,7 +99,7 @@ export default function OSHabitos() {
     if (!xp && !oro) return;
     const partes = [xp ? `+${xp} XP` : null, oro ? `+${oro} ORO` : null].filter(Boolean);
     const ts = Date.now();
-    setFeedback((cur) => ({ ...cur, [habitoId]: { texto: `>>> ${partes.join(' /// ')} /// REGISTRADO`, ts } }));
+    setFeedback((cur) => ({ ...cur, [habitoId]: { texto: `${partes.join(' · ')} · ¡anotado!`, ts } }));
     setTimeout(() => {
       setFeedback((cur) => {
         if (cur[habitoId]?.ts !== ts) return cur;
@@ -223,20 +223,20 @@ export default function OSHabitos() {
     <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
       {/* HUD de racha: primero lo que se pierde (loss aversion) */}
       <div className="m-hud">
-        <p className="m-hud-label">[ Racha activa / Dias ]</p>
-        <p className={`m-hud-num${hayRiesgo ? ' is-riesgo' : ''}`}>{String(mejorRacha).padStart(2, '0')}</p>
+        <p className="m-hud-label">Racha activa · días</p>
+        <p className={`m-hud-num${hayRiesgo ? ' is-riesgo' : ''}`}>{mejorRacha}</p>
         <div className="m-telemetria" style={{ marginTop: 10 }}>
-          <span>Nv.{String(perfil?.nivel.nivel ?? 1).padStart(2, '0')}</span>
-          <span>///</span>
-          <strong>{String(perfil?.xp_total ?? 0).padStart(4, '0')} XP</strong>
-          <span>&gt;&gt;&gt;</span>
-          <span>{String(perfil?.nivel.xpSiguiente ?? 0).padStart(4, '0')} AL SIGUIENTE</span>
+          <span>Nivel {perfil?.nivel.nivel ?? 1}</span>
+          <span>·</span>
+          <strong>{perfil?.xp_total ?? 0} XP</strong>
+          <span>·</span>
+          <span>{perfil?.nivel.xpSiguiente ?? 0} para subir</span>
         </div>
         <div className="m-bar"><div className="m-bar-fill" style={{ width: `${progresoPct}%` }} /></div>
       </div>
 
       {error && (
-        <div style={{ display: 'flex', alignItems: 'center', gap: 10, color: 'var(--m-accent)', fontSize: 13, fontFamily: 'var(--m-font-mono)' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 10, color: 'var(--m-accent)', fontSize: 13, fontFamily: 'var(--m-font-rounded)' }}>
           <span>{error}</span>
           <button style={{ ...btnGhost, padding: '6px 10px', fontSize: 11, minHeight: 0 }} onClick={() => cargar()}>Reintentar</button>
         </div>
@@ -244,12 +244,12 @@ export default function OSHabitos() {
 
       {alertaFalloAyer && (
         <div className="m-banda-alerta">
-          <p>[ NO SE FALLA DOS VECES ] {alertaFalloAyer}</p>
+          <p>No se falla dos veces: {alertaFalloAyer}</p>
         </div>
       )}
 
       {loading ? (
-        <p style={{ fontSize: 13, color: 'var(--m-muted)', fontFamily: 'var(--m-font-mono)' }}>Cargando...</p>
+        <p style={{ fontSize: 13, color: 'var(--m-muted)', fontFamily: 'var(--m-font-rounded)' }}>Cargando...</p>
       ) : habitos.length === 0 ? (
         <div style={{ ...card, display: 'flex', flexDirection: 'column', gap: 10, alignItems: 'center', textAlign: 'center', padding: '2rem 1rem' }}>
           <p style={{ fontSize: 14, color: 'var(--m-muted)', margin: 0 }}>
@@ -262,9 +262,9 @@ export default function OSHabitos() {
         <>
           {/* Diarias de hoy: lista de misiones */}
           <div>
-            <p className="m-section-title">[ Diarias de hoy ]</p>
+            <p className="m-section-title">Diarias de hoy</p>
             {diariasHoy.length === 0 ? (
-              <p style={{ fontSize: 13, color: 'var(--m-muted)', fontFamily: 'var(--m-font-mono)' }}>Nada programado para hoy.</p>
+              <p style={{ fontSize: 13, color: 'var(--m-muted)', fontFamily: 'var(--m-font-rounded)' }}>Nada programado para hoy.</p>
             ) : (
               <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
                 {diariasHoy.map((h) => {
@@ -284,13 +284,13 @@ export default function OSHabitos() {
                       </button>
                       <div style={{ flex: 1, minWidth: 0 }}>
                         <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
-                          <span style={{ fontSize: 14, fontWeight: 700, color: 'var(--m-fg)', textTransform: 'uppercase' }}>{h.nombre}</span>
-                          {h.es_core && <span className="m-estado" style={{ color: 'var(--m-accent)' }}>[ CORE ]</span>}
+                          <span style={{ fontSize: 14, fontWeight: 700, color: 'var(--m-fg)' }}>{h.nombre}</span>
+                          {h.es_core && <span className="m-estado" style={{ color: 'var(--m-accent)' }}>Core</span>}
                         </div>
-                        {h.intencion && <p style={{ fontSize: 11, color: 'var(--m-muted)', margin: '2px 0 0', fontFamily: 'var(--m-font-mono)' }}>{h.intencion}</p>}
+                        {h.intencion && <p style={{ fontSize: 11, color: 'var(--m-muted)', margin: '2px 0 0', fontFamily: 'var(--m-font-rounded)' }}>{h.intencion}</p>}
                         {fb && <p className="m-terminal-line is-flash">{fb.texto}</p>}
                       </div>
-                      <span className={`m-estado${hecho ? ' is-ok' : ''}`}>{hecho ? '[ OK ]' : '[ -- ]'}</span>
+                      <span className={`m-estado${hecho ? ' is-ok' : ''}`}>{hecho ? 'Hecho' : 'Pendiente'}</span>
                       <AnilloEma valor={h.ema} size={30} />
                       <button style={{ ...btnGhost, padding: '8px 10px', minHeight: 0, flexShrink: 0 }} onClick={() => setFormAbierto(h)} title="Editar">✎</button>
                     </div>
@@ -302,9 +302,9 @@ export default function OSHabitos() {
 
           {/* Hábitos +/- */}
           <div>
-            <p className="m-section-title">[ Hábitos ]</p>
+            <p className="m-section-title">Hábitos</p>
             {habitosMasMenos.length === 0 ? (
-              <p style={{ fontSize: 13, color: 'var(--m-muted)', fontFamily: 'var(--m-font-mono)' }}>Sin hábitos +/- activos.</p>
+              <p style={{ fontSize: 13, color: 'var(--m-muted)', fontFamily: 'var(--m-font-rounded)' }}>Sin hábitos +/- activos.</p>
             ) : (
               <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
                 {habitosMasMenos.map((h) => {
@@ -317,9 +317,9 @@ export default function OSHabitos() {
                     <div key={h.id} className="m-mission" style={{ flexWrap: 'wrap' }}>
                       <div style={{ flex: 1, minWidth: 0 }}>
                         <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
-                          <span style={{ fontSize: 14, fontWeight: 700, color: 'var(--m-fg)', textTransform: 'uppercase' }}>{h.nombre}</span>
+                          <span style={{ fontSize: 14, fontWeight: 700, color: 'var(--m-fg)' }}>{h.nombre}</span>
                         </div>
-                        {h.intencion && <p style={{ fontSize: 11, color: 'var(--m-muted)', margin: '2px 0 0', fontFamily: 'var(--m-font-mono)' }}>{h.intencion}</p>}
+                        {h.intencion && <p style={{ fontSize: 11, color: 'var(--m-muted)', margin: '2px 0 0', fontFamily: 'var(--m-font-rounded)' }}>{h.intencion}</p>}
                         {fb && <p className="m-terminal-line is-flash">{fb.texto}</p>}
                       </div>
                       <AnilloEma valor={h.ema} size={28} />
@@ -333,7 +333,7 @@ export default function OSHabitos() {
                               onClick={() => registrarCheck(h.id, 'menos')}
                               aria-label="Registrar fallo/menos"
                             >−</button>
-                            <span className="m-glyph-count">{String(contadores.menos).padStart(2, '0')}</span>
+                            <span className="m-glyph-count">{contadores.menos}</span>
                           </div>
                         )}
                         {permiteMas && (
@@ -345,7 +345,7 @@ export default function OSHabitos() {
                               onClick={() => registrarCheck(h.id, 'mas')}
                               aria-label="Registrar hecho"
                             >+</button>
-                            <span className="m-glyph-count">{String(contadores.mas).padStart(2, '0')}</span>
+                            <span className="m-glyph-count">{contadores.mas}</span>
                           </div>
                         )}
                       </div>
@@ -401,11 +401,11 @@ export default function OSHabitos() {
 
       <button className="m-btn" onClick={() => setFormAbierto('nuevo')}>+ Nuevo hábito</button>
 
-      {/* Celebración de subida de nivel: terminal, sin gradientes ni sombras suaves */}
+      {/* Celebración de subida de nivel: tile clay flotante */}
       {nivelUp != null && (
         <div className="habito-levelup" style={{ position: 'fixed', left: '50%', top: '90px', zIndex: 190, pointerEvents: 'none' }}>
-          <div style={{ background: 'var(--m-fg)', color: 'var(--m-bg)', fontFamily: 'var(--m-font-mono)', fontWeight: 700, fontSize: 13, letterSpacing: '0.06em', textTransform: 'uppercase', padding: '10px 20px', border: '1px solid var(--m-fg)', whiteSpace: 'nowrap' }}>
-            &gt;&gt;&gt; Nivel {nivelUp} /// Subida confirmada
+          <div style={{ background: 'var(--m-accent)', color: '#fff', fontFamily: 'var(--m-font-rounded)', fontWeight: 700, fontSize: 13, padding: '10px 20px', borderRadius: 999, boxShadow: 'var(--m-shadow)', border: 'none', whiteSpace: 'nowrap' }}>
+            ¡Subiste a nivel {nivelUp}! 🎉
           </div>
         </div>
       )}

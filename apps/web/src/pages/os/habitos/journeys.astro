@@ -50,9 +50,9 @@ cartasRenderizadas.sort((a, b) => a.journey.localeCompare(b.journey) || a.etapa 
       </div>
       <a
         href="/os/habitos"
-        style="font-size:11px;color:var(--m-muted);text-decoration:none;font-family:var(--m-font-mono);font-weight:700;text-transform:uppercase;letter-spacing:0.06em;white-space:nowrap;"
+        style="font-size:14px;color:var(--m-accent);text-decoration:none;font-family:var(--m-font-rounded);font-weight:700;white-space:nowrap;"
       >
-        [ ← Hábitos ]
+        ← Volver
       </a>
     </div>
 
@@ -62,7 +62,7 @@ cartasRenderizadas.sort((a, b) => a.journey.localeCompare(b.journey) || a.etapa 
 
     {cartasRenderizadas.length > 0 && (
       <div style="margin-top:2rem;position:relative;z-index:2;">
-        <p class="m-eyebrow" style="margin-bottom:10px;">[ Cartas de contenido ]</p>
+        <p class="m-eyebrow" style="margin-bottom:10px;">Cartas de contenido</p>
         <div style="display:flex;flex-direction:column;gap:8px;">
           {cartasRenderizadas.map(({ id, title, Content }) => (
             <details id={`carta-${id}`} class="m-carta">

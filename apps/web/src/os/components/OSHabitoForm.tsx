@@ -20,38 +20,37 @@ const TIPO_EXPL: Record<string, string> = {
   habito: 'Se registra cuantas veces quieras con + o −, sin horario fijo.',
 };
 
-// ── Estilos (Telemetria Tactica: tokens --m-* del modulo Habitos) ───────────
+// ── Estilos (Clay calido: tokens --m-* del modulo Habitos) ──────────────────
 const card: React.CSSProperties = {
-  background: 'var(--m-surface)', border: '1px solid var(--m-line)', borderRadius: 0, padding: '1rem',
+  background: 'var(--m-surface)', border: 'none', boxShadow: 'var(--m-shadow)', borderRadius: 20, padding: '1rem',
 };
 const input: React.CSSProperties = {
   background: 'var(--m-surface)', border: '1px solid var(--m-line)',
-  borderRadius: 0, padding: '0.65rem 0.7rem', minHeight: 44, fontSize: 14, color: 'var(--m-fg)',
+  borderRadius: 14, padding: '0.65rem 0.7rem', minHeight: 44, fontSize: 14, color: 'var(--m-fg)',
   fontFamily: 'var(--os-font-body)', outline: 'none', width: '100%',
 };
-const inputTime: React.CSSProperties = { ...input, colorScheme: 'dark' };
+const inputTime: React.CSSProperties = { ...input };
 const btn: React.CSSProperties = {
-  background: 'var(--m-fg)', color: 'var(--m-bg)', border: 'none', borderRadius: 0,
-  padding: '0.75rem 1.1rem', minHeight: 44, fontSize: 12, fontFamily: 'var(--m-font-mono)', fontWeight: 700,
-  letterSpacing: '0.06em', textTransform: 'uppercase', cursor: 'pointer',
+  background: 'var(--m-accent)', color: '#fff', border: 'none', borderRadius: 14,
+  padding: '0.75rem 1.1rem', minHeight: 44, fontSize: 12, fontFamily: 'var(--m-font-rounded)', fontWeight: 700,
+  cursor: 'pointer',
 };
 const btnGhost: React.CSSProperties = {
   background: 'transparent', color: 'var(--m-muted)', border: '1px solid var(--m-line)',
-  borderRadius: 0, padding: '0.6rem 0.9rem', minHeight: 44, fontSize: 11, fontFamily: 'var(--m-font-mono)',
-  letterSpacing: '0.06em', textTransform: 'uppercase', cursor: 'pointer',
+  borderRadius: 14, padding: '0.6rem 0.9rem', minHeight: 44, fontSize: 11, fontFamily: 'var(--m-font-rounded)',
+  cursor: 'pointer',
 };
 const label: React.CSSProperties = {
-  fontFamily: 'var(--m-font-mono)', fontSize: 10, fontWeight: 700, letterSpacing: '0.08em',
-  textTransform: 'uppercase', color: 'var(--m-muted)', marginBottom: 6, display: 'block',
+  fontFamily: 'var(--m-font-rounded)', fontSize: 10, fontWeight: 700,
+  color: 'var(--m-muted)', marginBottom: 6, display: 'block',
 };
 function pill(activo: boolean): React.CSSProperties {
   return {
     display: 'inline-flex', alignItems: 'center', justifyContent: 'center', minHeight: 44,
-    padding: '0.5rem 0.9rem', borderRadius: 0, fontSize: 12, fontFamily: 'var(--m-font-mono)', fontWeight: 700,
-    letterSpacing: '0.04em', textTransform: 'uppercase',
-    cursor: 'pointer', border: activo ? '1px solid var(--m-accent)' : '1px solid var(--m-line)',
-    background: activo ? 'var(--m-accent)' : 'transparent',
-    color: activo ? 'var(--m-fg)' : 'var(--m-muted)', transition: 'background .14s, color .14s, border-color .14s',
+    padding: '0.5rem 0.9rem', borderRadius: 999, fontSize: 12, fontFamily: 'var(--m-font-rounded)', fontWeight: 700,
+    cursor: 'pointer', border: 'none', boxShadow: 'var(--m-shadow-sm)',
+    background: activo ? 'var(--m-accent)' : 'var(--m-surface-2)',
+    color: activo ? '#fff' : 'var(--m-muted)', transition: 'background .14s, color .14s',
   };
 }
 
@@ -59,17 +58,18 @@ function Toggle({ checked, onChange, titulo, hint }: { checked: boolean; onChang
   return (
     <div style={{ display: 'flex', alignItems: 'flex-start', gap: 12, cursor: 'pointer' }} onClick={() => onChange(!checked)}>
       <span style={{
-        width: 44, height: 24, flexShrink: 0, marginTop: 1, position: 'relative', border: '1px solid var(--m-line)',
-        background: checked ? 'var(--m-accent)' : 'transparent', transition: 'background .15s',
+        width: 52, height: 28, flexShrink: 0, marginTop: 1, position: 'relative', border: 'none', borderRadius: 999,
+        background: checked ? 'var(--m-accent)' : '#D8D4EC', transition: 'background .15s',
       }}>
         <span style={{
-          position: 'absolute', top: 2, left: checked ? 21 : 2, width: 19, height: 19,
-          background: 'var(--m-fg)', transition: 'left .15s',
+          position: 'absolute', top: 3, left: 3, width: 22, height: 22, borderRadius: 999,
+          background: '#fff', boxShadow: 'var(--m-shadow-sm)',
+          transform: checked ? 'translateX(24px)' : 'translateX(0)', transition: 'transform .15s',
         }} />
       </span>
       <span>
-        <span style={{ fontSize: 13, color: 'var(--m-fg)', fontWeight: 700, textTransform: 'uppercase' }}>{titulo}</span>
-        {hint && <p style={{ fontSize: 11, color: 'var(--m-muted)', margin: '2px 0 0', lineHeight: 1.4, fontFamily: 'var(--m-font-mono)' }}>{hint}</p>}
+        <span style={{ fontSize: 13, color: 'var(--m-fg)', fontWeight: 700 }}>{titulo}</span>
+        {hint && <p style={{ fontSize: 11, color: 'var(--m-muted)', margin: '2px 0 0', lineHeight: 1.4, fontFamily: 'var(--m-font-rounded)' }}>{hint}</p>}
       </span>
     </div>
   );
@@ -130,10 +130,10 @@ export default function OSHabitoForm({ habito, onCerrar, onGuardado }: Props) {
     <div style={{ display: 'flex', flexDirection: 'column', gap: '1.1rem', maxWidth: 480, margin: '0 auto' }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <span className="m-h1" style={{ fontSize: 'clamp(1.1rem, 5vw, 1.5rem)' }}>{habito ? 'Editar hábito' : 'Nuevo hábito'}</span>
-        <button style={btnGhost} onClick={onCerrar}>[ ← Volver ]</button>
+        <button style={btnGhost} onClick={onCerrar}>← Volver</button>
       </div>
 
-      {error && <div style={{ color: 'var(--m-accent)', fontSize: 13, fontFamily: 'var(--m-font-mono)' }}>{error}</div>}
+      {error && <div style={{ color: 'var(--m-accent)', fontSize: 13, fontFamily: 'var(--m-font-rounded)' }}>{error}</div>}
 
       <div>
         <span style={label}>Nombre *</span>
