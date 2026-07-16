@@ -19,7 +19,8 @@ export type TipoEvento =
   | 'compra_recompensa'
   | 'loot'
   | 'muerte'
-  | 'ajuste';
+  | 'ajuste'
+  | 'logro';
 
 export type Prioridad = 'low' | 'medium' | 'high' | 'critical';
 
@@ -27,6 +28,9 @@ export interface RecompensaMeta {
   prioridad?: Prioridad;
   dificultad?: Dificultad;
   valor?: number;
+  /** Solo para tipo 'logro': premio fijo de la fila gfit_logros (no se deriva aquí). */
+  premio_xp?: number;
+  premio_oro?: number;
 }
 
 export interface Recompensa {
@@ -76,6 +80,12 @@ export function recompensaPorEvento(tipo: TipoEvento, meta: RecompensaMeta = {})
       const valor = meta.valor ?? 0;
       return recompensaCheck(valor, dificultad);
     }
+    case 'logro':
+      // El monto real vive en la fila gfit_logros (premio_xp/premio_oro), no aquí:
+      // el llamador (endpoint de logros) lo trae en meta y lo pasa explícito a
+      // registrarEvento (ev.xp/ev.oro), así que este caso normalmente ni se ejecuta.
+      // Se calcula igual por si algún día llega sin xp/oro explícitos.
+      return { xp: meta.premio_xp ?? 0, oro: meta.premio_oro ?? 0 };
     case 'diaria_fallo':
     case 'quest_ganada':
     case 'quest_perdida':
