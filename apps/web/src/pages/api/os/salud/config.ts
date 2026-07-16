@@ -43,6 +43,8 @@ export const PATCH: APIRoute = async (context) => {
     const campos = [
       'kcal_min', 'kcal_max', 'proteina_g', 'carbos_g', 'grasa_g_min', 'grasa_g_max',
       'ajustes_tipo_dia', 'protocolo_ayuno_default', 'unidad_peso', 'preferencias',
+      // Targets de Nutricion (paridad Yazio, ver 20260720000000_nutricion_yazio.sql).
+      'kcal_objetivo', 'proteina_objetivo_g', 'carbos_objetivo_g', 'grasa_objetivo_g',
     ];
     for (const c of campos) if (c in body) patch[c] = body[c];
     const { data, error } = await sb

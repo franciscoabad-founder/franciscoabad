@@ -6,6 +6,33 @@ import { isOsAuthorized, json } from '../../../../os/lib/osAuth';
 import { errMsg, numOrNull } from '../../../../lib/salud/apiHelpers';
 
 const FUENTES = ['personal', 'off', 'usda', 'latam'];
+const MODOS = ['recientes', 'frecuentes', 'favoritos'];
+
+// Adjunta alimento_porciones (tabla relacional) embebidas en cada fila de alimento,
+// para que el picker de porciones estilo Yazio no necesite un fetch aparte.
+async function conPorciones(
+  sb: ReturnType<typeof getSupabaseServer>,
+  alimentos: Array<Record<string, unknown>>
+) {
+  if (!alimentos.length) return alimentos;
+  const ids = [...new Set(alimentos.map((a) => a.id as string))];
+  const { data: porciones, error } = await sb
+    .from('alimento_porciones')
+    .select('*')
+    .in('alimento_id', ids)
+    .order('orden', { ascending: true });
+  if (error) throw error;
+  const porAlimento = new Map<string, unknown[]>();
+  for (const p of porciones ?? []) {
+    const lista = porAlimento.get(p.alimento_id) ?? [];
+    lista.push(p);
+    porAlimento.set(p.alimento_id, lista);
+  }
+  return alimentos.map((a) => ({
+    ...a,
+    alimento_porciones: porAlimento.get(a.id as string) ?? [],
+  }));
+}
 
 interface OffProduct {
   product_name?: string;
@@ -38,8 +65,28 @@ export const GET: APIRoute = async (context) => {
   const { url } = context;
   const q = url.searchParams.get('q')?.trim() || '';
   const barcode = url.searchParams.get('barcode')?.trim() || '';
+  const modo = url.searchParams.get('modo')?.trim() || '';
   try {
     const sb = getSupabaseServer();
+
+    // 0. Atajos de picker: recientes/frecuentes/favoritos (excluyentes con q/barcode).
+    if (modo) {
+      if (!MODOS.includes(modo)) {
+        return json({ error: `modo debe ser uno de: ${MODOS.join(', ')}` }, 400);
+      }
+      let query = sb.from('alimentos').select('*').limit(30);
+      if (modo === 'recientes') {
+        query = query.not('ultima_vez', 'is', null).order('ultima_vez', { ascending: false });
+      } else if (modo === 'frecuentes') {
+        query = query.gt('veces_usado', 0).order('veces_usado', { ascending: false });
+      } else {
+        query = query.eq('favorito', true).order('nombre', { ascending: true });
+      }
+      const { data, error } = await query;
+      if (error) throw error;
+      const alimentos = await conPorciones(sb, data ?? []);
+      return json({ alimentos, fuente: 'local', modo });
+    }
 
     // 1. Búsqueda por barcode: primero local, si no está consulta Open Food Facts.
     if (barcode) {
@@ -49,7 +96,9 @@ export const GET: APIRoute = async (context) => {
         .eq('barcode', barcode)
         .limit(1);
       if (error) throw error;
-      if (local && local.length) return json({ alimentos: local, fuente: 'local' });
+      if (local && local.length) {
+        return json({ alimentos: await conPorciones(sb, local), fuente: 'local' });
+      }
 
       // Consulta Open Food Facts server-side. El try/catch solo cubre la red de OFF;
       // el insert local queda FUERA para que un error de DB no se disfrace de "no encontrado".
@@ -75,7 +124,7 @@ export const GET: APIRoute = async (context) => {
           .select()
           .single();
         if (insErr) throw insErr;
-        return json({ alimentos: [guardado], fuente: 'off' });
+        return json({ alimentos: [{ ...guardado, alimento_porciones: [] }], fuente: 'off' });
       }
       return json({ alimentos: [], fuente: 'off_no_encontrado' });
     }
@@ -84,7 +133,8 @@ export const GET: APIRoute = async (context) => {
     // acentos y sin romper términos con paréntesis. term vacío/null => primeros 40 por nombre.
     const { data, error } = await sb.rpc('buscar_alimentos', { term: q || null, lim: 40 });
     if (error) throw error;
-    return json({ alimentos: data ?? [], fuente: 'local' });
+    const alimentos = await conPorciones(sb, data ?? []);
+    return json({ alimentos, fuente: 'local' });
   } catch (err) {
     return json({ error: errMsg(err) }, 502);
   }
@@ -118,6 +168,27 @@ export const POST: APIRoute = async (context) => {
       .single();
     if (error) throw error;
     return json({ alimento: data }, 201);
+  } catch (err) {
+    return json({ error: errMsg(err) }, 502);
+  }
+};
+
+export const PATCH: APIRoute = async (context) => {
+  if (!isOsAuthorized(context)) return json({ error: 'Unauthorized' }, 401);
+  const id = context.url.searchParams.get('id');
+  if (!id) return json({ error: 'id requerido' }, 400);
+  try {
+    const body = await context.request.json();
+    if (!('favorito' in body)) return json({ error: 'favorito requerido' }, 400);
+    const sb = getSupabaseServer();
+    const { data, error } = await sb
+      .from('alimentos')
+      .update({ favorito: !!body.favorito, updated_at: new Date().toISOString() })
+      .eq('id', id)
+      .select()
+      .single();
+    if (error) throw error;
+    return json({ alimento: data });
   } catch (err) {
     return json({ error: errMsg(err) }, 502);
   }
