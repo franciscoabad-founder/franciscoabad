@@ -3,6 +3,7 @@ export const prerender = false;
 import OSLayout from '../../../layouts/OSLayout.astro';
 import OSSaludDashboard from '../../../os/components/salud/OSSaludDashboard';
 import OSSaludNav from '../../../os/components/salud/OSSaludNav.astro';
+import OSOnboardingBanner from '../../../os/components/onboarding/OSOnboardingBanner';
 
 const fechaLarga = new Date().toLocaleDateString('es-EC', {
   weekday: 'long', day: 'numeric', month: 'long', year: 'numeric',
@@ -19,6 +20,7 @@ const fechaLarga = new Date().toLocaleDateString('es-EC', {
       <span style="font-size:12px;color:var(--os-muted);text-transform:capitalize;">{fechaLarga}</span>
     </div>
     <OSSaludNav activo="dashboard" />
+    <OSOnboardingBanner modulo="salud" client:load />
     <OSSaludDashboard client:load />
   </div>
 </OSLayout>
