@@ -6,18 +6,26 @@ interface Ayuno {
   protocolo: string; objetivo_horas: number; notas: string | null;
 }
 
-const PROTOCOLOS = [
+// Presets Yazio-style (Fase 5). El default se persiste en la columna existente
+// salud_config.protocolo_ayuno_default (+ horas custom en ayuno_objetivo_h) vía PATCH
+// /api/os/salud/config. Al iniciar un ayuno se manda el preset tal cual: el endpoint de
+// ayunos mapea '24h'/'36h' al enum legacy de la columna ayunos.protocolo y snapshotea
+// las horas reales en ayunos.objetivo_horas.
+const PRESETS: Array<{ key: string; label: string; horas: number | null }> = [
   { key: '16_8', label: '16:8', horas: 16 },
-  { key: '18_6', label: '18:6', horas: 18 },
-  { key: '20_4', label: '20:4', horas: 20 },
-  { key: 'omad', label: 'OMAD', horas: 23 },
-  { key: 'extendido', label: 'Extendido', horas: 36 },
-  { key: 'custom', label: 'Custom', horas: 16 },
+  { key: '24h', label: '24h', horas: 24 },
+  { key: '36h', label: '36h', horas: 36 },
+  { key: 'custom', label: 'Personalizado', horas: null },
 ];
 
 const card: React.CSSProperties = {
   background: 'var(--os-surface-2)', border: '1px solid var(--os-line-soft)',
   borderRadius: 'var(--os-r-card)', padding: '1rem',
+};
+const cardAviso: React.CSSProperties = {
+  ...card,
+  background: 'color-mix(in srgb, var(--os-warn) 14%, var(--os-surface-2))',
+  border: '1px solid color-mix(in srgb, var(--os-warn) 35%, transparent)',
 };
 const btn: React.CSSProperties = {
   background: 'var(--os-accent)', color: '#fff', border: 'none', borderRadius: 6,
@@ -28,16 +36,27 @@ const btnGhost: React.CSSProperties = {
   borderRadius: 6, padding: '8px 14px', fontSize: 13, cursor: 'pointer',
 };
 const selStyle: React.CSSProperties = {
-  background: '#0E1738', border: '1px solid var(--os-line)', borderRadius: 6,
-  padding: '8px 10px', fontSize: 13, color: 'var(--os-text)', colorScheme: 'dark', outline: 'none',
+  background: 'var(--os-surface)', border: '1px solid var(--os-line)', borderRadius: 6,
+  padding: '8px 10px', fontSize: 13, color: 'var(--os-text)', outline: 'none',
+};
+const pill: React.CSSProperties = {
+  background: 'var(--os-surface)', color: 'var(--os-text-2)', border: '1px solid var(--os-line)',
+  borderRadius: 'var(--os-r-full)', padding: '8px 16px', fontSize: 13, fontWeight: 600, cursor: 'pointer',
+};
+const pillActivo: React.CSSProperties = {
+  background: 'var(--os-accent)', color: '#fff', border: '1px solid var(--os-accent)',
 };
 
 export default function OSSaludAyuno() {
   const [activo, setActivo] = useState<Ayuno | null>(null);
+  const [finPrevisto, setFinPrevisto] = useState<string | null>(null);
+  const [sugerencia, setSugerencia] = useState<string | null>(null);
+  const [sugerenciaDescartada, setSugerenciaDescartada] = useState(false);
   const [historial, setHistorial] = useState<Ayuno[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
-  const [protocolo, setProtocolo] = useState('16_8');
+  const [preset, setPreset] = useState('16_8');
+  const [objetivoCustom, setObjetivoCustom] = useState(16);
   const [nowMs, setNowMs] = useState<number>(0); // tick de reloj; 0 hasta montar (evita hydration mismatch)
   const [editId, setEditId] = useState<string | null>(null);
   const [editVals, setEditVals] = useState({ inicio: '', fin: '' });
@@ -54,7 +73,17 @@ export default function OSSaludAyuno() {
       const dataHist = await resHist.json();
       if (dataAbierto.error) throw new Error(dataAbierto.error);
       setActivo(dataAbierto.ayuno ?? null);
-      if (dataAbierto.ayuno) setProtocolo(dataAbierto.ayuno.protocolo);
+      setFinPrevisto(dataAbierto.fin_previsto ?? null);
+      setSugerencia(dataAbierto.sugerencia ?? null);
+      setSugerenciaDescartada(false);
+      if (!dataAbierto.ayuno) {
+        // El pill selector solo importa cuando no hay ayuno activo (elige el objetivo
+        // del próximo ayuno). Se sincroniza con protocolo_ayuno_default de salud_config;
+        // tokens legacy sin pill propio ('18_6', 'omad', etc.) se muestran como custom.
+        const protocoloConfig = dataAbierto.protocolo ?? '16_8';
+        setPreset(PRESETS.some((p) => p.key === protocoloConfig) ? protocoloConfig : 'custom');
+        setObjetivoCustom(dataAbierto.objetivo_h ?? 16);
+      }
       setHistorial(dataHist.ayunos ?? []);
     } catch (e) {
       setError(e instanceof Error ? e.message : 'Error al cargar');
@@ -72,13 +101,27 @@ export default function OSSaludAyuno() {
     return () => { if (tickRef.current) clearInterval(tickRef.current); };
   }, []);
 
+  // Persiste el preset elegido como default en salud_config (protocolo_ayuno_default +
+  // ayuno_objetivo_h, vía la acción {protocolo, objetivo_h} del PATCH en config.ts).
+  async function cambiarProtocolo(nuevoPreset: string, objetivoOverride?: number) {
+    setPreset(nuevoPreset);
+    try {
+      const body: Record<string, unknown> = { protocolo: nuevoPreset };
+      if (nuevoPreset === 'custom') body.objetivo_h = objetivoOverride ?? objetivoCustom;
+      await fetch('/api/os/salud/config', {
+        method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body),
+      });
+    } catch { /* silencioso: el preset local ya quedó elegido para iniciar el ayuno */ }
+  }
+
   async function iniciar() {
     setError('');
-    const p = PROTOCOLOS.find((x) => x.key === protocolo) ?? PROTOCOLOS[0];
+    const p = PRESETS.find((x) => x.key === preset) ?? PRESETS[0];
+    const horas = preset === 'custom' ? (objetivoCustom || 16) : (p.horas as number);
     try {
       const res = await fetch('/api/os/salud/ayunos', {
         method: 'POST', headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ protocolo, objetivo_horas: p.horas }),
+        body: JSON.stringify({ protocolo: preset, objetivo_horas: horas }),
       });
       const data = await res.json();
       if (data.error) throw new Error(data.error);
@@ -122,8 +165,13 @@ export default function OSSaludAyuno() {
   }, [activo, nowMs]);
 
   const fase = faseActual(horasActual);
-  const progresoPct = activo && activo.objetivo_horas > 0
-    ? Math.min(100, (horasActual / activo.objetivo_horas) * 100) : 0;
+  // Objetivo informativo del ayuno en curso: su snapshot objetivo_horas. NUNCA se usa
+  // para auto-cerrar: el ring se capa visualmente en 100% y el timer sigue contando.
+  const objetivoActivo = activo ? (activo.objetivo_horas ?? 16) : 0;
+  const progresoPct = objetivoActivo > 0 ? Math.min(100, (horasActual / objetivoActivo) * 100) : 0;
+  const horasPasadoObjetivo = activo ? Math.max(0, horasActual - objetivoActivo) : 0;
+  const cumplioObjetivo = activo ? horasActual >= objetivoActivo : false;
+  const colorRing = cumplioObjetivo ? 'var(--os-champagne)' : 'var(--os-accent)';
   const C = 2 * Math.PI * 54;
 
   // Racha semanal: ayunos completados (con fin) en los últimos 7 días.
@@ -139,49 +187,107 @@ export default function OSSaludAyuno() {
     return new Date(d.getTime() - off * 60000).toISOString().slice(0, 16);
   }
 
+  function fmtFecha(iso: string): string {
+    return new Date(iso).toLocaleString('es-EC', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' });
+  }
+
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
       {error && <div style={{ color: 'var(--os-error)', fontSize: 13 }}>{error}</div>}
 
       {loading ? (
         <p style={{ fontSize: 13, color: 'var(--os-muted)' }}>Cargando...</p>
-      ) : activo ? (
-        // ── Ayuno en curso: timer en vivo ──
-        <div style={{ ...card, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 16 }}>
-          <div style={{ position: 'relative', width: 200, height: 200 }}>
-            <svg viewBox="0 0 120 120" width="200" height="200" style={{ transform: 'rotate(-90deg)' }}>
-              <circle cx="60" cy="60" r="54" fill="none" stroke="var(--os-line)" strokeWidth="7" />
-              <circle cx="60" cy="60" r="54" fill="none" stroke="var(--os-accent)" strokeWidth="7" strokeLinecap="round"
-                strokeDasharray={`${(progresoPct / 100) * C} ${C}`} style={{ transition: 'stroke-dasharray 1s linear' }} />
-            </svg>
-            <div style={{ position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
-              <span style={{ fontFamily: 'var(--os-font-mono)', fontSize: 30, fontWeight: 700, lineHeight: 1 }}>{formatearDuracion(horasActual)}</span>
-              <span style={{ fontSize: 11, color: 'var(--os-muted)', marginTop: 4 }}>de {activo.objetivo_horas}h · {Math.round(progresoPct)}%</span>
-            </div>
-          </div>
-
-          <div style={{ textAlign: 'center' }}>
-            <p style={{ fontFamily: 'var(--os-font-display)', fontSize: 15, fontWeight: 700, color: 'var(--os-accent-light)', margin: 0 }}>{fase.nombre}</p>
-            <p style={{ fontSize: 12, color: 'var(--os-text-2)', margin: '4px 0 0', maxWidth: 340, lineHeight: 1.4 }}>{fase.descripcion}</p>
-          </div>
-
-          <p style={{ fontSize: 12, color: 'var(--os-muted)', margin: 0 }}>
-            Inició {new Date(activo.inicio).toLocaleString('es-EC', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })} · {activo.protocolo}
-          </p>
-
-          <button style={btn} onClick={terminar}>Terminar ayuno</button>
-        </div>
       ) : (
-        // ── Sin ayuno activo: iniciar ──
-        <div style={{ ...card, display: 'flex', flexDirection: 'column', gap: 12, alignItems: 'center' }}>
-          <p style={{ fontSize: 14, color: 'var(--os-text-2)', margin: 0 }}>No hay ayuno activo.</p>
-          <div style={{ display: 'flex', gap: 8, alignItems: 'center', flexWrap: 'wrap', justifyContent: 'center' }}>
-            <select style={selStyle} value={protocolo} onChange={(e) => setProtocolo(e.target.value)}>
-              {PROTOCOLOS.map((p) => <option key={p.key} value={p.key}>{p.label} ({p.horas}h)</option>)}
-            </select>
-            <button style={btn} onClick={iniciar}>Iniciar ayuno</button>
-          </div>
-        </div>
+        <>
+          {/* Nudge manual-first: nadie tocó el módulo de ayuno ayer. Nunca abre/cierra
+              nada por su cuenta, solo pregunta (ver GET en ayunos.ts). */}
+          {!activo && sugerencia === 'sin_registro' && !sugerenciaDescartada && (
+            <div style={cardAviso}>
+              <p style={{ fontSize: 13, color: 'var(--os-text)', margin: '0 0 10px', lineHeight: 1.4 }}>
+                No has registrado tu estado. ¿Sigues comiendo o ya estás ayunando?
+              </p>
+              <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+                <button style={btn} onClick={iniciar}>Ya estoy ayunando</button>
+                <button style={btnGhost} onClick={() => setSugerenciaDescartada(true)}>Sigo comiendo</button>
+              </div>
+            </div>
+          )}
+
+          {activo ? (
+            // ── Ayuno en curso: timer en vivo ──
+            <div style={{ ...card, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 16 }}>
+              <div style={{ position: 'relative', width: 220, height: 220 }}>
+                <svg viewBox="0 0 120 120" width="220" height="220" style={{ transform: 'rotate(-90deg)' }}>
+                  <circle cx="60" cy="60" r="54" fill="none" stroke="var(--os-line)" strokeWidth="8" />
+                  <circle cx="60" cy="60" r="54" fill="none" stroke={colorRing} strokeWidth="8" strokeLinecap="round"
+                    strokeDasharray={`${(progresoPct / 100) * C} ${C}`}
+                    style={{ transition: 'stroke-dasharray 1s linear, stroke .3s' }} />
+                </svg>
+                <div style={{ position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
+                  <span style={{ fontFamily: 'var(--os-font-rounded)', fontSize: 32, fontWeight: 800, lineHeight: 1, color: 'var(--os-text)' }}>
+                    {formatearDuracion(horasActual)}
+                  </span>
+                  <span style={{ fontSize: 11, color: 'var(--os-muted)', marginTop: 4 }}>de {objetivoActivo}h objetivo</span>
+                  {horasPasadoObjetivo > 0 && (
+                    <span style={{ fontFamily: 'var(--os-font-mono)', fontSize: 11, fontWeight: 700, color: 'var(--os-champagne)', marginTop: 6 }}>
+                      +{formatearDuracion(horasPasadoObjetivo)}
+                    </span>
+                  )}
+                </div>
+              </div>
+
+              <div style={{ textAlign: 'center' }}>
+                <p style={{ fontFamily: 'var(--os-font-display)', fontSize: 15, fontWeight: 700, color: 'var(--os-accent-light)', margin: 0 }}>{fase.nombre}</p>
+                <p style={{ fontSize: 12, color: 'var(--os-text-2)', margin: '4px 0 0', maxWidth: 340, lineHeight: 1.4 }}>{fase.descripcion}</p>
+              </div>
+
+              <div style={{ textAlign: 'center' }}>
+                <p style={{ fontSize: 12, color: 'var(--os-muted)', margin: 0 }}>
+                  Inició {fmtFecha(activo.inicio)} · {activo.protocolo}
+                </p>
+                {finPrevisto && (
+                  <p style={{ fontSize: 12, color: 'var(--os-muted)', margin: '2px 0 0' }}>
+                    Fin previsto {fmtFecha(finPrevisto)} (informativo, no se auto-cierra)
+                  </p>
+                )}
+              </div>
+
+              <button style={btn} onClick={terminar}>Terminar ayuno</button>
+            </div>
+          ) : (
+            // ── Sin ayuno activo: elegir protocolo e iniciar ──
+            <div style={{ ...card, display: 'flex', flexDirection: 'column', gap: 14, alignItems: 'center' }}>
+              <p style={{ fontSize: 14, color: 'var(--os-text-2)', margin: 0 }}>No hay ayuno activo.</p>
+
+              <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', justifyContent: 'center' }}>
+                {PRESETS.map((p) => (
+                  <button
+                    key={p.key}
+                    style={{ ...pill, ...(preset === p.key ? pillActivo : {}) }}
+                    onClick={() => cambiarProtocolo(p.key)}
+                  >
+                    {p.label}
+                  </button>
+                ))}
+              </div>
+
+              {preset === 'custom' && (
+                <label style={{ fontSize: 12, color: 'var(--os-muted)', display: 'flex', gap: 8, alignItems: 'center' }}>
+                  Horas objetivo
+                  <input
+                    type="number" min={1} max={168} step={0.5}
+                    value={objetivoCustom}
+                    onChange={(e) => setObjetivoCustom(Number(e.target.value) || 0)}
+                    onBlur={() => cambiarProtocolo('custom', objetivoCustom)}
+                    style={{ ...selStyle, width: 80 }}
+                  />
+                </label>
+              )}
+
+              <button style={btn} onClick={iniciar}>Empezar ayuno</button>
+            </div>
+          )}
+        </>
       )}
 
       {/* Fases (referencia) */}
@@ -191,7 +297,7 @@ export default function OSSaludAyuno() {
           {FASES_AYUNO.map((f) => {
             const activa = activo && fase.key === f.key;
             return (
-              <div key={f.key} style={{ display: 'flex', gap: 10, padding: '6px 8px', borderRadius: 6, background: activa ? 'rgba(59,78,217,0.13)' : 'transparent' }}>
+              <div key={f.key} style={{ display: 'flex', gap: 10, padding: '6px 8px', borderRadius: 6, background: activa ? 'color-mix(in srgb, var(--os-accent) 13%, transparent)' : 'transparent' }}>
                 <span style={{ fontFamily: 'var(--os-font-mono)', fontSize: 11, color: activa ? 'var(--os-accent-light)' : 'var(--os-muted)', minWidth: 54 }}>
                   {f.hasta === Infinity ? `${f.desde}h+` : `${f.desde}-${f.hasta}h`}
                 </span>
@@ -220,7 +326,8 @@ export default function OSSaludAyuno() {
           <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
             {historial.slice(0, 20).map((a) => {
               const dur = duracionHoras(a.inicio, a.fin, nowMs || undefined);
-              const cumplido = dur >= a.objetivo_horas;
+              const objetivoFila = a.objetivo_horas ?? 16;
+              const cumplido = dur >= objetivoFila;
               return (
                 <div key={a.id} style={{ padding: '8px 0', borderBottom: '1px solid var(--os-line-soft)' }}>
                   {editId === a.id ? (
@@ -241,7 +348,7 @@ export default function OSSaludAyuno() {
                           {new Date(a.inicio).toLocaleDateString('es-EC', { day: 'numeric', month: 'short' })} · {a.protocolo}
                         </span>
                         <p style={{ fontSize: 11, fontFamily: 'var(--os-font-mono)', color: cumplido ? 'var(--os-ok)' : 'var(--os-muted)', margin: '2px 0 0' }}>
-                          {formatearDuracion(dur)} / {a.objetivo_horas}h {a.fin ? (cumplido ? '✓' : '') : '· en curso'}
+                          {formatearDuracion(dur)} / {objetivoFila}h {a.fin ? (cumplido ? '✓' : '') : '· en curso'}
                         </p>
                       </div>
                       <div style={{ display: 'flex', gap: 4 }}>

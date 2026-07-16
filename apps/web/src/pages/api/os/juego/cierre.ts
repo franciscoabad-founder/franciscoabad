@@ -87,6 +87,60 @@ async function celebrarDiasPerfectos(sb: SB, resumenes: Record<string, unknown>)
   return huboDiaPerfecto;
 }
 
+// e) Ayuno: nudge manual-first (Fase 5 Salud OS). Por cada día recién cerrado, si nadie
+// tocó el módulo de ayuno ese día (ni inició ni cerró uno) y hay un protocolo configurado
+// en salud_config, agenda un recordatorio de Telegram preguntando el estado. NUNCA abre
+// ni cierra un ayuno por su cuenta, solo pregunta. Idempotente por día: el mensaje incluye
+// la fecha, así que un segundo intento del mismo día no duplica el recordatorio.
+async function sugerirAyunoSinRegistro(sb: SB, cerrados: string[]): Promise<number> {
+  if (!cerrados.length) return 0;
+
+  const { data: configRows, error: errConfig } = await sb
+    .from('salud_config')
+    .select('protocolo_ayuno_default')
+    .order('created_at', { ascending: true })
+    .limit(1);
+  if (errConfig) throw errConfig;
+  // Columna existente (not null, default '16_8'): si no hay fila de config todavía,
+  // no hay módulo de salud activo y no se sugiere nada.
+  const protocolo = configRows?.[0]?.protocolo_ayuno_default;
+  if (!protocolo) return 0;
+
+  let sugeridos = 0;
+  for (const dia of cerrados) {
+    const inicioDia = `${dia}T00:00:00-05:00`;
+    const inicioSiguiente = `${addDias(dia, 1)}T00:00:00-05:00`;
+
+    const { data: tocados, error: errTocados } = await sb
+      .from('ayunos')
+      .select('id')
+      .or(
+        `and(inicio.gte.${inicioDia},inicio.lt.${inicioSiguiente}),` +
+        `and(fin.gte.${inicioDia},fin.lt.${inicioSiguiente})`,
+      )
+      .limit(1);
+    if (errTocados) throw errTocados;
+    if (tocados && tocados.length) continue; // hubo actividad de ayuno ese día
+
+    const mensaje = `¿Sigues comiendo o ya estás ayunando? No se registró tu estado de ayuno el ${dia}.`;
+    const { data: yaExiste, error: errYa } = await sb
+      .from('recordatorios')
+      .select('id')
+      .eq('mensaje', mensaje)
+      .limit(1);
+    if (errYa) throw errYa;
+    if (yaExiste && yaExiste.length) continue;
+
+    await sb.from('recordatorios').insert([{
+      mensaje,
+      recordar_at: new Date(Date.now() + 60 * 1000).toISOString(),
+      canal: 'telegram',
+    }]);
+    sugeridos += 1;
+  }
+  return sugeridos;
+}
+
 // d) Fresh start de lunes: resuelve las quests de la semana pasada, resetea HP al máximo,
 // y agenda el resumen semanal a Telegram. Idempotente: siembra un evento 'ajuste' con
 // meta.fresh_start_semana = lunes de hoy, y no repite si ya existe.
@@ -251,6 +305,7 @@ export const POST: APIRoute = async (context) => {
     const { cerrados, resumenes } = await cerrarPendientes(sb);
     const hpPerdido = await aplicarDanioPorFallos(sb, resumenes);
     const diaPerfecto = await celebrarDiasPerfectos(sb, resumenes);
+    const ayunosSugeridos = await sugerirAyunoSinRegistro(sb, cerrados);
 
     const hoy = hoyLocal();
     const lunes = await procesarLunes(sb, hoy);
@@ -260,6 +315,7 @@ export const POST: APIRoute = async (context) => {
       cerrados,
       hpPerdido,
       diaPerfecto,
+      ayunosSugeridos,
       ...(lunes ? { lunes } : {}),
     });
   } catch (err) {
