@@ -13,7 +13,7 @@ export default function OSOnboarding() {
     let cancelado = false;
     (async () => {
       try {
-        const res = await fetch('/api/os/onboarding?modulo=os');
+        const res = await fetch('/api/os/onboarding?modulo=os', { cache: 'no-store' });
         const data = await res.json();
         if (!cancelado && !data?.estado?.completado_at) setVisible(true);
       } catch {

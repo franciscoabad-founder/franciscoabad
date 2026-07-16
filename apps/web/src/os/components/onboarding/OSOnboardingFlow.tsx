@@ -58,7 +58,7 @@ export default function OSOnboardingFlow({ modulo, pasos, onFinish, onCompletar,
     let cancelado = false;
     (async () => {
       try {
-        const res = await fetch(`/api/os/onboarding?modulo=${encodeURIComponent(modulo)}`);
+        const res = await fetch(`/api/os/onboarding?modulo=${encodeURIComponent(modulo)}`, { cache: 'no-store' });
         const data = await res.json();
         if (cancelado) return;
         if (data?.estado && !data.estado.completado_at) {
@@ -439,7 +439,7 @@ export default function OSOnboardingFlow({ modulo, pasos, onFinish, onCompletar,
     : (paso === 0 ? 'Empezar' : 'Continuar');
 
   return (
-    <div style={{ position: 'fixed', inset: 0, zIndex: 500, background: 'var(--os-bg)', display: 'flex', flexDirection: 'column' }}>
+    <div style={{ position: 'fixed', inset: 0, height: '100dvh', zIndex: 500, background: 'var(--os-bg)', display: 'flex', flexDirection: 'column' }}>
       {!esConstruyendo && (
         <div style={{ padding: '14px 18px 4px', flexShrink: 0 }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
