@@ -53,6 +53,9 @@ create unique index if not exists os_objetivos_orden_activo_uniq
 -- 3. Lineas / proyectos con el Stack del canon:
 --    0 Urgente (riesgo activo) | 1 Dinero | 2 Soporte | 3 Estabilizar | 4 Pausado
 -- ─────────────────────────────────────────────────────────────────────────────
+-- `brain_tag` es el tag con el que la linea se busca en el brain
+-- (/api/brain/proyecto?tag=). Es explicito y no derivado del nombre porque no
+-- derivan: 'Marca personal' se indexa como 'marca'.
 create table if not exists public.os_lineas (
   id uuid primary key default gen_random_uuid(),
   nombre text not null unique,
@@ -62,6 +65,7 @@ create table if not exists public.os_lineas (
   objetivo_id uuid references public.os_objetivos(id) on delete set null,
   siguiente_accion text,
   estado text not null default 'activo' check (estado in ('activo','mantenimiento','pausado')),
+  brain_tag text,
   orden smallint,
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now()

@@ -83,7 +83,7 @@ export const PATCH: APIRoute = async (context) => {
     const patch: Record<string, unknown> = { updated_at: new Date().toISOString() };
     const campos = [
       'nombre', 'descripcion', 'prioridad_stack', 'recibe_maker', 'objetivo_id',
-      'siguiente_accion', 'estado', 'orden',
+      'siguiente_accion', 'estado', 'orden', 'brain_tag',
     ];
     for (const c of campos) if (c in body) patch[c] = body[c];
 
