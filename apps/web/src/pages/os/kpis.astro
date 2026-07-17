@@ -1,10 +1,7 @@
 ---
 export const prerender = false;
 import OSLayout from '../../layouts/OSLayout.astro';
-import { kpis } from '../../os/data/kpis';
-import OSKPIGrid from '../../os/components/OSKPIGrid';
-
-const categorias = [...new Set(kpis.map((k) => k.categoria))];
+import OSKpis from '../../os/components/OSKpis';
 ---
 
 <OSLayout title="KPIs">
@@ -16,27 +13,9 @@ const categorias = [...new Set(kpis.map((k) => k.categoria))];
         <p class="os-eyebrow" style="margin-bottom:6px;">Tablero</p>
         <h1 class="os-h1">KPIs</h1>
       </div>
-      <span style="font-size:12px;color:var(--os-muted);">Junio 2026</span>
     </div>
 
-    <OSKPIGrid kpis={kpis} client:load />
-
-    <!-- Resumen por categoria -->
-    <div style="margin-top:2rem;">
-      <p class="os-section-title">Resumen por categoria</p>
-      <div class="os-kpi-grid">
-        {categorias.map((cat) => {
-          const total = kpis.filter((k) => k.categoria === cat).length;
-          return (
-            <div class="os-kpi">
-              <p class="os-kpi-label">{cat}</p>
-              <p class="os-kpi-value">{total}</p>
-              <p style="font-size:10px;color:var(--os-muted);margin:0;">metricas seguidas</p>
-            </div>
-          );
-        })}
-      </div>
-    </div>
+    <OSKpis client:load />
 
     <!-- Nota sobre los numeros -->
     <div style="margin-top:2rem;">
@@ -45,7 +24,7 @@ const categorias = [...new Set(kpis.map((k) => k.categoria))];
         <div style="display:flex;align-items:flex-start;gap:10px;">
           <span class="material-symbols-outlined" style="font-size:18px;color:var(--os-accent-light);flex-shrink:0;margin-top:1px;">info</span>
           <p style="font-size:13px;color:var(--os-text-2);margin:0;line-height:1.6;">
-            Los valores en <span style="color:var(--os-champagne);font-weight:600;">champagne</span> son cifras reales del mes en curso. Las tendencias se calculan contra el mismo periodo del mes anterior. Todos los datos se conectaran a gbrain en la siguiente iteracion.
+            Los valores en <span style="color:var(--os-champagne);font-weight:600;">champagne</span> son el ultimo valor registrado por KPI. Las tendencias comparan contra el registro anterior. Registra un valor nuevo desde cada tarjeta cuando tengas el numero real.
           </p>
         </div>
       </div>

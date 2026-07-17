@@ -1,12 +1,7 @@
 ---
 export const prerender = false;
 import OSLayout from '../../layouts/OSLayout.astro';
-import { datosRevision } from '../../os/data/revision';
-import { objetivos } from '../../os/data/objetivos';
-
-const { weekly, monthly } = datosRevision;
-
-const energiaColor: Record<string, string> = { alta: 'var(--os-accent-light)', media: 'var(--os-champagne)', baja: 'var(--os-muted)' };
+import OSRevision from '../../os/components/OSRevision';
 ---
 
 <OSLayout title="Revision">
@@ -18,123 +13,10 @@ const energiaColor: Record<string, string> = { alta: 'var(--os-accent-light)', m
       <h1 class="os-h1">Revision</h1>
     </div>
 
-    <!-- Objetivos 90 dias (norte de la revision) -->
-    <div class="os-card os-card-accent" style="margin-bottom:1rem;">
-      <p class="os-eyebrow" style="margin:0 0 0.75rem;">Norte · Objetivos 90 dias</p>
-      <div style="display:flex;flex-direction:column;gap:7px;">
-        {objetivos.map((o, i) => (
-          <div style="display:flex;align-items:flex-start;gap:10px;">
-            <span class="os-num" style="font-size:11px;min-width:18px;padding-top:1px;">{i + 1}</span>
-            <div>
-              <span style="font-size:13px;font-weight:600;color:var(--os-text);">{o.titulo}.</span>
-              <span style="font-size:12px;color:var(--os-muted);margin-left:5px;">{o.descripcion}</span>
-            </div>
-          </div>
-        ))}
-      </div>
-    </div>
-
-    <div class="os-2col" style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1rem;">
-
-      <!-- Weekly review -->
-      <div class="os-card">
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;">
-          <div style="display:flex;align-items:center;gap:8px;">
-            <span class="material-symbols-outlined" style="font-size:18px;color:var(--os-accent-light);">event_repeat</span>
-            <p class="os-section-title" style="margin:0;">Weekly Review</p>
-          </div>
-          <span class="os-pill os-pill-accent">Energia {weekly.energia}</span>
-        </div>
-        <p style="font-size:12px;color:var(--os-muted);margin:0 0 1rem;">{weekly.periodo}</p>
-
-        <div style="margin-bottom:0.875rem;">
-          <p style="font-size:11px;font-weight:600;color:var(--os-accent-light);margin:0 0 0.5rem;font-family:var(--os-font-display);letter-spacing:0.05em;">Completado</p>
-          <ul style="list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:5px;">
-            {weekly.completado.map((c) => (
-              <li style="display:flex;align-items:flex-start;gap:7px;">
-                <span class="material-symbols-outlined" style="font-size:15px;color:var(--os-accent-light);flex-shrink:0;margin-top:1px;">check_circle</span>
-                <span style="font-size:13px;color:var(--os-text);line-height:1.4;">{c}</span>
-              </li>
-            ))}
-          </ul>
-        </div>
-
-        <div style="margin-bottom:0.875rem;">
-          <p style="font-size:11px;font-weight:600;color:var(--os-champagne);margin:0 0 0.5rem;font-family:var(--os-font-display);letter-spacing:0.05em;">Que parar</p>
-          <ul style="list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:5px;">
-            {weekly.que_parar.map((q) => (
-              <li style="font-size:13px;color:var(--os-text);line-height:1.4;padding-left:18px;position:relative;">
-                <span style="position:absolute;left:0;top:5px;width:6px;height:1px;background:var(--os-champagne);display:block;"></span>
-                {q}
-              </li>
-            ))}
-          </ul>
-        </div>
-
-        <div>
-          <p style="font-size:11px;font-weight:600;color:var(--os-muted);margin:0 0 0.5rem;font-family:var(--os-font-display);letter-spacing:0.05em;">Que escalar</p>
-          <ul style="list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:5px;">
-            {weekly.que_escalar.map((q) => (
-              <li style="font-size:13px;color:var(--os-text);line-height:1.4;padding-left:18px;position:relative;">
-                <span style="position:absolute;left:0;top:5px;width:6px;height:1px;background:var(--os-muted);display:block;"></span>
-                {q}
-              </li>
-            ))}
-          </ul>
-        </div>
-
-        <div style="margin-top:1rem;padding-top:1rem;border-top:1px solid var(--os-line-soft);">
-          <p style="font-size:13px;color:var(--os-muted);font-style:italic;margin:0;line-height:1.5;">"{weekly.nota}"</p>
-        </div>
-      </div>
-
-      <!-- Monthly review -->
-      <div class="os-card">
-        <div style="display:flex;align-items:center;gap:8px;margin-bottom:0.5rem;">
-          <span class="material-symbols-outlined" style="font-size:18px;color:var(--os-accent-light);">calendar_month</span>
-          <p class="os-section-title" style="margin:0;">Monthly Review</p>
-        </div>
-        <p style="font-size:12px;color:var(--os-muted);margin:0 0 1.25rem;">{monthly.periodo}</p>
-
-        <!-- Big number -->
-        <div class="os-card-2" style="text-align:center;margin-bottom:1.25rem;">
-          <p class="os-mono" style="font-size:2rem;font-weight:700;color:var(--os-champagne);margin:0;line-height:1;">{monthly.numero_destacado}</p>
-          <p class="os-kpi-label" style="margin:0.375rem 0 0;">{monthly.numero_label}</p>
-        </div>
-
-        <div style="margin-bottom:0.875rem;">
-          <p style="font-size:11px;font-weight:600;color:var(--os-accent-light);margin:0 0 0.5rem;font-family:var(--os-font-display);letter-spacing:0.05em;">Wins del mes</p>
-          <ul style="list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:5px;">
-            {monthly.wins.map((w) => (
-              <li style="display:flex;align-items:flex-start;gap:7px;">
-                <span class="material-symbols-outlined" style="font-size:15px;color:var(--os-accent-light);flex-shrink:0;margin-top:1px;">check_circle</span>
-                <span style="font-size:13px;color:var(--os-text);line-height:1.4;">{w}</span>
-              </li>
-            ))}
-          </ul>
-        </div>
-
-        <div style="margin-bottom:0.875rem;">
-          <p style="font-size:11px;font-weight:600;color:var(--os-muted);margin:0 0 0.5rem;font-family:var(--os-font-display);letter-spacing:0.05em;">Pendientes</p>
-          <ul style="list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:4px;">
-            {monthly.pendientes.map((p) => (
-              <li style="font-size:13px;color:var(--os-text);line-height:1.4;padding-left:14px;position:relative;">
-                <span style="position:absolute;left:0;top:7px;width:5px;height:5px;border-radius:50%;background:var(--os-muted);display:block;"></span>
-                {p}
-              </li>
-            ))}
-          </ul>
-        </div>
-
-        <div style="padding:0.875rem;background:rgba(59,78,217,0.08);border-left:2px solid var(--os-accent);border-radius:0 var(--os-r-sm) var(--os-r-sm) 0;">
-          <p style="font-size:11px;font-weight:600;color:var(--os-accent-light);margin:0 0 0.25rem;font-family:var(--os-font-display);letter-spacing:0.05em;">Decision clave</p>
-          <p style="font-size:13px;color:var(--os-text);margin:0;line-height:1.4;">{monthly.decision_clave}</p>
-        </div>
-      </div>
-    </div>
+    <OSRevision client:load />
   </div>
 
-  <style>
+  <style is:global>
     @media (max-width: 820px) {
       .os-2col { grid-template-columns: 1fr !important; }
     }
