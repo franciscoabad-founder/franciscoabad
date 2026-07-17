@@ -21,6 +21,14 @@ export interface NumeroCampoConfig {
   sugerido?: (respuestas: Respuestas) => number | undefined;
 }
 
+export interface TextoCampoConfig {
+  key: string;
+  label: string;
+  placeholder?: string;
+  multilinea?: boolean;
+  sugerido?: (respuestas: Respuestas) => string | undefined;
+}
+
 export interface ResumenItem {
   label: string;
   valor: (respuestas: Respuestas) => string;
@@ -32,6 +40,7 @@ export type PasoConfig =
   | { key: string; tipo: 'opciones'; titulo: string; copy?: string; opciones: OpcionItem[]; ctaLabel?: string; requerido?: boolean }
   | { key: string; tipo: 'multi'; titulo: string; copy?: string; opciones: OpcionItem[]; ctaLabel?: string }
   | { key: string; tipo: 'numero'; titulo: string; copy?: string; campos: NumeroCampoConfig[]; unidades?: string[]; unidadDefault?: string; ctaLabel?: string }
+  | { key: string; tipo: 'texto'; titulo: string; copy?: string; campos: TextoCampoConfig[]; ctaLabel?: string; requerido?: boolean }
   | { key: string; tipo: 'dias'; titulo: string; copy?: string; ctaLabel?: string }
   | { key: string; tipo: 'construyendo'; titulo?: string; mensaje?: string; duracionMs?: number }
   | { key: string; tipo: 'resumen'; titulo: string; copy?: string; items: ResumenItem[]; ctaLabel: string };
@@ -102,10 +111,13 @@ export default function OSOnboardingFlow({ modulo, pasos, onFinish, onCompletar,
   // Antes de avanzar de un paso 'numero', rellena los campos vacios con su sugerido
   // (si existe) para que la respuesta guardada nunca quede a medias.
   function resolverRespuestasPaso(): Respuestas {
-    if (step.tipo !== 'numero') return respuestas;
+    if (step.tipo !== 'numero' && step.tipo !== 'texto') return respuestas;
     const valores: Record<string, unknown> = { ...(respuestas[step.key] ?? {}) };
     for (const campo of step.campos) {
-      if (valores[campo.key] == null) {
+      const vacio = step.tipo === 'texto'
+        ? valores[campo.key] == null || String(valores[campo.key]).trim() === ''
+        : valores[campo.key] == null;
+      if (vacio) {
         const sugerido = campo.sugerido?.(respuestas);
         if (sugerido != null) valores[campo.key] = sugerido;
       }
@@ -164,6 +176,14 @@ export default function OSOnboardingFlow({ modulo, pasos, onFinish, onCompletar,
     if (enviando) return false;
     if (step.tipo === 'opciones' && step.requerido !== false) {
       return respuestas[step.key] != null;
+    }
+    if (step.tipo === 'texto' && step.requerido) {
+      const valores: Record<string, unknown> = respuestas[step.key] ?? {};
+      return step.campos.every((c) => {
+        const valor = valores[c.key];
+        if (valor != null && String(valor).trim() !== '') return true;
+        return c.sugerido?.(respuestas) != null;
+      });
     }
     return true;
   }
@@ -340,6 +360,66 @@ export default function OSOnboardingFlow({ modulo, pasos, onFinish, onCompletar,
                         style={{ marginTop: 8, border: 'none', cursor: 'pointer' }}
                       >
                         sugerido: {sugerido}
+                      </button>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+          </>
+        );
+      }
+
+      case 'texto': {
+        const valores: Record<string, any> = respuestas[step.key] ?? {};
+        function setCampo(campoKey: string, value: string) {
+          actualizarValor(step.key, { ...valores, [campoKey]: value });
+        }
+        return (
+          <>
+            {renderTitulo()}
+            {renderCopy()}
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+              {step.campos.map((c) => {
+                const sugerido = c.sugerido?.(respuestas);
+                const valor = valores[c.key] ?? '';
+                return (
+                  <div key={c.key} className="os-card-2" style={{ padding: '12px 14px' }}>
+                    <p className="os-eyebrow" style={{ marginBottom: 6 }}>{c.label}</p>
+                    {c.multilinea ? (
+                      <textarea
+                        rows={4}
+                        value={valor}
+                        placeholder={c.placeholder ?? sugerido}
+                        onChange={(e) => setCampo(c.key, e.target.value)}
+                        style={{
+                          border: '1px solid var(--os-line)', background: 'var(--os-fill-subtle)',
+                          borderRadius: 10, fontSize: 14, color: 'var(--os-text)', width: '100%',
+                          padding: '10px 12px', outline: 'none', resize: 'vertical', minHeight: 84,
+                          fontFamily: 'inherit', lineHeight: 1.5,
+                        }}
+                      />
+                    ) : (
+                      <input
+                        type="text"
+                        value={valor}
+                        placeholder={c.placeholder ?? sugerido}
+                        onChange={(e) => setCampo(c.key, e.target.value)}
+                        style={{
+                          border: '1px solid var(--os-line)', background: 'var(--os-fill-subtle)',
+                          borderRadius: 10, fontSize: 14, color: 'var(--os-text)', width: '100%',
+                          padding: '10px 12px', outline: 'none', fontFamily: 'inherit',
+                        }}
+                      />
+                    )}
+                    {sugerido != null && valor.trim() === '' && (
+                      <button
+                        type="button"
+                        onClick={() => setCampo(c.key, sugerido)}
+                        className="os-pill os-pill-gold"
+                        style={{ marginTop: 8, border: 'none', cursor: 'pointer' }}
+                      >
+                        usar sugerido
                       </button>
                     )}
                   </div>

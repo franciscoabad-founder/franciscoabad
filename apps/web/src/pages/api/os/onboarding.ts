@@ -4,8 +4,11 @@ import type { APIRoute } from 'astro';
 import { getSupabaseServer } from '../../../lib/supabase';
 import { isOsAuthorized, json } from '../../../os/lib/osAuth';
 import { errMsg } from '../../../lib/salud/apiHelpers';
+import { resumenModos } from '../../../os/components/onboarding/flujoOs';
 
 type SB = ReturnType<typeof getSupabaseServer>;
+
+const STATE_KEY = 'main';
 
 // GET ?modulo=X → estado del onboarding de ese modulo (o null si nunca se toco).
 export const GET: APIRoute = async (context) => {
@@ -99,6 +102,119 @@ async function aplicarSalud(sb: SB, respuestas: Record<string, any>): Promise<{ 
   }
 }
 
+// Deriva y escribe la config del modulo OS a partir de las respuestas del
+// onboarding del modulo 'os'. Mirror de aplicarSalud: nunca se salta una
+// escritura en silencio, si algo falla se lanza y el caller lo surface.
+async function aplicarOs(sb: SB, respuestas: Record<string, any>) {
+  const r = respuestas ?? {};
+
+  // 1) os_semana: modo (off gana sobre maker) + sale, sin tocar etiqueta/nota.
+  const { maker, manager, off } = resumenModos(r);
+  const diasSale: number[] = Array.isArray(r.dias_sale) ? r.dias_sale : [];
+  const modoPorDia = new Map<number, 'maker' | 'manager' | 'off'>();
+  for (const d of maker) modoPorDia.set(d, 'maker');
+  for (const d of manager) modoPorDia.set(d, 'manager');
+  for (const d of off) modoPorDia.set(d, 'off');
+
+  let semanaEscritas = 0;
+  for (let dia = 1; dia <= 7; dia++) {
+    const modo = modoPorDia.get(dia) ?? 'manager';
+    const sale = diasSale.includes(dia);
+    const { error } = await sb
+      .from('os_semana')
+      .update({ modo, sale, updated_at: new Date().toISOString() })
+      .eq('dia', dia);
+    if (error) throw error;
+    semanaEscritas++;
+  }
+
+  // 2) os_lineas: recibe_maker segun lineas_maker (match por nombre, las 8 filas).
+  const lineasMaker: string[] = Array.isArray(r.lineas_maker) ? r.lineas_maker : [];
+  const { data: todasLineas, error: errLineas } = await sb.from('os_lineas').select('id, nombre');
+  if (errLineas) throw errLineas;
+  let lineasEscritas = 0;
+  for (const l of todasLineas ?? []) {
+    const recibeMaker = lineasMaker.includes(l.nombre);
+    const { error } = await sb
+      .from('os_lineas')
+      .update({ recibe_maker: recibeMaker, updated_at: new Date().toISOString() })
+      .eq('id', l.id);
+    if (error) throw error;
+    lineasEscritas++;
+  }
+
+  // 3) os_funcion_presupuesto: upsert de las 4 funciones.
+  const presupuesto = r.presupuesto ?? {};
+  const FUNCIONES = ['promover', 'vender', 'construir', 'entregar'] as const;
+  let presupuestoEscrito = 0;
+  for (const funcion of FUNCIONES) {
+    const horas = presupuesto[funcion];
+    if (horas == null) continue; // explicito gana; si no vino, no se toca.
+    const { error } = await sb
+      .from('os_funcion_presupuesto')
+      .upsert(
+        { funcion, horas_semana_objetivo: Number(horas), updated_at: new Date().toISOString() },
+        { onConflict: 'funcion' },
+      );
+    if (error) throw error;
+    presupuestoEscrito++;
+  }
+
+  // 4) os_objetivos: reemplaza el placeholder "[CONFIRMAR EN ONBOARDING]" en
+  // punto_partida de los objetivos activos orden=1 (finanzas) y orden=3 (ingresos).
+  const puntoPartida = r.punto_partida ?? {};
+  let objetivosEscritos = 0;
+  if (puntoPartida.finanzas != null) {
+    const { error } = await sb
+      .from('os_objetivos')
+      .update({ punto_partida: puntoPartida.finanzas, updated_at: new Date().toISOString() })
+      .eq('orden', 1)
+      .eq('activo', true);
+    if (error) throw error;
+    objetivosEscritos++;
+  }
+  if (puntoPartida.ingresos != null) {
+    const { error } = await sb
+      .from('os_objetivos')
+      .update({ punto_partida: puntoPartida.ingresos, updated_at: new Date().toISOString() })
+      .eq('orden', 3)
+      .eq('activo', true);
+    if (error) throw error;
+    objetivosEscritos++;
+  }
+
+  // 5) Identidad: no existe tabla os_identidad, se guarda en os_system_state.state.identidad
+  // (merge, sin clobbear otras claves de state). Se lee el estado actual primero.
+  const identidadTexto = r.identidad?.texto;
+  let identidadEscrita = false;
+  if (identidadTexto != null) {
+    const { data: existente, error: errLeer } = await sb
+      .from('os_system_state')
+      .select('state')
+      .eq('key', STATE_KEY)
+      .maybeSingle();
+    if (errLeer) throw errLeer;
+    const stateActual = (existente?.state as Record<string, unknown>) ?? {};
+    const nuevoState = { ...stateActual, identidad: identidadTexto };
+    const { error: errWrite } = await sb
+      .from('os_system_state')
+      .upsert(
+        { key: STATE_KEY, state: nuevoState, updated_at: new Date().toISOString() },
+        { onConflict: 'key' },
+      );
+    if (errWrite) throw errWrite;
+    identidadEscrita = true;
+  }
+
+  return {
+    semana: semanaEscritas,
+    lineas: lineasEscritas,
+    presupuesto: presupuestoEscrito,
+    objetivos: objetivosEscritos,
+    identidad: identidadEscrita,
+  };
+}
+
 // POST { modulo, paso?, respuestas? (merge sobre lo existente), completado? }
 //   → upsert de onboarding_estado por modulo.
 // POST { aplicar: 'salud' }
@@ -124,6 +240,21 @@ export const POST: APIRoute = async (context) => {
       if (error) throw error;
       const resultado = await aplicarSalud(sb, estado?.respuestas ?? {});
       return json({ ok: true, ...resultado });
+    } catch (err) {
+      return json({ error: errMsg(err) }, 502);
+    }
+  }
+
+  if (body.aplicar === 'os') {
+    try {
+      const { data: estado, error } = await sb
+        .from('onboarding_estado')
+        .select('respuestas')
+        .eq('modulo', 'os')
+        .maybeSingle();
+      if (error) throw error;
+      const aplicado = await aplicarOs(sb, estado?.respuestas ?? {});
+      return json({ ok: true, aplicado });
     } catch (err) {
       return json({ error: errMsg(err) }, 502);
     }
