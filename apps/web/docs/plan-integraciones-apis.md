@@ -13,31 +13,39 @@ Todo sigue el mismo patron que ya funciona en el OS:
 
 Regla: ninguna llamada directa desde el frontend a APIs de terceros. Siempre plataforma -> n8n -> OS -> Supabase.
 
-## 1. Fitbit (salud)
+## 1. Biometricas (salud) via Google Health API
 
-Objetivo: pasos, sueno, frecuencia cardiaca, peso y actividad diaria alimentando los insights de Salud.
+**Cambio de plan (16-17 julio 2026): la Fitbit Web API se apaga el 30 de septiembre de
+2026.** Fitbit la reemplaza por la **Google Health API**, que se autoriza con **Google
+OAuth 2.0**, no con el OAuth legacy de Fitbit. Los tokens Fitbit existentes **no se
+transfieren**: hay que re-autorizar desde cero contra Google. Ambas APIs conviven de mayo
+al 30 de septiembre de 2026, pero este puente se construye **directo sobre Google Health**,
+sin pasar por la API legacy de Fitbit.
 
-### Como conectarlo (una sola vez, ~20 min)
+Objetivo: pasos, sueno, frecuencia cardiaca en reposo y peso alimentando los insights de
+Salud.
 
-1. Crear una app en https://dev.fitbit.com/apps (cuenta Fitbit propia).
-   - OAuth 2.0 Application Type: **Personal** (da acceso a series intradia de tu propia cuenta sin revision de Fitbit).
-   - Callback URL: `https://n8n.franciscoabad.com/rest/oauth2-credential/callback`.
-   - Scopes: `activity heartrate sleep weight nutrition profile`.
-2. En n8n: Credentials -> nueva credencial **OAuth2 API** con:
-   - Authorization URL: `https://www.fitbit.com/oauth2/authorize`
-   - Token URL: `https://api.fitbit.com/oauth2/token`
-   - Client ID y Secret de la app creada, auth via header Basic.
-   - Conectar y autorizar con la cuenta Fitbit. n8n refresca el token solo.
-3. Workflow `Fitbit Sync Diario` (cron 06:30 EC):
-   - `GET https://api.fitbit.com/1/user/-/activities/date/{ayer}.json` (pasos, kcal quemadas, minutos activos)
-   - `GET https://api.fitbit.com/1.2/user/-/sleep/date/{ayer}.json` (duracion, eficiencia, fases)
-   - `GET https://api.fitbit.com/1/user/-/body/log/weight/date/{ayer}.json` (peso si hay bascula)
-   - POST al OS a un endpoint nuevo `/api/os/salud/biometricas` que upsertea en una tabla `biometricas_dia` (fecha unica, pasos, sueno_min, sueno_eficiencia, fc_reposo, kcal_quemadas, peso_kg).
-4. Extender `/api/os/salud/insights` con 2 generadores nuevos: sueno < 6h promedio 3 dias (alerta) y pasos < 5000 promedio 3 dias (nudge).
+Migracion, endpoint y contrato completo ya construidos: ver
+`apps/web/docs/contrato-biometricas.md`. Resumen:
 
-Limite de la API: 150 requests/hora por usuario, sobra para un sync diario.
+### Como conectarlo (una sola vez)
 
-Pendiente de construir: migracion `biometricas_dia`, endpoint `/api/os/salud/biometricas`, workflow n8n, generadores de insights.
+1. **Dependencia bloqueante (Pancho):** crear un proyecto en **Google Cloud Console**,
+   habilitar la **Google Health API**, y generar **Client ID** y **Client Secret** de OAuth
+   2.0. Sin esto el workflow de n8n no puede autorizarse.
+2. En n8n: credencial **Google OAuth2** (scopes de lectura de actividad, sueno, peso y
+   frecuencia cardiaca), autorizada una vez contra la cuenta de Google de Pancho. n8n
+   refresca el token solo, igual que las credenciales Google existentes (Gmail/Agenda).
+3. Workflow `Biometricas Sync Diario` (cron, ej. 06:30 EC): lee de Google Health los datos
+   del dia anterior (pasos, duracion de sueno, peso si hay medicion, frecuencia cardiaca en
+   reposo), normaliza peso a **kg** y sueno a **minutos**, y hace `POST` a
+   `/api/os/biometricas` (upsert por fecha, idempotente; soporta batch para backfill).
+4. Extender `/api/os/salud/insights` con 2 generadores nuevos: sueno < 6h promedio 3 dias
+   (alerta) y pasos < 5000 promedio 3 dias (nudge).
+
+Pendiente de construir: workflow n8n (bloqueado por la credencial de Google de Pancho) y
+los 2 generadores de insights. La tabla `biometricas_dia` y el endpoint
+`/api/os/biometricas` ya estan listos (ver `contrato-biometricas.md`).
 
 ## 2. Redes sociales
 
@@ -102,8 +110,8 @@ La red mas valiosa para la marca y la API mas restrictiva.
 
 ## 3. Piezas comunes a construir en el OS
 
-1. Migracion `redes_metricas_dia` (red, fecha, seguidores, alcance, engagement, detalle jsonb; unique red+fecha) y `biometricas_dia`.
-2. Endpoints `/api/os/redes/metricas` y `/api/os/salud/biometricas` (GET + POST upsert, mismo molde que los existentes).
+1. Migracion `redes_metricas_dia` (red, fecha, seguidores, alcance, engagement, detalle jsonb; unique red+fecha) y `biometricas_dia` (esta ultima ya aplicada, ver `contrato-biometricas.md`).
+2. Endpoints `/api/os/redes/metricas` y `/api/os/biometricas` (GET + POST upsert, mismo molde que los existentes; `biometricas` ya construido).
 3. Dashboard `/os/redes` con datos reales (hoy es maqueta): curva de seguidores por red, top posts de la semana, alertas de caida.
 4. Cola de publicacion: tabla `redes_cola` (red, contenido, media_url, estado borrador/aprobado/publicado, programado_at). El Motor de Contenido escribe borradores, Pancho aprueba desde el OS o Telegram (ya existe OS Approval Gate), n8n publica.
 5. Insights de redes en el coach diario: "IG crecio X esta semana", "llevas N dias sin publicar en LinkedIn".
@@ -112,7 +120,7 @@ La red mas valiosa para la marca y la API mas restrictiva.
 
 | Fase | Que | Esfuerzo |
 |---|---|---|
-| 1 | Fitbit completo (app, credencial, sync, insights de sueno y pasos) | 1 sesion |
+| 1 | Biometricas via Google Health (credencial Google, sync, insights de sueno y pasos) | 1 sesion |
 | 2 | App de Meta + lectura IG/FB/Threads + tablas y endpoint de metricas | 1-2 sesiones |
 | 3 | YouTube lectura + LinkedIn publicacion (`w_member_social`) | 1 sesion |
 | 4 | Cola de publicacion + publicar en IG/Threads/FB/X desde el OS | 2 sesiones |
