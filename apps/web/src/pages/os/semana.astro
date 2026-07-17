@@ -1,0 +1,20 @@
+---
+export const prerender = false;
+import OSLayout from '../../layouts/OSLayout.astro';
+import OSSemana from '../../os/components/OSSemana';
+---
+
+<OSLayout title="Semana">
+  <div class="os-fade-up">
+    <div style="margin-bottom:1rem;">
+      <p class="os-eyebrow" style="margin-bottom:6px;">Control · Semana</p>
+      <h1 class="os-h1">Semana</h1>
+      <p style="font-size:13px;color:var(--os-text-2);line-height:1.6;margin:8px 0 0;max-width:62ch;">
+        El día lleva el modo (Maker o Manager) y el bloque lleva la función. La cara de cada
+        bloque se deriva del cruce: el mismo bloque de vender propone reuniones y CRM en un día
+        Manager, y propuestas y decks en un día Maker. El balance se cuadra por semana, no por día.
+      </p>
+    </div>
+    <OSSemana client:load />
+  </div>
+</OSLayout>

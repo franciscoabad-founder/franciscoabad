@@ -3,7 +3,6 @@ export const prerender = false;
 
 import OSLayout from '../../layouts/OSLayout.astro';
 import OSAprobaciones from '../../os/components/OSAprobaciones';
-import { aprobacionesDefault } from '../../os/data/sistema';
 ---
 
 <OSLayout title="Aprobaciones">
@@ -26,6 +25,6 @@ import { aprobacionesDefault } from '../../os/data/sistema';
       </p>
     </div>
 
-    <OSAprobaciones initialApprovals={aprobacionesDefault} client:load />
+    <OSAprobaciones client:load />
   </div>
 </OSLayout>

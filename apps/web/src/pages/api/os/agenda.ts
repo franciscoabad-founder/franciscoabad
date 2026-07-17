@@ -1,90 +1,120 @@
 export const prerender = false;
 
+// Backend de agenda: antes usaba webhooks de n8n (AGENDA_LIST_WEBHOOK_URL /
+// AGENDA_WRITE_WEBHOOK_URL) con auth propia solo por cookie. Ahora lee/escribe
+// directamente en la tabla pre-existente `reuniones` y usa el helper compartido
+// isOsAuthorized (cookie u os_auth O Bearer token, para que n8n pueda escribir con
+// OS_API_TOKEN). `reuniones` ahora tiene columnas `fin` (timestamptz) y `ubicacion`
+// (text) ademas de `fecha`, asi que el rango inicio/fin y la ubicacion persisten.
+
 import type { APIRoute } from 'astro';
+import { getSupabaseServer } from '../../../lib/supabase';
+import { isOsAuthorized, json } from '../../../os/lib/osAuth';
+import { errMsg, hoyGuayaquil } from '../../../lib/salud/apiHelpers';
 
-function isAuthorized(cookies: Parameters<APIRoute>[0]['cookies']): boolean {
-  const token = cookies.get('os_auth')?.value;
-  const expected = import.meta.env.OS_AUTH_TOKEN;
-  return !!(token && expected && token === expected);
-}
+const CAMPOS = ['titulo', 'fecha', 'fin', 'ubicacion', 'resumen', 'brain_slug'];
 
-const json = (data: unknown, status = 200) =>
-  new Response(JSON.stringify(data), {
-    status,
-    headers: { 'Content-Type': 'application/json' },
-  });
-
-function dateOnly(date: Date): string {
-  return date.toISOString().slice(0, 10);
-}
-
-function defaultRange(url: URL) {
-  const today = new Date();
-  const inTwoWeeks = new Date(today);
-  inTwoWeeks.setDate(today.getDate() + 14);
+// El UI de /os/agenda (agenda.astro) espera objetos con inicio/fin ISO. `reuniones`
+// mapea fecha -> inicio, fin -> fin (null si no esta seteado) y resumen -> descripcion.
+function toEvento(reunion: Record<string, unknown>) {
   return {
-    desde: url.searchParams.get('desde') ?? dateOnly(today),
-    hasta: url.searchParams.get('hasta') ?? dateOnly(inTwoWeeks),
+    id: reunion.id,
+    titulo: reunion.titulo,
+    inicio: reunion.fecha,
+    fin: reunion.fin ?? null,
+    ubicacion: reunion.ubicacion ?? undefined,
+    descripcion: reunion.resumen ?? undefined,
+    brain_slug: reunion.brain_slug,
+    fuente: reunion.fuente,
   };
 }
 
-export const GET: APIRoute = async ({ cookies, url }) => {
-  if (!isAuthorized(cookies)) return json({ error: 'Unauthorized' }, 401);
+function defaultRango(context: Parameters<APIRoute>[0]) {
+  const hoy = hoyGuayaquil();
+  const enUnaSemana = new Date();
+  enUnaSemana.setDate(enUnaSemana.getDate() + 7);
+  return {
+    desde: context.url.searchParams.get('desde') || hoy,
+    hasta: context.url.searchParams.get('hasta') || enUnaSemana.toISOString().slice(0, 10),
+  };
+}
 
-  const webhook = import.meta.env.AGENDA_LIST_WEBHOOK_URL;
-  if (!webhook) return json({ ok: true, eventos: [] });
-
-  const { desde, hasta } = defaultRange(url);
-
+export const GET: APIRoute = async (context) => {
+  if (!isOsAuthorized(context)) return json({ error: 'Unauthorized' }, 401);
   try {
-    const res = await fetch(webhook, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ desde, hasta }),
-    });
-    if (!res.ok) throw new Error(`n8n HTTP ${res.status}`);
-    const data = await res.json();
-    return json({ ok: true, eventos: Array.isArray(data.eventos) ? data.eventos : [] });
-  } catch {
-    return json({ ok: true, eventos: [] });
+    const { desde, hasta } = defaultRango(context);
+    const sb = getSupabaseServer();
+    const { data, error } = await sb
+      .from('reuniones')
+      .select('*')
+      .gte('fecha', `${desde}T00:00:00`)
+      .lte('fecha', `${hasta}T23:59:59`)
+      .order('fecha', { ascending: true });
+    if (error) throw error;
+    return json({ eventos: (data ?? []).map(toEvento) });
+  } catch (err) {
+    return json({ error: errMsg(err) }, 502);
   }
 };
 
-export const POST: APIRoute = async ({ cookies, request }) => {
-  if (!isAuthorized(cookies)) return json({ error: 'Unauthorized' }, 401);
-
-  const webhook = import.meta.env.AGENDA_WRITE_WEBHOOK_URL;
-  if (!webhook) {
-    return json({ ok: false, error: 'AGENDA_WRITE_WEBHOOK_URL no configurada' }, 501);
-  }
-
-  let body: Record<string, unknown>;
+export const POST: APIRoute = async (context) => {
+  if (!isOsAuthorized(context)) return json({ error: 'Unauthorized' }, 401);
   try {
-    body = await request.json();
-  } catch {
-    return json({ ok: false, error: 'JSON invalido' }, 400);
-  }
+    const body = await context.request.json();
+    const titulo = typeof body.titulo === 'string' ? body.titulo.trim() : '';
+    if (!titulo) return json({ error: 'titulo requerido' }, 400);
+    // Acepta `fecha` (nombre de columna) o `inicio` (nombre usado por el form de
+    // agenda.astro) como el timestamp del evento.
+    const fecha = body.fecha || body.inicio;
+    if (!fecha) return json({ error: 'fecha requerida' }, 400);
 
-  const titulo = body.titulo?.toString().trim();
-  const inicio = body.inicio?.toString().trim();
-  const fin = body.fin?.toString().trim();
-  const descripcion = body.descripcion?.toString().trim() || undefined;
-  const ubicacion = body.ubicacion?.toString().trim() || undefined;
-
-  if (!titulo) return json({ ok: false, error: 'titulo requerido' }, 400);
-  if (!inicio) return json({ ok: false, error: 'inicio requerido' }, 400);
-  if (!fin) return json({ ok: false, error: 'fin requerido' }, 400);
-
-  try {
-    const res = await fetch(webhook, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ titulo, inicio, fin, descripcion, ubicacion }),
-    });
-    if (!res.ok) throw new Error(`n8n HTTP ${res.status}`);
-    const data = await res.json();
-    return json({ ok: true, id: data.id ?? null }, 201);
+    const sb = getSupabaseServer();
+    const { data, error } = await sb
+      .from('reuniones')
+      .insert([{
+        titulo,
+        fecha,
+        fin: body.fin ?? null,
+        ubicacion: body.ubicacion ?? null,
+        resumen: body.resumen ?? body.descripcion ?? null,
+        brain_slug: body.brain_slug ?? null,
+      }])
+      .select()
+      .single();
+    if (error) throw error;
+    return json({ ok: true, evento: toEvento(data) }, 201);
   } catch (err) {
-    return json({ ok: false, error: String(err) }, 502);
+    return json({ error: errMsg(err) }, 502);
+  }
+};
+
+export const PATCH: APIRoute = async (context) => {
+  if (!isOsAuthorized(context)) return json({ error: 'Unauthorized' }, 401);
+  const id = context.url.searchParams.get('id');
+  if (!id) return json({ error: 'id requerido' }, 400);
+  try {
+    const body = await context.request.json();
+    const sb = getSupabaseServer();
+    const patch: Record<string, unknown> = {};
+    for (const c of CAMPOS) if (c in body) patch[c] = body[c];
+    const { data, error } = await sb.from('reuniones').update(patch).eq('id', id).select().single();
+    if (error) throw error;
+    return json({ ok: true, evento: toEvento(data) });
+  } catch (err) {
+    return json({ error: errMsg(err) }, 502);
+  }
+};
+
+export const DELETE: APIRoute = async (context) => {
+  if (!isOsAuthorized(context)) return json({ error: 'Unauthorized' }, 401);
+  const id = context.url.searchParams.get('id');
+  if (!id) return json({ error: 'id requerido' }, 400);
+  try {
+    const sb = getSupabaseServer();
+    const { error } = await sb.from('reuniones').delete().eq('id', id);
+    if (error) throw error;
+    return json({ ok: true });
+  } catch (err) {
+    return json({ error: errMsg(err) }, 502);
   }
 };
