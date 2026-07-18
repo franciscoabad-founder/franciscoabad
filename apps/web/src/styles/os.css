@@ -60,6 +60,20 @@
   --os-font-body:    'Inter', sans-serif;
   --os-font-mono:    'JetBrains Mono', 'SF Mono', monospace;
   --os-font-rounded: 'Nunito', 'Inter', sans-serif;
+
+  /* ── Escala tipografica minima (legibilidad) ──
+     Regla dura: ningun texto del OS baja de 11px; el cuerpo nunca baja de 13px.
+     xs es el piso para labels/eyebrows/tags; base es el cuerpo por defecto. */
+  --os-text-xs:   12px;
+  --os-text-sm:   13px;
+  --os-text-base: 14.5px;
+  --os-text-lg:   16px;
+
+  /* ── Areas tactiles ──
+     36px minimo en desktop (densidad); 44px en pantallas tactiles via
+     media (pointer: coarse) al final de este archivo. */
+  --os-tap-min: 36px;
+  --os-tap-coarse: 44px;
 }
 
 /* ── Tema oscuro ── */
@@ -111,7 +125,7 @@
    ========================================================================== */
 .os-eyebrow {
   font-family: var(--os-font-display);
-  font-size: 10px;
+  font-size: 11px;
   font-weight: 700;
   letter-spacing: 0.14em;
   text-transform: uppercase;
@@ -132,7 +146,7 @@
 }
 .os-section-title {
   font-family: var(--os-font-display);
-  font-size: 10px;
+  font-size: 11px;
   font-weight: 700;
   letter-spacing: 0.14em;
   text-transform: uppercase;
@@ -205,7 +219,7 @@
 }
 .os-kpi-label {
   font-family: var(--os-font-display);
-  font-size: 9px;
+  font-size: 11px;
   font-weight: 600;
   letter-spacing: 0.12em;
   text-transform: uppercase;
@@ -231,10 +245,10 @@
   display: inline-flex;
   align-items: center;
   gap: 5px;
-  padding: 2px 9px;
+  padding: 3px 10px;
   border-radius: var(--os-r-full);
   font-family: var(--os-font-display);
-  font-size: 10px;
+  font-size: 11px;
   font-weight: 700;
   letter-spacing: 0.06em;
   text-transform: uppercase;
@@ -243,10 +257,10 @@
 .os-pill-accent { background: rgba(59, 78, 217, 0.22); color: var(--os-accent-light); }
 .os-pill-gold   { background: rgba(181, 152, 90, 0.16); color: var(--os-champagne); }
 .os-tag {
-  font-size: 10px;
+  font-size: 11px;
   color: var(--os-muted);
   background: var(--os-fill-subtle);
-  padding: 2px 7px;
+  padding: 2px 8px;
   border-radius: 4px;
 }
 
@@ -265,9 +279,9 @@
 }
 .os-mode-label {
   font-family: var(--os-font-display);
-  font-size: 9px;
+  font-size: 11px;
   font-weight: 700;
-  letter-spacing: 0.18em;
+  letter-spacing: 0.14em;
   text-transform: uppercase;
 }
 
@@ -284,8 +298,9 @@
   border: none;
   border-radius: var(--os-r-sm);
   padding: 0.5rem 1rem;
+  min-height: var(--os-tap-min);
   font-family: var(--os-font-display);
-  font-size: 12px;
+  font-size: var(--os-text-sm);
   font-weight: 700;
   letter-spacing: 0.02em;
   cursor: pointer;
@@ -306,7 +321,8 @@
   border: 1px solid var(--os-line);
   border-radius: var(--os-r-sm);
   padding: 0.5rem 0.75rem;
-  font-size: 13px;
+  min-height: var(--os-tap-min);
+  font-size: var(--os-text-sm);
   color: var(--os-text);
   font-family: var(--os-font-body);
   outline: none;
@@ -370,3 +386,18 @@
 /* Scrollbar oculto para filas horizontales */
 .os-hscroll { overflow-x: auto; scrollbar-width: none; -ms-overflow-style: none; }
 .os-hscroll::-webkit-scrollbar { display: none; }
+
+/* ============================================================================
+   Areas tactiles en pantallas touch (pointer: coarse)
+   Controles interactivos suben a 44px de alto minimo. En desktop se mantiene
+   36px por densidad.
+   ========================================================================== */
+@media (pointer: coarse) {
+  .os-btn,
+  .os-input,
+  button.os-pill,
+  a.os-pill,
+  .os-theme-toggle {
+    min-height: var(--os-tap-coarse);
+  }
+}

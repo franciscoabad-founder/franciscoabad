@@ -84,14 +84,23 @@ const navGroups = [
   ]},
 ];
 
-// Bottom-nav (movil): 5 destinos primarios + Mas
-const bottomNav = [
-  { href: '/os', label: 'Hoy', icon: 'dashboard' },
-  { href: '/os/sistema', label: 'Sistema', icon: 'account_tree' },
-  { href: '/os/cerebro', label: 'Cerebro', icon: 'psychology' },
-  { href: '/os/agenda', label: 'Agenda', icon: 'calendar_today' },
-  { href: '/os/finanzas', label: 'Finanzas', icon: 'payments' },
-];
+// DECISION DE NAVEGACION (fase 1 rediseño): una sola jerarquia.
+// navGroups es LA fuente de verdad de toda la navegacion del OS.
+// - Desktop: sidebar con los 4 grupos completos.
+// - Movil: bottom-nav con 5 destinos primarios (Hoy, Sistema, Tareas,
+//   Agenda, Salud) DERIVADOS de navGroups, + boton "Mas" que abre el
+//   drawer con los mismos navGroups. Nada se define dos veces.
+const primariosMovil = ['/os', '/os/sistema', '/os/tareas', '/os/agenda', '/os/salud'];
+const etiquetaCorta: Record<string, string> = { '/os/sistema': 'Sistema' };
+const todosLosItems = navGroups.flatMap((g) => g.items);
+const bottomNav = primariosMovil.map((href) => {
+  const item = todosLosItems.find((i) => i.href === href);
+  return {
+    href,
+    label: etiquetaCorta[href] ?? item?.label ?? href,
+    icon: ms[href] ?? 'circle',
+  };
+});
 
 function isActive(href: string): boolean {
   if (href === '/os') return pathname === '/os' || pathname === '/os/';
@@ -174,13 +183,13 @@ const anyBottomActive = bottomNav.some(i => isActive(i.href));
         animation: os-pulse 2.4s cubic-bezier(0.4,0,0.6,1) infinite;
       }
       .cmd-mode-label {
-        font-family: var(--os-font-display); font-size: 9px; font-weight: 700;
-        letter-spacing: 0.18em; text-transform: uppercase; color: var(--os-accent-light);
+        font-family: var(--os-font-display); font-size: 11px; font-weight: 700;
+        letter-spacing: 0.14em; text-transform: uppercase; color: var(--os-accent-light);
       }
       .cmd-sep { width: 1px; height: 12px; background: var(--os-line); }
       .cmd-name {
-        font-family: var(--os-font-display); font-size: 9px; font-weight: 600;
-        letter-spacing: 0.12em; text-transform: uppercase; color: var(--os-muted);
+        font-family: var(--os-font-display); font-size: 11px; font-weight: 600;
+        letter-spacing: 0.1em; text-transform: uppercase; color: var(--os-muted);
       }
       .cmd-center {
         flex: 1; display: flex; align-items: center; gap: 10px;
@@ -188,37 +197,35 @@ const anyBottomActive = bottomNav.some(i => isActive(i.href));
         border-right: 1px solid var(--os-line-soft); overflow: hidden;
       }
       .cmd-day-pill {
-        display: inline-flex; align-items: center; padding: 2px 8px;
-        border-radius: 4px; font-family: var(--os-font-display);
-        font-size: 8px; font-weight: 700; letter-spacing: 0.14em;
+        display: inline-flex; align-items: center; padding: 3px 10px;
+        border-radius: 5px; font-family: var(--os-font-display);
+        font-size: 11px; font-weight: 700; letter-spacing: 0.1em;
         text-transform: uppercase; flex-shrink: 0;
         background: rgba(59,78,217,0.14);
-      }
-      .cmd-domino-label {
-        font-size: 9px; color: var(--os-muted); font-family: var(--os-font-display);
-        font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; flex-shrink: 0;
-      }
-      .cmd-domino-text {
-        font-size: 12px; color: var(--os-text); white-space: nowrap;
-        overflow: hidden; text-overflow: ellipsis; min-width: 0;
       }
       .cmd-right { display: flex; align-items: center; gap: 10px; padding: 0 0.875rem; height: 100%; flex-shrink: 0; }
       .cmd-capture {
         display: flex; align-items: center;
         background: var(--os-fill-subtle);
         border: 1px solid var(--os-line-soft);
-        border-radius: 5px; overflow: hidden;
+        border-radius: 7px; overflow: hidden;
       }
       .cmd-capture input {
         background: transparent; border: none; outline: none;
-        padding: 4px 8px; font-size: 11px; color: var(--os-text);
-        font-family: var(--os-font-body); width: 140px;
+        padding: 6px 8px; font-size: 12px; color: var(--os-text);
+        font-family: var(--os-font-body); width: 190px; min-height: 32px;
       }
       .cmd-capture input::placeholder { color: var(--os-muted); }
-      .cmd-status { display: flex; align-items: center; gap: 5px; font-size: 10px; color: var(--os-muted); font-family: var(--os-font-display); letter-spacing: 0.06em; }
-      .cmd-status-dot { width: 5px; height: 5px; border-radius: 50%; background: var(--os-ok); box-shadow: 0 0 5px rgba(181,152,90,0.5); flex-shrink: 0; }
+      .cmd-quick-mode {
+        display: inline-flex; align-items: center; justify-content: center;
+        width: 32px; height: 32px; flex-shrink: 0; background: transparent;
+        border: none; border-right: 1px solid var(--os-line-soft);
+        color: var(--os-accent-light); cursor: pointer; padding: 0;
+      }
+      .cmd-quick-mode .material-symbols-outlined { font-size: 17px; }
+      .cmd-quick-mode:hover { background: var(--os-hover); }
       .cmd-logout {
-        font-size: 10px; color: var(--os-muted); text-decoration: none;
+        font-size: 11px; color: var(--os-muted); text-decoration: none;
         font-family: var(--os-font-display); letter-spacing: 0.06em;
         text-transform: uppercase; font-weight: 600; transition: color 0.14s;
         padding: 3px 6px; border-radius: 4px; border: 1px solid var(--os-line-soft);
@@ -230,7 +237,7 @@ const anyBottomActive = bottomNav.some(i => isActive(i.href));
         display: inline-flex; align-items: center; justify-content: center;
         background: none; border: 1px solid var(--os-line);
         border-radius: var(--os-r-sm); color: var(--os-muted);
-        cursor: pointer; width: 28px; height: 28px; padding: 0; flex-shrink: 0;
+        cursor: pointer; width: 36px; height: 36px; padding: 0; flex-shrink: 0;
         transition: background 0.14s, color 0.14s, border-color 0.14s;
       }
       .os-theme-toggle:hover { background: var(--os-hover); color: var(--os-text); border-color: var(--os-line-accent); }
@@ -283,14 +290,14 @@ const anyBottomActive = bottomNav.some(i => isActive(i.href));
 
       /* ── Nav ── */
       .nav-group-label {
-        font-family: var(--os-font-display); font-size: 8px; font-weight: 700;
-        letter-spacing: 0.18em; text-transform: uppercase;
-        color: rgba(107,114,128,0.7); padding: 0 0.625rem; margin-bottom: 1px;
+        font-family: var(--os-font-display); font-size: 11px; font-weight: 700;
+        letter-spacing: 0.12em; text-transform: uppercase;
+        color: rgba(107,114,128,0.8); padding: 0 0.625rem; margin-bottom: 2px;
       }
       .nav-item {
         display: flex; align-items: center; gap: 9px;
-        padding: 0.35rem 0.625rem; border-radius: 5px;
-        font-size: 12.5px; color: var(--os-muted); background: transparent;
+        padding: 0.35rem 0.625rem; min-height: 40px; border-radius: 7px;
+        font-size: 13px; color: var(--os-muted); background: transparent;
         border-left: 2px solid transparent; text-decoration: none;
         transition: color 0.14s, background 0.14s; white-space: nowrap; letter-spacing: 0.01em;
       }
@@ -325,7 +332,7 @@ const anyBottomActive = bottomNav.some(i => isActive(i.href));
         cursor: pointer; transition: color 0.15s, transform 0.15s; padding: 8px 0;
       }
       .bn-item .material-symbols-outlined { font-size: 23px; }
-      .bn-label { font-family: var(--os-font-display); font-size: 9px; font-weight: 600; letter-spacing: 0.04em; }
+      .bn-label { font-family: var(--os-font-display); font-size: 11px; font-weight: 600; letter-spacing: 0.02em; }
       .bn-item:active { transform: scale(0.9); }
       .bn-item.active { color: var(--os-accent-light); }
       .bn-item.active .material-symbols-outlined { font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
@@ -342,6 +349,8 @@ const anyBottomActive = bottomNav.some(i => isActive(i.href));
         .os-shell { min-height: calc(100dvh - 44px); }
         .os-theme-toggle { width: 44px; height: 44px; }
         .os-theme-toggle .material-symbols-outlined { font-size: 20px; }
+        /* Items de nav (drawer movil): area tactil de 48px */
+        .nav-item { min-height: 48px; }
       }
     </style>
   </head>
@@ -359,24 +368,25 @@ const anyBottomActive = bottomNav.some(i => isActive(i.href));
       </div>
 
       <div class="cmd-center">
-        <span class="cmd-day-pill" style={`color:${tipoColor[tipoDia]};`}>{tipoLabel[tipoDia]}</span>
-        <span class="cmd-domino-label">Domino</span>
-        <span class="cmd-domino-text">{dominoTexto}</span>
+        <!-- El Domino del dia ya vive en el dashboard (Hoy); aqui queda solo
+             como tooltip del pill de modo para no cargar la barra. -->
+        <span class="cmd-day-pill" style={`color:${tipoColor[tipoDia]};`} title={`Domino de hoy: ${dominoTexto}`}>{tipoLabel[tipoDia]}</span>
       </div>
 
       <div class="cmd-right">
-        <div class="cmd-capture" id="pregunta-wrap">
-          <input id="os-pregunta" type="text" placeholder="Preguntar al cerebro..." maxlength="400" />
-        </div>
-        <div class="cmd-capture">
-          <input id="os-capture" type="text" placeholder="Capturar idea..." maxlength="200" />
+        <!-- Captura rapida unificada: un solo input con conmutador
+             preguntar al cerebro / capturar idea. -->
+        <div class="cmd-capture" id="quick-wrap">
+          <button type="button" class="cmd-quick-mode" id="os-quick-toggle" title="Cambiar entre preguntar y capturar" aria-label="Cambiar entre preguntar y capturar">
+            <span class="material-symbols-outlined" id="os-quick-icon">psychology</span>
+          </button>
+          <input id="os-quick" type="text" placeholder="Preguntar al cerebro..." maxlength="400" />
         </div>
         <OSJugadorBar client:load />
         <button type="button" class="os-theme-toggle" data-os-theme-toggle aria-label="Cambiar tema">
           <span class="material-symbols-outlined" data-os-theme-icon="sun">light_mode</span>
           <span class="material-symbols-outlined" data-os-theme-icon="moon">dark_mode</span>
         </button>
-        <div class="cmd-status"><span class="cmd-status-dot"></span><span>Activo</span></div>
         <a href="/api/os-auth?action=logout" class="cmd-logout" title="Cerrar sesion">salir</a>
       </div>
     </header>
@@ -539,7 +549,6 @@ const anyBottomActive = bottomNav.some(i => isActive(i.href));
       overlay?.addEventListener('click', closeDrawer);
 
       // ── Chat con el cerebro ──
-      const preguntaBar   = document.getElementById('os-pregunta') as HTMLInputElement | null;
       const preguntaPanel = document.getElementById('os-pregunta-panel') as HTMLElement | null;
       const preguntaBody  = document.getElementById('os-pregunta-body') as HTMLElement | null;
       const preguntaClose = document.getElementById('os-pregunta-close') as HTMLElement | null;
@@ -610,14 +619,6 @@ const anyBottomActive = bottomNav.some(i => isActive(i.href));
         renderChat();
       }
 
-      preguntaBar?.addEventListener('keydown', (e: KeyboardEvent) => {
-        if (e.key !== 'Enter') return;
-        const q = preguntaBar.value.trim();
-        if (!q) { openChat(); return; }
-        preguntaBar.value = '';
-        askBrain(q);
-      });
-
       const sendFromPanel = () => {
         if (!preguntaInput) return;
         const q = preguntaInput.value.trim();
@@ -636,14 +637,26 @@ const anyBottomActive = bottomNav.some(i => isActive(i.href));
         renderChat();
       });
 
-      // ── Capturar idea → cerebro ──
-      const captureInput = document.getElementById('os-capture') as HTMLInputElement | null;
-      async function sendCapture() {
-        if (!captureInput) return;
-        const texto = captureInput.value.trim();
-        if (!texto) return;
-        captureInput.value = '';
-        captureInput.placeholder = 'Guardando...';
+      // ── Captura rapida unificada (un input, conmutador preguntar/capturar) ──
+      // Mismos endpoints de siempre: /api/os/preguntar (chat) y /api/os/capturar.
+      const quickInput  = document.getElementById('os-quick') as HTMLInputElement | null;
+      const quickToggle = document.getElementById('os-quick-toggle');
+      const quickIcon   = document.getElementById('os-quick-icon');
+      let quickMode: 'preguntar' | 'capturar' = 'preguntar';
+
+      function aplicarQuickMode() {
+        if (quickInput) quickInput.placeholder = quickMode === 'preguntar' ? 'Preguntar al cerebro...' : 'Capturar idea...';
+        if (quickIcon) quickIcon.textContent = quickMode === 'preguntar' ? 'psychology' : 'edit_note';
+      }
+      quickToggle?.addEventListener('click', () => {
+        quickMode = quickMode === 'preguntar' ? 'capturar' : 'preguntar';
+        aplicarQuickMode();
+        quickInput?.focus();
+      });
+
+      async function sendCapture(texto: string) {
+        if (!quickInput) return;
+        quickInput.placeholder = 'Guardando...';
         try {
           const res = await fetch('/api/os/capturar', {
             method: 'POST',
@@ -651,14 +664,25 @@ const anyBottomActive = bottomNav.some(i => isActive(i.href));
             body: JSON.stringify({ texto }),
           });
           const data: { ok?: boolean; error?: string } = await res.json();
-          captureInput.placeholder = (res.ok && data.ok) ? 'Guardado en el cerebro' : 'Error al guardar';
+          quickInput.placeholder = (res.ok && data.ok) ? 'Guardado en el cerebro' : 'Error al guardar';
         } catch {
-          captureInput.placeholder = 'Error al guardar';
+          quickInput.placeholder = 'Error al guardar';
         }
-        setTimeout(() => { if (captureInput) captureInput.placeholder = 'Capturar idea...'; }, 1800);
+        setTimeout(aplicarQuickMode, 1800);
       }
-      captureInput?.addEventListener('keydown', (e: KeyboardEvent) => {
-        if (e.key === 'Enter') sendCapture();
+
+      quickInput?.addEventListener('keydown', (e: KeyboardEvent) => {
+        if (e.key !== 'Enter') return;
+        const v = quickInput.value.trim();
+        if (quickMode === 'preguntar') {
+          if (!v) { openChat(); return; }
+          quickInput.value = '';
+          askBrain(v);
+        } else {
+          if (!v) return;
+          quickInput.value = '';
+          sendCapture(v);
+        }
       });
 
       // ── PWA: registrar service worker ──
