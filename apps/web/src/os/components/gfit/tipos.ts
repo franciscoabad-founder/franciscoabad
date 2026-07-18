@@ -84,10 +84,12 @@ export const WEEKDAY_CORTO: Record<number, string> = {
 };
 
 export const TIPOS_SERIE_ORDEN: TipoSerie[] = ['warmup', 'working', 'drop', 'failure'];
+// Colores categóricos de tipo de serie (paridad Jefit). warmup y failure no
+// tienen token --os-* equivalente: ámbar y coral del canon, nunca verde.
 export const TIPO_SERIE_COLOR: Record<TipoSerie, string> = {
   warmup: '#EF9F27',
   working: 'var(--os-accent)',
-  drop: '#6B7AE8',
+  drop: 'var(--os-accent-light)',
   failure: '#E8709A',
 };
 export const TIPO_SERIE_DEF: Record<TipoSerie, { titulo: string; texto: string }> = {

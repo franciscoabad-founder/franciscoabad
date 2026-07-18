@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
+import { Button, Spinner, EmptyState } from '../ui';
 import { sugerenciaOverload, ajusteRecuperacion, type SetHist } from '../../../lib/salud/progresion';
 
 // ── Tipos ──────────────────────────────────────────────────────────────────
@@ -45,17 +46,19 @@ const card: React.CSSProperties = {
   borderRadius: 'var(--os-r-card)', padding: '1rem',
 };
 const input: React.CSSProperties = {
-  background: 'rgba(232,234,240,0.05)', border: '1px solid var(--os-line)', borderRadius: 6,
-  padding: '7px 10px', fontSize: 13, color: 'var(--os-text)', fontFamily: 'var(--os-font-body)', outline: 'none', width: '100%',
+  background: 'var(--os-fill-subtle)', border: '1px solid var(--os-line)', borderRadius: 'var(--os-r-sm)',
+  padding: '7px 10px', fontSize: 'var(--os-text-sm)', color: 'var(--os-text)', fontFamily: 'var(--os-font-body)', outline: 'none', width: '100%', minHeight: 40,
 };
-const sel: React.CSSProperties = { ...input, background: '#0E1738', colorScheme: 'dark' };
+const sel: React.CSSProperties = { ...input, background: 'var(--os-surface)' };
 const btn: React.CSSProperties = {
-  background: 'var(--os-accent)', color: '#fff', border: 'none', borderRadius: 6,
-  padding: '9px 16px', fontSize: 13, fontFamily: 'var(--os-font-display)', fontWeight: 700, cursor: 'pointer', whiteSpace: 'nowrap',
+  display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
+  background: 'var(--os-accent)', color: '#fff', border: 'none', borderRadius: 'var(--os-r-sm)',
+  padding: '9px 16px', minHeight: 44, fontSize: 'var(--os-text-sm)', fontFamily: 'var(--os-font-display)', fontWeight: 700, cursor: 'pointer', whiteSpace: 'nowrap',
 };
 const btnGhost: React.CSSProperties = {
+  display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
   background: 'transparent', color: 'var(--os-muted)', border: '1px solid var(--os-line)',
-  borderRadius: 6, padding: '7px 12px', fontSize: 12, cursor: 'pointer',
+  borderRadius: 'var(--os-r-sm)', padding: '7px 12px', minHeight: 40, fontSize: 'var(--os-text-xs)', cursor: 'pointer',
 };
 const tab = (activo: boolean): React.CSSProperties => ({
   ...btnGhost, ...(activo ? { color: '#fff', background: 'var(--os-accent)', borderColor: 'var(--os-accent)' } : {}),
@@ -150,16 +153,23 @@ function Biblioteca() {
         </div>
       )}
 
-      {loading ? <p style={{ fontSize: 13, color: 'var(--os-muted)' }}>Cargando...</p> :
-        ejercicios.length === 0 ? <p style={{ fontSize: 13, color: 'var(--os-muted)' }}>Sin ejercicios. Corre el seed de wger o agrega manual.</p> :
+      {loading ? <Spinner /> :
+        ejercicios.length === 0 ? (
+          <EmptyState
+            icon="fitness_center"
+            title="Sin ejercicios"
+            text="Corre el seed de wger o agrega uno manual."
+            action={<Button size="sm" onClick={() => setAlta(true)}>+ Manual</Button>}
+          />
+        ) :
         <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
           {ejercicios.map((e) => (
             <div key={e.id} style={{ ...card, padding: '10px 12px' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', gap: 8 }}>
-                <span style={{ fontSize: 14, fontWeight: 600, color: 'var(--os-text)' }}>{e.nombre}</span>
-                {e.patron && <span style={{ fontSize: 10, fontFamily: 'var(--os-font-display)', color: 'var(--os-accent-light)', background: 'rgba(59,78,217,0.15)', padding: '2px 8px', borderRadius: 999, whiteSpace: 'nowrap' }}>{PATRONES.find((p) => p.key === e.patron)?.label ?? e.patron}</span>}
+                <span style={{ fontSize: 'var(--os-text-base)', fontWeight: 600, color: 'var(--os-text)' }}>{e.nombre}</span>
+                {e.patron && <span style={{ fontSize: 11, fontFamily: 'var(--os-font-display)', color: 'var(--os-accent-light)', background: 'rgba(59,78,217,0.15)', padding: '2px 8px', borderRadius: 999, whiteSpace: 'nowrap' }}>{PATRONES.find((p) => p.key === e.patron)?.label ?? e.patron}</span>}
               </div>
-              <p style={{ fontSize: 11, color: 'var(--os-muted)', margin: '3px 0 0' }}>
+              <p style={{ fontSize: 'var(--os-text-xs)', color: 'var(--os-muted)', margin: '3px 0 0' }}>
                 {[e.grupo_muscular_primario, e.equipamiento].filter(Boolean).join(' · ')}
               </p>
             </div>
@@ -214,15 +224,22 @@ function Rutinas({ onIniciar }: { onIniciar: (sets: SetVivo[], meta: { rutinaId:
         <button style={btn} onClick={() => setEditor('nueva')}>+ Nueva rutina</button>
         <SesionRapida onCreada={cargar} />
       </div>
-      {loading ? <p style={{ fontSize: 13, color: 'var(--os-muted)' }}>Cargando...</p> :
-        rutinas.length === 0 ? <p style={{ fontSize: 13, color: 'var(--os-muted)' }}>Sin rutinas. Crea una o corre el seed "Full Body Casa".</p> :
+      {loading ? <Spinner /> :
+        rutinas.length === 0 ? (
+          <EmptyState
+            icon="assignment"
+            title="Sin rutinas"
+            text='Crea una o corre el seed "Full Body Casa".'
+            action={<Button size="sm" onClick={() => setEditor('nueva')}>+ Nueva rutina</Button>}
+          />
+        ) :
         rutinas.map((r) => (
           <div key={r.id} style={card}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 8 }}>
               <div>
                 <p style={{ fontSize: 15, fontWeight: 700, color: 'var(--os-text)', margin: 0 }}>{r.nombre}</p>
-                {r.descripcion && <p style={{ fontSize: 12, color: 'var(--os-muted)', margin: '2px 0 0' }}>{r.descripcion}</p>}
-                <p style={{ fontSize: 11, color: 'var(--os-muted)', margin: '6px 0 0' }}>
+                {r.descripcion && <p style={{ fontSize: 'var(--os-text-xs)', color: 'var(--os-muted)', margin: '2px 0 0' }}>{r.descripcion}</p>}
+                <p style={{ fontSize: 'var(--os-text-xs)', color: 'var(--os-muted)', margin: '6px 0 0' }}>
                   {r.rutina_ejercicios?.length ?? 0} ejercicios
                 </p>
               </div>
@@ -372,7 +389,7 @@ function ConstructorRutina({ rutina, onCerrar }: { rutina: Rutina | null; onCerr
 
       <div style={{ display: 'flex', gap: 6 }}>
         <button style={btn} disabled={guardando} onClick={guardar}>{guardando ? 'Guardando...' : 'Guardar rutina'}</button>
-        {rutina && <button style={{ ...btnGhost, color: 'var(--os-error)', borderColor: 'rgba(248,113,113,0.4)' }} onClick={borrarRutina}>Borrar</button>}
+        {rutina && <Button variant="danger" onClick={borrarRutina}>Borrar</Button>}
       </div>
     </div>
   );
@@ -483,11 +500,11 @@ function ModoSesion({ sets, setSets, meta, onSalir }: {
     return (
       <div style={{ display: 'flex', flexDirection: 'column', gap: 14, maxWidth: 480, margin: '0 auto' }}>
         <p style={{ fontSize: 18, fontWeight: 700, color: 'var(--os-text)', margin: 0 }}>Terminar sesión</p>
-        <p style={{ fontSize: 13, color: 'var(--os-muted)', margin: 0 }}>{completados} de {sets.length} sets completados · {meta.nombre}</p>
-        <label style={{ fontSize: 12, color: 'var(--os-muted)' }}>RPE global (1-10)
+        <p style={{ fontSize: 'var(--os-text-sm)', color: 'var(--os-muted)', margin: 0 }}>{completados} de {sets.length} sets completados · {meta.nombre}</p>
+        <label style={{ fontSize: 'var(--os-text-xs)', color: 'var(--os-muted)' }}>RPE global (1-10)
           <input style={{ ...input, marginTop: 4 }} type="number" min="1" max="10" value={rpeGlobal} onChange={(e) => setRpeGlobal(e.target.value)} />
         </label>
-        <label style={{ fontSize: 12, color: 'var(--os-muted)' }}>Notas
+        <label style={{ fontSize: 'var(--os-text-xs)', color: 'var(--os-muted)' }}>Notas
           <textarea style={{ ...input, marginTop: 4, minHeight: 70, resize: 'vertical' }} value={notas} onChange={(e) => setNotas(e.target.value)} />
         </label>
         <div style={{ display: 'flex', gap: 8 }}>
@@ -503,23 +520,23 @@ function ModoSesion({ sets, setSets, meta, onSalir }: {
       {/* Barra de progreso */}
       <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
         <button style={btnGhost} onClick={() => { if (confirm('¿Salir sin guardar la sesión?')) onSalir(); }}>✕</button>
-        <div style={{ flex: 1, height: 6, background: 'rgba(232,234,240,0.1)', borderRadius: 3, overflow: 'hidden' }}>
+        <div style={{ flex: 1, height: 6, background: 'var(--os-fill-subtle)', borderRadius: 3, overflow: 'hidden' }}>
           <div style={{ height: '100%', width: `${pct}%`, background: 'var(--os-accent)', borderRadius: 3, transition: 'width .3s' }} />
         </div>
-        <span style={{ fontSize: 12, fontFamily: 'var(--os-font-mono)', color: 'var(--os-muted)' }}>{idx + 1}/{sets.length}</span>
+        <span style={{ fontSize: 'var(--os-text-xs)', fontFamily: 'var(--os-font-mono)', color: 'var(--os-muted)' }}>{idx + 1}/{sets.length}</span>
       </div>
 
       {/* Aviso de recuperación (regla de sueño) */}
       {avisoRecup && (
-        <div style={{ ...card, borderColor: 'rgba(255,180,171,0.3)', background: 'rgba(147,0,10,0.08)', padding: '10px 12px' }}>
-          <p style={{ fontSize: 12, color: 'var(--os-warn)', margin: 0 }}>😴 {avisoRecup}</p>
+        <div style={{ ...card, borderColor: 'color-mix(in srgb, var(--os-warn) 35%, transparent)', background: 'color-mix(in srgb, var(--os-warn) 10%, var(--os-surface-2))', padding: '10px 12px' }}>
+          <p style={{ fontSize: 'var(--os-text-xs)', color: 'var(--os-warn)', margin: 0 }}>😴 {avisoRecup}</p>
         </div>
       )}
 
       {/* Timer de descanso */}
       {descanso > 0 && (
         <div style={{ ...card, textAlign: 'center', background: 'rgba(59,78,217,0.14)', borderColor: 'var(--os-line-accent)' }}>
-          <p style={{ fontSize: 11, color: 'var(--os-accent-light)', textTransform: 'uppercase', letterSpacing: '0.1em', margin: 0 }}>Descanso</p>
+          <p style={{ fontSize: 'var(--os-text-xs)', color: 'var(--os-accent-light)', textTransform: 'uppercase', letterSpacing: '0.1em', margin: 0 }}>Descanso</p>
           <p style={{ fontSize: 40, fontFamily: 'var(--os-font-mono)', fontWeight: 700, margin: '4px 0', color: 'var(--os-text)' }}>
             {Math.floor(descanso / 60)}:{String(descanso % 60).padStart(2, '0')}
           </p>
@@ -534,25 +551,25 @@ function ModoSesion({ sets, setSets, meta, onSalir }: {
       <div style={card}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 4 }}>
           <span style={{ fontSize: 18, fontWeight: 700, color: 'var(--os-text)' }}>{actual.ejercicio_nombre}</span>
-          <span style={{ fontSize: 10, fontFamily: 'var(--os-font-display)', color: 'var(--os-accent-light)', background: 'rgba(59,78,217,0.15)', padding: '3px 9px', borderRadius: 999 }}>{TIPO_SET_LABEL[actual.tipo_set]}</span>
+          <span style={{ fontSize: 11, fontFamily: 'var(--os-font-display)', color: 'var(--os-accent-light)', background: 'rgba(59,78,217,0.15)', padding: '3px 9px', borderRadius: 999 }}>{TIPO_SET_LABEL[actual.tipo_set]}</span>
         </div>
-        <p style={{ fontSize: 13, color: 'var(--os-text-2)', margin: '0 0 4px' }}>
+        <p style={{ fontSize: 'var(--os-text-sm)', color: 'var(--os-text-2)', margin: '0 0 4px' }}>
           Objetivo: <b>{actual.reps_objetivo || '-'} reps</b>{actual.peso_objetivo ? ` × ${actual.peso_objetivo} kg` : ''}
         </p>
         {sugerencias[actual.ejercicio_id] && (
-          <p style={{ fontSize: 12, color: 'var(--os-champagne)', margin: '0 0 10px' }}>
+          <p style={{ fontSize: 'var(--os-text-xs)', color: 'var(--os-champagne)', margin: '0 0 10px' }}>
             💡 {sugerencias[actual.ejercicio_id]}
           </p>
         )}
 
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 8, marginTop: 8 }}>
-          <label style={{ fontSize: 11, color: 'var(--os-muted)' }}>Reps
+          <label style={{ fontSize: 'var(--os-text-xs)', color: 'var(--os-muted)' }}>Reps
             <input style={{ ...input, marginTop: 3, fontSize: 16, textAlign: 'center' }} type="number" inputMode="numeric" value={actual.reps} onChange={(e) => actualizar('reps', e.target.value)} />
           </label>
-          <label style={{ fontSize: 11, color: 'var(--os-muted)' }}>Peso (kg)
+          <label style={{ fontSize: 'var(--os-text-xs)', color: 'var(--os-muted)' }}>Peso (kg)
             <input style={{ ...input, marginTop: 3, fontSize: 16, textAlign: 'center' }} type="number" inputMode="decimal" value={actual.peso_kg} onChange={(e) => actualizar('peso_kg', e.target.value)} />
           </label>
-          <label style={{ fontSize: 11, color: 'var(--os-muted)' }}>RPE
+          <label style={{ fontSize: 'var(--os-text-xs)', color: 'var(--os-muted)' }}>RPE
             <input style={{ ...input, marginTop: 3, fontSize: 16, textAlign: 'center' }} type="number" inputMode="numeric" min="1" max="10" value={actual.rpe} onChange={(e) => actualizar('rpe', e.target.value)} />
           </label>
         </div>
@@ -581,19 +598,19 @@ function Historial() {
   useEffect(() => {
     fetch('/api/os/salud/sesiones?limit=50').then((r) => r.json()).then((d) => { setSesiones(d.sesiones ?? []); setLoading(false); });
   }, []);
-  if (loading) return <p style={{ fontSize: 13, color: 'var(--os-muted)' }}>Cargando...</p>;
-  if (!sesiones.length) return <p style={{ fontSize: 13, color: 'var(--os-muted)' }}>Sin sesiones registradas.</p>;
+  if (loading) return <Spinner />;
+  if (!sesiones.length) return <EmptyState icon="history" title="Sin sesiones registradas" text="Inicia una rutina o registra una sesión rápida." />;
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
       {sesiones.map((s) => (
         <div key={s.id} style={card}>
           <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-            <span style={{ fontSize: 14, fontWeight: 600, color: 'var(--os-text)', textTransform: 'capitalize' }}>{s.tipo}</span>
-            <span style={{ fontSize: 12, fontFamily: 'var(--os-font-mono)', color: 'var(--os-muted)' }}>
+            <span style={{ fontSize: 'var(--os-text-base)', fontWeight: 600, color: 'var(--os-text)', textTransform: 'capitalize' }}>{s.tipo}</span>
+            <span style={{ fontSize: 'var(--os-text-xs)', fontFamily: 'var(--os-font-mono)', color: 'var(--os-muted)' }}>
               {new Date(s.fecha + 'T12:00:00').toLocaleDateString('es-EC', { day: 'numeric', month: 'short' })}
             </span>
           </div>
-          <p style={{ fontSize: 11, color: 'var(--os-muted)', margin: '4px 0 0' }}>
+          <p style={{ fontSize: 'var(--os-text-xs)', color: 'var(--os-muted)', margin: '4px 0 0' }}>
             {s.sets_log?.length ? `${s.sets_log.length} sets` : ''}{s.duracion_min ? ` · ${s.duracion_min} min` : ''}{s.rpe_sesion ? ` · RPE ${s.rpe_sesion}` : ''}
           </p>
         </div>

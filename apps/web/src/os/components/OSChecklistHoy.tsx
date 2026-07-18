@@ -1,13 +1,10 @@
 import { useEffect, useState } from 'react';
 
-// NOTA de diseño (rebrand brutalista de Habitos, rama feat/habitos-brutal):
-// este componente vive en el HOME del OS (Ultramarine v5), NO dentro de
-// [data-modulo="habitos"]. El home no carga src/styles/os-conductual.css,
-// asi que este checklist conserva intencionalmente la marca personal
-// Ultramarine (colores hex directos, radios redondeados) y NO usa tokens
-// --m-*. Es la unica excepcion documentada en el canon de diseno conductual
-// (apps/web/docs/os-diseno-conductual.md): el modulo Habitos vive en su
-// zona brutalista solo dentro de /os/habitos y /os/habitos/journeys.
+// Checklist de diarias (habitos) en el HOME del OS. Trae data real desde
+// /api/os/habitos, a diferencia de OSChecklist (estatico por props, daily.astro).
+// Vive fuera de [data-modulo="habitos"], asi que usa tokens --os-* (Ultramarine v5),
+// no los tokens --m-* del canon conductual brutalista.
+// Regla de color: hecho/completado = champagne, accion = accent, nunca verde.
 
 interface HabitoDiaria {
   id: string;
@@ -114,11 +111,11 @@ export default function OSChecklistHoy({ title }: Props) {
     <div>
       {title && (
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.625rem' }}>
-          <p style={{ fontFamily: 'Montserrat, sans-serif', fontSize: '10px', fontWeight: 600, letterSpacing: '0.12em', textTransform: 'uppercase', color: '#6B7280', margin: 0 }}>
+          <p style={{ fontFamily: 'var(--os-font-display)', fontSize: 11, fontWeight: 600, letterSpacing: '0.12em', textTransform: 'uppercase', color: 'var(--os-muted)', margin: 0 }}>
             {title}
           </p>
           {!loading && !error && habitos.length > 0 && (
-            <span style={{ fontSize: '12px', color: done === habitos.length ? '#6B7AE8' : '#6B7280' }}>
+            <span style={{ fontSize: 'var(--os-text-xs)', color: done === habitos.length ? 'var(--os-champagne)' : 'var(--os-muted)' }}>
               {done}/{habitos.length}
             </span>
           )}
@@ -131,9 +128,9 @@ export default function OSChecklistHoy({ title }: Props) {
             <li
               key={i}
               style={{
-                height: '35px',
+                height: '36px',
                 borderRadius: '6px',
-                background: 'rgba(232,234,240,0.04)',
+                background: 'var(--os-fill-subtle)',
                 opacity: 0.4 + i * 0.15,
                 animation: 'os-checklist-pulse 1.2s ease-in-out infinite',
               }}
@@ -141,21 +138,21 @@ export default function OSChecklistHoy({ title }: Props) {
           ))}
         </ul>
       ) : error ? (
-        <div style={{ display: 'flex', alignItems: 'center', gap: 10, fontSize: '13px', color: '#f87171' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 10, fontSize: 'var(--os-text-sm)', color: 'var(--os-error)' }}>
           <span>{error}</span>
           <button
             onClick={() => cargar()}
             style={{
-              background: 'transparent', color: '#6B7280', border: '1px solid rgba(232,234,240,0.2)',
-              borderRadius: 6, padding: '3px 10px', fontSize: 11, cursor: 'pointer',
+              background: 'transparent', color: 'var(--os-text-2)', border: '1px solid var(--os-line)',
+              borderRadius: 6, padding: '3px 10px', minHeight: 36, fontSize: 'var(--os-text-xs)', cursor: 'pointer',
             }}
           >
             Reintentar
           </button>
         </div>
       ) : habitos.length === 0 ? (
-        <p style={{ fontSize: '13px', color: '#6B7280', margin: 0, lineHeight: 1.5 }}>
-          Sin diarias para hoy. <a href="/os/habitos" style={{ color: '#6B7AE8' }}>Configura tus hábitos.</a>
+        <p style={{ fontSize: 'var(--os-text-sm)', color: 'var(--os-muted)', margin: 0, lineHeight: 1.5 }}>
+          Sin diarias para hoy. <a href="/os/habitos" style={{ color: 'var(--os-accent-light)' }}>Configura tus hábitos.</a>
         </p>
       ) : (
         <ul style={{ listStyle: 'none', margin: 0, padding: 0, display: 'flex', flexDirection: 'column', gap: '4px' }}>
@@ -170,8 +167,8 @@ export default function OSChecklistHoy({ title }: Props) {
                   style={{
                     display: 'flex', alignItems: 'flex-start', gap: '10px',
                     width: '100%', border: 'none', cursor: enVuelo ? 'not-allowed' : 'pointer',
-                    padding: '8px 10px', borderRadius: '6px', textAlign: 'left',
-                    background: completado ? 'rgba(59,78,217,0.1)' : 'rgba(232,234,240,0.04)',
+                    padding: '8px 10px', minHeight: 36, borderRadius: '6px', textAlign: 'left',
+                    background: completado ? 'rgba(181,152,90,0.10)' : 'var(--os-fill-subtle)',
                     opacity: enVuelo ? 0.5 : 1,
                     transition: 'background 0.16s',
                   }}
@@ -179,22 +176,22 @@ export default function OSChecklistHoy({ title }: Props) {
                   <span
                     style={{
                       width: '17px', height: '17px', flexShrink: 0, borderRadius: '4px', marginTop: '1px',
-                      border: completado ? '2px solid #3B4ED9' : '2px solid rgba(232,234,240,0.2)',
-                      background: completado ? '#3B4ED9' : 'transparent',
+                      border: completado ? '2px solid var(--os-champagne)' : '2px solid var(--os-line)',
+                      background: completado ? 'var(--os-champagne)' : 'transparent',
                       display: 'flex', alignItems: 'center', justifyContent: 'center',
                       transition: 'all 0.16s',
                     }}
                   >
                     {completado && (
                       <svg width="9" height="7" viewBox="0 0 9 7" fill="none">
-                        <polyline points="1,3.5 3.5,6 8,1" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                        <polyline points="1,3.5 3.5,6 8,1" stroke="#1A1A1A" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
                       </svg>
                     )}
                   </span>
                   <span
                     style={{
-                      fontSize: '14px',
-                      color: completado ? '#6B7280' : '#F4F6F8',
+                      fontSize: 'var(--os-text-base)',
+                      color: completado ? 'var(--os-muted)' : 'var(--os-text)',
                       textDecoration: completado ? 'line-through' : 'none',
                       transition: 'color 0.16s',
                       lineHeight: 1.45,
@@ -210,7 +207,7 @@ export default function OSChecklistHoy({ title }: Props) {
                         title="core"
                         style={{
                           width: '5px', height: '5px', borderRadius: '50%',
-                          background: '#3B4ED9', flexShrink: 0, display: 'inline-block',
+                          background: 'var(--os-accent)', flexShrink: 0, display: 'inline-block',
                         }}
                       />
                     )}
@@ -218,7 +215,7 @@ export default function OSChecklistHoy({ title }: Props) {
                   {xpFlash?.id === h.id && (
                     <span
                       style={{
-                        fontSize: '11px', fontWeight: 700, color: '#B5985A',
+                        fontSize: 'var(--os-text-xs)', fontWeight: 700, color: 'var(--os-champagne)',
                         flexShrink: 0, alignSelf: 'center',
                       }}
                     >
@@ -233,7 +230,7 @@ export default function OSChecklistHoy({ title }: Props) {
       )}
 
       <div style={{ marginTop: '0.625rem', textAlign: 'right' }}>
-        <a href="/os/habitos" style={{ fontSize: '11px', color: '#6B7280', textDecoration: 'none' }}>
+        <a href="/os/habitos" style={{ fontSize: 'var(--os-text-xs)', color: 'var(--os-muted)', textDecoration: 'none' }}>
           Gestionar hábitos →
         </a>
       </div>

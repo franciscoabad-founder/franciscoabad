@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
+import { Button, Spinner, EmptyState } from '../ui';
 import { FASES_AYUNO, faseActual, duracionHoras, formatearDuracion } from '../../../lib/salud/ayuno';
 
 interface Ayuno {
@@ -27,21 +28,13 @@ const cardAviso: React.CSSProperties = {
   background: 'color-mix(in srgb, var(--os-warn) 14%, var(--os-surface-2))',
   border: '1px solid color-mix(in srgb, var(--os-warn) 35%, transparent)',
 };
-const btn: React.CSSProperties = {
-  background: 'var(--os-accent)', color: '#fff', border: 'none', borderRadius: 6,
-  padding: '10px 20px', fontSize: 14, fontFamily: 'var(--os-font-display)', fontWeight: 700, cursor: 'pointer',
-};
-const btnGhost: React.CSSProperties = {
-  background: 'transparent', color: 'var(--os-muted)', border: '1px solid var(--os-line)',
-  borderRadius: 6, padding: '8px 14px', fontSize: 13, cursor: 'pointer',
-};
 const selStyle: React.CSSProperties = {
-  background: 'var(--os-surface)', border: '1px solid var(--os-line)', borderRadius: 6,
-  padding: '8px 10px', fontSize: 13, color: 'var(--os-text)', outline: 'none',
+  background: 'var(--os-surface)', border: '1px solid var(--os-line)', borderRadius: 'var(--os-r-sm)',
+  padding: '8px 10px', fontSize: 'var(--os-text-sm)', color: 'var(--os-text)', outline: 'none', minHeight: 40,
 };
 const pill: React.CSSProperties = {
   background: 'var(--os-surface)', color: 'var(--os-text-2)', border: '1px solid var(--os-line)',
-  borderRadius: 'var(--os-r-full)', padding: '8px 16px', fontSize: 13, fontWeight: 600, cursor: 'pointer',
+  borderRadius: 'var(--os-r-full)', padding: '8px 16px', minHeight: 36, fontSize: 'var(--os-text-sm)', fontWeight: 600, cursor: 'pointer',
 };
 const pillActivo: React.CSSProperties = {
   background: 'var(--os-accent)', color: '#fff', border: '1px solid var(--os-accent)',
@@ -193,22 +186,22 @@ export default function OSSaludAyuno() {
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
-      {error && <div style={{ color: 'var(--os-error)', fontSize: 13 }}>{error}</div>}
+      {error && <div style={{ color: 'var(--os-error)', fontSize: 'var(--os-text-sm)' }}>{error}</div>}
 
       {loading ? (
-        <p style={{ fontSize: 13, color: 'var(--os-muted)' }}>Cargando...</p>
+        <Spinner />
       ) : (
         <>
           {/* Nudge manual-first: nadie tocó el módulo de ayuno ayer. Nunca abre/cierra
               nada por su cuenta, solo pregunta (ver GET en ayunos.ts). */}
           {!activo && sugerencia === 'sin_registro' && !sugerenciaDescartada && (
             <div style={cardAviso}>
-              <p style={{ fontSize: 13, color: 'var(--os-text)', margin: '0 0 10px', lineHeight: 1.4 }}>
+              <p style={{ fontSize: 'var(--os-text-sm)', color: 'var(--os-text)', margin: '0 0 10px', lineHeight: 1.4 }}>
                 No has registrado tu estado. ¿Sigues comiendo o ya estás ayunando?
               </p>
               <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
-                <button style={btn} onClick={iniciar}>Ya estoy ayunando</button>
-                <button style={btnGhost} onClick={() => setSugerenciaDescartada(true)}>Sigo comiendo</button>
+                <Button onClick={iniciar}>Ya estoy ayunando</Button>
+                <Button variant="ghost" onClick={() => setSugerenciaDescartada(true)}>Sigo comiendo</Button>
               </div>
             </div>
           )}
@@ -227,7 +220,7 @@ export default function OSSaludAyuno() {
                   <span style={{ fontFamily: 'var(--os-font-rounded)', fontSize: 32, fontWeight: 800, lineHeight: 1, color: 'var(--os-text)' }}>
                     {formatearDuracion(horasActual)}
                   </span>
-                  <span style={{ fontSize: 11, color: 'var(--os-muted)', marginTop: 4 }}>de {objetivoActivo}h objetivo</span>
+                  <span style={{ fontSize: 'var(--os-text-xs)', color: 'var(--os-muted)', marginTop: 4 }}>de {objetivoActivo}h objetivo</span>
                   {horasPasadoObjetivo > 0 && (
                     <span style={{ fontFamily: 'var(--os-font-mono)', fontSize: 11, fontWeight: 700, color: 'var(--os-champagne)', marginTop: 6 }}>
                       +{formatearDuracion(horasPasadoObjetivo)}
@@ -238,26 +231,26 @@ export default function OSSaludAyuno() {
 
               <div style={{ textAlign: 'center' }}>
                 <p style={{ fontFamily: 'var(--os-font-display)', fontSize: 15, fontWeight: 700, color: 'var(--os-accent-light)', margin: 0 }}>{fase.nombre}</p>
-                <p style={{ fontSize: 12, color: 'var(--os-text-2)', margin: '4px 0 0', maxWidth: 340, lineHeight: 1.4 }}>{fase.descripcion}</p>
+                <p style={{ fontSize: 'var(--os-text-xs)', color: 'var(--os-text-2)', margin: '4px 0 0', maxWidth: 340, lineHeight: 1.4 }}>{fase.descripcion}</p>
               </div>
 
               <div style={{ textAlign: 'center' }}>
-                <p style={{ fontSize: 12, color: 'var(--os-muted)', margin: 0 }}>
+                <p style={{ fontSize: 'var(--os-text-xs)', color: 'var(--os-muted)', margin: 0 }}>
                   Inició {fmtFecha(activo.inicio)} · {activo.protocolo}
                 </p>
                 {finPrevisto && (
-                  <p style={{ fontSize: 12, color: 'var(--os-muted)', margin: '2px 0 0' }}>
+                  <p style={{ fontSize: 'var(--os-text-xs)', color: 'var(--os-muted)', margin: '2px 0 0' }}>
                     Fin previsto {fmtFecha(finPrevisto)} (informativo, no se auto-cierra)
                   </p>
                 )}
               </div>
 
-              <button style={btn} onClick={terminar}>Terminar ayuno</button>
+              <Button onClick={terminar}>Terminar ayuno</Button>
             </div>
           ) : (
             // ── Sin ayuno activo: elegir protocolo e iniciar ──
             <div style={{ ...card, display: 'flex', flexDirection: 'column', gap: 14, alignItems: 'center' }}>
-              <p style={{ fontSize: 14, color: 'var(--os-text-2)', margin: 0 }}>No hay ayuno activo.</p>
+              <p style={{ fontSize: 'var(--os-text-base)', color: 'var(--os-text-2)', margin: 0 }}>No hay ayuno activo.</p>
 
               <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', justifyContent: 'center' }}>
                 {PRESETS.map((p) => (
@@ -272,7 +265,7 @@ export default function OSSaludAyuno() {
               </div>
 
               {preset === 'custom' && (
-                <label style={{ fontSize: 12, color: 'var(--os-muted)', display: 'flex', gap: 8, alignItems: 'center' }}>
+                <label style={{ fontSize: 'var(--os-text-xs)', color: 'var(--os-muted)', display: 'flex', gap: 8, alignItems: 'center' }}>
                   Horas objetivo
                   <input
                     type="number" min={1} max={168} step={0.5}
@@ -284,7 +277,7 @@ export default function OSSaludAyuno() {
                 </label>
               )}
 
-              <button style={btn} onClick={iniciar}>Empezar ayuno</button>
+              <Button onClick={iniciar}>Empezar ayuno</Button>
             </div>
           )}
         </>
@@ -297,13 +290,13 @@ export default function OSSaludAyuno() {
           {FASES_AYUNO.map((f) => {
             const activa = activo && fase.key === f.key;
             return (
-              <div key={f.key} style={{ display: 'flex', gap: 10, padding: '6px 8px', borderRadius: 6, background: activa ? 'color-mix(in srgb, var(--os-accent) 13%, transparent)' : 'transparent' }}>
+              <div key={f.key} style={{ display: 'flex', gap: 10, padding: '6px 8px', borderRadius: 'var(--os-r-sm)', background: activa ? 'color-mix(in srgb, var(--os-accent) 13%, transparent)' : 'transparent' }}>
                 <span style={{ fontFamily: 'var(--os-font-mono)', fontSize: 11, color: activa ? 'var(--os-accent-light)' : 'var(--os-muted)', minWidth: 54 }}>
                   {f.hasta === Infinity ? `${f.desde}h+` : `${f.desde}-${f.hasta}h`}
                 </span>
                 <div>
                   <span style={{ fontSize: 13, fontWeight: activa ? 700 : 500, color: activa ? 'var(--os-text)' : 'var(--os-text-2)' }}>{f.nombre}</span>
-                  <p style={{ fontSize: 11, color: 'var(--os-muted)', margin: '1px 0 0', lineHeight: 1.35 }}>{f.descripcion}</p>
+                  <p style={{ fontSize: 'var(--os-text-xs)', color: 'var(--os-muted)', margin: '1px 0 0', lineHeight: 1.35 }}>{f.descripcion}</p>
                 </div>
               </div>
             );
@@ -313,7 +306,7 @@ export default function OSSaludAyuno() {
 
       {/* Racha semanal */}
       <div style={{ ...card, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <span style={{ fontSize: 13, color: 'var(--os-text-2)' }}>Ayunos completados (7 días)</span>
+        <span style={{ fontSize: 'var(--os-text-sm)', color: 'var(--os-text-2)' }}>Ayunos completados (7 días)</span>
         <span style={{ fontFamily: 'var(--os-font-mono)', fontSize: 18, color: 'var(--os-champagne)', fontWeight: 700 }}>{racha}</span>
       </div>
 
@@ -321,7 +314,7 @@ export default function OSSaludAyuno() {
       <div style={card}>
         <p style={{ fontFamily: 'var(--os-font-display)', fontSize: 11, fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', color: 'var(--os-muted)', margin: '0 0 10px' }}>Historial</p>
         {historial.length === 0 ? (
-          <p style={{ fontSize: 13, color: 'var(--os-muted)', margin: 0 }}>Sin registros aún.</p>
+          <EmptyState icon="timer" title="Sin registros aún" text="Tu primer ayuno aparecerá aquí al iniciarlo." />
         ) : (
           <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
             {historial.slice(0, 20).map((a) => {
@@ -332,28 +325,28 @@ export default function OSSaludAyuno() {
                 <div key={a.id} style={{ padding: '8px 0', borderBottom: '1px solid var(--os-line-soft)' }}>
                   {editId === a.id ? (
                     <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
-                      <label style={{ fontSize: 11, color: 'var(--os-muted)' }}>Inicio
+                      <label style={{ fontSize: 'var(--os-text-xs)', color: 'var(--os-muted)' }}>Inicio
                         <input type="datetime-local" style={{ ...selStyle, width: '100%', marginTop: 2 }} value={editVals.inicio} onChange={(e) => setEditVals({ ...editVals, inicio: e.target.value })} /></label>
-                      <label style={{ fontSize: 11, color: 'var(--os-muted)' }}>Fin
+                      <label style={{ fontSize: 'var(--os-text-xs)', color: 'var(--os-muted)' }}>Fin
                         <input type="datetime-local" style={{ ...selStyle, width: '100%', marginTop: 2 }} value={editVals.fin} onChange={(e) => setEditVals({ ...editVals, fin: e.target.value })} /></label>
                       <div style={{ display: 'flex', gap: 6 }}>
-                        <button style={btn} onClick={() => guardarEdicion(a.id)}>Guardar</button>
-                        <button style={btnGhost} onClick={() => setEditId(null)}>Cancelar</button>
+                        <Button size="sm" onClick={() => guardarEdicion(a.id)}>Guardar</Button>
+                        <Button variant="ghost" size="sm" onClick={() => setEditId(null)}>Cancelar</Button>
                       </div>
                     </div>
                   ) : (
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 8 }}>
                       <div>
-                        <span style={{ fontSize: 13, color: 'var(--os-text)' }}>
+                        <span style={{ fontSize: 'var(--os-text-sm)', color: 'var(--os-text)' }}>
                           {new Date(a.inicio).toLocaleDateString('es-EC', { day: 'numeric', month: 'short' })} · {a.protocolo}
                         </span>
-                        <p style={{ fontSize: 11, fontFamily: 'var(--os-font-mono)', color: cumplido ? 'var(--os-ok)' : 'var(--os-muted)', margin: '2px 0 0' }}>
+                        <p style={{ fontSize: 'var(--os-text-xs)', fontFamily: 'var(--os-font-mono)', color: cumplido ? 'var(--os-ok)' : 'var(--os-muted)', margin: '2px 0 0' }}>
                           {formatearDuracion(dur)} / {objetivoFila}h {a.fin ? (cumplido ? '✓' : '') : '· en curso'}
                         </p>
                       </div>
                       <div style={{ display: 'flex', gap: 4 }}>
-                        <button style={{ ...btnGhost, padding: '4px 8px' }} onClick={() => { setEditId(a.id); setEditVals({ inicio: inputLocal(a.inicio), fin: inputLocal(a.fin) }); }} title="Editar">✎</button>
-                        <button style={{ ...btnGhost, padding: '4px 8px' }} onClick={() => borrar(a.id)} title="Borrar">✕</button>
+                        <Button variant="ghost" size="sm" onClick={() => { setEditId(a.id); setEditVals({ inicio: inputLocal(a.inicio), fin: inputLocal(a.fin) }); }} title="Editar">✎</Button>
+                        <Button variant="danger" size="sm" onClick={() => borrar(a.id)} title="Borrar">✕</Button>
                       </div>
                     </div>
                   )}

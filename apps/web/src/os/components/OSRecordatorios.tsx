@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { Button, EmptyState, Spinner } from './ui';
 
 interface Recordatorio {
   id: string;
@@ -11,21 +12,34 @@ interface Recordatorio {
 }
 
 const ESTADO_META: Record<string, { label: string; color: string; bg: string }> = {
-  pendiente: { label: 'Pendiente', color: '#6B7AE8', bg: 'rgba(107,122,232,0.14)' },
-  enviado:   { label: 'Enviado',   color: '#B5985A', bg: 'rgba(181,152,90,0.14)' },
+  pendiente: { label: 'Pendiente', color: 'var(--os-accent-light)', bg: 'rgba(107,122,232,0.14)' },
+  enviado:   { label: 'Enviado',   color: 'var(--os-champagne)', bg: 'rgba(181,152,90,0.14)' },
   hecho:     { label: 'Hecho',     color: 'var(--os-champagne)', bg: 'rgba(181,152,90,0.12)' },
-  cancelado: { label: 'Cancelado', color: '#6B7280', bg: 'rgba(107,114,128,0.14)' },
+  cancelado: { label: 'Cancelado', color: 'var(--os-muted)', bg: 'rgba(107,114,128,0.14)' },
 };
 
 const inputStyle: React.CSSProperties = {
-  background: 'rgba(232,234,240,0.05)',
+  background: 'var(--os-fill-subtle)',
   border: '1px solid var(--os-line)',
   borderRadius: 6,
   padding: '7px 11px',
-  fontSize: 12,
+  minHeight: 36,
+  fontSize: 'var(--os-text-sm)',
   color: 'var(--os-text)',
   fontFamily: 'var(--os-font-body)',
   outline: 'none',
+  boxSizing: 'border-box',
+};
+
+const accionStyle: React.CSSProperties = {
+  borderRadius: 6,
+  cursor: 'pointer',
+  padding: '3px 9px',
+  minHeight: 36,
+  fontSize: 'var(--os-text-xs)',
+  fontFamily: 'var(--os-font-display)',
+  fontWeight: 700,
+  textTransform: 'uppercase',
 };
 
 export default function OSRecordatorios() {
@@ -124,19 +138,23 @@ export default function OSRecordatorios() {
           value={cuando}
           onChange={(e) => setCuando(e.target.value)}
           required
-          style={{ ...inputStyle, colorScheme: 'dark', minWidth: 190 }}
+          style={{ ...inputStyle, minWidth: 190 }}
         />
-        <button type="submit" className="os-btn" disabled={busy} style={{ padding: '6px 16px', fontSize: 12 }}>
+        <Button type="submit" size="sm" disabled={busy}>
           {busy ? 'Guardando...' : 'Agregar'}
-        </button>
+        </Button>
       </form>
 
-      {error && <p style={{ color: 'var(--os-error)', fontSize: 12, marginBottom: 10 }}>Error: {error}</p>}
-      {loading && <div className="os-card-2" style={{ padding: '1rem', color: 'var(--os-muted)', fontSize: 13 }}>Cargando...</div>}
+      {error && <p style={{ color: 'var(--os-error)', fontSize: 'var(--os-text-xs)', marginBottom: 10 }}>Error: {error}</p>}
+      {loading && <Spinner />}
 
       {!loading && !items.length && (
-        <div className="os-card-2" style={{ padding: '1.75rem', textAlign: 'center', color: 'var(--os-muted)', fontSize: 12 }}>
-          Sin recordatorios. Hermes los empuja al celular cuando llega la hora.
+        <div className="os-card-2">
+          <EmptyState
+            icon="notifications"
+            title="Sin recordatorios"
+            text="Hermes los empuja al celular cuando llega la hora. Crea el primero con el formulario de arriba."
+          />
         </div>
       )}
 
@@ -156,13 +174,13 @@ export default function OSRecordatorios() {
                     opacity: titulo === 'Historial' ? 0.65 : 1,
                   }}>
                     <div style={{ flex: 1, minWidth: 160 }}>
-                      <p style={{ fontSize: 13, color: 'var(--os-text)', margin: 0, lineHeight: 1.4 }}>{r.mensaje}</p>
-                      <p className="os-mono" style={{ fontSize: 11, color: vencido ? 'var(--os-error)' : 'var(--os-muted)', margin: '2px 0 0' }}>
+                      <p style={{ fontSize: 'var(--os-text-sm)', color: 'var(--os-text)', margin: 0, lineHeight: 1.4 }}>{r.mensaje}</p>
+                      <p className="os-mono" style={{ fontSize: 'var(--os-text-xs)', color: vencido ? 'var(--os-error)' : 'var(--os-muted)', margin: '2px 0 0' }}>
                         {fechaBonita(r.recordar_at)}{vencido ? ' · vencido' : ''}
                       </p>
                     </div>
                     <span style={{
-                      fontSize: 10, fontFamily: 'var(--os-font-display)', fontWeight: 700, letterSpacing: '0.08em',
+                      fontSize: 'var(--os-text-xs)', fontFamily: 'var(--os-font-display)', fontWeight: 700, letterSpacing: '0.08em',
                       textTransform: 'uppercase', color: meta.color, background: meta.bg, borderRadius: 999, padding: '3px 10px',
                     }}>
                       {meta.label}
@@ -170,17 +188,17 @@ export default function OSRecordatorios() {
                     {(r.estado === 'pendiente' || r.estado === 'enviado') && (
                       <div style={{ display: 'flex', gap: 6, flexShrink: 0 }}>
                         <button onClick={() => marcar(r.id, 'hecho')}
-                          style={{ background: 'rgba(59,78,217,0.12)', border: '1px solid rgba(59,78,217,0.35)', borderRadius: 6, color: 'var(--os-accent)', cursor: 'pointer', padding: '3px 9px', fontSize: 10, fontFamily: 'var(--os-font-display)', fontWeight: 700, textTransform: 'uppercase' }}>
+                          style={{ ...accionStyle, background: 'rgba(181,152,90,0.12)', border: '1px solid rgba(181,152,90,0.35)', color: 'var(--os-champagne)' }}>
                           Hecho
                         </button>
                         <button onClick={() => marcar(r.id, 'cancelado')}
-                          style={{ background: 'none', border: '1px solid var(--os-line)', borderRadius: 6, color: 'var(--os-muted)', cursor: 'pointer', padding: '3px 9px', fontSize: 10, fontFamily: 'var(--os-font-display)', fontWeight: 700, textTransform: 'uppercase' }}>
+                          style={{ ...accionStyle, background: 'none', border: '1px solid var(--os-line)', color: 'var(--os-muted)' }}>
                           Cancelar
                         </button>
                       </div>
                     )}
                     <button onClick={() => eliminar(r.id)} title="Eliminar"
-                      style={{ background: 'none', border: 'none', color: 'rgba(107,114,128,0.45)', cursor: 'pointer', padding: 0, fontSize: 15, lineHeight: 1 }}>
+                      style={{ background: 'none', border: 'none', color: 'var(--os-muted)', cursor: 'pointer', padding: 0, minWidth: 36, minHeight: 36, fontSize: 15, lineHeight: 1 }}>
                       ×
                     </button>
                   </div>

@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import OSHabitoForm from './OSHabitoForm';
+import { EmptyState, Spinner } from './ui';
 
 // ── Tipos (contrato del API construido en paralelo) ─────────────────────────
 export interface Racha { actual: number; mejor: number }
@@ -37,20 +38,6 @@ function isoWeekdayHoy(): number {
   return d === 0 ? 7 : d;
 }
 const DIA_LABEL: Record<number, string> = { 1: 'L', 2: 'M', 3: 'X', 4: 'J', 5: 'V', 6: 'S', 7: 'D' };
-
-// ── Estilos (Clay calido: tokens --m-* del modulo Habitos) ──────────────────
-const card: React.CSSProperties = {
-  background: 'var(--m-surface)', border: 'none', boxShadow: 'var(--m-shadow)', borderRadius: 20, padding: '1rem',
-};
-const btnGhost: React.CSSProperties = {
-  background: 'transparent', color: 'var(--m-muted)', border: '1px solid var(--m-line)',
-  borderRadius: 14, padding: '10px 14px', minHeight: 44, fontSize: 11, fontFamily: 'var(--m-font-rounded)',
-  fontWeight: 700, cursor: 'pointer',
-};
-const sectionTitle: React.CSSProperties = {
-  fontFamily: 'var(--m-font-rounded)', fontSize: 11, fontWeight: 700,
-  color: 'var(--m-muted)', margin: '0 0 10px',
-};
 
 // ── Anillo EMA mini (mismo patrón SVG, recoloreado a clay) ──────────────────
 function AnilloEma({ valor, size = 30 }: { valor: number | null; size?: number }) {
@@ -238,7 +225,7 @@ export default function OSHabitos() {
       {error && (
         <div style={{ display: 'flex', alignItems: 'center', gap: 10, color: 'var(--m-accent-text)', fontSize: 13, fontFamily: 'var(--m-font-rounded)' }}>
           <span>{error}</span>
-          <button style={{ ...btnGhost, padding: '6px 10px', fontSize: 11, minHeight: 0 }} onClick={() => cargar()}>Reintentar</button>
+          <button className="m-btn-ghost" onClick={() => cargar()}>Reintentar</button>
         </div>
       )}
 
@@ -249,15 +236,18 @@ export default function OSHabitos() {
       )}
 
       {loading ? (
-        <p style={{ fontSize: 13, color: 'var(--m-muted)', fontFamily: 'var(--m-font-rounded)' }}>Cargando...</p>
+        <Spinner label="Cargando hábitos..." />
       ) : habitos.length === 0 ? (
-        <div style={{ ...card, display: 'flex', flexDirection: 'column', gap: 10, alignItems: 'center', textAlign: 'center', padding: '2rem 1rem' }}>
-          <p style={{ fontSize: 14, color: 'var(--m-muted)', margin: 0 }}>
-            Sin hábitos aún. Crea el primero o{' '}
-            <a href="/os/habitos/journeys" style={{ color: 'var(--m-fg)' }}>inicia un journey</a>.
-          </p>
-          <button className="m-btn" onClick={() => setFormAbierto('nuevo')}>+ Crear primer hábito</button>
-        </div>
+        <EmptyState
+          title="Sin hábitos aún"
+          text="Crea el primero o inicia un journey."
+          action={
+            <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap', justifyContent: 'center' }}>
+              <button className="m-btn" onClick={() => setFormAbierto('nuevo')}>+ Crear primer hábito</button>
+              <a href="/os/habitos/journeys" className="m-btn-ghost" style={{ display: 'inline-flex', alignItems: 'center', textDecoration: 'none' }}>Ver journeys</a>
+            </div>
+          }
+        />
       ) : (
         <>
           {/* Diarias de hoy: lista de misiones */}
@@ -287,12 +277,12 @@ export default function OSHabitos() {
                           <span style={{ fontSize: 14, fontWeight: 700, color: 'var(--m-fg)' }}>{h.nombre}</span>
                           {h.es_core && <span className="m-estado" style={{ color: 'var(--m-accent-text)' }}>Core</span>}
                         </div>
-                        {h.intencion && <p style={{ fontSize: 11, color: 'var(--m-muted)', margin: '2px 0 0', fontFamily: 'var(--m-font-rounded)' }}>{h.intencion}</p>}
+                        {h.intencion && <p style={{ fontSize: 13, color: 'var(--m-muted)', margin: '2px 0 0', fontFamily: 'var(--m-font-rounded)' }}>{h.intencion}</p>}
                         {fb && <p className="m-terminal-line is-flash">{fb.texto}</p>}
                       </div>
                       <span className={`m-estado${hecho ? ' is-ok' : ''}`}>{hecho ? 'Hecho' : 'Pendiente'}</span>
                       <AnilloEma valor={h.ema} size={30} />
-                      <button style={{ ...btnGhost, padding: '8px 10px', minHeight: 0, flexShrink: 0 }} onClick={() => setFormAbierto(h)} title="Editar">✎</button>
+                      <button className="m-btn-ghost" style={{ flexShrink: 0 }} onClick={() => setFormAbierto(h)} title="Editar" aria-label="Editar hábito">✎</button>
                     </div>
                   );
                 })}
@@ -319,7 +309,7 @@ export default function OSHabitos() {
                         <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
                           <span style={{ fontSize: 14, fontWeight: 700, color: 'var(--m-fg)' }}>{h.nombre}</span>
                         </div>
-                        {h.intencion && <p style={{ fontSize: 11, color: 'var(--m-muted)', margin: '2px 0 0', fontFamily: 'var(--m-font-rounded)' }}>{h.intencion}</p>}
+                        {h.intencion && <p style={{ fontSize: 13, color: 'var(--m-muted)', margin: '2px 0 0', fontFamily: 'var(--m-font-rounded)' }}>{h.intencion}</p>}
                         {fb && <p className="m-terminal-line is-flash">{fb.texto}</p>}
                       </div>
                       <AnilloEma valor={h.ema} size={28} />
@@ -349,7 +339,7 @@ export default function OSHabitos() {
                           </div>
                         )}
                       </div>
-                      <button style={{ ...btnGhost, padding: '8px 10px', minHeight: 0, flexShrink: 0 }} onClick={() => setFormAbierto(h)} title="Editar">✎</button>
+                      <button className="m-btn-ghost" style={{ flexShrink: 0 }} onClick={() => setFormAbierto(h)} title="Editar" aria-label="Editar hábito">✎</button>
                     </div>
                   );
                 })}
@@ -360,7 +350,7 @@ export default function OSHabitos() {
           {/* Diarias de otros días (colapsado) */}
           {diariasOtras.length > 0 && (
             <div>
-              <button style={{ ...btnGhost, width: '100%', textAlign: 'left' }} onClick={() => setMostrarOtras(!mostrarOtras)}>
+              <button className="m-btn-ghost" style={{ width: '100%', textAlign: 'left' }} onClick={() => setMostrarOtras(!mostrarOtras)}>
                 {mostrarOtras ? '▾' : '▸'} Diarias de otros días ({diariasOtras.length})
               </button>
               {mostrarOtras && (
@@ -381,7 +371,7 @@ export default function OSHabitos() {
           {/* Pausados */}
           {pausados.length > 0 && (
             <div>
-              <button style={{ ...btnGhost, width: '100%', textAlign: 'left' }} onClick={() => setMostrarPausados(!mostrarPausados)}>
+              <button className="m-btn-ghost" style={{ width: '100%', textAlign: 'left' }} onClick={() => setMostrarPausados(!mostrarPausados)}>
                 {mostrarPausados ? '▾' : '▸'} Pausados ({pausados.length})
               </button>
               {mostrarPausados && (
@@ -389,7 +379,7 @@ export default function OSHabitos() {
                   {pausados.map((h) => (
                     <div key={h.id} className="m-mission" style={{ justifyContent: 'space-between', padding: '8px 12px', opacity: 0.6 }}>
                       <span style={{ fontSize: 13, color: 'var(--m-fg)' }}>{h.nombre}</span>
-                      <button style={{ ...btnGhost, padding: '6px 10px', minHeight: 0 }} onClick={() => reactivar(h)}>Reactivar</button>
+                      <button className="m-btn-ghost" onClick={() => reactivar(h)}>Reactivar</button>
                     </div>
                   ))}
                 </div>

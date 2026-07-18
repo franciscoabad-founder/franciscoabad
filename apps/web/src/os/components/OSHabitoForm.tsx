@@ -21,38 +21,11 @@ const TIPO_EXPL: Record<string, string> = {
 };
 
 // ── Estilos (Clay calido: tokens --m-* del modulo Habitos) ──────────────────
+// Botones, inputs, labels y pills usan las clases .m-* de os-conductual.css
+// (44px de area tactil y tipografia del modulo garantizadas por CSS).
 const card: React.CSSProperties = {
   background: 'var(--m-surface)', border: 'none', boxShadow: 'var(--m-shadow)', borderRadius: 20, padding: '1rem',
 };
-const input: React.CSSProperties = {
-  background: 'var(--m-surface)', border: '1px solid var(--m-line)',
-  borderRadius: 14, padding: '0.65rem 0.7rem', minHeight: 44, fontSize: 14, color: 'var(--m-fg)',
-  fontFamily: 'var(--m-font-rounded)', outline: 'none', width: '100%',
-};
-const inputTime: React.CSSProperties = { ...input };
-const btn: React.CSSProperties = {
-  background: 'var(--m-accent)', color: '#fff', border: 'none', borderRadius: 14,
-  padding: '0.75rem 1.1rem', minHeight: 44, fontSize: 12, fontFamily: 'var(--m-font-rounded)', fontWeight: 700,
-  cursor: 'pointer',
-};
-const btnGhost: React.CSSProperties = {
-  background: 'transparent', color: 'var(--m-muted)', border: '1px solid var(--m-line)',
-  borderRadius: 14, padding: '0.6rem 0.9rem', minHeight: 44, fontSize: 11, fontFamily: 'var(--m-font-rounded)',
-  cursor: 'pointer',
-};
-const label: React.CSSProperties = {
-  fontFamily: 'var(--m-font-rounded)', fontSize: 10, fontWeight: 700,
-  color: 'var(--m-muted)', marginBottom: 6, display: 'block',
-};
-function pill(activo: boolean): React.CSSProperties {
-  return {
-    display: 'inline-flex', alignItems: 'center', justifyContent: 'center', minHeight: 44,
-    padding: '0.5rem 0.9rem', borderRadius: 999, fontSize: 12, fontFamily: 'var(--m-font-rounded)', fontWeight: 700,
-    cursor: 'pointer', border: 'none', boxShadow: 'var(--m-shadow-sm)',
-    background: activo ? 'var(--m-accent)' : 'var(--m-surface-2)',
-    color: activo ? '#fff' : 'var(--m-muted)', transition: 'background .14s, color .14s',
-  };
-}
 
 function Toggle({ checked, onChange, titulo, hint }: { checked: boolean; onChange: (v: boolean) => void; titulo: string; hint?: string }) {
   return (
@@ -69,7 +42,7 @@ function Toggle({ checked, onChange, titulo, hint }: { checked: boolean; onChang
       </span>
       <span>
         <span style={{ fontSize: 13, color: 'var(--m-fg)', fontWeight: 700 }}>{titulo}</span>
-        {hint && <p style={{ fontSize: 11, color: 'var(--m-muted)', margin: '2px 0 0', lineHeight: 1.4, fontFamily: 'var(--m-font-rounded)' }}>{hint}</p>}
+        {hint && <p style={{ fontSize: 13, color: 'var(--m-muted)', margin: '2px 0 0', lineHeight: 1.4, fontFamily: 'var(--m-font-rounded)' }}>{hint}</p>}
       </span>
     </div>
   );
@@ -130,23 +103,23 @@ export default function OSHabitoForm({ habito, onCerrar, onGuardado }: Props) {
     <div style={{ display: 'flex', flexDirection: 'column', gap: '1.1rem', maxWidth: 480, margin: '0 auto' }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <span className="m-h1" style={{ fontSize: 'clamp(1.1rem, 5vw, 1.5rem)' }}>{habito ? 'Editar hábito' : 'Nuevo hábito'}</span>
-        <button style={btnGhost} onClick={onCerrar}>← Volver</button>
+        <button className="m-btn-ghost" onClick={onCerrar}>← Volver</button>
       </div>
 
       {error && <div style={{ color: 'var(--m-accent-text)', fontSize: 13, fontFamily: 'var(--m-font-rounded)' }}>{error}</div>}
 
       <div>
-        <span style={label}>Nombre *</span>
-        <input style={input} placeholder="Ej. Agua al despertar" value={nombre} onChange={(e) => setNombre(e.target.value)} />
+        <label className="m-label">Nombre *</label>
+        <input className="m-input" placeholder="Ej. Agua al despertar" value={nombre} onChange={(e) => setNombre(e.target.value)} />
       </div>
 
       <div>
-        <span style={label}>Tipo</span>
+        <span className="m-label">Tipo</span>
         <div style={{ display: 'flex', gap: 8 }}>
-          <button style={pill(tipo === 'diaria')} onClick={() => setTipo('diaria')}>Diaria</button>
-          <button style={pill(tipo === 'habito')} onClick={() => setTipo('habito')}>Hábito +/-</button>
+          <button className={`m-pill${tipo === 'diaria' ? ' is-activo' : ''}`} onClick={() => setTipo('diaria')}>Diaria</button>
+          <button className={`m-pill${tipo === 'habito' ? ' is-activo' : ''}`} onClick={() => setTipo('habito')}>Hábito +/-</button>
         </div>
-        <p style={{ fontSize: 11.5, color: 'var(--m-muted)', margin: '6px 0 0', lineHeight: 1.4 }}>{TIPO_EXPL[tipo]}</p>
+        <p style={{ fontSize: 13, color: 'var(--m-muted)', margin: '6px 0 0', lineHeight: 1.4 }}>{TIPO_EXPL[tipo]}</p>
       </div>
 
       {tipo === 'habito' && (
@@ -157,32 +130,32 @@ export default function OSHabitoForm({ habito, onCerrar, onGuardado }: Props) {
       )}
 
       <div>
-        <span style={label}>Dificultad</span>
+        <span className="m-label">Dificultad</span>
         <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
           {DIFICULTADES.map((d) => (
-            <button key={d.key} style={pill(dificultad === d.key)} onClick={() => setDificultad(d.key)}>{d.label}</button>
+            <button key={d.key} className={`m-pill${dificultad === d.key ? ' is-activo' : ''}`} onClick={() => setDificultad(d.key)}>{d.label}</button>
           ))}
         </div>
       </div>
 
       <div>
-        <span style={label}>Días de la semana</span>
+        <span className="m-label">Días de la semana</span>
         <div style={{ display: 'flex', gap: 6 }}>
           {DIAS.map((d) => (
-            <button key={d.iso} style={{ ...pill(dias.includes(d.iso)), width: 38, padding: '7px 0' }} onClick={() => toggleDia(d.iso)}>{d.label}</button>
+            <button key={d.iso} className={`m-pill${dias.includes(d.iso) ? ' is-activo' : ''}`} style={{ width: 44, paddingLeft: 0, paddingRight: 0 }} onClick={() => toggleDia(d.iso)}>{d.label}</button>
           ))}
         </div>
       </div>
 
       <div>
-        <span style={label}>Intención (cuándo y dónde)</span>
-        <input style={input} placeholder="Cuándo y dónde: ej. después del café, en el escritorio" value={intencion} onChange={(e) => setIntencion(e.target.value)} />
+        <label className="m-label">Intención (cuándo y dónde)</label>
+        <input className="m-input" placeholder="Cuándo y dónde: ej. después del café, en el escritorio" value={intencion} onChange={(e) => setIntencion(e.target.value)} />
       </div>
 
       <div>
-        <span style={label}>Hora de recordatorio</span>
-        <input style={{ ...inputTime, maxWidth: 160 }} type="time" value={horaRecordatorio} onChange={(e) => setHoraRecordatorio(e.target.value)} />
-        <p style={{ fontSize: 11, color: 'var(--m-muted)', margin: '6px 0 0' }}>Opcional. Te llega por Telegram.</p>
+        <label className="m-label">Hora de recordatorio</label>
+        <input className="m-input" style={{ maxWidth: 160 }} type="time" value={horaRecordatorio} onChange={(e) => setHoraRecordatorio(e.target.value)} />
+        <p style={{ fontSize: 13, color: 'var(--m-muted)', margin: '6px 0 0' }}>Opcional. Te llega por Telegram.</p>
       </div>
 
       <div style={card}>
@@ -193,10 +166,10 @@ export default function OSHabitoForm({ habito, onCerrar, onGuardado }: Props) {
       </div>
 
       <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
-        <button style={btn} disabled={guardando} onClick={guardar}>{guardando ? 'Guardando...' : 'Guardar hábito'}</button>
-        <button style={btnGhost} onClick={onCerrar}>Cancelar</button>
+        <button className="m-btn" disabled={guardando} onClick={guardar}>{guardando ? 'Guardando...' : 'Guardar hábito'}</button>
+        <button className="m-btn-ghost" onClick={onCerrar}>Cancelar</button>
         {habito && (
-          <button style={{ ...btnGhost, color: 'var(--m-accent-text)', borderColor: 'var(--m-accent-text)' }} onClick={archivar}>Archivar</button>
+          <button className="m-btn-ghost is-danger" onClick={archivar}>Archivar</button>
         )}
       </div>
     </div>

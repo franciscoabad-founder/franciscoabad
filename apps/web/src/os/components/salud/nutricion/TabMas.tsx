@@ -68,7 +68,7 @@ export default function TabMas({ momento, dia, tipoDia, comidasHoy, onAgregado }
     <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
       <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
         <p style={eyebrow}>Registro rapido</p>
-        {error && <div style={{ color: 'var(--os-error)', fontSize: 12.5 }}>{error}</div>}
+        {error && <div style={{ color: 'var(--os-error)', fontSize: 'var(--os-text-sm)' }}>{error}</div>}
         <input style={input} placeholder="Que comiste *" value={libre.descripcion} onChange={(e) => setLibre({ ...libre, descripcion: e.target.value })} />
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 6 }}>
           <input style={input} type="number" placeholder="kcal" value={libre.kcal} onChange={(e) => setLibre({ ...libre, kcal: e.target.value })} />
@@ -81,10 +81,10 @@ export default function TabMas({ momento, dia, tipoDia, comidasHoy, onAgregado }
 
       <div style={{ ...card2, display: 'flex', flexDirection: 'column', gap: 8 }}>
         <p style={eyebrow}>Crear meal desde hoy</p>
-        <p style={{ fontSize: 12.5, color: 'var(--os-text-2)', margin: 0 }}>
+        <p style={{ fontSize: 'var(--os-text-sm)', color: 'var(--os-text-2)', margin: 0 }}>
           Junta todo lo que ya registraste hoy ({comidasHoy.length} entrada{comidasHoy.length === 1 ? '' : 's'}) en un meal reusable.
         </p>
-        {mensajeMeal && <p style={{ fontSize: 12, color: 'var(--os-accent-light)', margin: 0 }}>{mensajeMeal}</p>}
+        {mensajeMeal && <p style={{ fontSize: 'var(--os-text-xs)', color: 'var(--os-accent-light)', margin: 0 }}>{mensajeMeal}</p>}
         <button style={btn} disabled={creandoMeal || !comidasHoy.length} onClick={crearMealDesdeHoy}>
           {creandoMeal ? 'Guardando...' : 'Guardar comidas de hoy como meal'}
         </button>

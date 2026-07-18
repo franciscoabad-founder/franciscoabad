@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { Button, EmptyState, Spinner, ToastProvider, useToast } from './ui';
 
 interface Pendiente {
   id: string;
@@ -11,24 +12,38 @@ interface Pendiente {
 }
 
 const ESTADO_META: Record<string, { label: string; color: string; bg: string }> = {
-  abierto:    { label: 'Abierto',    color: '#6B7AE8', bg: 'rgba(107,122,232,0.14)' },
+  abierto:    { label: 'Abierto',    color: 'var(--os-accent-light)', bg: 'rgba(107,122,232,0.14)' },
   convertido: { label: 'Convertido', color: 'var(--os-champagne)', bg: 'rgba(181,152,90,0.12)' },
-  descartado: { label: 'Descartado', color: '#6B7280', bg: 'rgba(107,114,128,0.14)' },
+  descartado: { label: 'Descartado', color: 'var(--os-muted)', bg: 'rgba(107,114,128,0.14)' },
   hecho:      { label: 'Hecho',      color: 'var(--os-champagne)', bg: 'rgba(181,152,90,0.12)' },
 };
 
 const inputStyle: React.CSSProperties = {
-  background: 'rgba(232,234,240,0.05)',
+  background: 'var(--os-fill-subtle)',
   border: '1px solid var(--os-line)',
   borderRadius: 6,
   padding: '7px 11px',
-  fontSize: 12,
+  minHeight: 36,
+  fontSize: 'var(--os-text-sm)',
   color: 'var(--os-text)',
   fontFamily: 'var(--os-font-body)',
   outline: 'none',
+  boxSizing: 'border-box',
 };
 
-export default function OSPendientes() {
+const accionStyle: React.CSSProperties = {
+  borderRadius: 6,
+  cursor: 'pointer',
+  padding: '3px 9px',
+  minHeight: 36,
+  fontSize: 'var(--os-text-xs)',
+  fontFamily: 'var(--os-font-display)',
+  fontWeight: 700,
+  textTransform: 'uppercase',
+};
+
+function OSPendientesInner() {
+  const toast = useToast();
   const [pendientes, setPendientes] = useState<Pendiente[]>([]);
   const [titulo, setTitulo] = useState('');
   const [proyecto, setProyecto] = useState('');
@@ -94,7 +109,7 @@ export default function OSPendientes() {
     const deadline = window.prompt('Deadline de la tarea (YYYY-MM-DD, vacio = sin deadline):', '');
     if (deadline === null) return;
     if (deadline.trim() && !/^\d{4}-\d{2}-\d{2}$/.test(deadline.trim())) {
-      window.alert('Formato invalido. Usa YYYY-MM-DD');
+      toast.show('Formato invalido. Usa YYYY-MM-DD', 'error');
       return;
     }
     try {
@@ -116,6 +131,7 @@ export default function OSPendientes() {
         body: JSON.stringify({ estado: 'convertido', convertido_a: 'tarea', convertido_id: data.tarea?.id ?? null }),
       });
       await load();
+      toast.show('Convertido a tarea.', 'ok');
     } catch (err) {
       setError(err instanceof Error ? err.message : String(err));
     }
@@ -140,32 +156,29 @@ export default function OSPendientes() {
           placeholder="Proyecto"
           style={{ ...inputStyle, flex: 1, minWidth: 110 }}
         />
-        <button type="submit" className="os-btn" disabled={busy} style={{ padding: '6px 16px', fontSize: 12 }}>
+        <Button type="submit" size="sm" disabled={busy}>
           {busy ? 'Guardando...' : 'Agregar'}
-        </button>
+        </Button>
       </form>
 
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.75rem' }}>
-        <p className="os-num" style={{ fontSize: 12, margin: 0 }}>{abiertos} abiertos</p>
-        <button
-          onClick={() => setMostrarCerrados((v) => !v)}
-          style={{
-            background: 'none', border: '1px solid var(--os-line)', borderRadius: 6, cursor: 'pointer',
-            color: mostrarCerrados ? 'var(--os-text)' : 'var(--os-muted)', fontSize: 11, padding: '3px 10px',
-            fontFamily: 'var(--os-font-display)', fontWeight: 700,
-          }}
-        >
+        <p className="os-num" style={{ fontSize: 'var(--os-text-xs)', margin: 0 }}>{abiertos} abiertos</p>
+        <Button size="sm" variant="ghost" onClick={() => setMostrarCerrados((v) => !v)}>
           {mostrarCerrados ? 'Ocultar cerrados' : 'Ver cerrados'}
-        </button>
+        </Button>
       </div>
 
-      {error && <p style={{ color: 'var(--os-error)', fontSize: 12, marginBottom: 10 }}>Error: {error}</p>}
+      {error && <p style={{ color: 'var(--os-error)', fontSize: 'var(--os-text-xs)', marginBottom: 10 }}>Error: {error}</p>}
 
       <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
-        {loading && <div className="os-card-2" style={{ padding: '1rem', color: 'var(--os-muted)', fontSize: 13 }}>Cargando...</div>}
+        {loading && <Spinner />}
         {!loading && !visibles.length && (
-          <div className="os-card-2" style={{ padding: '1.75rem', textAlign: 'center', color: 'var(--os-muted)', fontSize: 12 }}>
-            Nada pendiente. Captura lo que quieras hacer sin comprometerte a una fecha.
+          <div className="os-card-2">
+            <EmptyState
+              icon="pending_actions"
+              title="Nada pendiente"
+              text="Captura lo que quieras hacer sin comprometerte a una fecha. Cuando decidas actuar, conviertelo a tarea."
+            />
           </div>
         )}
         {visibles.map((p) => {
@@ -178,13 +191,13 @@ export default function OSPendientes() {
               borderRadius: 10, padding: '0.625rem 0.875rem', opacity: cerrado ? 0.65 : 1,
             }}>
               <div style={{ flex: 1, minWidth: 160 }}>
-                <p style={{ fontSize: 13, color: 'var(--os-text)', margin: 0, lineHeight: 1.4, textDecoration: p.estado === 'hecho' ? 'line-through' : 'none' }}>
+                <p style={{ fontSize: 'var(--os-text-sm)', color: 'var(--os-text)', margin: 0, lineHeight: 1.4, textDecoration: p.estado === 'hecho' ? 'line-through' : 'none' }}>
                   {p.titulo}
                 </p>
-                {p.proyecto && <p style={{ fontSize: 11, color: 'var(--os-accent-light)', margin: '2px 0 0' }}>{p.proyecto}</p>}
+                {p.proyecto && <p style={{ fontSize: 'var(--os-text-xs)', color: 'var(--os-accent-light)', margin: '2px 0 0' }}>{p.proyecto}</p>}
               </div>
               <span style={{
-                fontSize: 10, fontFamily: 'var(--os-font-display)', fontWeight: 700, letterSpacing: '0.08em',
+                fontSize: 'var(--os-text-xs)', fontFamily: 'var(--os-font-display)', fontWeight: 700, letterSpacing: '0.08em',
                 textTransform: 'uppercase', color: meta.color, background: meta.bg, borderRadius: 999, padding: '3px 10px',
               }}>
                 {meta.label}
@@ -192,15 +205,15 @@ export default function OSPendientes() {
               {!cerrado && (
                 <div style={{ display: 'flex', gap: 6, flexShrink: 0 }}>
                   <button onClick={() => convertirATarea(p)} title="Convertir a tarea"
-                    style={{ background: 'rgba(59,78,217,0.16)', border: '1px solid rgba(59,78,217,0.4)', borderRadius: 6, color: '#6B7AE8', cursor: 'pointer', padding: '3px 9px', fontSize: 10, fontFamily: 'var(--os-font-display)', fontWeight: 700, textTransform: 'uppercase' }}>
+                    style={{ ...accionStyle, background: 'rgba(59,78,217,0.16)', border: '1px solid rgba(59,78,217,0.4)', color: 'var(--os-accent-light)' }}>
                     Tarea
                   </button>
                   <button onClick={() => marcar(p.id, 'hecho')} title="Marcar hecho"
-                    style={{ background: 'rgba(59,78,217,0.12)', border: '1px solid rgba(59,78,217,0.35)', borderRadius: 6, color: 'var(--os-accent)', cursor: 'pointer', padding: '3px 9px', fontSize: 10, fontFamily: 'var(--os-font-display)', fontWeight: 700, textTransform: 'uppercase' }}>
+                    style={{ ...accionStyle, background: 'rgba(181,152,90,0.12)', border: '1px solid rgba(181,152,90,0.35)', color: 'var(--os-champagne)' }}>
                     Hecho
                   </button>
                   <button onClick={() => marcar(p.id, 'descartado')} title="Descartar"
-                    style={{ background: 'none', border: '1px solid var(--os-line)', borderRadius: 6, color: 'var(--os-muted)', cursor: 'pointer', padding: '3px 9px', fontSize: 10, fontFamily: 'var(--os-font-display)', fontWeight: 700, textTransform: 'uppercase' }}>
+                    style={{ ...accionStyle, background: 'none', border: '1px solid var(--os-line)', color: 'var(--os-muted)' }}>
                     Descartar
                   </button>
                 </div>
@@ -210,5 +223,13 @@ export default function OSPendientes() {
         })}
       </div>
     </div>
+  );
+}
+
+export default function OSPendientes() {
+  return (
+    <ToastProvider>
+      <OSPendientesInner />
+    </ToastProvider>
   );
 }

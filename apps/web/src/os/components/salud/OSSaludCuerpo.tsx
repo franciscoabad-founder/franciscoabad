@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
+import { Button, Spinner, EmptyState } from '../ui';
 import { promedioMovil } from '../../../lib/salud/progresion';
 
 interface Medicion {
@@ -12,23 +13,15 @@ const card: React.CSSProperties = {
   borderRadius: 'var(--os-r-card)', padding: '1rem',
 };
 const input: React.CSSProperties = {
-  background: 'rgba(232,234,240,0.05)', border: '1px solid var(--os-line)', borderRadius: 6,
-  padding: '7px 10px', fontSize: 13, color: 'var(--os-text)', fontFamily: 'var(--os-font-body)', outline: 'none', width: '100%',
-};
-const btn: React.CSSProperties = {
-  background: 'var(--os-accent)', color: '#fff', border: 'none', borderRadius: 6,
-  padding: '9px 16px', fontSize: 13, fontFamily: 'var(--os-font-display)', fontWeight: 700, cursor: 'pointer',
-};
-const btnGhost: React.CSSProperties = {
-  background: 'transparent', color: 'var(--os-muted)', border: '1px solid var(--os-line)',
-  borderRadius: 6, padding: '6px 10px', fontSize: 12, cursor: 'pointer',
+  background: 'var(--os-fill-subtle)', border: '1px solid var(--os-line)', borderRadius: 'var(--os-r-sm)',
+  padding: '7px 10px', fontSize: 'var(--os-text-sm)', color: 'var(--os-text)', fontFamily: 'var(--os-font-body)', outline: 'none', width: '100%', minHeight: 40,
 };
 const TZ = 'America/Guayaquil';
 const hoyISO = () => new Date().toLocaleDateString('en-CA', { timeZone: TZ });
 
 function LineChart({ crudo, media, height = 150 }: { crudo: { x: string; y: number }[]; media: { x: string; y: number }[]; height?: number }) {
   const todos = [...crudo, ...media];
-  if (!todos.length) return <p style={{ fontSize: 12, color: 'var(--os-muted)' }}>Sin datos aún.</p>;
+  if (!todos.length) return <EmptyState icon="monitoring" title="Sin datos aún" text="Registra tu primera medición para ver la tendencia." />;
   const xs = Array.from(new Set(todos.map((p) => p.x))).sort();
   const maxY = Math.max(...todos.map((p) => p.y));
   const minY = Math.min(...todos.map((p) => p.y));
@@ -40,8 +33,8 @@ function LineChart({ crudo, media, height = 150 }: { crudo: { x: string; y: numb
   return (
     <div className="os-hscroll">
       <svg viewBox={`0 0 ${W} ${H}`} width="100%" height={H} preserveAspectRatio="none" style={{ minWidth: 280 }}>
-        <path d={linea(crudo)} fill="none" stroke="rgba(107,122,232,0.4)" strokeWidth="1.5" />
-        <path d={linea(media)} fill="none" stroke="#B5985A" strokeWidth="2.5" strokeLinejoin="round" />
+        <path d={linea(crudo)} fill="none" stroke="var(--os-accent-light)" strokeOpacity="0.4" strokeWidth="1.5" />
+        <path d={linea(media)} fill="none" stroke="var(--os-champagne)" strokeWidth="2.5" strokeLinejoin="round" />
       </svg>
     </div>
   );
@@ -99,7 +92,7 @@ export default function OSSaludCuerpo() {
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
-      {error && <div style={{ color: 'var(--os-error)', fontSize: 13 }}>{error}</div>}
+      {error && <div style={{ color: 'var(--os-error)', fontSize: 'var(--os-text-sm)' }}>{error}</div>}
 
       {/* Último registro */}
       {ultimo && (
@@ -111,7 +104,7 @@ export default function OSSaludCuerpo() {
             { label: 'Cintura', val: ultimo.cintura_cm, u: 'cm' },
           ].filter((m) => m.val != null).map((m) => (
             <div key={m.label} style={{ ...card, padding: '10px', textAlign: 'center' }}>
-              <p style={{ fontSize: 10, color: 'var(--os-muted)', textTransform: 'uppercase', letterSpacing: '0.08em', margin: 0 }}>{m.label}</p>
+              <p style={{ fontSize: 11, color: 'var(--os-muted)', textTransform: 'uppercase', letterSpacing: '0.08em', margin: 0 }}>{m.label}</p>
               <p style={{ fontFamily: 'var(--os-font-mono)', fontSize: 18, fontWeight: 700, color: 'var(--os-champagne)', margin: '3px 0 0' }}>{m.val}<span style={{ fontSize: 11, color: 'var(--os-muted)' }}> {m.u}</span></p>
             </div>
           ))}
@@ -129,7 +122,7 @@ export default function OSSaludCuerpo() {
       {/* Alta manual */}
       <div style={{ ...card, display: 'flex', flexDirection: 'column', gap: 8 }}>
         <p style={{ fontFamily: 'var(--os-font-display)', fontSize: 11, fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', color: 'var(--os-muted)', margin: 0 }}>Nueva medición</p>
-        <input style={{ ...input, colorScheme: 'dark', background: '#0E1738' }} type="date" value={form.fecha} onChange={(e) => setForm({ ...form, fecha: e.target.value })} />
+        <input style={{ ...input, background: 'var(--os-surface)' }} type="date" value={form.fecha} onChange={(e) => setForm({ ...form, fecha: e.target.value })} />
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 6 }}>
           <input style={input} type="number" placeholder="Peso (kg)" value={form.peso_kg} onChange={(e) => setForm({ ...form, peso_kg: e.target.value })} />
           <input style={input} type="number" placeholder="Grasa (%)" value={form.grasa_pct} onChange={(e) => setForm({ ...form, grasa_pct: e.target.value })} />
@@ -138,24 +131,24 @@ export default function OSSaludCuerpo() {
           <input style={input} type="number" placeholder="Cintura (cm)" value={form.cintura_cm} onChange={(e) => setForm({ ...form, cintura_cm: e.target.value })} />
           <input style={input} type="number" placeholder="Sueño (h)" value={form.sueno_horas} onChange={(e) => setForm({ ...form, sueno_horas: e.target.value })} />
         </div>
-        <button style={btn} disabled={guardando} onClick={guardar}>{guardando ? 'Guardando...' : 'Guardar medición'}</button>
+        <Button disabled={guardando} onClick={guardar}>{guardando ? 'Guardando...' : 'Guardar medición'}</Button>
       </div>
 
       {/* Historial */}
       <div style={card}>
         <p style={{ fontFamily: 'var(--os-font-display)', fontSize: 11, fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', color: 'var(--os-muted)', margin: '0 0 10px' }}>Historial</p>
-        {loading ? <p style={{ fontSize: 13, color: 'var(--os-muted)' }}>Cargando...</p> :
-          !mediciones.length ? <p style={{ fontSize: 13, color: 'var(--os-muted)' }}>Sin mediciones aún.</p> :
+        {loading ? <Spinner /> :
+          !mediciones.length ? <EmptyState icon="monitor_weight" title="Sin mediciones aún" text="Guarda la primera con el formulario de arriba." /> :
           <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
             {mediciones.slice(0, 30).map((m) => (
               <div key={m.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '6px 0', borderBottom: '1px solid var(--os-line-soft)' }}>
                 <div>
-                  <span style={{ fontSize: 13, color: 'var(--os-text)', fontFamily: 'var(--os-font-mono)' }}>{m.fecha}</span>
-                  <span style={{ fontSize: 12, color: 'var(--os-muted)', marginLeft: 8 }}>
+                  <span style={{ fontSize: 'var(--os-text-sm)', color: 'var(--os-text)', fontFamily: 'var(--os-font-mono)' }}>{m.fecha}</span>
+                  <span style={{ fontSize: 'var(--os-text-xs)', color: 'var(--os-muted)', marginLeft: 8 }}>
                     {[m.peso_kg && `${m.peso_kg}kg`, m.grasa_pct && `${m.grasa_pct}%`, m.cintura_cm && `${m.cintura_cm}cm`, m.source !== 'manual' && m.source].filter(Boolean).join(' · ')}
                   </span>
                 </div>
-                <button style={{ ...btnGhost, padding: '4px 8px' }} onClick={() => borrar(m.id)}>✕</button>
+                <Button variant="danger" size="sm" onClick={() => borrar(m.id)} aria-label="Borrar medición">✕</Button>
               </div>
             ))}
           </div>

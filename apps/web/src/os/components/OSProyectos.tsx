@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
+import { EmptyState, Spinner, ToastProvider, useToast } from './ui';
 
 // Vista Proyectos: el Project Stack del canon, en vivo desde /api/os/lineas.
 // prioridad_stack es la unica jerarquia que importa: 0 Urgente, 1 Dinero,
@@ -78,7 +79,8 @@ const selectStyle: React.CSSProperties = {
   outline: 'none',
 };
 
-export default function OSProyectos() {
+function OSProyectosInner() {
+  const toast = useToast();
   const [lineas, setLineas] = useState<Linea[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -145,7 +147,7 @@ export default function OSProyectos() {
       if (!res.ok) throw new Error(data.error || String(res.status));
       await load();
     } catch (err) {
-      window.alert('Error: ' + (err instanceof Error ? err.message : String(err)));
+      toast.show('Error: ' + (err instanceof Error ? err.message : String(err)), 'error');
     }
   }
 
@@ -168,7 +170,7 @@ export default function OSProyectos() {
   }, [lineas]);
 
   if (loading) {
-    return <div className="os-card-2" style={{ padding: '1rem', color: 'var(--os-muted)', fontSize: 13 }}>Cargando proyectos...</div>;
+    return <Spinner label="Cargando proyectos..." />;
   }
   if (error && lineas.length === 0) {
     return (
@@ -183,8 +185,12 @@ export default function OSProyectos() {
       {error && <p style={{ color: 'var(--os-error)', fontSize: 12, margin: 0 }}>{error}</p>}
 
       {lineas.length === 0 && (
-        <div className="os-card-2" style={{ padding: '1.75rem', textAlign: 'center', color: 'var(--os-muted)', fontSize: 12 }}>
-          Todavia no hay lineas registradas en el stack.
+        <div className="os-card-2">
+          <EmptyState
+            icon="account_tree"
+            title="Stack vacio"
+            text="Todavia no hay lineas registradas. Las lineas del Project Stack se registran via API (/api/os/lineas)."
+          />
         </div>
       )}
 
@@ -288,7 +294,7 @@ export default function OSProyectos() {
             </button>
 
             <p style={{
-              fontSize: 10, color: 'var(--os-accent-light)', letterSpacing: '0.1em', textTransform: 'uppercase',
+              fontSize: 11, color: 'var(--os-accent-light)', letterSpacing: '0.1em', textTransform: 'uppercase',
               fontFamily: 'var(--os-font-display)', margin: '0 0 6px',
             }}>
               Proyecto · #{modalTag}
@@ -320,7 +326,7 @@ export default function OSProyectos() {
                   <h3 style={{ fontSize: 14, fontWeight: 700, color: 'var(--os-text)', margin: 0, fontFamily: 'var(--os-font-display)' }}>
                     {p.titulo}
                   </h3>
-                  <span style={{ fontSize: 10, color: 'var(--os-muted)', flexShrink: 0 }}>{p.fecha}</span>
+                  <span style={{ fontSize: 11, color: 'var(--os-muted)', flexShrink: 0 }}>{p.fecha}</span>
                 </div>
                 {p.brief ? (
                   <div style={{ fontSize: 13, color: 'var(--os-text-2)', lineHeight: 1.65 }}>{renderBrief(p.brief)}</div>
@@ -333,7 +339,7 @@ export default function OSProyectos() {
                     borderRadius: 8, padding: '10px 12px',
                   }}>
                     <p style={{
-                      fontFamily: 'var(--os-font-display)', fontSize: 9, fontWeight: 700, letterSpacing: '0.12em',
+                      fontFamily: 'var(--os-font-display)', fontSize: 11, fontWeight: 700, letterSpacing: '0.12em',
                       textTransform: 'uppercase', color: 'var(--os-accent-light)', margin: '0 0 6px',
                     }}>
                       Pendientes
@@ -352,5 +358,13 @@ export default function OSProyectos() {
         </div>
       )}
     </div>
+  );
+}
+
+export default function OSProyectos() {
+  return (
+    <ToastProvider>
+      <OSProyectosInner />
+    </ToastProvider>
   );
 }

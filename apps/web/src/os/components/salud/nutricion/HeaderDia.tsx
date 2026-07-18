@@ -50,7 +50,7 @@ export default function HeaderDia({ dia, setDia, tipoDia, onCambiarTipoDia, tota
           <div style={{ display: 'flex', justifyContent: 'space-around', alignItems: 'center', flexWrap: 'wrap', gap: 12 }}>
             <div style={{ textAlign: 'center' }}>
               <p style={{ ...numGrande, fontSize: 26 }}>{Math.round(totales.kcal)}</p>
-              <p style={{ fontSize: 10.5, color: 'var(--os-muted)', textTransform: 'uppercase', letterSpacing: '0.06em', margin: '2px 0 0' }}>Comido</p>
+              <p style={{ fontSize: 11, color: 'var(--os-muted)', textTransform: 'uppercase', letterSpacing: '0.06em', margin: '2px 0 0' }}>Comido</p>
             </div>
             <div style={{ textAlign: 'center' }}>
               {sinMetas ? (
@@ -65,13 +65,13 @@ export default function HeaderDia({ dia, setDia, tipoDia, onCambiarTipoDia, tota
                   <p style={{ ...numGrande, fontSize: 34, color: restante.kcal != null && restante.kcal < 0 ? '#E8709A' : 'var(--os-text)' }}>
                     {restante.kcal != null ? Math.round(restante.kcal) : '—'}
                   </p>
-                  <p style={{ fontSize: 10.5, color: 'var(--os-muted)', textTransform: 'uppercase', letterSpacing: '0.06em', margin: '2px 0 0' }}>Restante (kcal)</p>
+                  <p style={{ fontSize: 11, color: 'var(--os-muted)', textTransform: 'uppercase', letterSpacing: '0.06em', margin: '2px 0 0' }}>Restante (kcal)</p>
                 </>
               )}
             </div>
             <div style={{ textAlign: 'center' }}>
               <p style={{ ...numGrande, fontSize: 26 }}>{targets.kcal ?? '—'}</p>
-              <p style={{ fontSize: 10.5, color: 'var(--os-muted)', textTransform: 'uppercase', letterSpacing: '0.06em', margin: '2px 0 0' }}>Meta</p>
+              <p style={{ fontSize: 11, color: 'var(--os-muted)', textTransform: 'uppercase', letterSpacing: '0.06em', margin: '2px 0 0' }}>Meta</p>
             </div>
           </div>
 

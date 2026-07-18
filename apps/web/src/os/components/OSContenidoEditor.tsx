@@ -1,4 +1,7 @@
 import { useState } from 'react';
+import { Button } from './ui';
+
+// Editor rapido de borradores (solo en sesion, sin persistencia todavia).
 
 interface Borrador {
   id: string;
@@ -12,9 +15,15 @@ const PLATAFORMAS = ['linkedin', 'instagram', 'blog'] as const;
 type Plataforma = typeof PLATAFORMAS[number];
 
 const PLAT_COLOR: Record<string, string> = {
-  linkedin:  '#3B4ED9',
-  instagram: '#B5985A',
-  blog:      '#6B7AE8',
+  linkedin:  'var(--os-accent)',
+  instagram: 'var(--os-champagne)',
+  blog:      'var(--os-accent-light)',
+};
+// Tints con alpha (var() no se puede concatenar con sufijo hex).
+const PLAT_BG: Record<string, string> = {
+  linkedin:  'rgba(59,78,217,0.13)',
+  instagram: 'rgba(181,152,90,0.13)',
+  blog:      'rgba(107,122,232,0.13)',
 };
 
 export default function OSContenidoEditor() {
@@ -44,12 +53,13 @@ export default function OSContenidoEditor() {
 
   const inputStyle: React.CSSProperties = {
     width: '100%',
-    background: 'rgba(232,234,240,0.04)',
-    border: '1px solid rgba(232,234,240,0.1)',
+    background: 'var(--os-fill-subtle)',
+    border: '1px solid var(--os-line)',
     borderRadius: 7,
     padding: '0.625rem 0.75rem',
-    color: '#F4F6F8',
-    fontFamily: "'Inter', sans-serif",
+    minHeight: 36,
+    color: 'var(--os-text)',
+    fontFamily: 'var(--os-font-body)',
     outline: 'none',
     boxSizing: 'border-box',
   };
@@ -57,24 +67,25 @@ export default function OSContenidoEditor() {
   return (
     <div>
       {/* Editor */}
-      <div style={{ background: '#131F4A', border: '1px solid rgba(232,234,240,0.09)', borderRadius: 12, padding: '1.25rem', marginBottom: '1rem' }}>
-        <p style={{ fontFamily: "'Montserrat',sans-serif", fontSize: 10, fontWeight: 600, letterSpacing: '0.12em', textTransform: 'uppercase', color: '#6B7280', margin: '0 0 0.875rem' }}>
+      <div className="os-card-2" style={{ marginBottom: '1rem' }}>
+        <p className="os-section-title" style={{ marginBottom: '0.875rem' }}>
           Nuevo borrador
         </p>
 
-        <div style={{ display: 'flex', gap: 6, marginBottom: 10 }}>
+        <div style={{ display: 'flex', gap: 6, marginBottom: 10, flexWrap: 'wrap' }}>
           {PLATAFORMAS.map(p => (
             <button
               key={p}
               onClick={() => setPlataforma(p)}
               style={{
                 padding: '3px 10px',
+                minHeight: 36,
                 borderRadius: 5,
-                border: `1px solid ${plataforma === p ? PLAT_COLOR[p] : 'rgba(232,234,240,0.12)'}`,
-                background: plataforma === p ? `${PLAT_COLOR[p]}22` : 'transparent',
-                color: plataforma === p ? PLAT_COLOR[p] : '#6B7280',
-                fontFamily: "'Montserrat',sans-serif",
-                fontSize: 9,
+                border: `1px solid ${plataforma === p ? PLAT_COLOR[p] : 'var(--os-line)'}`,
+                background: plataforma === p ? PLAT_BG[p] : 'transparent',
+                color: plataforma === p ? PLAT_COLOR[p] : 'var(--os-muted)',
+                fontFamily: 'var(--os-font-display)',
+                fontSize: 11,
                 fontWeight: 700,
                 letterSpacing: '0.1em',
                 textTransform: 'uppercase',
@@ -90,57 +101,43 @@ export default function OSContenidoEditor() {
           value={titulo}
           onChange={e => setTitulo(e.target.value)}
           placeholder="Titulo o hook..."
-          style={{ ...inputStyle, fontSize: 14, marginBottom: 8 }}
+          style={{ ...inputStyle, fontSize: 'var(--os-text-base)', marginBottom: 8 }}
         />
         <textarea
           value={cuerpo}
           onChange={e => setCuerpo(e.target.value)}
           placeholder="Contenido del post..."
           rows={6}
-          style={{ ...inputStyle, fontSize: 13, resize: 'vertical', lineHeight: 1.5, marginBottom: 10 }}
+          style={{ ...inputStyle, fontSize: 'var(--os-text-sm)', resize: 'vertical', lineHeight: 1.5, marginBottom: 10 }}
         />
         {/* TODO: AI assist - generar variantes, mejorar hook */}
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-          <span style={{ fontSize: 11, color: '#6B7280', fontFamily: "'JetBrains Mono', monospace" }}>
+          <span style={{ fontSize: 'var(--os-text-xs)', color: 'var(--os-muted)', fontFamily: 'var(--os-font-mono)' }}>
             {cuerpo.length} car
           </span>
-          <button
-            onClick={guardar}
-            style={{
-              padding: '0.5rem 1.125rem',
-              background: flash ? 'rgba(59,78,217,0.35)' : '#3B4ED9',
-              border: 'none',
-              borderRadius: 7,
-              color: '#F4F6F8',
-              fontFamily: "'Montserrat',sans-serif",
-              fontSize: 11,
-              fontWeight: 700,
-              letterSpacing: '0.08em',
-              textTransform: 'uppercase',
-              cursor: 'pointer',
-              transition: 'background 0.15s',
-            }}
-          >{flash ? 'Guardado' : 'Guardar borrador'}</button>
+          <Button size="sm" onClick={guardar} style={flash ? { background: 'rgba(59,78,217,0.35)' } : undefined}>
+            {flash ? 'Guardado' : 'Guardar borrador'}
+          </Button>
         </div>
       </div>
 
       {/* Lista de borradores */}
       {borradores.length > 0 && (
-        <div style={{ background: '#131F4A', border: '1px solid rgba(232,234,240,0.09)', borderRadius: 12, padding: '1.25rem' }}>
-          <p style={{ fontFamily: "'Montserrat',sans-serif", fontSize: 10, fontWeight: 600, letterSpacing: '0.12em', textTransform: 'uppercase', color: '#6B7280', margin: '0 0 0.75rem' }}>
+        <div className="os-card-2">
+          <p className="os-section-title" style={{ marginBottom: '0.75rem' }}>
             Borradores en sesion ({borradores.length})
           </p>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
             {borradores.map(b => (
-              <div key={b.id} style={{ padding: '0.625rem 0.75rem', borderRadius: 7, background: 'rgba(232,234,240,0.03)', border: '1px solid rgba(232,234,240,0.06)', display: 'flex', gap: 10, alignItems: 'flex-start' }}>
+              <div key={b.id} style={{ padding: '0.625rem 0.75rem', borderRadius: 7, background: 'var(--os-fill-subtle)', border: '1px solid var(--os-line-soft)', display: 'flex', gap: 10, alignItems: 'flex-start' }}>
                 <div style={{ flex: 1, minWidth: 0 }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 4 }}>
-                    <span style={{ fontSize: 13, fontWeight: 600, color: '#F4F6F8' }}>{b.titulo}</span>
-                    <span style={{ fontSize: 9, color: PLAT_COLOR[b.plataforma] ?? '#6B7280', fontFamily: "'Montserrat',sans-serif", letterSpacing: '0.08em', textTransform: 'uppercase', flexShrink: 0 }}>{b.plataforma}</span>
-                    <span style={{ fontSize: 10, color: '#6B7280', flexShrink: 0 }}>{b.fecha}</span>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 4, flexWrap: 'wrap' }}>
+                    <span style={{ fontSize: 'var(--os-text-sm)', fontWeight: 600, color: 'var(--os-text)' }}>{b.titulo}</span>
+                    <span style={{ fontSize: 11, color: PLAT_COLOR[b.plataforma] ?? 'var(--os-muted)', fontFamily: 'var(--os-font-display)', letterSpacing: '0.08em', textTransform: 'uppercase', flexShrink: 0 }}>{b.plataforma}</span>
+                    <span style={{ fontSize: 'var(--os-text-xs)', color: 'var(--os-muted)', flexShrink: 0 }}>{b.fecha}</span>
                   </div>
                   {b.cuerpo && (
-                    <p style={{ fontSize: 12, color: '#6B7280', margin: 0, lineHeight: 1.4, overflow: 'hidden', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical' }}>
+                    <p style={{ fontSize: 'var(--os-text-sm)', color: 'var(--os-muted)', margin: 0, lineHeight: 1.4, overflow: 'hidden', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical' }}>
                       {b.cuerpo}
                     </p>
                   )}
@@ -148,7 +145,7 @@ export default function OSContenidoEditor() {
                 <button
                   onClick={() => eliminar(b.id)}
                   aria-label="Eliminar borrador"
-                  style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#6B7280', padding: '2px 4px', flexShrink: 0, lineHeight: 1 }}
+                  style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--os-muted)', padding: '2px 4px', minWidth: 36, minHeight: 36, flexShrink: 0, lineHeight: 1, display: 'flex', alignItems: 'center', justifyContent: 'center' }}
                 >
                   <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
                 </button>

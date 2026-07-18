@@ -5,6 +5,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import type { Comida, Momento, Totales, Targets } from './nutricion/tipos';
 import { MOMENTOS, hoyISO, addDias } from './nutricion/tipos';
+import { Spinner } from '../ui';
 import HeaderDia from './nutricion/HeaderDia';
 import SeccionMomento from './nutricion/SeccionMomento';
 import AddSheet from './nutricion/AddSheet';
@@ -114,7 +115,7 @@ export default function OSSaludNutricion() {
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
-      {error && <div style={{ color: 'var(--os-error)', fontSize: 13 }}>{error}</div>}
+      {error && <div style={{ color: 'var(--os-error)', fontSize: 'var(--os-text-sm)' }}>{error}</div>}
 
       <HeaderDia
         dia={dia} setDia={setDia} tipoDia={tipoDia} onCambiarTipoDia={cambiarTipoDia}
@@ -124,7 +125,7 @@ export default function OSSaludNutricion() {
 
       <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
         {loading ? (
-          <p style={{ fontSize: 13, color: 'var(--os-muted)' }}>Cargando...</p>
+          <Spinner />
         ) : (
           MOMENTOS.map((m) => (
             <SeccionMomento
@@ -141,7 +142,7 @@ export default function OSSaludNutricion() {
           background: 'var(--os-surface)', borderRadius: 'var(--os-r-card)', boxShadow: 'var(--os-shadow-card)',
           padding: '1rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center',
         }}>
-          <span style={{ fontSize: 13, color: 'var(--os-text-2)' }}>Promedio ultimos 7 dias</span>
+          <span style={{ fontSize: 'var(--os-text-sm)', color: 'var(--os-text-2)' }}>Promedio ultimos 7 dias</span>
           <span style={{ fontFamily: 'var(--os-font-rounded)', fontSize: 18, color: 'var(--os-champagne)', fontWeight: 800 }}>{promedioSemana} kcal</span>
         </div>
       )}

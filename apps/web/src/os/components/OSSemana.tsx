@@ -1,4 +1,5 @@
 import { useEffect, useState, type CSSProperties } from 'react';
+import { Spinner } from './ui';
 
 // Vista Semana: la metodologia modo x funcion, hecha visible.
 //
@@ -32,7 +33,7 @@ const MODO_LABEL: Record<string, string> = { maker: 'Maker', manager: 'Manager',
 // El modo pinta la forma de atencion, no un juicio de valor: ambos son necesarios.
 const MODO_COLOR: Record<string, string> = {
   maker: 'var(--os-accent)',
-  manager: 'var(--os-ultra-light, var(--os-accent))',
+  manager: 'var(--os-accent-light)',
   off: 'var(--os-muted)',
 };
 
@@ -99,7 +100,7 @@ export default function OSSemana() {
     return <div style={card}><p style={{ color: 'var(--os-error)', fontSize: 13, margin: 0 }}>No se pudo cargar la semana: {error}</p></div>;
   }
   if (!data) {
-    return <div style={card}><p style={{ color: 'var(--os-muted)', fontSize: 13, margin: 0 }}>Cargando la semana...</p></div>;
+    return <Spinner label="Cargando la semana..." />;
   }
 
   return (
@@ -164,9 +165,9 @@ export default function OSSemana() {
                   <span style={{ fontSize: 11, color: 'var(--os-muted)', flex: 1 }}>
                     Planificado {b.horas_planificadas}h
                   </span>
-                  <button type="button" style={{ ...btnGhost, minHeight: 30, padding: '4px 10px', fontSize: 11 }}
+                  <button type="button" style={{ ...btnGhost, minHeight: 36, padding: '4px 10px', fontSize: 11 }}
                     onClick={() => registrar(b.funcion, 30)}>+30 min</button>
-                  <button type="button" style={{ ...btnGhost, minHeight: 30, padding: '4px 10px', fontSize: 11 }}
+                  <button type="button" style={{ ...btnGhost, minHeight: 36, padding: '4px 10px', fontSize: 11 }}
                     onClick={() => registrar(b.funcion, 60)}>+1 h</button>
                 </div>
               </div>
@@ -186,12 +187,12 @@ export default function OSSemana() {
                   {DIAS_LARGO[d.dia - 1]}
                 </span>
                 <span style={{
-                  fontSize: 10.5, fontWeight: 700, letterSpacing: '.04em', textTransform: 'uppercase',
+                  fontSize: 11, fontWeight: 700, letterSpacing: '.04em', textTransform: 'uppercase',
                   color: MODO_COLOR[d.modo], border: `1px solid ${MODO_COLOR[d.modo]}`,
                   borderRadius: 999, padding: '2px 8px',
                 }}>{MODO_LABEL[d.modo]}</span>
                 {d.sale && (
-                  <span style={{ fontSize: 10.5, color: 'var(--os-muted)', display: 'inline-flex', alignItems: 'center', gap: 3 }}>
+                  <span style={{ fontSize: 11, color: 'var(--os-muted)', display: 'inline-flex', alignItems: 'center', gap: 3 }}>
                     <span className="material-symbols-outlined" style={{ fontSize: 13 }}>directions_car</span>
                     sale
                   </span>
@@ -226,7 +227,7 @@ export default function OSSemana() {
                           )}
                           <span style={{ flex: 1 }} />
                           {/* La cara derivada: la prueba visible de que el eje es ortogonal. */}
-                          <span style={{ fontSize: 10.5, color: 'var(--os-muted)', textTransform: 'uppercase', letterSpacing: '.04em' }}>
+                          <span style={{ fontSize: 11, color: 'var(--os-muted)', textTransform: 'uppercase', letterSpacing: '.04em' }}>
                             cara {b.cara}
                           </span>
                           <span className="material-symbols-outlined" style={{ fontSize: 18, color: 'var(--os-muted)' }}>

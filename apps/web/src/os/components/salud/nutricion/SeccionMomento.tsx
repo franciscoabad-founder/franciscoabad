@@ -26,7 +26,7 @@ export default function SeccionMomento({ momento, comidas, onCambio, onAgregar }
         </div>
         {comidas.length > 0 && (
           <span style={{ fontFamily: 'var(--os-font-rounded)', fontWeight: 700, fontSize: 14, color: 'var(--os-text-2)' }}>
-            {Math.round(subtotal)} <span style={{ fontSize: 10, color: 'var(--os-muted)', fontFamily: 'var(--os-font-body)' }}>kcal</span>
+            {Math.round(subtotal)} <span style={{ fontSize: 11, color: 'var(--os-muted)', fontFamily: 'var(--os-font-body)' }}>kcal</span>
           </span>
         )}
       </div>
@@ -36,7 +36,7 @@ export default function SeccionMomento({ momento, comidas, onCambio, onAgregar }
           {comidas.map((c) => <FilaComida key={c.id} comida={c} onCambio={onCambio} />)}
         </div>
       ) : (
-        <p style={{ fontSize: 12.5, color: 'var(--os-muted)', margin: '0 0 8px' }}>Todavia no registras nada aqui.</p>
+        <p style={{ fontSize: 'var(--os-text-sm)', color: 'var(--os-muted)', margin: '0 0 8px' }}>Todavia no registras nada aqui.</p>
       )}
 
       {comidas.length > 0 && (

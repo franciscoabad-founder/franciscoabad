@@ -3,6 +3,7 @@ export const prerender = false;
 import OSLayout from '../../layouts/OSLayout.astro';
 import { datosDaily } from '../../os/data/daily';
 import OSChecklist from '../../os/components/OSChecklist';
+import PageHeader from '../../os/components/ui/PageHeader';
 
 const { principios, semana, rutina_am, check_10min, pm_close, reglas } = datosDaily;
 
@@ -13,8 +14,8 @@ const tipoColor: Record<string, string> = {
 };
 const tipoBg: Record<string, string> = {
   maker:   'rgba(59,78,217,0.15)',
-  manager: 'rgba(232,234,240,0.06)',
-  off:     'rgba(232,234,240,0.03)',
+  manager: 'var(--os-fill-subtle)',
+  off:     'var(--os-fill-subtle)',
 };
 const tipoLabel: Record<string, string> = {
   maker:   'Maker',
@@ -26,11 +27,7 @@ const tipoLabel: Record<string, string> = {
 <OSLayout title="Daily OS">
   <div class="os-fade-up">
 
-    <!-- Header -->
-    <div style="margin-bottom:1.5rem;">
-      <p class="os-eyebrow" style="margin-bottom:6px;">Sistema diario</p>
-      <h1 class="os-h1">Daily OS</h1>
-    </div>
+    <PageHeader eyebrow="Sistema diario" title="Daily OS" subtitle="Principios, semana Maker/Manager y rutinas del dia." />
 
     <!-- Principios -->
     <div class="os-card-2" style="margin-bottom:1rem;">
@@ -54,9 +51,9 @@ const tipoLabel: Record<string, string> = {
       <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:6px;">
         {semana.map((d) => (
           <div style={`background:${tipoBg[d.tipo]};border:1px solid ${d.tipo === 'maker' ? 'var(--os-line-accent)' : 'var(--os-line-soft)'};border-radius:var(--os-r-md);padding:0.625rem 0.5rem;text-align:center;`}>
-            <p style="font-family:var(--os-font-display);font-size:10px;font-weight:600;letter-spacing:0.06em;text-transform:uppercase;color:var(--os-muted);margin:0 0 4px;">{d.dia.slice(0,3)}</p>
-            <p style={`font-family:var(--os-font-display);font-size:9px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:${tipoColor[d.tipo]};margin:0 0 4px;`}>{tipoLabel[d.tipo]}</p>
-            <p style="font-size:10px;color:var(--os-muted);margin:0;line-height:1.3;">{d.descripcion}</p>
+            <p style="font-family:var(--os-font-display);font-size:11px;font-weight:600;letter-spacing:0.05em;text-transform:uppercase;color:var(--os-muted);margin:0 0 4px;">{d.dia.slice(0,3)}</p>
+            <p style={`font-family:var(--os-font-display);font-size:11px;font-weight:700;letter-spacing:0.05em;text-transform:uppercase;color:${tipoColor[d.tipo]};margin:0 0 4px;`}>{tipoLabel[d.tipo]}</p>
+            <p style="font-size:11px;color:var(--os-muted);margin:0;line-height:1.3;">{d.descripcion}</p>
           </div>
         ))}
       </div>
@@ -66,7 +63,7 @@ const tipoLabel: Record<string, string> = {
           <span style="font-size:11px;color:var(--os-muted);">Maker: crear y entregar (Mie, Vie, Sab)</span>
         </div>
         <div style="display:flex;align-items:center;gap:5px;">
-          <span style="width:8px;height:8px;border-radius:2px;background:rgba(232,234,240,0.2);display:block;"></span>
+          <span style="width:8px;height:8px;border-radius:2px;background:var(--os-line);display:block;"></span>
           <span style="font-size:11px;color:var(--os-muted);">Manager: reuniones y tramites (Lun, Mar, Jue)</span>
         </div>
       </div>

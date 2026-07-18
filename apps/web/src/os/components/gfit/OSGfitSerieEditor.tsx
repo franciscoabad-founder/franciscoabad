@@ -48,9 +48,9 @@ export default function OSGfitSerieEditor({ dia_ejercicio_id, series, unidad, on
     <div style={{ display: 'flex', flexDirection: 'column', gap: 6, marginTop: 10 }}>
       <div style={{ display: 'grid', gridTemplateColumns: '34px 1fr 1fr 1fr 30px', gap: 6, alignItems: 'center', padding: '0 2px' }}>
         <span />
-        <span style={{ fontSize: 10, color: 'var(--os-muted)', fontFamily: 'var(--os-font-display)' }}>Peso ({unidad})</span>
-        <span style={{ fontSize: 10, color: 'var(--os-muted)', fontFamily: 'var(--os-font-display)' }}>Reps</span>
-        <span style={{ fontSize: 10, color: 'var(--os-muted)', fontFamily: 'var(--os-font-display)' }}>Desc. (s)</span>
+        <span style={{ fontSize: 11, color: 'var(--os-muted)', fontFamily: 'var(--os-font-display)' }}>Peso ({unidad})</span>
+        <span style={{ fontSize: 11, color: 'var(--os-muted)', fontFamily: 'var(--os-font-display)' }}>Reps</span>
+        <span style={{ fontSize: 11, color: 'var(--os-muted)', fontFamily: 'var(--os-font-display)' }}>Desc. (s)</span>
         <span />
       </div>
 
@@ -81,13 +81,13 @@ export default function OSGfitSerieEditor({ dia_ejercicio_id, series, unidad, on
 
       {ayuda && (
         <div style={{ ...input, background: 'var(--os-fill-subtle)', display: 'flex', flexDirection: 'column', gap: 8, padding: '10px 12px' }}>
-          <p style={{ fontSize: 11, fontWeight: 700, color: 'var(--os-text)', margin: 0 }}>Conoce tus tipos de serie</p>
+          <p style={{ fontSize: 'var(--os-text-xs)', fontWeight: 700, color: 'var(--os-text)', margin: 0 }}>Conoce tus tipos de serie</p>
           {TIPOS_SERIE_ORDEN.map((t) => (
             <div key={t} style={{ display: 'flex', gap: 8, alignItems: 'flex-start' }}>
               <span style={{ width: 20, height: 20, borderRadius: 6, background: TIPO_SERIE_COLOR[t], flexShrink: 0 }} />
               <div>
-                <p style={{ fontSize: 11.5, fontWeight: 700, color: 'var(--os-text)', margin: 0 }}>{TIPO_SERIE_DEF[t].titulo}</p>
-                <p style={{ fontSize: 11, color: 'var(--os-muted)', margin: '2px 0 0' }}>{TIPO_SERIE_DEF[t].texto}</p>
+                <p style={{ fontSize: 'var(--os-text-xs)', fontWeight: 700, color: 'var(--os-text)', margin: 0 }}>{TIPO_SERIE_DEF[t].titulo}</p>
+                <p style={{ fontSize: 'var(--os-text-xs)', color: 'var(--os-muted)', margin: '2px 0 0' }}>{TIPO_SERIE_DEF[t].texto}</p>
               </div>
             </div>
           ))}

@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
+import { Spinner } from './ui';
 
 // ── Tipos (contrato de los endpoints api/os/juego/*, construidos en paralelo) ──
 interface Nivel { nivel: number; xpEnNivel: number; xpSiguiente: number; progreso: number }
@@ -32,11 +33,6 @@ const EVENTOS: Array<{ value: NonNullable<ObjetivoQuest['evento']>; label: strin
 ];
 
 // ── Estilos compartidos (tokens --m-* del módulo, clay cálido) ──────────────
-const btnGhost: React.CSSProperties = {
-  background: 'transparent', color: 'var(--m-muted)', border: '1px solid var(--m-line)',
-  borderRadius: 14, padding: '10px 14px', minHeight: 44, fontSize: 11, fontFamily: 'var(--m-font-rounded)',
-  fontWeight: 700, cursor: 'pointer',
-};
 const card: React.CSSProperties = {
   background: 'var(--m-surface)', border: 'none', boxShadow: 'var(--m-shadow)', borderRadius: 20, padding: '1rem',
 };
@@ -275,7 +271,7 @@ export default function OSJuego() {
   }, [jugador]);
 
   if (loading) {
-    return <p style={{ fontSize: 13, color: 'var(--m-muted)', fontFamily: 'var(--m-font-rounded)' }}>Cargando...</p>;
+    return <Spinner label="Cargando el juego..." />;
   }
 
   return (
@@ -283,7 +279,7 @@ export default function OSJuego() {
       {error && (
         <div style={{ display: 'flex', alignItems: 'center', gap: 10, color: 'var(--m-accent-text)', fontSize: 13, fontFamily: 'var(--m-font-rounded)' }}>
           <span>{error}</span>
-          <button style={{ ...btnGhost, padding: '6px 10px', fontSize: 11, minHeight: 0 }} onClick={() => cargar()}>Reintentar</button>
+          <button className="m-btn-ghost" onClick={() => cargar()}>Reintentar</button>
         </div>
       )}
 
@@ -358,7 +354,7 @@ export default function OSJuego() {
                           <span className="m-estado">×{r.veces_canjeada}</span>
                         )}
                       </div>
-                      {r.descripcion && <p style={{ fontSize: 11, color: 'var(--m-muted)', margin: '2px 0 0', fontFamily: 'var(--m-font-rounded)' }}>{r.descripcion}</p>}
+                      {r.descripcion && <p style={{ fontSize: 13, color: 'var(--m-muted)', margin: '2px 0 0', fontFamily: 'var(--m-font-rounded)' }}>{r.descripcion}</p>}
                     </div>
                     <span className="m-precio">⛁ {r.costo_oro}</span>
                     <button
@@ -423,14 +419,14 @@ export default function OSJuego() {
                         <span style={{ fontSize: 14, fontWeight: 800, color: 'var(--m-fg)', fontFamily: 'var(--m-font-rounded)' }}>
                           {q.titulo}
                         </span>
-                        <p style={{ fontSize: 11.5, color: 'var(--m-muted)', margin: '4px 0 0', fontFamily: 'var(--m-font-rounded)' }}>
+                        <p style={{ fontSize: 13, color: 'var(--m-muted)', margin: '4px 0 0', fontFamily: 'var(--m-font-rounded)' }}>
                           {nombreObjetivo(q.objetivo)} · meta {meta}
                         </p>
                       </div>
                       {q.apuesta_oro > 0 && (
                         <div style={{ textAlign: 'right' }}>
                           <span className="m-precio" style={{ color: 'var(--m-champagne)' }}>Apuesta ⛁ {q.apuesta_oro}</span>
-                          <p style={{ fontSize: 10, color: 'var(--m-accent-text)', margin: '2px 0 0', fontFamily: 'var(--m-font-rounded)' }}>
+                          <p style={{ fontSize: 13, color: 'var(--m-accent-text)', margin: '2px 0 0', fontFamily: 'var(--m-font-rounded)' }}>
                             Si fallas la pierdes
                           </p>
                         </div>
@@ -456,7 +452,7 @@ export default function OSJuego() {
 
           {formQuestAbierto ? (
             <form onSubmit={crearQuest} style={{ ...card, display: 'flex', flexDirection: 'column', gap: 10 }}>
-              {errorQ && <p style={{ fontSize: 12, color: 'var(--m-accent-text)', fontFamily: 'var(--m-font-rounded)', margin: 0 }}>{errorQ}</p>}
+              {errorQ && <p style={{ fontSize: 13, color: 'var(--m-accent-text)', fontFamily: 'var(--m-font-rounded)', margin: 0 }}>{errorQ}</p>}
               <div>
                 <label className="m-label">Título</label>
                 <input className="m-input" value={tituloQ} onChange={(e) => setTituloQ(e.target.value)} placeholder="Ej. 4 sesiones de gym esta semana" required />
@@ -491,7 +487,7 @@ export default function OSJuego() {
               <div>
                 <label className="m-label">Apuesta de oro</label>
                 <input className="m-input" type="number" min={0} value={apuestaQ} onChange={(e) => setApuestaQ(e.target.value)} />
-                <p style={{ fontSize: 10.5, color: 'var(--m-muted)', margin: '6px 0 0', fontFamily: 'var(--m-font-rounded)' }}>
+                <p style={{ fontSize: 13, color: 'var(--m-muted)', margin: '6px 0 0', fontFamily: 'var(--m-font-rounded)' }}>
                   Pre-compromiso estilo Ariely: apuesta oro que pierdes si no cumples.
                 </p>
               </div>
@@ -516,14 +512,14 @@ export default function OSJuego() {
 
           {questsHistorial.length > 0 && (
             <div style={{ marginTop: 12 }}>
-              <button style={{ ...btnGhost, width: '100%', textAlign: 'left' }} onClick={() => setHistorialAbierto(!historialAbierto)}>
+              <button className="m-btn-ghost" style={{ width: '100%', textAlign: 'left' }} onClick={() => setHistorialAbierto(!historialAbierto)}>
                 {historialAbierto ? '▾' : '▸'} Historial ({questsHistorial.length})
               </button>
               {historialAbierto && (
                 <div style={{ display: 'flex', flexDirection: 'column', gap: 6, marginTop: 8 }}>
                   {questsHistorial.map((q) => (
                     <div key={q.id} className="m-mission" style={{ justifyContent: 'space-between' }}>
-                      <span style={{ fontSize: 12.5, color: 'var(--m-fg)' }}>{q.titulo}</span>
+                      <span style={{ fontSize: 13, color: 'var(--m-fg)' }}>{q.titulo}</span>
                       {q.estado === 'ganada' && <span className="m-estado is-ok">Ganada</span>}
                       {q.estado === 'perdida' && <span className="m-estado" style={{ color: 'var(--m-accent-text)' }}>Perdida</span>}
                       {q.estado === 'cancelada' && <span className="m-estado">Cancelada</span>}
@@ -543,7 +539,7 @@ export default function OSJuego() {
           <div className="m-switch-row">
             <div>
               <p style={{ fontSize: 13, fontWeight: 700, color: 'var(--m-fg)', margin: 0 }}>HP</p>
-              <p style={{ fontSize: 11, color: 'var(--m-muted)', margin: '2px 0 0', fontFamily: 'var(--m-font-rounded)' }}>
+              <p style={{ fontSize: 13, color: 'var(--m-muted)', margin: '2px 0 0', fontFamily: 'var(--m-font-rounded)' }}>
                 Apaga las mecánicas que te estorben; el sistema es tuyo.
               </p>
             </div>
@@ -552,7 +548,7 @@ export default function OSJuego() {
           <div className="m-switch-row">
             <div>
               <p style={{ fontSize: 13, fontWeight: 700, color: 'var(--m-fg)', margin: 0 }}>Oro</p>
-              <p style={{ fontSize: 11, color: 'var(--m-muted)', margin: '2px 0 0', fontFamily: 'var(--m-font-rounded)' }}>
+              <p style={{ fontSize: 13, color: 'var(--m-muted)', margin: '2px 0 0', fontFamily: 'var(--m-font-rounded)' }}>
                 Apaga las mecánicas que te estorben; el sistema es tuyo.
               </p>
             </div>
@@ -561,7 +557,7 @@ export default function OSJuego() {
           <div className="m-switch-row">
             <div>
               <p style={{ fontSize: 13, fontWeight: 700, color: 'var(--m-fg)', margin: 0 }}>Loot y quests</p>
-              <p style={{ fontSize: 11, color: 'var(--m-muted)', margin: '2px 0 0', fontFamily: 'var(--m-font-rounded)' }}>
+              <p style={{ fontSize: 13, color: 'var(--m-muted)', margin: '2px 0 0', fontFamily: 'var(--m-font-rounded)' }}>
                 Apaga las mecánicas que te estorben; el sistema es tuyo.
               </p>
             </div>

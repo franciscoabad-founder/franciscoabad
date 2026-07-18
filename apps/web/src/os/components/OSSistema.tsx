@@ -13,8 +13,8 @@ function cloneState(state: SistemaState): SistemaState {
 
 function statusColor(status: string) {
   if (status === 'activo') return 'var(--os-champagne)';
-  if (status === 'error') return '#F87171';
-  return '#B5985A';
+  if (status === 'error') return 'var(--os-error)';
+  return 'var(--os-warn)';
 }
 
 export default function OSSistema({ initialState }: Props) {
@@ -109,34 +109,34 @@ export default function OSSistema({ initialState }: Props) {
         <div className="os-kpi">
           <p className="os-kpi-label">Objetivos 90d</p>
           <p className="os-kpi-value">{state.objetivos_90d.length}</p>
-          <span style={{ fontSize: 10, color: '#6B7280' }}>Norte activo</span>
+          <span style={{ fontSize: 11, color: 'var(--os-muted)' }}>Norte activo</span>
         </div>
         <div className="os-kpi">
           <p className="os-kpi-label">Prioridad</p>
           <p className="os-kpi-value">{state.priority_stack.length}</p>
-          <span style={{ fontSize: 10, color: stackAlert ? '#ffb4ab' : '#6B7280' }}>
+          <span style={{ fontSize: 11, color: stackAlert ? 'var(--os-warn)' : 'var(--os-muted)' }}>
             {stackAlert ? 'Stack mayor a 5' : 'Dentro de limite'}
           </span>
         </div>
         <div className="os-kpi">
           <p className="os-kpi-label">Modulos</p>
           <p className="os-kpi-value">{state.modulos.filter((m) => m.estado === 'activo').length}</p>
-          <span style={{ fontSize: 10, color: '#6B7280' }}>Activos</span>
+          <span style={{ fontSize: 11, color: 'var(--os-muted)' }}>Activos</span>
         </div>
         <div className="os-kpi">
           <p className="os-kpi-label">Onboarding</p>
           <p className="os-kpi-value">{completed ? 'OK' : 'PEN'}</p>
-          <span style={{ fontSize: 10, color: '#6B7280' }}>{completed ? 'Completo' : 'Pendiente'}</span>
+          <span style={{ fontSize: 11, color: 'var(--os-muted)' }}>{completed ? 'Completo' : 'Pendiente'}</span>
         </div>
       </div>
 
       {!completed && (
         <div className="os-domino" style={{ marginBottom: 0 }}>
           <p className="os-eyebrow" style={{ marginBottom: 8 }}>Onboarding pendiente</p>
-          <p style={{ margin: '0 0 6px', color: '#E8EAF0', fontWeight: 700, fontSize: 15 }}>
+          <p style={{ margin: '0 0 6px', color: 'var(--os-text)', fontWeight: 700, fontSize: 15 }}>
             Empieza en la tarjeta “Onboarding del agente”.
           </p>
-          <p style={{ margin: 0, color: '#C5C5D7', fontSize: 13, lineHeight: 1.5 }}>
+          <p style={{ margin: 0, color: 'var(--os-text-2)', fontSize: 13, lineHeight: 1.5 }}>
             Llena foco, ritmo, tono y finanzas. Cuando este listo, presiona Completar y luego Guardar sistema.
           </p>
         </div>
@@ -146,7 +146,7 @@ export default function OSSistema({ initialState }: Props) {
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12, marginBottom: 12 }}>
           <div>
             <p className="os-section-title" style={{ marginBottom: 4 }}>Onboarding del agente</p>
-            <p style={{ margin: 0, color: '#C5C5D7', fontSize: 13 }}>Esto le dice a Mateo como operar tu sistema sin preguntarte lo obvio cada vez.</p>
+            <p style={{ margin: 0, color: 'var(--os-text-2)', fontSize: 13 }}>Esto le dice a Mateo como operar tu sistema sin preguntarte lo obvio cada vez.</p>
           </div>
           <button className="os-btn os-btn-ghost" type="button" onClick={toggleOnboarding}>
             {completed ? 'Reabrir' : 'Completar'}
@@ -194,7 +194,7 @@ export default function OSSistema({ initialState }: Props) {
       <div className="os-card os-card-accent">
         <div style={{ marginBottom: 12 }}>
           <p className="os-section-title" style={{ marginBottom: 4 }}>Onboarding financiero</p>
-          <p style={{ margin: 0, color: '#C5C5D7', fontSize: 13, lineHeight: 1.5 }}>
+          <p style={{ margin: 0, color: 'var(--os-text-2)', fontSize: 13, lineHeight: 1.5 }}>
             Esto alimenta la revision financiera de Hermes: gap mensual, deuda prioritaria, cuentas y reglas de asignacion.
           </p>
         </div>
@@ -309,7 +309,7 @@ export default function OSSistema({ initialState }: Props) {
       <div className="os-card">
         <p className="os-section-title">Priority Stack</p>
         {stackAlert && (
-          <p style={{ color: '#ffb4ab', fontSize: 12, margin: '0 0 10px' }}>
+          <p style={{ color: 'var(--os-warn)', fontSize: 12, margin: '0 0 10px' }}>
             Hay mas de cinco prioridades. Conviene bajar una antes de sumar otra.
           </p>
         )}
@@ -330,12 +330,12 @@ export default function OSSistema({ initialState }: Props) {
           <p className="os-section-title">Modulos</p>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
             {state.modulos.map((m) => (
-              <div key={m.id} style={{ padding: 10, border: '1px solid rgba(232,234,240,0.07)', borderRadius: 8, background: 'rgba(232,234,240,0.03)' }}>
+              <div key={m.id} style={{ padding: 10, border: '1px solid var(--os-line-soft)', borderRadius: 8, background: 'var(--os-fill-subtle)' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', gap: 8 }}>
-                  <strong style={{ color: '#E8EAF0', fontSize: 13 }}>{m.nombre}</strong>
-                  <span style={{ color: statusColor(m.estado), fontSize: 10, textTransform: 'uppercase', letterSpacing: '0.08em' }}>{m.estado}</span>
+                  <strong style={{ color: 'var(--os-text)', fontSize: 13 }}>{m.nombre}</strong>
+                  <span style={{ color: statusColor(m.estado), fontSize: 11, textTransform: 'uppercase', letterSpacing: '0.08em' }}>{m.estado}</span>
                 </div>
-                <p style={{ color: '#6B7280', fontSize: 12, lineHeight: 1.45, margin: '5px 0 0' }}>{m.descripcion}</p>
+                <p style={{ color: 'var(--os-muted)', fontSize: 12, lineHeight: 1.45, margin: '5px 0 0' }}>{m.descripcion}</p>
               </div>
             ))}
           </div>
@@ -345,20 +345,20 @@ export default function OSSistema({ initialState }: Props) {
           <p className="os-section-title">Conexiones</p>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
             {state.conexiones.map((c) => (
-              <div key={c.id} style={{ padding: 10, border: '1px solid rgba(232,234,240,0.07)', borderRadius: 8, background: 'rgba(232,234,240,0.03)' }}>
+              <div key={c.id} style={{ padding: 10, border: '1px solid var(--os-line-soft)', borderRadius: 8, background: 'var(--os-fill-subtle)' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', gap: 8 }}>
-                  <strong style={{ color: '#E8EAF0', fontSize: 13 }}>{c.nombre}</strong>
-                  <span style={{ color: statusColor(c.estado), fontSize: 10, textTransform: 'uppercase', letterSpacing: '0.08em' }}>{c.estado}</span>
+                  <strong style={{ color: 'var(--os-text)', fontSize: 13 }}>{c.nombre}</strong>
+                  <span style={{ color: statusColor(c.estado), fontSize: 11, textTransform: 'uppercase', letterSpacing: '0.08em' }}>{c.estado}</span>
                 </div>
-                <p style={{ color: '#6B7280', fontSize: 12, lineHeight: 1.45, margin: '5px 0 0', wordBreak: 'break-word' }}>{c.detalle}</p>
+                <p style={{ color: 'var(--os-muted)', fontSize: 12, lineHeight: 1.45, margin: '5px 0 0', wordBreak: 'break-word' }}>{c.detalle}</p>
               </div>
             ))}
           </div>
         </div>
       </div>
 
-      <div style={{ position: 'sticky', bottom: 12, display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12, background: 'rgba(6,12,30,0.92)', border: '1px solid rgba(59,78,217,0.3)', borderRadius: 12, padding: '10px 12px', boxShadow: 'var(--os-shadow-card)' }}>
-        <span style={{ color: '#6B7280', fontSize: 12 }}>{message}</span>
+      <div style={{ position: 'sticky', bottom: 12, display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12, background: 'var(--os-surface)', border: '1px solid var(--os-line-accent)', borderRadius: 12, padding: '10px 12px', boxShadow: 'var(--os-shadow-card)' }}>
+        <span style={{ color: 'var(--os-muted)', fontSize: 12 }}>{message}</span>
         <button className="os-btn" type="button" onClick={save} disabled={saving}>
           {saving ? 'Guardando' : 'Guardar sistema'}
         </button>

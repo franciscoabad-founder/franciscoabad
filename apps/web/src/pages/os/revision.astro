@@ -2,16 +2,13 @@
 export const prerender = false;
 import OSLayout from '../../layouts/OSLayout.astro';
 import OSRevision from '../../os/components/OSRevision';
+import PageHeader from '../../os/components/ui/PageHeader';
 ---
 
 <OSLayout title="Revision">
   <div class="os-fade-up">
 
-    <!-- Header -->
-    <div style="margin-bottom:1.5rem;">
-      <p class="os-eyebrow" style="margin-bottom:6px;">Retrospectiva</p>
-      <h1 class="os-h1">Revision</h1>
-    </div>
+    <PageHeader eyebrow="Retrospectiva" title="Revision" subtitle="Weekly y monthly review, con el norte de 90 dias siempre a la vista." />
 
     <OSRevision client:load />
   </div>

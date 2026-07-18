@@ -2,18 +2,13 @@
 export const prerender = false;
 import OSLayout from '../../layouts/OSLayout.astro';
 import OSContenido from '../../os/components/OSContenido';
+import PageHeader from '../../os/components/ui/PageHeader';
 ---
 
 <OSLayout title="Contenido">
   <div class="os-fade-up">
 
-    <!-- Header -->
-    <div style="display:flex;align-items:flex-end;justify-content:space-between;flex-wrap:wrap;gap:0.5rem;margin-bottom:1.5rem;">
-      <div>
-        <p class="os-eyebrow" style="margin-bottom:6px;">Pipeline editorial</p>
-        <h1 class="os-h1">Contenido</h1>
-      </div>
-    </div>
+    <PageHeader eyebrow="Pipeline editorial" title="Contenido" subtitle="Ideas, produccion y repurposing en un solo pipeline." />
 
     <OSContenido client:load />
   </div>

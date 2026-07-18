@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import type { Receta, Momento } from './tipos';
 import { input, btn, btnGhost, thumb, chipMuted, rowItem } from './estilos';
+import { Spinner, EmptyState } from '../../ui';
 
 interface Props {
   momento: Momento;
@@ -88,7 +89,7 @@ export default function TabRecetas({ momento, dia, tipoDia, onAgregado }: Props)
         <button style={{ ...btnGhost, alignSelf: 'flex-start' }} onClick={() => setDetalle(null)}>‹ Volver</button>
         {detalle.foto_url && <img src={detalle.foto_url} alt="" style={{ width: '100%', maxHeight: 160, objectFit: 'cover', borderRadius: 14 }} />}
         <p style={{ fontSize: 15, fontWeight: 700, color: 'var(--os-text)', margin: 0 }}>{detalle.nombre}</p>
-        {detalle.descripcion && <p style={{ fontSize: 12.5, color: 'var(--os-text-2)', margin: 0 }}>{detalle.descripcion}</p>}
+        {detalle.descripcion && <p style={{ fontSize: 'var(--os-text-sm)', color: 'var(--os-text-2)', margin: 0 }}>{detalle.descripcion}</p>}
 
         {(detalle.kcal != null) && (
           <div style={{ display: 'flex', gap: 12, fontSize: 13, fontFamily: 'var(--os-font-mono)', color: 'var(--os-text-2)', flexWrap: 'wrap' }}>
@@ -103,7 +104,7 @@ export default function TabRecetas({ momento, dia, tipoDia, onAgregado }: Props)
         {!!detalle.ingredientes?.length && (
           <div>
             <p style={{ fontSize: 11, fontWeight: 700, color: 'var(--os-muted)', textTransform: 'uppercase', letterSpacing: '0.08em', margin: '4px 0' }}>Ingredientes</p>
-            <ul style={{ margin: 0, paddingLeft: 18, fontSize: 12.5, color: 'var(--os-text-2)' }}>
+            <ul style={{ margin: 0, paddingLeft: 18, fontSize: 'var(--os-text-sm)', color: 'var(--os-text-2)' }}>
               {detalle.ingredientes.map((ing) => <li key={ing.id}>{ing.descripcion}</li>)}
             </ul>
           </div>
@@ -113,12 +114,12 @@ export default function TabRecetas({ momento, dia, tipoDia, onAgregado }: Props)
           <div>
             <button
               onClick={() => setInstruccionesAbiertas((v) => !v)}
-              style={{ background: 'none', border: 'none', color: 'var(--os-accent-light)', fontSize: 11.5, fontWeight: 700, cursor: 'pointer', padding: 0 }}
+              style={{ background: 'none', border: 'none', color: 'var(--os-accent-light)', fontSize: 'var(--os-text-xs)', fontWeight: 700, cursor: 'pointer', padding: 0, minHeight: 36 }}
             >
               {instruccionesAbiertas ? 'Ocultar instrucciones' : 'Ver instrucciones'}
             </button>
             {instruccionesAbiertas && (
-              <ol style={{ margin: '6px 0 0', paddingLeft: 18, fontSize: 12.5, color: 'var(--os-text-2)', display: 'flex', flexDirection: 'column', gap: 4 }}>
+              <ol style={{ margin: '6px 0 0', paddingLeft: 18, fontSize: 'var(--os-text-sm)', color: 'var(--os-text-2)', display: 'flex', flexDirection: 'column', gap: 4 }}>
                 {detalle.instrucciones.map((paso, i) => <li key={i}>{paso}</li>)}
               </ol>
             )}
@@ -142,8 +143,10 @@ export default function TabRecetas({ momento, dia, tipoDia, onAgregado }: Props)
 
       <input style={input} placeholder="Buscar receta" value={q} onChange={(e) => setQ(e.target.value)} />
 
-      {cargando && <p style={{ fontSize: 12, color: 'var(--os-muted)' }}>Cargando...</p>}
-      {!cargando && !recetas.length && <p style={{ fontSize: 12, color: 'var(--os-muted)' }}>Sin recetas todavia.</p>}
+      {cargando && <Spinner inline />}
+      {!cargando && !recetas.length && (
+        <EmptyState icon="menu_book" title="Sin recetas todavia" text="Importa la primera desde una URL con el campo de arriba." />
+      )}
 
       <div style={{ display: 'flex', flexDirection: 'column', maxHeight: 320, overflowY: 'auto' }}>
         {recetas.map((r) => (
@@ -151,7 +154,7 @@ export default function TabRecetas({ momento, dia, tipoDia, onAgregado }: Props)
             style={{ ...rowItem, background: 'none', border: 'none', textAlign: 'left', cursor: 'pointer', width: '100%' }}>
             {r.foto_url ? <img src={r.foto_url} alt="" loading="lazy" style={thumb(44)} /> : <div style={thumb(44)} />}
             <div style={{ flex: 1, minWidth: 0 }}>
-              <p style={{ margin: 0, fontSize: 13, color: 'var(--os-text)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{r.nombre}</p>
+              <p style={{ margin: 0, fontSize: 'var(--os-text-sm)', color: 'var(--os-text)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{r.nombre}</p>
               {r.fuente && <span style={chipMuted}>{r.fuente}</span>}
             </div>
           </button>

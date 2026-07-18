@@ -2,22 +2,16 @@
 export const prerender = false;
 import OSLayout from '../../layouts/OSLayout.astro';
 import OSTareas from '../../os/components/OSTareas';
+import PageHeader from '../../os/components/ui/PageHeader';
 ---
 
 <OSLayout title="Tareas">
   <div class="os-fade-up">
-    <div style="display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:1.25rem;flex-wrap:wrap;gap:0.5rem;">
-      <div>
-        <p class="os-eyebrow" style="margin-bottom:6px;">Growth OS</p>
-        <h1 class="os-h1" style="display:flex;align-items:center;gap:9px;">
-          <span class="material-symbols-outlined" style="font-size:24px;color:var(--os-accent-light);">checklist</span>
-          Tareas
-        </h1>
-      </div>
-      <p style="font-size:12px;color:var(--os-muted);margin:0;max-width:340px;text-align:right;">
-        War room: agrupadas por urgencia, con subtareas y prioridad visual.
-      </p>
-    </div>
+    <PageHeader
+      eyebrow="Growth OS"
+      title="Tareas"
+      subtitle="War room: agrupadas por urgencia, con subtareas y prioridad visual."
+    />
 
     <OSTareas client:load />
   </div>

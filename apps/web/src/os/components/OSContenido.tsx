@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
+import { Button, EmptyState, Spinner, ToastProvider, useToast } from './ui';
 
 // Vista Contenido: pipeline editorial en vivo desde /api/os/contenido.
 
@@ -44,7 +45,9 @@ const inputStyle: React.CSSProperties = {
   border: '1px solid var(--os-line)',
   borderRadius: 6,
   padding: '6px 10px',
-  fontSize: 12,
+  minHeight: 36,
+  boxSizing: 'border-box',
+  fontSize: 'var(--os-text-sm)',
   color: 'var(--os-text)',
   fontFamily: 'var(--os-font-body)',
   outline: 'none',
@@ -52,7 +55,8 @@ const inputStyle: React.CSSProperties = {
 
 const listaDesdeTexto = (s: string) => s.split(',').map((x) => x.trim()).filter(Boolean);
 
-export default function OSContenido() {
+function OSContenidoInner() {
+  const toast = useToast();
   const [ideas, setIdeas] = useState<Idea[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -91,7 +95,7 @@ export default function OSContenido() {
       if (!res.ok) throw new Error(data.error || String(res.status));
       await load();
     } catch (err) {
-      window.alert('Error: ' + (err instanceof Error ? err.message : String(err)));
+      toast.show('Error: ' + (err instanceof Error ? err.message : String(err)), 'error');
     }
   }
 
@@ -102,7 +106,7 @@ export default function OSContenido() {
       if (!res.ok) throw new Error(String(res.status));
       await load();
     } catch (err) {
-      window.alert('Error: ' + (err instanceof Error ? err.message : String(err)));
+      toast.show('Error: ' + (err instanceof Error ? err.message : String(err)), 'error');
     }
   }
 
@@ -142,7 +146,7 @@ export default function OSContenido() {
       setCreando(false);
       await load();
     } catch (err) {
-      window.alert('Error: ' + (err instanceof Error ? err.message : String(err)));
+      toast.show('Error: ' + (err instanceof Error ? err.message : String(err)), 'error');
     } finally {
       setBusy(false);
     }
@@ -155,7 +159,7 @@ export default function OSContenido() {
   );
 
   if (loading) {
-    return <div className="os-card-2" style={{ padding: '1rem', color: 'var(--os-muted)', fontSize: 13 }}>Cargando pipeline editorial...</div>;
+    return <Spinner label="Cargando pipeline editorial..." />;
   }
   if (error && ideas.length === 0) {
     return (
@@ -174,9 +178,9 @@ export default function OSContenido() {
           <span className="material-symbols-outlined" style={{ fontSize: 13 }}>edit_note</span>
           <span className="os-num" style={{ color: 'inherit' }}>{enProduccion}</span> en produccion
         </span>
-        <button onClick={() => setCreando((v) => !v)} className="os-btn" style={{ padding: '5px 12px', fontSize: 11 }}>
+        <Button size="sm" variant={creando ? 'ghost' : 'primary'} onClick={() => setCreando((v) => !v)}>
           {creando ? 'Cancelar' : '+ Nueva idea'}
-        </button>
+        </Button>
       </div>
 
       {creando && (
@@ -185,17 +189,22 @@ export default function OSContenido() {
           <select value={nFormato} onChange={(e) => setNFormato(e.target.value)} style={{ ...inputStyle, width: 140 }}>
             {FORMATOS.map((f) => <option key={f} value={f}>{FORMATO_LABEL[f]}</option>)}
           </select>
-          <input type="date" value={nFecha} onChange={(e) => setNFecha(e.target.value)} style={{ ...inputStyle, colorScheme: 'dark' }} />
+          <input type="date" value={nFecha} onChange={(e) => setNFecha(e.target.value)} style={inputStyle} />
           <input value={nPlataformas} onChange={(e) => setNPlataformas(e.target.value)} placeholder="Plataformas (LinkedIn, Blog...)" style={{ ...inputStyle, flex: 1, minWidth: 160 }} />
           <textarea value={nIdeaMadre} onChange={(e) => setNIdeaMadre(e.target.value)} placeholder="Idea madre" rows={2} style={{ ...inputStyle, flexBasis: '100%', resize: 'vertical', fontFamily: 'var(--os-font-body)' }} />
-          <button type="submit" className="os-btn" disabled={busy}>{busy ? '...' : 'Guardar'}</button>
+          <Button type="submit" size="sm" disabled={busy}>{busy ? '...' : 'Guardar'}</Button>
         </form>
       )}
 
       <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
         {ordenadas.length === 0 && (
-          <div className="os-card-2" style={{ padding: '1.75rem', textAlign: 'center', color: 'var(--os-muted)', fontSize: 12 }}>
-            Sin ideas todavia. El pipeline editorial empieza vacio.
+          <div className="os-card-2">
+            <EmptyState
+              icon="edit_note"
+              title="Sin ideas todavia"
+              text="El pipeline editorial empieza vacio. Captura la primera idea."
+              action={!creando ? <Button size="sm" onClick={() => setCreando(true)}>+ Nueva idea</Button> : undefined}
+            />
           </div>
         )}
         {ordenadas.map((idea) => (
@@ -215,7 +224,7 @@ export default function OSContenido() {
               </div>
               <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
                 {idea.fecha_target && <span className="os-num" style={{ fontSize: 11, whiteSpace: 'nowrap' }}>{idea.fecha_target}</span>}
-                <button onClick={() => eliminar(idea.id)} title="Eliminar" style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--os-muted)', padding: 0, lineHeight: 1 }}>
+                <button onClick={() => eliminar(idea.id)} title="Eliminar" style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--os-muted)', padding: 0, minWidth: 36, minHeight: 36, lineHeight: 1 }}>
                   <span className="material-symbols-outlined" style={{ fontSize: 16 }}>close</span>
                 </button>
               </div>
@@ -253,5 +262,13 @@ export default function OSContenido() {
         ))}
       </div>
     </div>
+  );
+}
+
+export default function OSContenido() {
+  return (
+    <ToastProvider>
+      <OSContenidoInner />
+    </ToastProvider>
   );
 }

@@ -11,8 +11,8 @@ const PLATAFORMAS = ['instagram', 'tiktok', 'linkedin', 'facebook', 'youtube', '
 
 const trendIcon: Record<string, string> = {
   up:   '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--os-champagne)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg>',
-  down: '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 17 13.5 8.5 8.5 13.5 2 7"/><polyline points="16 17 22 17 22 11"/></svg>',
-  flat: '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#6B7280" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/></svg>',
+  down: '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#D4537E" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 17 13.5 8.5 8.5 13.5 2 7"/><polyline points="16 17 22 17 22 11"/></svg>',
+  flat: '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--os-muted)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/></svg>',
 };
 ---
 
@@ -25,7 +25,7 @@ const trendIcon: Record<string, string> = {
         <p class="os-eyebrow" style="margin-bottom:6px;">Distribucion</p>
         <h1 class="os-h1">Redes y Contenido</h1>
       </div>
-      <span id="redes-estado-pill" class="os-pill os-tag" style="background:rgba(232,234,240,0.06);">Cargando...</span>
+      <span id="redes-estado-pill" class="os-pill os-tag" style="background:var(--os-fill-subtle);">Cargando...</span>
     </div>
 
     <!-- Social insight cards -->
@@ -55,8 +55,8 @@ const trendIcon: Record<string, string> = {
 <script is:inline define:vars={{ redLabel, redColor, redIcon, PLATAFORMAS }}>
 var trendIconMap = {
   up:   '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--os-champagne)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg>',
-  down: '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 17 13.5 8.5 8.5 13.5 2 7"/><polyline points="16 17 22 17 22 11"/></svg>',
-  flat: '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#6B7280" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/></svg>',
+  down: '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#D4537E" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 17 13.5 8.5 8.5 13.5 2 7"/><polyline points="16 17 22 17 22 11"/></svg>',
+  flat: '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--os-muted)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/></svg>',
 };
 
 function esc(s) {
@@ -107,7 +107,7 @@ function cardRed(red, info) {
   var color = redColor[red];
   var actual = info.actual || {};
   var delta = deltaVs7dias(info.serie);
-  var deltaColor = delta.tendencia === 'up' ? 'var(--os-champagne)' : (delta.tendencia === 'down' ? '#ef4444' : 'var(--os-muted)');
+  var deltaColor = delta.tendencia === 'up' ? 'var(--os-champagne)' : (delta.tendencia === 'down' ? '#D4537E' : 'var(--os-muted)');
   var deltaSigno = delta.valor > 0 ? '+' : '';
   return '<div class="os-card-2" style="border-top:2px solid ' + color + ';">'
     + '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:0.875rem;">'
@@ -157,7 +157,7 @@ function postHtml(p) {
     : esc(titulo);
   return '<div style="display:flex;align-items:center;justify-content:space-between;gap:10px;background:var(--os-surface-2);border:1px solid var(--os-line-soft);border-radius:var(--os-r-card);padding:0.6rem 0.8rem;">'
     + '<div style="min-width:0;flex:1;">'
-      + '<p style="font-size:9px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--os-muted);margin:0 0 3px;">' + esc(redLabel[p.plataforma] || p.plataforma) + '</p>'
+      + '<p style="font-size:11px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--os-muted);margin:0 0 3px;">' + esc(redLabel[p.plataforma] || p.plataforma) + '</p>'
       + '<p style="font-size:12px;margin:0;line-height:1.4;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">' + contenido + '</p>'
     + '</div>'
     + '<div style="display:flex;gap:12px;flex-shrink:0;font-family:var(--os-font-mono);font-size:11px;color:var(--os-muted);">'

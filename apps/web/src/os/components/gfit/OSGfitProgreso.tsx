@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import type { UnidadPeso } from './tipos';
 import { GRUPO_ES } from './tipos';
 import { card, card2, btn, btnIcon, pill, chip, eyebrow } from './estilos';
+import { EmptyState } from '../ui';
 import { formatearPeso, kgALbs } from '../../../lib/gfit/unidades';
 
 // ═══════════════════════════════════════════════════════════════════════════
@@ -150,7 +151,7 @@ function CalendarioMes({ fechasEntrenadas }: { fechasEntrenadas: Set<string> }) 
         </button>
       </div>
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: 3, marginBottom: 4 }}>
-        {DIAS_SEMANA.map((d) => <span key={d} style={{ fontSize: 9, color: 'var(--os-muted)', textAlign: 'center' }}>{d}</span>)}
+        {DIAS_SEMANA.map((d) => <span key={d} style={{ fontSize: 11, color: 'var(--os-muted)', textAlign: 'center' }}>{d}</span>)}
       </div>
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: 3 }}>
         {celdas.map((c, i) => {
@@ -160,7 +161,7 @@ function CalendarioMes({ fechasEntrenadas }: { fechasEntrenadas: Set<string> }) 
           return (
             <div key={c.fecha} style={{
               aspectRatio: '1', display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: 7,
-              fontSize: 10, fontWeight: 700, boxSizing: 'border-box',
+              fontSize: 11, fontWeight: 700, boxSizing: 'border-box',
               background: entrenado ? 'var(--os-accent)' : 'var(--os-fill-subtle)',
               color: entrenado ? '#fff' : 'var(--os-text-2)',
               border: esHoy ? '2px solid var(--os-accent)' : '2px solid transparent',
@@ -173,7 +174,7 @@ function CalendarioMes({ fechasEntrenadas }: { fechasEntrenadas: Set<string> }) 
 }
 
 function BarrasVerticales({ datos, unidad, tipo }: { datos: { fecha: string; total: number }[]; unidad: UnidadPeso; tipo: 'kg' | 'min' }) {
-  if (!datos.length) return <p style={{ fontSize: 11.5, color: 'var(--os-muted)', margin: 0 }}>Sin datos en este rango.</p>;
+  if (!datos.length) return <EmptyState icon="bar_chart" title="Sin datos en este rango" text="Completa sesiones para ver la comparativa." />;
   const max = Math.max(1, ...datos.map((d) => d.total));
   const W = Math.max(160, datos.length * 20);
   const H = 84;
@@ -223,11 +224,11 @@ function TarjetaComparativa({ titulo, tipo, datosPorRango, unidad }: {
         <div style={{ marginTop: 10, display: 'flex', flexDirection: 'column', gap: 8 }} onClick={(e) => e.stopPropagation()}>
           <div className="os-hscroll" style={{ display: 'flex', gap: 4 }}>
             {PILLS_RANGO.map((r) => (
-              <button key={r.key} style={{ ...pill(rango === r.key), padding: '6px 11px', minHeight: 30, fontSize: 10.5 }} onClick={() => setRango(r.key)}>{r.label}</button>
+              <button key={r.key} style={{ ...pill(rango === r.key), padding: '6px 11px', minHeight: 36, fontSize: 11 }} onClick={() => setRango(r.key)}>{r.label}</button>
             ))}
           </div>
           <BarrasVerticales datos={serie} unidad={unidad} tipo={tipo} />
-          <p style={{ fontSize: 10.5, color: 'var(--os-muted)', margin: 0 }}>
+          <p style={{ fontSize: 'var(--os-text-xs)', color: 'var(--os-muted)', margin: 0 }}>
             {tipo === 'kg' ? `${pesoAcumulado(actual.total, unidad)} ${unidad}` : `${Math.round(actual.total)} min`} en el rango seleccionado
           </p>
         </div>
@@ -240,13 +241,13 @@ function BreakdownMuscular({ datos }: { datos: Record<string, number> }) {
   const filas = Object.entries(datos)
     .map(([grupo, sets]) => ({ grupo, sets, label: GRUPO_ES[grupo] ?? grupo }))
     .sort((a, b) => b.sets - a.sets);
-  if (!filas.length) return <p style={{ fontSize: 12, color: 'var(--os-muted)', margin: 0 }}>Sin series registradas en los últimos 3 meses.</p>;
+  if (!filas.length) return <EmptyState icon="exercise" title="Sin series registradas" text="No hay series en los últimos 3 meses." />;
   const max = Math.max(1, ...filas.map((f) => f.sets));
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 9 }}>
       {filas.map((f) => (
         <div key={f.grupo}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 11.5, marginBottom: 3 }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 'var(--os-text-xs)', marginBottom: 3 }}>
             <span style={{ color: 'var(--os-text-2)', fontWeight: 600 }}>{f.label}</span>
             <span style={{ color: 'var(--os-muted)' }}>{f.sets} sets</span>
           </div>
@@ -260,14 +261,14 @@ function BreakdownMuscular({ datos }: { datos: Record<string, number> }) {
 }
 
 function ListaUnoRm({ datos, unidad }: { datos: { ejercicio_id: string; nombre: string; est_1rm: number }[]; unidad: UnidadPeso }) {
-  if (!datos.length) return <p style={{ fontSize: 12, color: 'var(--os-muted)', margin: 0 }}>Aún no hay suficientes datos para estimar tu 1RM.</p>;
+  if (!datos.length) return <EmptyState icon="military_tech" title="Sin 1RM estimado" text="Aún no hay suficientes datos para estimar tu 1RM." />;
   return (
     <div style={{ display: 'flex', flexDirection: 'column' }}>
       {datos.map((u) => (
         <div key={u.ejercicio_id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '9px 0', borderBottom: '1px solid var(--os-line-soft)' }}>
-          <span style={{ fontSize: 12.5, color: 'var(--os-text)', fontWeight: 600 }}>{u.nombre}</span>
+          <span style={{ fontSize: 'var(--os-text-sm)', color: 'var(--os-text)', fontWeight: 600 }}>{u.nombre}</span>
           <span style={{ fontFamily: 'var(--os-font-rounded)', fontSize: 17, fontWeight: 800, color: 'var(--os-champagne)' }}>
-            {formatearPeso(u.est_1rm, unidad)} <span style={{ fontSize: 10, fontWeight: 600, color: 'var(--os-muted)' }}>{unidad}</span>
+            {formatearPeso(u.est_1rm, unidad)} <span style={{ fontSize: 11, fontWeight: 600, color: 'var(--os-muted)' }}>{unidad}</span>
           </span>
         </div>
       ))}
@@ -283,8 +284,8 @@ function TablaRecovery({ recovery }: { recovery: Record<string, { rate_pct: numb
     })
     .sort((a, b) => a.rate_pct - b.rate_pct);
 
-  const th: React.CSSProperties = { textAlign: 'left', fontSize: 9.5, fontWeight: 700, color: 'var(--os-muted)', textTransform: 'uppercase', letterSpacing: '0.06em', padding: '0 4px 8px', borderBottom: '1px solid var(--os-line-soft)' };
-  const td: React.CSSProperties = { padding: '7px 4px', borderBottom: '1px solid var(--os-line-soft)', color: 'var(--os-text-2)', fontSize: 12 };
+  const th: React.CSSProperties = { textAlign: 'left', fontSize: 11, fontWeight: 700, color: 'var(--os-muted)', textTransform: 'uppercase', letterSpacing: '0.06em', padding: '0 4px 8px', borderBottom: '1px solid var(--os-line-soft)' };
+  const td: React.CSSProperties = { padding: '7px 4px', borderBottom: '1px solid var(--os-line-soft)', color: 'var(--os-text-2)', fontSize: 'var(--os-text-xs)' };
 
   return (
     <div className="os-hscroll">
@@ -298,7 +299,7 @@ function TablaRecovery({ recovery }: { recovery: Record<string, { rate_pct: numb
         </thead>
         <tbody>
           {filas.map((f) => {
-            const color = f.rate_pct >= 95 ? 'var(--os-champagne)' : f.rate_pct < 30 ? '#E8709A' : 'var(--os-accent)';
+            const color = f.rate_pct >= 95 ? 'var(--os-champagne)' : f.rate_pct < 30 ? 'var(--os-error)' : 'var(--os-accent)';
             const tiempoTexto = f.rate_pct >= 95 ? 'Recuperado' : `${Math.round(f.horas_restantes)} h`;
             return (
               <tr key={f.grupo}>
@@ -308,7 +309,7 @@ function TablaRecovery({ recovery }: { recovery: Record<string, { rate_pct: numb
                     <div style={{ flex: 1, height: 8, borderRadius: 999, background: 'var(--os-fill-subtle)', overflow: 'hidden', minWidth: 60 }}>
                       <div style={{ height: '100%', width: `${Math.min(100, Math.max(0, f.rate_pct))}%`, background: color, borderRadius: 999 }} />
                     </div>
-                    <span style={{ fontSize: 10.5, color, fontWeight: 700, width: 32, textAlign: 'right', flexShrink: 0 }}>{Math.round(f.rate_pct)}%</span>
+                    <span style={{ fontSize: 11, color, fontWeight: 700, width: 34, textAlign: 'right', flexShrink: 0 }}>{Math.round(f.rate_pct)}%</span>
                   </div>
                 </td>
                 <td style={{ ...td, textAlign: 'right', color: f.rate_pct >= 95 ? 'var(--os-champagne)' : 'var(--os-muted)', fontWeight: f.rate_pct >= 95 ? 700 : 400 }}>{tiempoTexto}</td>
@@ -340,9 +341,9 @@ function LogroCard({ logro }: { logro: LogroApi }) {
           <span className="material-symbols-outlined" style={{ fontSize: 20, color: obtenido ? 'var(--os-champagne)' : 'var(--os-muted)' }}>{iconoLogro(logro.slug)}</span>
         </div>
         <div style={{ flex: 1, minWidth: 0 }}>
-          <p style={{ fontSize: 12, fontWeight: 700, margin: 0, color: obtenido ? 'var(--os-text)' : 'var(--os-muted)', lineHeight: 1.25 }}>{logro.nombre}</p>
+          <p style={{ fontSize: 'var(--os-text-xs)', fontWeight: 700, margin: 0, color: obtenido ? 'var(--os-text)' : 'var(--os-muted)', lineHeight: 1.25 }}>{logro.nombre}</p>
           {obtenido && ultimo ? (
-            <p style={{ fontSize: 10, color: 'var(--os-champagne)', margin: '2px 0 0', fontWeight: 700 }}>Obtenido · {formatearFechaLogro(ultimo.obtenido_at)}</p>
+            <p style={{ fontSize: 11, color: 'var(--os-champagne)', margin: '2px 0 0', fontWeight: 700 }}>Obtenido · {formatearFechaLogro(ultimo.obtenido_at)}</p>
           ) : (
             <span style={{ ...chip, color: 'var(--os-muted)', background: 'var(--os-fill-subtle)', marginTop: 3 }}>
               <span className="material-symbols-outlined" style={{ fontSize: 11 }}>lock</span> Bloqueado
@@ -352,8 +353,8 @@ function LogroCard({ logro }: { logro: LogroApi }) {
       </div>
       {abierto && (
         <div style={{ borderTop: '1px solid var(--os-line-soft)', paddingTop: 8, display: 'flex', flexDirection: 'column', gap: 5 }}>
-          <p style={{ fontSize: 11.5, color: 'var(--os-text-2)', margin: 0, lineHeight: 1.4 }}>{logro.descripcion}</p>
-          <p style={{ fontSize: 10.5, color: 'var(--os-muted)', fontStyle: 'italic', margin: 0, lineHeight: 1.4 }}>{logro.ciencia}</p>
+          <p style={{ fontSize: 'var(--os-text-xs)', color: 'var(--os-text-2)', margin: 0, lineHeight: 1.4 }}>{logro.descripcion}</p>
+          <p style={{ fontSize: 11, color: 'var(--os-muted)', fontStyle: 'italic', margin: 0, lineHeight: 1.4 }}>{logro.ciencia}</p>
           <div style={{ display: 'flex', gap: 6, marginTop: 2 }}>
             <span className="os-pill os-pill-accent">+{logro.premio_xp} XP</span>
             <span className="os-pill os-pill-gold">+{logro.premio_oro} oro</span>
@@ -365,7 +366,7 @@ function LogroCard({ logro }: { logro: LogroApi }) {
 }
 
 function GridLogros({ logros }: { logros: LogroApi[] }) {
-  if (!logros.length) return <p style={{ fontSize: 12, color: 'var(--os-muted)', margin: 0 }}>Aún no hay logros disponibles.</p>;
+  if (!logros.length) return <EmptyState icon="emoji_events" title="Sin logros disponibles" text="Los logros aparecerán cuando entrenes." />;
   return (
     <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 8 }}>
       {logros.map((l) => <LogroCard key={l.id} logro={l} />)}
@@ -442,9 +443,13 @@ export default function OSGfitProgreso({ unidad }: { unidad: UnidadPeso }) {
 
   if (error || !data) {
     return (
-      <div style={{ ...card, textAlign: 'center', display: 'flex', flexDirection: 'column', gap: 10, alignItems: 'center' }}>
-        <p style={{ fontSize: 13, color: 'var(--os-text-2)', margin: 0 }}>No pudimos cargar tu progreso. Intenta de nuevo en un momento.</p>
-        <button style={btn} onClick={cargar}>Reintentar</button>
+      <div style={card}>
+        <EmptyState
+          icon="cloud_off"
+          title="No pudimos cargar tu progreso"
+          text="Intenta de nuevo en un momento."
+          action={<button style={btn} onClick={cargar}>Reintentar</button>}
+        />
       </div>
     );
   }

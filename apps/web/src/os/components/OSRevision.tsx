@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { Spinner, ToastProvider, useToast } from './ui';
 
 // Vista Revision: weekly + monthly review en vivo desde /api/os/revision,
 // mas el norte de objetivos 90 dias desde /api/os/objetivos.
@@ -62,11 +63,12 @@ const textareaStyle: React.CSSProperties = {
 };
 const inputStyle: React.CSSProperties = { ...textareaStyle, resize: 'none' };
 const labelStyle: React.CSSProperties = {
-  fontFamily: 'var(--os-font-display)', fontSize: 10.5, fontWeight: 700, letterSpacing: '0.06em',
+  fontFamily: 'var(--os-font-display)', fontSize: 11, fontWeight: 700, letterSpacing: '0.06em',
   textTransform: 'uppercase', color: 'var(--os-muted)', margin: '0 0 4px', display: 'block',
 };
 
-export default function OSRevision() {
+function OSRevisionInner() {
+  const toast = useToast();
   const [objetivos, setObjetivos] = useState<Objetivo[]>([]);
   const [weekly, setWeekly] = useState<ContenidoWeekly>(WEEKLY_VACIO);
   const [monthly, setMonthly] = useState<ContenidoMonthly>(MONTHLY_VACIO);
@@ -116,7 +118,7 @@ export default function OSRevision() {
       if (!res.ok) throw new Error(data.error || String(res.status));
       setFlashW(true); setTimeout(() => setFlashW(false), 1600);
     } catch (err) {
-      window.alert('Error: ' + (err instanceof Error ? err.message : String(err)));
+      toast.show('Error: ' + (err instanceof Error ? err.message : String(err)), 'error');
     } finally {
       setGuardandoW(false);
     }
@@ -133,14 +135,14 @@ export default function OSRevision() {
       if (!res.ok) throw new Error(data.error || String(res.status));
       setFlashM(true); setTimeout(() => setFlashM(false), 1600);
     } catch (err) {
-      window.alert('Error: ' + (err instanceof Error ? err.message : String(err)));
+      toast.show('Error: ' + (err instanceof Error ? err.message : String(err)), 'error');
     } finally {
       setGuardandoM(false);
     }
   }
 
   if (loading) {
-    return <div className="os-card-2" style={{ padding: '1rem', color: 'var(--os-muted)', fontSize: 13 }}>Cargando revision...</div>;
+    return <Spinner label="Cargando revision..." />;
   }
   if (error && objetivos.length === 0 && !weekly.nota && !monthly.decision_clave) {
     return (
@@ -268,5 +270,13 @@ export default function OSRevision() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function OSRevision() {
+  return (
+    <ToastProvider>
+      <OSRevisionInner />
+    </ToastProvider>
   );
 }

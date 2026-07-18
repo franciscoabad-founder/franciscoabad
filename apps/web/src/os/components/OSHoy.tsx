@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { datosDaily } from '../data/daily';
 import OSChecklistHoy from './OSChecklistHoy';
+import { Spinner } from './ui';
 
 // Isla que reemplaza los datos demo del dashboard "Hoy" por los endpoints reales
 // (os_dia, os_wins, os_priority_stack, os_semana, os_objetivos). Fetch en el cliente
@@ -26,7 +27,7 @@ interface DiaSemana { dia: number; modo: 'maker' | 'manager' | 'off'; sale: stri
 
 const DIA_LABEL = ['Lunes', 'Martes', 'Miercoles', 'Jueves', 'Viernes', 'Sabado', 'Domingo'];
 const MODO_COLOR: Record<string, string> = { maker: 'var(--os-accent-light)', manager: 'var(--os-muted)', off: 'var(--os-muted)' };
-const MODO_BG: Record<string, string> = { maker: 'rgba(59,78,217,0.15)', manager: 'rgba(232,234,240,0.06)', off: 'rgba(232,234,240,0.03)' };
+const MODO_BG: Record<string, string> = { maker: 'rgba(59,78,217,0.15)', manager: 'var(--os-fill-subtle)', off: 'var(--os-fill-subtle)' };
 const MODO_LABEL: Record<string, string> = { maker: 'Maker', manager: 'Manager', off: 'Off' };
 
 async function safeJson(url: string) {
@@ -169,11 +170,9 @@ export default function OSHoy() {
 
   if (loading) {
     return (
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-        <div className="os-domino" style={{ opacity: 0.5 }}>
-          <p className="os-eyebrow" style={{ marginBottom: '0.5rem' }}>One Domino</p>
-          <p style={{ fontSize: 13, color: 'var(--os-muted)' }}>Cargando...</p>
-        </div>
+      <div className="os-domino" style={{ marginBottom: '1rem' }}>
+        <p className="os-eyebrow" style={{ marginBottom: '0.5rem' }}>One Domino</p>
+        <Spinner inline label="Cargando el dia..." />
       </div>
     );
   }
@@ -394,7 +393,7 @@ export default function OSHoy() {
             <ul style={{ listStyle: 'none', margin: 0, padding: 0, display: 'flex', flexDirection: 'column', gap: 5 }}>
               {datosDaily.principios.map((p, i) => (
                 <li key={i} style={{ display: 'flex', gap: 8 }}>
-                  <span className="os-mono" style={{ fontSize: 9, fontWeight: 700, color: 'var(--os-accent)', minWidth: 14, paddingTop: 2 }}>{i + 1}</span>
+                  <span className="os-mono" style={{ fontSize: 11, fontWeight: 700, color: 'var(--os-accent)', minWidth: 16, paddingTop: 2 }}>{i + 1}</span>
                   <span style={{ fontSize: 12, color: 'var(--os-muted)', lineHeight: 1.35 }}>{p}</span>
                 </li>
               ))}
@@ -415,14 +414,14 @@ export default function OSHoy() {
                 <div
                   key={d.dia}
                   style={{
-                    background: MODO_BG[d.modo], border: `1px solid ${d.modo === 'maker' ? 'rgba(59,78,217,0.18)' : 'rgba(232,234,240,0.06)'}`,
+                    background: MODO_BG[d.modo], border: `1px solid ${d.modo === 'maker' ? 'var(--os-line-accent)' : 'var(--os-line-soft)'}`,
                     borderRadius: 6, padding: '0.5rem 0.25rem', textAlign: 'center',
                   }}
                 >
-                  <p style={{ fontFamily: 'var(--os-font-display)', fontSize: 8, fontWeight: 600, letterSpacing: '0.06em', textTransform: 'uppercase', color: 'var(--os-muted)', margin: '0 0 3px' }}>
+                  <p style={{ fontFamily: 'var(--os-font-display)', fontSize: 11, fontWeight: 600, letterSpacing: '0.04em', textTransform: 'uppercase', color: 'var(--os-muted)', margin: '0 0 3px' }}>
                     {DIA_LABEL[d.dia - 1]?.slice(0, 3) ?? '?'}
                   </p>
-                  <p style={{ fontFamily: 'var(--os-font-display)', fontSize: 7, fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase', color: MODO_COLOR[d.modo], margin: 0 }}>
+                  <p style={{ fontFamily: 'var(--os-font-display)', fontSize: 11, fontWeight: 700, letterSpacing: '0.04em', textTransform: 'uppercase', color: MODO_COLOR[d.modo], margin: 0 }}>
                     {MODO_LABEL[d.modo]}
                   </p>
                 </div>

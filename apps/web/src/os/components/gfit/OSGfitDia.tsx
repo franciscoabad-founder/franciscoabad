@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import type { Dia, DiaEjercicio, Ejercicio, UnidadPeso } from './tipos';
 import { chipsGrupo, nombreEjercicio, resumenSeries } from './tipos';
 import { card, card2, input, btnGhost, btnIcon, thumb, chip } from './estilos';
+import { Spinner, EmptyState } from '../ui';
 import OSGfitBodyMap from './OSGfitBodyMap';
 import OSGfitSerieEditor from './OSGfitSerieEditor';
 import OSGfitSwapSheet from './OSGfitSwapSheet';
@@ -110,7 +111,13 @@ export default function OSGfitDia({ dia, unidad, onDia, onVolver }: Props) {
 
       <OSGfitBodyMap dia={dia} />
 
-      {!items.length && <p style={{ fontSize: 13, color: 'var(--os-muted)' }}>Sin ejercicios todavía. Agrega el primero abajo.</p>}
+      {!items.length && (
+        <EmptyState
+          icon="fitness_center"
+          title="Sin ejercicios todavía"
+          text="Usa el buscador de abajo para agregar el primero."
+        />
+      )}
 
       {items.map((it, idx) => {
         const siguienteMismoGrupo = it.superset_grupo != null && items[idx + 1]?.superset_grupo === it.superset_grupo;
@@ -137,7 +144,7 @@ export default function OSGfitDia({ dia, unidad, onDia, onVolver }: Props) {
                   <div style={{ display: 'flex', gap: 4, flexWrap: 'wrap', margin: '3px 0' }}>
                     {chipsGrupo(it.ejercicio).map((g) => <span key={g} style={chip}>{g}</span>)}
                   </div>
-                  <p style={{ fontSize: 12, color: 'var(--os-muted)', margin: 0 }}>{resumenSeries(it.gfit_series_plan)}</p>
+                  <p style={{ fontSize: 'var(--os-text-xs)', color: 'var(--os-muted)', margin: 0 }}>{resumenSeries(it.gfit_series_plan)}</p>
                 </div>
               </div>
 
@@ -166,7 +173,7 @@ export default function OSGfitDia({ dia, unidad, onDia, onVolver }: Props) {
 
       <div style={card2}>
         <input style={input} placeholder="Agregar ejercicio (buscar)..." value={buscador} onChange={(e) => setBuscador(e.target.value)} />
-        {buscando && <p style={{ fontSize: 11, color: 'var(--os-muted)', margin: '6px 0 0' }}>Buscando...</p>}
+        {buscando && <div style={{ margin: '6px 0 0' }}><Spinner inline label="Buscando..." /></div>}
         {resultados.length > 0 && (
           <div style={{ display: 'flex', flexDirection: 'column', gap: 4, marginTop: 8 }}>
             {resultados.map((e) => (

@@ -62,7 +62,7 @@ export default function FilaComida({ comida, onCambio }: Props) {
   if (editando) {
     return (
       <div style={{ padding: '8px 0', borderBottom: '1px solid var(--os-line-soft)', display: 'flex', flexDirection: 'column', gap: 6 }}>
-        {error && <div style={{ color: 'var(--os-error)', fontSize: 12 }}>{error}</div>}
+        {error && <div style={{ color: 'var(--os-error)', fontSize: 'var(--os-text-xs)' }}>{error}</div>}
         <select style={{ ...sel, width: 'auto' }} value={form.momento} onChange={(e) => setForm({ ...form, momento: e.target.value as Momento })}>
           {MOMENTOS.map((m) => <option key={m} value={m}>{MOMENTO_LABEL[m]}</option>)}
         </select>
@@ -93,10 +93,10 @@ export default function FilaComida({ comida, onCambio }: Props) {
         onClick={() => setEditando(true)}
         style={{ background: 'none', border: 'none', textAlign: 'left', padding: 0, cursor: 'pointer', minWidth: 0, flex: 1 }}
       >
-        <p style={{ fontSize: 13, color: 'var(--os-text)', margin: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+        <p style={{ fontSize: 'var(--os-text-sm)', color: 'var(--os-text)', margin: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
           {comida.descripcion_libre || 'Alimento'}{comida.cantidad_g ? ` · ${comida.cantidad_g}g` : ''}
         </p>
-        <p style={{ fontSize: 11, fontFamily: 'var(--os-font-mono)', color: 'var(--os-muted)', margin: '2px 0 0' }}>
+        <p style={{ fontSize: 'var(--os-text-xs)', fontFamily: 'var(--os-font-mono)', color: 'var(--os-muted)', margin: '2px 0 0' }}>
           {Math.round(comida.kcal ?? 0)} kcal · P{Math.round(comida.proteina_g ?? 0)} C{Math.round(comida.carbos_g ?? 0)} G{Math.round(comida.grasa_g ?? 0)}
         </p>
       </button>

@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import * as d3 from 'd3';
+import { Spinner } from './ui';
 
 interface GraphNode extends d3.SimulationNodeDatum {
   id: string;
@@ -358,20 +359,21 @@ export default function OSGraphBrain() {
     return () => { sim.stop(); };
   }, [graphData, onlyConnected]);
 
-  const MUTED  = '#6B7280';
-  const BORDER = 'rgba(232,234,240,0.1)';
-  const INK    = '#0E1738';
+  // Chrome HTML en tokens; los colores dentro del SVG quedan literales (canvas oscuro fijo).
+  const MUTED  = 'var(--os-muted)';
+  const BORDER = 'var(--os-line)';
+  const PANEL  = 'var(--os-surface)';
 
   return (
     <div>
       {loading && (
-        <div style={{ height: '520px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: MUTED, fontSize: '13px' }}>
-          Conectando con gbrain...
+        <div style={{ height: '520px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          <Spinner label="Conectando con gbrain..." />
         </div>
       )}
 
       {error && (
-        <div style={{ height: '120px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#F87171', fontSize: '12px' }}>
+        <div style={{ height: '120px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--os-error)', fontSize: 'var(--os-text-sm)' }}>
           No se pudo cargar el grafo: {error}
         </div>
       )}
@@ -382,7 +384,7 @@ export default function OSGraphBrain() {
           <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap', marginBottom: '12px' }}>
             <button
               onClick={() => setActiveGroup(null)}
-              style={{ fontSize: '11px', padding: '4px 12px', borderRadius: '99px', border: `1px solid ${!activeGroup ? '#3B4ED9' : BORDER}`, background: !activeGroup ? '#3B4ED9' : 'transparent', color: !activeGroup ? '#fff' : MUTED, cursor: 'pointer', fontFamily: 'Montserrat, sans-serif' }}
+              style={{ fontSize: '11px', padding: '4px 12px', minHeight: 36, borderRadius: '99px', border: `1px solid ${!activeGroup ? 'var(--os-accent)' : BORDER}`, background: !activeGroup ? 'var(--os-accent)' : 'transparent', color: !activeGroup ? '#fff' : MUTED, cursor: 'pointer', fontFamily: 'var(--os-font-display)' }}
             >
               Todos
             </button>
@@ -390,7 +392,7 @@ export default function OSGraphBrain() {
               <button
                 key={gr}
                 onClick={() => setActiveGroup(gr === activeGroup ? null : gr)}
-                style={{ fontSize: '11px', padding: '4px 12px', borderRadius: '99px', border: `1px solid ${activeGroup === gr ? (GROUP_COLORS[gr] ?? MUTED) : BORDER}`, background: activeGroup === gr ? (GROUP_COLORS[gr] ?? MUTED) + '22' : 'transparent', color: activeGroup === gr ? (GROUP_COLORS[gr] ?? MUTED) : MUTED, cursor: 'pointer', fontFamily: 'Montserrat, sans-serif', display: 'flex', alignItems: 'center', gap: '5px' }}
+                style={{ fontSize: '11px', padding: '4px 12px', minHeight: 36, borderRadius: '99px', border: `1px solid ${activeGroup === gr ? (GROUP_COLORS[gr] ?? MUTED) : BORDER}`, background: activeGroup === gr ? (GROUP_COLORS[gr] ?? MUTED) + '22' : 'transparent', color: activeGroup === gr ? (GROUP_COLORS[gr] ?? MUTED) : MUTED, cursor: 'pointer', fontFamily: 'var(--os-font-display)', display: 'flex', alignItems: 'center', gap: '5px' }}
               >
                 <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: GROUP_COLORS[gr] ?? MUTED, display: 'inline-block', flexShrink: 0 }} />
                 {GROUP_LABELS[gr] ?? gr}
@@ -401,7 +403,7 @@ export default function OSGraphBrain() {
 
             <button
               onClick={() => setOnlyConnected((v) => !v)}
-              style={{ fontSize: '11px', padding: '4px 12px', borderRadius: '99px', border: `1px solid ${onlyConnected ? '#3B4ED9' : BORDER}`, background: onlyConnected ? '#3B4ED9' : 'transparent', color: onlyConnected ? '#fff' : MUTED, cursor: 'pointer', fontFamily: 'Montserrat, sans-serif' }}
+              style={{ fontSize: '11px', padding: '4px 12px', minHeight: 36, borderRadius: '99px', border: `1px solid ${onlyConnected ? 'var(--os-accent)' : BORDER}`, background: onlyConnected ? 'var(--os-accent)' : 'transparent', color: onlyConnected ? '#fff' : MUTED, cursor: 'pointer', fontFamily: 'var(--os-font-display)' }}
             >
               Solo conectados
             </button>
@@ -409,7 +411,7 @@ export default function OSGraphBrain() {
             {graphData?.meta?.truncated && (
               <button
                 onClick={() => setShowAll((v) => !v)}
-                style={{ fontSize: '11px', padding: '4px 12px', borderRadius: '99px', border: `1px solid ${BORDER}`, background: 'transparent', color: MUTED, cursor: 'pointer', fontFamily: 'Montserrat, sans-serif' }}
+                style={{ fontSize: '11px', padding: '4px 12px', minHeight: 36, borderRadius: '99px', border: `1px solid ${BORDER}`, background: 'transparent', color: MUTED, cursor: 'pointer', fontFamily: 'var(--os-font-display)' }}
               >
                 {showAll ? 'Ver top conectadas' : 'Ver todo'}
               </button>
@@ -425,15 +427,15 @@ export default function OSGraphBrain() {
 
             {/* Node detail panel */}
             {panelSlug && panelData && (
-              <div style={{ position: 'absolute', top: '8px', right: '8px', width: '220px', background: INK, border: `1px solid ${(GROUP_COLORS[panelData.group] ?? '#3B4ED9') + '55'}`, borderLeft: `3px solid ${GROUP_COLORS[panelData.group] ?? '#3B4ED9'}`, borderRadius: '10px', padding: '14px', zIndex: 10 }}>
+              <div style={{ position: 'absolute', top: '8px', right: '8px', width: '220px', background: PANEL, border: `1px solid ${(GROUP_COLORS[panelData.group] ?? '#3B4ED9') + '55'}`, borderLeft: `3px solid ${GROUP_COLORS[panelData.group] ?? '#3B4ED9'}`, borderRadius: '10px', padding: '14px', zIndex: 10 }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
-                  <span style={{ fontSize: '10px', letterSpacing: '0.1em', textTransform: 'uppercase', color: GROUP_COLORS[panelData.group] ?? '#6B7AE8', fontFamily: 'Montserrat, sans-serif', fontWeight: 600 }}>
+                  <span style={{ fontSize: '11px', letterSpacing: '0.1em', textTransform: 'uppercase', color: GROUP_COLORS[panelData.group] ?? '#6B7AE8', fontFamily: 'var(--os-font-display)', fontWeight: 600 }}>
                     {GROUP_LABELS[panelData.group] ?? panelData.group}
                   </span>
                   <button onClick={() => { setPanelSlug(null); setPanelData(null); }} style={{ background: 'none', border: 'none', color: MUTED, cursor: 'pointer', fontSize: '16px', lineHeight: 1, padding: 0 }}>x</button>
                 </div>
-                <h3 style={{ fontSize: '12px', fontWeight: 700, color: '#F4F6F8', margin: '0 0 8px', lineHeight: 1.35 }}>{panelData.label}</h3>
-                <span style={{ fontSize: '10px', color: '#6B7AE8', background: 'rgba(107,122,232,0.1)', padding: '2px 7px', borderRadius: '4px' }}>{panelData.connections} enlaces</span>
+                <h3 style={{ fontSize: 'var(--os-text-sm)', fontWeight: 700, color: 'var(--os-text)', margin: '0 0 8px', lineHeight: 1.35 }}>{panelData.label}</h3>
+                <span style={{ fontSize: '11px', color: '#6B7AE8', background: 'rgba(107,122,232,0.1)', padding: '2px 7px', borderRadius: '4px' }}>{panelData.connections} enlaces</span>
               </div>
             )}
           </div>
@@ -443,10 +445,10 @@ export default function OSGraphBrain() {
             {availableGroups.map((gr) => (
               <div key={gr} style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
                 <span style={{ width: '7px', height: '7px', borderRadius: '50%', background: GROUP_COLORS[gr] ?? MUTED, display: 'block' }} />
-                <span style={{ fontSize: '10px', color: MUTED, fontFamily: 'Montserrat, sans-serif' }}>{GROUP_LABELS[gr] ?? gr}</span>
+                <span style={{ fontSize: '11px', color: MUTED, fontFamily: 'var(--os-font-display)' }}>{GROUP_LABELS[gr] ?? gr}</span>
               </div>
             ))}
-            <span style={{ fontSize: '10px', color: '#4B5563', marginLeft: 'auto' }}>
+            <span style={{ fontSize: '11px', color: MUTED, marginLeft: 'auto' }}>
               {totalNotes} notas · {nodeCount} mostradas · {edgeCount} enlaces reales
               {graphData?.meta?.orphans ? ` · ${graphData.meta.orphans} sin enlaces` : ''}
             </span>

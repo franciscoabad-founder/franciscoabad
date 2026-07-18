@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import type { Dia, Rutina, TipoDia, UnidadPeso } from './tipos';
 import { OBJETIVOS, WEEKDAY_CORTO, badgeDia, estimarMinutos } from './tipos';
 import { card, card2, input, sel, btn, btnGhost, btnIcon, pill, thumb } from './estilos';
+import { Spinner, EmptyState } from '../ui';
 import OSGfitDia from './OSGfitDia';
 
 interface Props {
@@ -83,20 +84,27 @@ export default function OSGfitRutinas({ unidad, onUnidad }: Props) {
         />
       )}
 
-      {loading ? <p style={{ fontSize: 13, color: 'var(--os-muted)' }}>Cargando...</p> :
-        !rutinas.length ? <p style={{ fontSize: 13, color: 'var(--os-muted)' }}>Sin rutinas todavía. Crea la primera.</p> :
+      {loading ? <Spinner /> :
+        !rutinas.length ? (
+          <EmptyState
+            icon="fitness_center"
+            title="Sin rutinas todavía"
+            text="Crea la primera para planificar tus días de entrenamiento."
+            action={<button style={btn} onClick={() => setNuevaAbierta(true)}>+ Nueva rutina</button>}
+          />
+        ) :
         rutinas.map((r) => (
           <div key={r.id} style={card}>
             <div style={{ display: 'flex', justifyContent: 'space-between', gap: 8 }}>
               <div style={{ flex: 1, minWidth: 0, cursor: 'pointer' }} onClick={() => abrirRutina(r)}>
                 <p style={{ fontSize: 15, fontWeight: 700, color: 'var(--os-text)', margin: 0 }}>{r.nombre}</p>
                 <div style={{ display: 'flex', gap: 6, alignItems: 'center', marginTop: 4, flexWrap: 'wrap' }}>
-                  {r.objetivo && <span style={{ fontSize: 10.5, color: 'var(--os-accent-light)', background: 'rgba(59,78,217,0.12)', padding: '2px 8px', borderRadius: 999, fontFamily: 'var(--os-font-display)', fontWeight: 700 }}>
+                  {r.objetivo && <span style={{ fontSize: 11, color: 'var(--os-accent-light)', background: 'rgba(59,78,217,0.12)', padding: '2px 8px', borderRadius: 999, fontFamily: 'var(--os-font-display)', fontWeight: 700 }}>
                     {OBJETIVOS.find((o) => o.key === r.objetivo)?.label ?? r.objetivo}
                   </span>}
-                  <span style={{ fontSize: 11.5, color: 'var(--os-muted)' }}>{r.dias?.[0]?.count ?? 0} días</span>
+                  <span style={{ fontSize: 'var(--os-text-xs)', color: 'var(--os-muted)' }}>{r.dias?.[0]?.count ?? 0} días</span>
                 </div>
-                {r.descripcion && <p style={{ fontSize: 12, color: 'var(--os-muted)', margin: '5px 0 0' }}>{r.descripcion}</p>}
+                {r.descripcion && <p style={{ fontSize: 'var(--os-text-xs)', color: 'var(--os-muted)', margin: '5px 0 0' }}>{r.descripcion}</p>}
               </div>
               <button style={btnIcon} onClick={() => setMenuId(menuId === r.id ? null : r.id)} aria-label="Más opciones">
                 <span className="material-symbols-outlined" style={{ fontSize: 20 }}>more_vert</span>
@@ -182,7 +190,7 @@ function VistaDias({ rutina, onVolver, onAbrirDia }: { rutina: Rutina; onVolver:
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <div>
           <p style={{ fontSize: 15, fontWeight: 700, color: 'var(--os-text)', margin: 0 }}>{rutina.nombre}</p>
-          <p style={{ fontSize: 11.5, color: 'var(--os-muted)', margin: '2px 0 0' }}>{dias.length} días</p>
+          <p style={{ fontSize: 'var(--os-text-xs)', color: 'var(--os-muted)', margin: '2px 0 0' }}>{dias.length} días</p>
         </div>
         <button style={btnGhost} onClick={onVolver}>← Rutinas</button>
       </div>
@@ -190,8 +198,15 @@ function VistaDias({ rutina, onVolver, onAbrirDia }: { rutina: Rutina; onVolver:
       <button style={btn} onClick={() => setNuevoAbierto(!nuevoAbierto)}>+ Agregar día</button>
       {nuevoAbierto && <FormDia rutinaId={rutina.id} onCancelar={() => setNuevoAbierto(false)} onGuardado={() => { setNuevoAbierto(false); cargar(); }} />}
 
-      {loading ? <p style={{ fontSize: 13, color: 'var(--os-muted)' }}>Cargando...</p> :
-        !dias.length ? <p style={{ fontSize: 13, color: 'var(--os-muted)' }}>Sin días todavía. Agrega el primero.</p> :
+      {loading ? <Spinner /> :
+        !dias.length ? (
+          <EmptyState
+            icon="calendar_month"
+            title="Sin días todavía"
+            text="Agrega el primer día de esta rutina."
+            action={<button style={btn} onClick={() => setNuevoAbierto(true)}>+ Agregar día</button>}
+          />
+        ) :
         dias.map((d) => {
           const badge = badgeDia(d);
           const n = d.gfit_dia_ejercicios?.length ?? 0;
@@ -202,7 +217,7 @@ function VistaDias({ rutina, onVolver, onAbrirDia }: { rutina: Rutina; onVolver:
                 <div style={{ flex: 1, minWidth: 0, cursor: 'pointer' }} onClick={() => onAbrirDia(d)}>
                   <div style={{ display: 'flex', gap: 6, alignItems: 'center' }}>
                     <span style={{
-                      fontSize: 10, fontFamily: 'var(--os-font-display)', fontWeight: 800, letterSpacing: '0.06em',
+                      fontSize: 11, fontFamily: 'var(--os-font-display)', fontWeight: 800, letterSpacing: '0.06em',
                       padding: '3px 8px', borderRadius: 999,
                       background: badge.tono === 'accent' ? 'rgba(59,78,217,0.14)' : 'var(--os-fill-subtle)',
                       color: badge.tono === 'accent' ? 'var(--os-accent-light)' : 'var(--os-muted)',
@@ -210,7 +225,7 @@ function VistaDias({ rutina, onVolver, onAbrirDia }: { rutina: Rutina; onVolver:
                     <span style={{ fontSize: 14, fontWeight: 700, color: 'var(--os-text)' }}>{d.nombre}</span>
                   </div>
                   {d.tipo !== 'descanso' && (
-                    <p style={{ fontSize: 11.5, color: 'var(--os-muted)', margin: '5px 0 0' }}>
+                    <p style={{ fontSize: 'var(--os-text-xs)', color: 'var(--os-muted)', margin: '5px 0 0' }}>
                       {n} ejercicio{n === 1 ? '' : 's'} · ~{estimarMinutos(d)} min
                     </p>
                   )}

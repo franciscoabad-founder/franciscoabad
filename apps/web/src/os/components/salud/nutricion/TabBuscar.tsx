@@ -5,6 +5,7 @@ import { useEffect, useState } from 'react';
 import type { Alimento, Momento, ModoBusqueda } from './tipos';
 import { MODOS_BUSQUEDA } from './tipos';
 import { input, pill, btnPlus, rowItem } from './estilos';
+import { Spinner, EmptyState } from '../../ui';
 import DetallePorcion from './DetallePorcion';
 
 interface Props {
@@ -71,11 +72,11 @@ export default function TabBuscar({ momento, dia, tipoDia, onAgregado }: Props) 
         </div>
       )}
 
-      {buscando && <p style={{ fontSize: 12, color: 'var(--os-muted)' }}>Buscando...</p>}
+      {buscando && <Spinner inline label="Buscando..." />}
       {!buscando && resultados.length === 0 && (
-        <p style={{ fontSize: 12, color: 'var(--os-muted)' }}>
-          {q.trim() ? 'Sin resultados. Prueba con "Mas" para una entrada libre.' : 'Nada por aqui todavia.'}
-        </p>
+        q.trim()
+          ? <EmptyState icon="search_off" title="Sin resultados" text='Prueba con otro termino o usa "Mas" para una entrada libre.' />
+          : <EmptyState icon="restaurant" title="Nada por aqui todavia" text="Busca un alimento para empezar a registrar." />
       )}
 
       <div style={{ display: 'flex', flexDirection: 'column', maxHeight: 320, overflowY: 'auto' }}>
@@ -85,10 +86,10 @@ export default function TabBuscar({ momento, dia, tipoDia, onAgregado }: Props) 
               onClick={() => setSel(a)}
               style={{ background: 'none', border: 'none', textAlign: 'left', padding: 0, cursor: 'pointer', flex: 1, minWidth: 0 }}
             >
-              <p style={{ margin: 0, fontSize: 13, color: 'var(--os-text)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+              <p style={{ margin: 0, fontSize: 'var(--os-text-sm)', color: 'var(--os-text)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                 {a.nombre}{a.marca ? ` · ${a.marca}` : ''}
               </p>
-              <p style={{ margin: '2px 0 0', fontSize: 11, fontFamily: 'var(--os-font-mono)', color: 'var(--os-muted)' }}>
+              <p style={{ margin: '2px 0 0', fontSize: 'var(--os-text-xs)', fontFamily: 'var(--os-font-mono)', color: 'var(--os-muted)' }}>
                 {a.kcal} kcal / 100 g
               </p>
             </button>

@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
+import { Button, Spinner, EmptyState } from '../ui';
 
 interface Paso { nombre: string; detalle: string; duracion_seg: number; por_lado: boolean }
 interface RutinaEstiramiento { id: string; nombre: string; descripcion: string | null; pasos: Paso[] }
@@ -7,14 +8,7 @@ const card: React.CSSProperties = {
   background: 'var(--os-surface-2)', border: '1px solid var(--os-line-soft)',
   borderRadius: 'var(--os-r-card)', padding: '1rem',
 };
-const btn: React.CSSProperties = {
-  background: 'var(--os-accent)', color: '#fff', border: 'none', borderRadius: 6,
-  padding: '10px 20px', fontSize: 14, fontFamily: 'var(--os-font-display)', fontWeight: 700, cursor: 'pointer',
-};
-const btnGhost: React.CSSProperties = {
-  background: 'transparent', color: 'var(--os-muted)', border: '1px solid var(--os-line)',
-  borderRadius: 6, padding: '8px 14px', fontSize: 13, cursor: 'pointer',
-};
+
 
 // Expande pasos "por lado" en dos sub-pasos (izquierdo/derecho).
 function expandirPasos(pasos: Paso[]): Array<{ nombre: string; detalle: string; duracion_seg: number }> {
@@ -59,14 +53,14 @@ export default function OSSaludEstiramiento() {
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-      {loading ? <p style={{ fontSize: 13, color: 'var(--os-muted)' }}>Cargando...</p> :
-        !rutinas.length ? <p style={{ fontSize: 13, color: 'var(--os-muted)' }}>Sin rutinas. Corre el seed de estiramiento.</p> :
+      {loading ? <Spinner /> :
+        !rutinas.length ? <EmptyState icon="self_improvement" title="Sin rutinas" text="Corre el seed de estiramiento para cargar las rutinas guiadas." /> :
         rutinas.map((r) => (
           <div key={r.id} style={card}>
             <p style={{ fontSize: 15, fontWeight: 700, color: 'var(--os-text)', margin: 0 }}>{r.nombre}</p>
-            {r.descripcion && <p style={{ fontSize: 12, color: 'var(--os-muted)', margin: '3px 0 0' }}>{r.descripcion}</p>}
-            <p style={{ fontSize: 11, color: 'var(--os-muted)', margin: '6px 0 10px' }}>{r.pasos?.length ?? 0} pasos</p>
-            <button style={btn} onClick={() => setActiva(r)}>▶ Empezar</button>
+            {r.descripcion && <p style={{ fontSize: 'var(--os-text-xs)', color: 'var(--os-muted)', margin: '3px 0 0' }}>{r.descripcion}</p>}
+            <p style={{ fontSize: 'var(--os-text-xs)', color: 'var(--os-muted)', margin: '6px 0 10px' }}>{r.pasos?.length ?? 0} pasos</p>
+            <Button onClick={() => setActiva(r)}>▶ Empezar</Button>
           </div>
         ))
       }
@@ -123,8 +117,8 @@ function Reproductor({ rutina, onSalir }: { rutina: RutinaEstiramiento; onSalir:
       <div style={{ ...card, textAlign: 'center', maxWidth: 480, margin: '2rem auto' }}>
         <p style={{ fontSize: 40, margin: 0 }}>✓</p>
         <p style={{ fontSize: 18, fontWeight: 700, color: 'var(--os-text)', margin: '8px 0' }}>Rutina completada</p>
-        <p style={{ fontSize: 13, color: 'var(--os-muted)', margin: '0 0 16px' }}>{rutina.nombre}</p>
-        <button style={btn} onClick={onSalir}>Volver</button>
+        <p style={{ fontSize: 'var(--os-text-sm)', color: 'var(--os-muted)', margin: '0 0 16px' }}>{rutina.nombre}</p>
+        <Button onClick={onSalir}>Volver</Button>
       </div>
     );
   }
@@ -136,11 +130,11 @@ function Reproductor({ rutina, onSalir }: { rutina: RutinaEstiramiento; onSalir:
     <div style={{ display: 'flex', flexDirection: 'column', gap: 18, alignItems: 'center', maxWidth: 480, margin: '0 auto' }}>
       {/* Progreso total */}
       <div style={{ display: 'flex', alignItems: 'center', gap: 10, width: '100%' }}>
-        <button style={btnGhost} onClick={() => { if (confirm('¿Salir de la rutina?')) onSalir(); }}>✕</button>
-        <div style={{ flex: 1, height: 6, background: 'rgba(232,234,240,0.1)', borderRadius: 3, overflow: 'hidden' }}>
+        <Button variant="ghost" onClick={() => { if (confirm('¿Salir de la rutina?')) onSalir(); }} aria-label="Salir">✕</Button>
+        <div style={{ flex: 1, height: 6, background: 'var(--os-fill-subtle)', borderRadius: 3, overflow: 'hidden' }}>
           <div style={{ height: '100%', width: `${pctTotal}%`, background: 'var(--os-accent)', borderRadius: 3, transition: 'width .3s' }} />
         </div>
-        <span style={{ fontSize: 12, fontFamily: 'var(--os-font-mono)', color: 'var(--os-muted)' }}>{idx + 1}/{pasos.length}</span>
+        <span style={{ fontSize: 'var(--os-text-xs)', fontFamily: 'var(--os-font-mono)', color: 'var(--os-muted)' }}>{idx + 1}/{pasos.length}</span>
       </div>
 
       {/* Cronómetro grande */}
@@ -152,26 +146,26 @@ function Reproductor({ rutina, onSalir }: { rutina: RutinaEstiramiento; onSalir:
         </svg>
         <div style={{ position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
           <span style={{ fontFamily: 'var(--os-font-mono)', fontSize: 52, fontWeight: 700, lineHeight: 1 }}>{restante}</span>
-          <span style={{ fontSize: 11, color: 'var(--os-muted)', textTransform: 'uppercase', letterSpacing: '0.1em' }}>segundos</span>
+          <span style={{ fontSize: 'var(--os-text-xs)', color: 'var(--os-muted)', textTransform: 'uppercase', letterSpacing: '0.1em' }}>segundos</span>
         </div>
       </div>
 
       {/* Paso actual */}
       <div style={{ textAlign: 'center' }}>
         <p style={{ fontSize: 20, fontWeight: 700, color: 'var(--os-text)', margin: 0 }}>{actual?.nombre}</p>
-        <p style={{ fontSize: 14, color: 'var(--os-text-2)', margin: '6px 0 0', lineHeight: 1.4, maxWidth: 360 }}>{actual?.detalle}</p>
+        <p style={{ fontSize: 'var(--os-text-base)', color: 'var(--os-text-2)', margin: '6px 0 0', lineHeight: 1.4, maxWidth: 360 }}>{actual?.detalle}</p>
       </div>
 
       {/* Controles */}
       <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', justifyContent: 'center' }}>
-        <button style={btn} onClick={() => setPausado(!pausado)}>{pausado ? '▶ Reanudar' : '⏸ Pausar'}</button>
-        <button style={btnGhost} onClick={reiniciarPaso}>↻ Reiniciar paso</button>
-        <button style={btnGhost} onClick={saltar}>Saltar →</button>
+        <Button onClick={() => setPausado(!pausado)}>{pausado ? '▶ Reanudar' : '⏸ Pausar'}</Button>
+        <Button variant="ghost" onClick={reiniciarPaso}>↻ Reiniciar paso</Button>
+        <Button variant="ghost" onClick={saltar}>Saltar →</Button>
       </div>
 
       {/* Siguiente */}
       {idx < pasos.length - 1 && (
-        <p style={{ fontSize: 12, color: 'var(--os-muted)' }}>Sigue: {pasos[idx + 1]?.nombre}</p>
+        <p style={{ fontSize: 'var(--os-text-xs)', color: 'var(--os-muted)' }}>Sigue: {pasos[idx + 1]?.nombre}</p>
       )}
     </div>
   );

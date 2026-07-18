@@ -35,7 +35,7 @@ export default function MacroRing({ label, consumido, target, size = 84, grosor 
           {sinMeta ? (
             <button
               onClick={onConfigurar}
-              style={{ background: 'none', border: 'none', color: 'var(--os-accent-light)', fontSize: 10, textAlign: 'center', cursor: 'pointer', padding: 0, lineHeight: 1.2 }}
+              style={{ background: 'none', border: 'none', color: 'var(--os-accent-light)', fontSize: 11, textAlign: 'center', cursor: 'pointer', padding: 0, lineHeight: 1.2 }}
             >
               Configurar
             </button>
@@ -49,7 +49,7 @@ export default function MacroRing({ label, consumido, target, size = 84, grosor 
           )}
         </div>
       </div>
-      <span style={{ fontSize: 11.5, fontWeight: 700, color: 'var(--os-text-2)', fontFamily: 'var(--os-font-display)' }}>{label}</span>
+      <span style={{ fontSize: 'var(--os-text-xs)', fontWeight: 700, color: 'var(--os-text-2)', fontFamily: 'var(--os-font-display)' }}>{label}</span>
     </div>
   );
 }

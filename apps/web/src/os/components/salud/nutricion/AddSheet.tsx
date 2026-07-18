@@ -1,9 +1,11 @@
-// Bottom sheet de captura estilo Yazio: tiles de icono (Buscar/Recetas/Meals/Mas,
+// Sheet de captura estilo Yazio: tiles de icono (Buscar/Recetas/Meals/Mas,
 // Foto y Barcode deshabilitados con chip "proximamente") + el contenido del tab activo.
+// Overlay/bottom-sheet delegado al componente Sheet de ui/.
 import { useState } from 'react';
 import type { Comida, Momento, TabAgregar } from './tipos';
 import { MOMENTOS, MOMENTO_LABEL } from './tipos';
-import { overlay, sheet, sheetBody, sheetHandle, sel, tile, tileActivo, chipMuted } from './estilos';
+import { sel, tile, tileActivo, chipMuted } from './estilos';
+import { Sheet } from '../../ui';
 import TabBuscar from './TabBuscar';
 import TabRecetas from './TabRecetas';
 import TabMeals from './TabMeals';
@@ -35,42 +37,36 @@ export default function AddSheet({ momentoInicial, dia, tipoDia, comidasHoy, onC
   }
 
   return (
-    <div style={overlay} onClick={onCerrar}>
-      <div style={sheet} onClick={(e) => e.stopPropagation()}>
-        <div style={sheetHandle} />
-        <div style={{ padding: '0 1rem 0.5rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <select style={{ ...sel, width: 'auto' }} value={momento} onChange={(e) => setMomento(e.target.value as Momento)}>
-            {MOMENTOS.map((m) => <option key={m} value={m}>{MOMENTO_LABEL[m]}</option>)}
-          </select>
-          <button onClick={onCerrar} style={{ background: 'none', border: 'none', color: 'var(--os-muted)', fontSize: 22, cursor: 'pointer', lineHeight: 1 }}>×</button>
-        </div>
+    <Sheet open onClose={onCerrar} title="Agregar comida">
+      <div style={{ marginBottom: 10 }}>
+        <select style={{ ...sel, width: 'auto' }} value={momento} onChange={(e) => setMomento(e.target.value as Momento)}>
+          {MOMENTOS.map((m) => <option key={m} value={m}>{MOMENTO_LABEL[m]}</option>)}
+        </select>
+      </div>
 
-        <div style={{ padding: '0 1rem 0.75rem', display: 'grid', gridTemplateColumns: 'repeat(6, 1fr)', gap: 6 }}>
-          {TILES.map((t) => (
-            <button key={t.key} onClick={() => setTab(t.key)} style={{ ...tile(false), ...(tab === t.key ? tileActivo : {}) }}>
-              <span className="material-symbols-outlined" style={{ fontSize: 20, color: tab === t.key ? 'var(--os-accent-light)' : 'var(--os-text-2)' }}>{t.icon}</span>
-              <span style={{ fontSize: 9.5, color: tab === t.key ? 'var(--os-accent-light)' : 'var(--os-muted)', fontWeight: 700 }}>{t.label}</span>
-            </button>
-          ))}
-          <div style={tile(true)}>
-            <span className="material-symbols-outlined" style={{ fontSize: 20, color: 'var(--os-muted)' }}>photo_camera</span>
-            <span style={{ fontSize: 9.5, color: 'var(--os-muted)', fontWeight: 700 }}>Foto</span>
-            <span style={{ ...chipMuted, position: 'absolute', top: -6, right: -6, fontSize: 8, padding: '2px 5px' }}>pronto</span>
-          </div>
-          <div style={tile(true)}>
-            <span className="material-symbols-outlined" style={{ fontSize: 20, color: 'var(--os-muted)' }}>qr_code_scanner</span>
-            <span style={{ fontSize: 9.5, color: 'var(--os-muted)', fontWeight: 700 }}>Codigo</span>
-            <span style={{ ...chipMuted, position: 'absolute', top: -6, right: -6, fontSize: 8, padding: '2px 5px' }}>pronto</span>
-          </div>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(6, 1fr)', gap: 6, marginBottom: 12 }}>
+        {TILES.map((t) => (
+          <button key={t.key} onClick={() => setTab(t.key)} style={{ ...tile(false), ...(tab === t.key ? tileActivo : {}) }}>
+            <span className="material-symbols-outlined" style={{ fontSize: 20, color: tab === t.key ? 'var(--os-accent-light)' : 'var(--os-text-2)' }}>{t.icon}</span>
+            <span style={{ fontSize: 11, color: tab === t.key ? 'var(--os-accent-light)' : 'var(--os-muted)', fontWeight: 700 }}>{t.label}</span>
+          </button>
+        ))}
+        <div style={tile(true)}>
+          <span className="material-symbols-outlined" style={{ fontSize: 20, color: 'var(--os-muted)' }}>photo_camera</span>
+          <span style={{ fontSize: 11, color: 'var(--os-muted)', fontWeight: 700 }}>Foto</span>
+          <span style={{ ...chipMuted, position: 'absolute', top: -6, right: -6, fontSize: 11, padding: '1px 5px' }}>pronto</span>
         </div>
-
-        <div style={sheetBody}>
-          {tab === 'buscar' && <TabBuscar momento={momento} dia={dia} tipoDia={tipoDia} onAgregado={agregado} />}
-          {tab === 'recetas' && <TabRecetas momento={momento} dia={dia} tipoDia={tipoDia} onAgregado={agregado} />}
-          {tab === 'meals' && <TabMeals momento={momento} dia={dia} onAgregado={agregado} />}
-          {tab === 'mas' && <TabMas momento={momento} dia={dia} tipoDia={tipoDia} comidasHoy={comidasHoy} onAgregado={agregado} />}
+        <div style={tile(true)}>
+          <span className="material-symbols-outlined" style={{ fontSize: 20, color: 'var(--os-muted)' }}>qr_code_scanner</span>
+          <span style={{ fontSize: 11, color: 'var(--os-muted)', fontWeight: 700 }}>Codigo</span>
+          <span style={{ ...chipMuted, position: 'absolute', top: -6, right: -6, fontSize: 11, padding: '1px 5px' }}>pronto</span>
         </div>
       </div>
-    </div>
+
+      {tab === 'buscar' && <TabBuscar momento={momento} dia={dia} tipoDia={tipoDia} onAgregado={agregado} />}
+      {tab === 'recetas' && <TabRecetas momento={momento} dia={dia} tipoDia={tipoDia} onAgregado={agregado} />}
+      {tab === 'meals' && <TabMeals momento={momento} dia={dia} onAgregado={agregado} />}
+      {tab === 'mas' && <TabMas momento={momento} dia={dia} tipoDia={tipoDia} comidasHoy={comidasHoy} onAgregado={agregado} />}
+    </Sheet>
   );
 }

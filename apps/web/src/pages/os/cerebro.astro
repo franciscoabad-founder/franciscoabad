@@ -85,10 +85,10 @@ import OSGraphBrain from '../../os/components/OSGraphBrain';
 
   function mdToHtml(md) {
     return md
-      .replace(/^#### (.+)$/gm, '<b style="color:#6B7AE8;font-size:12px;">$1</b>')
-      .replace(/^### (.+)$/gm, '<b style="color:#94A3B8;font-size:13px;">$1</b>')
-      .replace(/^## (.+)$/gm, '<b style="color:#E8EAF0;font-size:14px;">$1</b>')
-      .replace(/^# (.+)$/gm, '<b style="color:#E8EAF0;font-size:16px;">$1</b>')
+      .replace(/^#### (.+)$/gm, '<b style="color:var(--os-accent-light);font-size:12px;">$1</b>')
+      .replace(/^### (.+)$/gm, '<b style="color:var(--os-text-2);font-size:13px;">$1</b>')
+      .replace(/^## (.+)$/gm, '<b style="color:var(--os-text);font-size:14px;">$1</b>')
+      .replace(/^# (.+)$/gm, '<b style="color:var(--os-text);font-size:16px;">$1</b>')
       .replace(/\*\*(.+?)\*\*/g, '<b>$1</b>')
       .replace(/`(.+?)`/g, '<code style="background:rgba(59,78,217,0.18);padding:1px 5px;border-radius:3px;font-size:12px;">$1</code>')
       .replace(/^- (.+)$/gm, '<span style="display:block;padding-left:12px;">• $1</span>')
@@ -105,22 +105,22 @@ import OSGraphBrain from '../../os/components/OSGraphBrain';
   function openNote(slug) {
     if (!modal || !modalContent) return;
     modal.style.display = 'block';
-    modalContent.innerHTML = '<p style="color:#6B7280;font-size:13px;">Cargando...</p>';
+    modalContent.innerHTML = '<p style="color:var(--os-muted);font-size:13px;">Cargando...</p>';
     fetch('/api/brain/note?slug=' + encodeURIComponent(slug))
       .then(function(r) { return r.json(); })
       .then(function(n) {
-        if (n.error) { modalContent.innerHTML = '<p style="color:#F87171;">Error: ' + esc(n.error) + '</p>'; return; }
+        if (n.error) { modalContent.innerHTML = '<p style="color:var(--os-error);">Error: ' + esc(n.error) + '</p>'; return; }
         var tagsHtml = (n.tags || []).map(function(t) {
-          return '<span style="font-size:10px;color:#6B7280;background:rgba(232,234,240,0.06);padding:2px 8px;border-radius:4px;margin-right:4px;">#' + esc(t) + '</span>';
+          return '<span style="font-size:11px;color:var(--os-muted);background:var(--os-fill-subtle);padding:2px 8px;border-radius:4px;margin-right:4px;">#' + esc(t) + '</span>';
         }).join('');
         modalContent.innerHTML =
-          '<p style="font-size:10px;color:#6B7AE8;letter-spacing:0.14em;text-transform:uppercase;font-family:Montserrat,sans-serif;font-weight:700;margin:0 0 10px;">' + esc(n.tipo) + '</p>'
-          + '<h2 style="font-size:1.1rem;font-weight:700;color:#E8EAF0;margin:0 0 10px;line-height:1.3;font-family:Montserrat,sans-serif;">' + esc(n.titulo) + '</h2>'
+          '<p style="font-size:11px;color:var(--os-accent-light);letter-spacing:0.14em;text-transform:uppercase;font-family:var(--os-font-display);font-weight:700;margin:0 0 10px;">' + esc(n.tipo) + '</p>'
+          + '<h2 style="font-size:1.1rem;font-weight:700;color:var(--os-text);margin:0 0 10px;line-height:1.3;font-family:var(--os-font-display);">' + esc(n.titulo) + '</h2>'
           + '<div style="margin-bottom:14px;flex-wrap:wrap;">' + tagsHtml + '</div>'
-          + '<p style="font-size:10px;color:rgba(107,114,128,0.6);margin:0 0 16px;">' + esc(n.fecha) + '</p>'
-          + '<div style="font-size:13px;color:#C5C5D7;line-height:1.7;border-top:1px solid rgba(255,255,255,0.12);padding-top:16px;">' + mdToHtml(n.contenido || '') + '</div>';
+          + '<p style="font-size:11px;color:var(--os-muted);margin:0 0 16px;">' + esc(n.fecha) + '</p>'
+          + '<div style="font-size:13px;color:var(--os-text-2);line-height:1.7;border-top:1px solid var(--os-line);padding-top:16px;">' + mdToHtml(n.contenido || '') + '</div>';
       })
-      .catch(function() { modalContent.innerHTML = '<p style="color:#F87171;">Error al cargar la nota.</p>'; });
+      .catch(function() { modalContent.innerHTML = '<p style="color:var(--os-error);">Error al cargar la nota.</p>'; });
   }
 
   if (modalClose) modalClose.addEventListener('click', function() { modal.style.display = 'none'; });
@@ -143,13 +143,13 @@ import OSGraphBrain from '../../os/components/OSGraphBrain';
 
       grid.innerHTML = notes.map(function(n) {
         var tagsHtml = (n.tags || []).map(function(t) {
-          return '<span style="font-size:10px;color:#6B7280;background:rgba(232,234,240,0.06);padding:2px 7px;border-radius:4px;">#' + esc(t) + '</span>';
+          return '<span style="font-size:11px;color:var(--os-muted);background:var(--os-fill-subtle);padding:2px 7px;border-radius:4px;">#' + esc(t) + '</span>';
         }).join('');
         return '<div data-slug="' + esc(n.slug) + '" class="nota-card os-card" style="display:flex;flex-direction:column;gap:0.5rem;cursor:pointer;transition:border-color .15s;">'
-          + '<h3 style="font-family:\'Montserrat\',sans-serif;font-size:13px;font-weight:700;color:#E8EAF0;margin:0;line-height:1.3;">' + esc(n.titulo) + '</h3>'
-          + '<p style="font-size:12px;color:#6B7280;margin:0;line-height:1.45;flex:1;">' + esc(n.resumen) + '</p>'
+          + '<h3 style="font-family:var(--os-font-display);font-size:13px;font-weight:700;color:var(--os-text);margin:0;line-height:1.3;">' + esc(n.titulo) + '</h3>'
+          + '<p style="font-size:12px;color:var(--os-muted);margin:0;line-height:1.45;flex:1;">' + esc(n.resumen) + '</p>'
           + '<div style="display:flex;gap:4px;flex-wrap:wrap;">' + tagsHtml + '</div>'
-          + '<p style="font-size:10px;color:rgba(107,114,128,0.5);margin:0;">' + esc(n.fecha) + '</p>'
+          + '<p style="font-size:11px;color:var(--os-muted);margin:0;">' + esc(n.fecha) + '</p>'
           + '</div>';
       }).join('');
 
@@ -159,7 +159,7 @@ import OSGraphBrain from '../../os/components/OSGraphBrain';
       });
     } catch (e) {
       var grid = document.getElementById('notes-grid');
-      if (grid) grid.innerHTML = '<div style="color:#F87171;font-size:12px;padding:1rem;">Error cargando notas.</div>';
+      if (grid) grid.innerHTML = '<div style="color:var(--os-error);font-size:12px;padding:1rem;">Error cargando notas.</div>';
     }
   }
 
@@ -171,14 +171,14 @@ import OSGraphBrain from '../../os/components/OSGraphBrain';
     var resultsEl = document.getElementById('search-results');
     if (!resultsEl) return;
     if (!results || !results.length) {
-      resultsEl.innerHTML = '<p style="color:#6B7280;font-size:12px;padding:0.25rem 0;">Sin resultados.</p>';
+      resultsEl.innerHTML = '<p style="color:var(--os-muted);font-size:12px;padding:0.25rem 0;">Sin resultados.</p>';
       return;
     }
     resultsEl.innerHTML = '<div style="display:flex;flex-direction:column;gap:8px;">'
       + results.map(function(r) {
         return '<div data-slug="' + esc(r.slug) + '" class="result-card os-card" style="padding:0.875rem 1rem;cursor:pointer;transition:border-color .15s;">'
-          + '<h4 style="font-size:13px;font-weight:700;color:#E8EAF0;margin:0 0 4px;font-family:\'Montserrat\',sans-serif;">' + esc(r.titulo) + '</h4>'
-          + '<p style="font-size:12px;color:#6B7280;margin:0;line-height:1.4;">' + esc(r.resumen) + '</p>'
+          + '<h4 style="font-size:13px;font-weight:700;color:var(--os-text);margin:0 0 4px;font-family:var(--os-font-display);">' + esc(r.titulo) + '</h4>'
+          + '<p style="font-size:12px;color:var(--os-muted);margin:0;line-height:1.4;">' + esc(r.resumen) + '</p>'
           + '</div>';
       }).join('')
       + '</div>';
@@ -192,14 +192,14 @@ import OSGraphBrain from '../../os/components/OSGraphBrain';
     var resultsEl = document.getElementById('search-results');
     if (!resultsEl) return;
     resultsEl.style.display = 'block';
-    resultsEl.innerHTML = '<p style="color:#6B7280;font-size:12px;padding:0.25rem 0;">Buscando...</p>';
+    resultsEl.innerHTML = '<p style="color:var(--os-muted);font-size:12px;padding:0.25rem 0;">Buscando...</p>';
     try {
       var res = await fetch('/api/brain/search?q=' + encodeURIComponent(q));
       if (!res.ok) throw new Error(String(res.status));
       var data = await res.json();
       renderResults(data.results);
     } catch {
-      resultsEl.innerHTML = '<p style="color:#F87171;font-size:12px;">Error al buscar.</p>';
+      resultsEl.innerHTML = '<p style="color:var(--os-error);font-size:12px;">Error al buscar.</p>';
     }
   }
 

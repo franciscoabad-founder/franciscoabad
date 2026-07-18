@@ -2,18 +2,13 @@
 export const prerender = false;
 import OSLayout from '../../layouts/OSLayout.astro';
 import OSKpis from '../../os/components/OSKpis';
+import PageHeader from '../../os/components/ui/PageHeader';
 ---
 
 <OSLayout title="KPIs">
   <div class="os-fade-up">
 
-    <!-- Header -->
-    <div style="display:flex;align-items:flex-end;justify-content:space-between;flex-wrap:wrap;gap:0.5rem;margin-bottom:1.5rem;">
-      <div>
-        <p class="os-eyebrow" style="margin-bottom:6px;">Tablero</p>
-        <h1 class="os-h1">KPIs</h1>
-      </div>
-    </div>
+    <PageHeader eyebrow="Tablero" title="KPIs" subtitle="Metricas reales, registradas a mano o por API. Sin cifras inventadas." />
 
     <OSKpis client:load />
 

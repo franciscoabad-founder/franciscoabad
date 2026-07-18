@@ -1,6 +1,10 @@
 import { useState } from 'react';
 import type { CheckItem } from '../data/types';
 
+// Checklist estatico (daily.astro): items vienen por props, estado local.
+// Distinto de OSChecklistHoy, que trae habitos desde /api/os/habitos.
+// Regla de color: hecho/completado = champagne, nunca verde.
+
 interface Props {
   items: CheckItem[];
   title?: string;
@@ -18,10 +22,10 @@ export default function OSChecklist({ items: initial, title }: Props) {
     <div>
       {title && (
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.625rem' }}>
-          <p style={{ fontFamily: 'Montserrat, sans-serif', fontSize: '10px', fontWeight: 600, letterSpacing: '0.12em', textTransform: 'uppercase', color: '#6B7280', margin: 0 }}>
+          <p style={{ fontFamily: 'var(--os-font-display)', fontSize: 11, fontWeight: 600, letterSpacing: '0.12em', textTransform: 'uppercase', color: 'var(--os-muted)', margin: 0 }}>
             {title}
           </p>
-          <span style={{ fontSize: '12px', color: done === items.length ? '#6B7AE8' : '#6B7280' }}>
+          <span style={{ fontSize: 'var(--os-text-xs)', color: done === items.length ? 'var(--os-champagne)' : 'var(--os-muted)' }}>
             {done}/{items.length}
           </span>
         </div>
@@ -34,27 +38,27 @@ export default function OSChecklist({ items: initial, title }: Props) {
               style={{
                 display: 'flex', alignItems: 'flex-start', gap: '10px',
                 width: '100%', border: 'none', cursor: 'pointer',
-                padding: '8px 10px', borderRadius: '6px', textAlign: 'left',
-                background: item.completado ? 'rgba(59,78,217,0.1)' : 'rgba(232,234,240,0.04)',
+                padding: '8px 10px', minHeight: 36, borderRadius: '6px', textAlign: 'left',
+                background: item.completado ? 'rgba(181,152,90,0.10)' : 'var(--os-fill-subtle)',
                 transition: 'background 0.16s',
               }}
             >
               <span style={{
                 width: '17px', height: '17px', flexShrink: 0, borderRadius: '4px', marginTop: '1px',
-                border: item.completado ? '2px solid #3B4ED9' : '2px solid rgba(232,234,240,0.2)',
-                background: item.completado ? '#3B4ED9' : 'transparent',
+                border: item.completado ? '2px solid var(--os-champagne)' : '2px solid var(--os-line)',
+                background: item.completado ? 'var(--os-champagne)' : 'transparent',
                 display: 'flex', alignItems: 'center', justifyContent: 'center',
                 transition: 'all 0.16s',
               }}>
                 {item.completado && (
                   <svg width="9" height="7" viewBox="0 0 9 7" fill="none">
-                    <polyline points="1,3.5 3.5,6 8,1" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                    <polyline points="1,3.5 3.5,6 8,1" stroke="#1A1A1A" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
                   </svg>
                 )}
               </span>
               <span style={{
-                fontSize: '14px',
-                color: item.completado ? '#6B7280' : '#F4F6F8',
+                fontSize: 'var(--os-text-base)',
+                color: item.completado ? 'var(--os-muted)' : 'var(--os-text)',
                 textDecoration: item.completado ? 'line-through' : 'none',
                 transition: 'color 0.16s',
                 lineHeight: 1.45,

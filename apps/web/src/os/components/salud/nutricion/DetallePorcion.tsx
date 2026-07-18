@@ -67,7 +67,7 @@ export default function DetallePorcion({ alimento, momento, dia, tipoDia, onCerr
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 8 }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
           <button style={btnGhost} onClick={onCerrar}>‹ Volver</button>
-          <span style={{ fontWeight: 700, color: 'var(--os-text)', fontSize: 14 }}>{alimento.nombre}</span>
+          <span style={{ fontWeight: 700, color: 'var(--os-text)', fontSize: 'var(--os-text-base)' }}>{alimento.nombre}</span>
         </div>
         <button style={btnIcon} onClick={toggleFavorito} title="Favorito">
           <span className="material-symbols-outlined" style={{ fontSize: 20, color: favorito ? 'var(--os-champagne)' : 'var(--os-muted)', fontVariationSettings: favorito ? "'FILL' 1" : "'FILL' 0" }}>
@@ -76,7 +76,7 @@ export default function DetallePorcion({ alimento, momento, dia, tipoDia, onCerr
         </button>
       </div>
 
-      {error && <div style={{ color: 'var(--os-error)', fontSize: 12.5 }}>{error}</div>}
+      {error && <div style={{ color: 'var(--os-error)', fontSize: 'var(--os-text-sm)' }}>{error}</div>}
 
       <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', alignItems: 'center' }}>
         <input style={{ ...input, width: 90 }} type="number" min="0" value={cantidad} onChange={(e) => setCantidad(e.target.value)} />
@@ -84,10 +84,10 @@ export default function DetallePorcion({ alimento, momento, dia, tipoDia, onCerr
           <option value="gramos">gramos</option>
           {alimento.alimento_porciones.map((p) => <option key={p.id} value={p.id}>{p.nombre} ({p.gramos}g)</option>)}
         </select>
-        {porcionSel && <span style={{ fontSize: 12, color: 'var(--os-muted)' }}>= {gramos} g</span>}
+        {porcionSel && <span style={{ fontSize: 'var(--os-text-xs)', color: 'var(--os-muted)' }}>= {gramos} g</span>}
       </div>
 
-      <div style={{ display: 'flex', gap: 12, fontSize: 13, fontFamily: 'var(--os-font-mono)', color: 'var(--os-text-2)', flexWrap: 'wrap' }}>
+      <div style={{ display: 'flex', gap: 12, fontSize: 'var(--os-text-sm)', fontFamily: 'var(--os-font-mono)', color: 'var(--os-text-2)', flexWrap: 'wrap' }}>
         <span>{preview.kcal} kcal</span><span>P {preview.proteina_g}g</span>
         <span>C {preview.carbos_g}g</span><span>G {preview.grasa_g}g</span>
       </div>

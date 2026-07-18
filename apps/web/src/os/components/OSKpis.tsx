@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { Button, EmptyState, Spinner, ToastProvider, useToast } from './ui';
 
 // Vista KPIs: tablero en vivo desde /api/os/kpis.
 // La tabla arranca vacia; el vacio invita a crear el primer KPI en vez de fingir datos.
@@ -22,10 +23,12 @@ const inputStyle: React.CSSProperties = {
   border: '1px solid var(--os-line)',
   borderRadius: 6,
   padding: '6px 10px',
-  fontSize: 12,
+  minHeight: 36,
+  fontSize: 'var(--os-text-sm)',
   color: 'var(--os-text)',
   fontFamily: 'var(--os-font-body)',
   outline: 'none',
+  boxSizing: 'border-box',
 };
 
 function formatearValor(valor: number | null, unidad: string | null): string {
@@ -51,15 +54,16 @@ function TrendArrow({ t }: { t: KPI['tendencia'] }) {
   }
   if (t === 'down') {
     return (
-      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--os-danger, #D4537E)" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#D4537E" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
         <polyline points="6 9 12 15 18 9" />
       </svg>
     );
   }
-  return <span style={{ color: 'var(--os-muted)', fontSize: 12, lineHeight: 1 }}>--</span>;
+  return <span style={{ color: 'var(--os-muted)', fontSize: 'var(--os-text-xs)', lineHeight: 1 }}>--</span>;
 }
 
-export default function OSKpis() {
+function OSKpisInner() {
+  const toast = useToast();
   const [kpis, setKpis] = useState<KPI[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -91,7 +95,7 @@ export default function OSKpis() {
 
   async function registrarValor(kpiId: string) {
     const num = Number(valorNuevo.replace(',', '.'));
-    if (!Number.isFinite(num)) { window.alert('Ingresa un numero valido.'); return; }
+    if (!Number.isFinite(num)) { toast.show('Ingresa un numero valido.', 'error'); return; }
     setBusy(true);
     try {
       const res = await fetch('/api/os/kpis', {
@@ -104,8 +108,9 @@ export default function OSKpis() {
       setRegistrando(null);
       setValorNuevo('');
       await load();
+      toast.show('Valor registrado.', 'ok');
     } catch (err) {
-      window.alert('Error: ' + (err instanceof Error ? err.message : String(err)));
+      toast.show('Error: ' + (err instanceof Error ? err.message : String(err)), 'error');
     } finally {
       setBusy(false);
     }
@@ -131,8 +136,9 @@ export default function OSKpis() {
       setNLabel(''); setNUnidad(''); setNMeta(''); setNCategoria('');
       setCreando(false);
       await load();
+      toast.show('KPI creado.', 'ok');
     } catch (err) {
-      window.alert('Error: ' + (err instanceof Error ? err.message : String(err)));
+      toast.show('Error: ' + (err instanceof Error ? err.message : String(err)), 'error');
     } finally {
       setBusy(false);
     }
@@ -145,37 +151,41 @@ export default function OSKpis() {
       if (!res.ok) throw new Error(String(res.status));
       await load();
     } catch (err) {
-      window.alert('Error: ' + (err instanceof Error ? err.message : String(err)));
+      toast.show('Error: ' + (err instanceof Error ? err.message : String(err)), 'error');
     }
   }
 
   if (loading) {
-    return <div className="os-card-2" style={{ padding: '1rem', color: 'var(--os-muted)', fontSize: 13 }}>Cargando KPIs...</div>;
+    return <Spinner label="Cargando KPIs..." />;
   }
   if (error && kpis.length === 0) {
     return (
       <div className="os-card-2" style={{ padding: '1rem' }}>
-        <p style={{ color: 'var(--os-error)', fontSize: 13, margin: 0 }}>No se pudo cargar el tablero: {error}</p>
+        <p style={{ color: 'var(--os-error)', fontSize: 'var(--os-text-sm)', margin: 0 }}>No se pudo cargar el tablero: {error}</p>
       </div>
     );
   }
 
   return (
     <div>
-      {error && <p style={{ color: 'var(--os-error)', fontSize: 12, marginBottom: 10 }}>{error}</p>}
+      {error && <p style={{ color: 'var(--os-error)', fontSize: 'var(--os-text-xs)', marginBottom: 10 }}>{error}</p>}
 
       {kpis.length === 0 && !creando && (
-        <div className="os-card-2" style={{ padding: '1.75rem', textAlign: 'center' }}>
-          <p style={{ color: 'var(--os-muted)', fontSize: 13, margin: '0 0 1rem' }}>
-            Todavia no hay KPIs registrados. El tablero empieza vacio a proposito: nada de cifras inventadas.
-          </p>
-          <button className="os-btn" onClick={() => setCreando(true)}>Crear el primer KPI</button>
+        <div className="os-card-2">
+          <EmptyState
+            icon="monitoring"
+            title="Todavia no hay KPIs"
+            text="El tablero empieza vacio a proposito: nada de cifras inventadas."
+            action={<Button size="sm" onClick={() => setCreando(true)}>Crear el primer KPI</Button>}
+          />
         </div>
       )}
 
       {kpis.length > 0 && (
         <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: '0.75rem' }}>
-          <button className="os-btn" onClick={() => setCreando((v) => !v)}>{creando ? 'Cancelar' : '+ Nuevo KPI'}</button>
+          <Button size="sm" variant={creando ? 'ghost' : 'primary'} onClick={() => setCreando((v) => !v)}>
+            {creando ? 'Cancelar' : '+ Nuevo KPI'}
+          </Button>
         </div>
       )}
 
@@ -185,7 +195,7 @@ export default function OSKpis() {
           <input value={nUnidad} onChange={(e) => setNUnidad(e.target.value)} placeholder="Unidad ($, %, personas...)" style={{ ...inputStyle, width: 150 }} />
           <input value={nMeta} onChange={(e) => setNMeta(e.target.value)} placeholder="Meta" type="number" style={{ ...inputStyle, width: 100 }} />
           <input value={nCategoria} onChange={(e) => setNCategoria(e.target.value)} placeholder="Categoria" style={{ ...inputStyle, width: 130 }} />
-          <button type="submit" className="os-btn" disabled={busy}>{busy ? '...' : 'Crear'}</button>
+          <Button type="submit" size="sm" disabled={busy}>{busy ? '...' : 'Crear'}</Button>
         </form>
       )}
 
@@ -200,7 +210,7 @@ export default function OSKpis() {
               <TrendArrow t={k.tendencia} />
             </div>
             <p className="os-kpi-value">{formatearValor(k.valor_actual, k.unidad)}</p>
-            <p style={{ fontSize: 11, color: 'var(--os-muted)', margin: 0 }}>
+            <p style={{ fontSize: 'var(--os-text-xs)', color: 'var(--os-muted)', margin: 0 }}>
               {k.meta !== null ? `meta ${formatearValor(k.meta, k.unidad)}` : 'sin meta'}
               {k.fecha_actual ? ` · ${k.fecha_actual}` : ''}
             </p>
@@ -213,15 +223,15 @@ export default function OSKpis() {
                   onChange={(e) => setValorNuevo(e.target.value)}
                   onKeyDown={(e) => { if (e.key === 'Enter') registrarValor(k.id); if (e.key === 'Escape') setRegistrando(null); }}
                   placeholder="Nuevo valor"
-                  style={{ ...inputStyle, flex: 1, fontSize: 11, padding: '4px 8px' }}
+                  style={{ ...inputStyle, flex: 1, minWidth: 0, fontSize: 'var(--os-text-xs)', padding: '4px 8px' }}
                 />
-                <button className="os-btn" style={{ padding: '4px 10px', fontSize: 11 }} disabled={busy} onClick={() => registrarValor(k.id)}>OK</button>
+                <Button size="sm" disabled={busy} onClick={() => registrarValor(k.id)}>OK</Button>
               </div>
             ) : (
               <div style={{ display: 'flex', gap: 8, marginTop: 6, alignItems: 'center' }}>
                 <button
                   className="os-btn-ghost"
-                  style={{ borderRadius: 6, padding: '3px 9px', fontSize: 10.5, fontFamily: 'var(--os-font-display)', fontWeight: 700, cursor: 'pointer' }}
+                  style={{ borderRadius: 6, padding: '3px 9px', minHeight: 36, fontSize: 'var(--os-text-xs)', fontFamily: 'var(--os-font-display)', fontWeight: 700, cursor: 'pointer' }}
                   onClick={() => { setRegistrando(k.id); setValorNuevo(''); }}
                 >
                   + registrar valor
@@ -229,7 +239,7 @@ export default function OSKpis() {
                 <button
                   onClick={() => eliminar(k.id)}
                   title="Eliminar KPI"
-                  style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--os-muted)', padding: 0, lineHeight: 1, marginLeft: 'auto' }}
+                  style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--os-muted)', padding: 0, minHeight: 36, minWidth: 36, lineHeight: 1, marginLeft: 'auto' }}
                 >
                   <span className="material-symbols-outlined" style={{ fontSize: 15 }}>close</span>
                 </button>
@@ -249,7 +259,7 @@ export default function OSKpis() {
                 <div key={cat} className="os-kpi">
                   <p className="os-kpi-label">{cat}</p>
                   <p className="os-kpi-value">{total}</p>
-                  <p style={{ fontSize: 10, color: 'var(--os-muted)', margin: 0 }}>metricas seguidas</p>
+                  <p style={{ fontSize: 'var(--os-text-xs)', color: 'var(--os-muted)', margin: 0 }}>metricas seguidas</p>
                 </div>
               );
             })}
@@ -257,5 +267,13 @@ export default function OSKpis() {
         </div>
       )}
     </div>
+  );
+}
+
+export default function OSKpis() {
+  return (
+    <ToastProvider>
+      <OSKpisInner />
+    </ToastProvider>
   );
 }

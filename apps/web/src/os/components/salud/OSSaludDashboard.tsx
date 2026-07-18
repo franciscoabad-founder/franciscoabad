@@ -46,35 +46,35 @@ export default function OSSaludDashboard() {
       {/* Resumen del día */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(150px,1fr))', gap: 10 }}>
         <a href="/os/salud/nutricion" style={{ ...card, textDecoration: 'none' }}>
-          <p style={{ fontSize: 10, color: 'var(--os-muted)', textTransform: 'uppercase', letterSpacing: '0.08em', margin: 0 }}>Hoy · calorías</p>
+          <p style={{ fontSize: 11, color: 'var(--os-muted)', textTransform: 'uppercase', letterSpacing: '0.08em', margin: 0 }}>Hoy · calorías</p>
           <p style={{ fontFamily: 'var(--os-font-mono)', fontSize: 22, fontWeight: 700, color: 'var(--os-text)', margin: '4px 0 0' }}>
             {macros ? Math.round(macros.kcal) : '—'}<span style={{ fontSize: 12, color: 'var(--os-muted)' }}> kcal</span>
           </p>
-          {macros && <p style={{ fontSize: 11, fontFamily: 'var(--os-font-mono)', color: 'var(--os-muted)', margin: '2px 0 0' }}>P{Math.round(macros.proteina_g)} C{Math.round(macros.carbos_g)} G{Math.round(macros.grasa_g)}</p>}
+          {macros && <p style={{ fontSize: 'var(--os-text-xs)', fontFamily: 'var(--os-font-mono)', color: 'var(--os-muted)', margin: '2px 0 0' }}>P{Math.round(macros.proteina_g)} C{Math.round(macros.carbos_g)} G{Math.round(macros.grasa_g)}</p>}
         </a>
 
         <a href="/os/salud/ayuno" style={{ ...card, textDecoration: 'none' }}>
-          <p style={{ fontSize: 10, color: 'var(--os-muted)', textTransform: 'uppercase', letterSpacing: '0.08em', margin: 0 }}>Ayuno</p>
+          <p style={{ fontSize: 11, color: 'var(--os-muted)', textTransform: 'uppercase', letterSpacing: '0.08em', margin: 0 }}>Ayuno</p>
           {ayuno ? (
             <>
               <p style={{ fontFamily: 'var(--os-font-mono)', fontSize: 22, fontWeight: 700, color: 'var(--os-accent-light)', margin: '4px 0 0' }}>{formatearDuracion(horasAyuno)}</p>
-              <p style={{ fontSize: 11, color: 'var(--os-muted)', margin: '2px 0 0' }}>{faseActual(horasAyuno).nombre}</p>
+              <p style={{ fontSize: 'var(--os-text-xs)', color: 'var(--os-muted)', margin: '2px 0 0' }}>{faseActual(horasAyuno).nombre}</p>
             </>
           ) : <p style={{ fontFamily: 'var(--os-font-mono)', fontSize: 16, color: 'var(--os-muted)', margin: '4px 0 0' }}>Sin ayuno</p>}
         </a>
 
         <a href="/os/salud/entrenamiento" style={{ ...card, textDecoration: 'none' }}>
-          <p style={{ fontSize: 10, color: 'var(--os-muted)', textTransform: 'uppercase', letterSpacing: '0.08em', margin: 0 }}>Última sesión</p>
+          <p style={{ fontSize: 11, color: 'var(--os-muted)', textTransform: 'uppercase', letterSpacing: '0.08em', margin: 0 }}>Última sesión</p>
           {sesion ? (
             <>
               <p style={{ fontSize: 15, fontWeight: 600, color: 'var(--os-text)', margin: '4px 0 0', textTransform: 'capitalize' }}>{sesion.tipo}</p>
-              <p style={{ fontSize: 11, fontFamily: 'var(--os-font-mono)', color: 'var(--os-muted)', margin: '2px 0 0' }}>{sesion.fecha}</p>
+              <p style={{ fontSize: 'var(--os-text-xs)', fontFamily: 'var(--os-font-mono)', color: 'var(--os-muted)', margin: '2px 0 0' }}>{sesion.fecha}</p>
             </>
           ) : <p style={{ fontSize: 14, color: 'var(--os-muted)', margin: '4px 0 0' }}>Ninguna</p>}
         </a>
 
         <a href="/os/salud/cuerpo" style={{ ...card, textDecoration: 'none' }}>
-          <p style={{ fontSize: 10, color: 'var(--os-muted)', textTransform: 'uppercase', letterSpacing: '0.08em', margin: 0 }}>Último peso</p>
+          <p style={{ fontSize: 11, color: 'var(--os-muted)', textTransform: 'uppercase', letterSpacing: '0.08em', margin: 0 }}>Último peso</p>
           {peso?.peso_kg != null ? (
             <p style={{ fontFamily: 'var(--os-font-mono)', fontSize: 22, fontWeight: 700, color: 'var(--os-champagne)', margin: '4px 0 0' }}>{peso.peso_kg}<span style={{ fontSize: 12, color: 'var(--os-muted)' }}> kg</span></p>
           ) : <p style={{ fontSize: 14, color: 'var(--os-muted)', margin: '4px 0 0' }}>Sin registro</p>}
@@ -87,7 +87,7 @@ export default function OSSaludDashboard() {
           <a key={s.href} href={s.href} className="os-card-interactive" style={{ ...card, textDecoration: 'none', display: 'flex', flexDirection: 'column', gap: 6 }}>
             <span className="material-symbols-outlined" style={{ fontSize: 24, color: 'var(--os-accent-light)' }}>{s.icon}</span>
             <span style={{ fontSize: 14, fontWeight: 700, color: 'var(--os-text)' }}>{s.label}</span>
-            <span style={{ fontSize: 11, color: 'var(--os-muted)' }}>{s.desc}</span>
+            <span style={{ fontSize: 'var(--os-text-xs)', color: 'var(--os-muted)' }}>{s.desc}</span>
           </a>
         ))}
       </div>

@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
+import { Button, Spinner, EmptyState } from '../ui';
 import { progressIndex, e1rmEpley, promedioMovil, type SetAnalytics } from '../../../lib/salud/progresion';
 
 interface SetRow extends SetAnalytics { fecha: string }
@@ -27,7 +28,7 @@ function LineChart({ series, height = 140, colores }: {
   series: { nombre: string; puntos: { x: string; y: number }[] }[]; height?: number; colores: string[];
 }) {
   const todos = series.flatMap((s) => s.puntos);
-  if (!todos.length) return <p style={{ fontSize: 12, color: 'var(--os-muted)' }}>Sin datos aún.</p>;
+  if (!todos.length) return <EmptyState icon="show_chart" title="Sin datos aún" text="Registra sesiones para ver esta gráfica." />;
   const xs = Array.from(new Set(todos.map((p) => p.x))).sort();
   const maxY = Math.max(...todos.map((p) => p.y), 1);
   const minY = Math.min(...todos.map((p) => p.y), 0);
@@ -54,17 +55,17 @@ function LineChart({ series, height = 140, colores }: {
 
 // ── Gráfica de barras SVG ─────────────────────────────────────────────────────
 function BarChart({ datos, color = 'var(--os-accent)' }: { datos: { label: string; valor: number }[]; color?: string }) {
-  if (!datos.length) return <p style={{ fontSize: 12, color: 'var(--os-muted)' }}>Sin datos aún.</p>;
+  if (!datos.length) return <EmptyState icon="bar_chart" title="Sin datos aún" text="Registra sesiones para ver esta gráfica." />;
   const max = Math.max(...datos.map((d) => d.valor), 1);
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
       {datos.map((d) => (
         <div key={d.label} style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-          <span style={{ fontSize: 12, color: 'var(--os-text-2)', width: 90, flexShrink: 0, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{d.label}</span>
-          <div style={{ flex: 1, height: 16, background: 'rgba(232,234,240,0.06)', borderRadius: 4, overflow: 'hidden' }}>
+          <span style={{ fontSize: 'var(--os-text-xs)', color: 'var(--os-text-2)', width: 90, flexShrink: 0, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{d.label}</span>
+          <div style={{ flex: 1, height: 16, background: 'var(--os-fill-subtle)', borderRadius: 4, overflow: 'hidden' }}>
             <div style={{ height: '100%', width: `${(d.valor / max) * 100}%`, background: color, borderRadius: 4 }} />
           </div>
-          <span style={{ fontFamily: 'var(--os-font-mono)', fontSize: 11, color: 'var(--os-muted)', width: 56, textAlign: 'right' }}>{Math.round(d.valor)}</span>
+          <span style={{ fontFamily: 'var(--os-font-mono)', fontSize: 'var(--os-text-xs)', color: 'var(--os-muted)', width: 56, textAlign: 'right' }}>{Math.round(d.valor)}</span>
         </div>
       ))}
     </div>
@@ -125,21 +126,30 @@ export default function OSSaludProgreso() {
     Object.entries(analytics.volumenPorGrupo).map(([label, valor]) => ({ label, valor })).sort((a, b) => b.valor - a.valor),
   [analytics]);
 
-  const COLORES = ['#6B7AE8', '#3B4ED9', '#B5985A', '#8A6F3D'];
+  const COLORES = ['var(--os-accent-light)', 'var(--os-accent)', 'var(--os-champagne)', 'var(--os-bronze)'];
 
-  if (loading) return <p style={{ fontSize: 13, color: 'var(--os-muted)' }}>Cargando...</p>;
+  if (loading) return <Spinner />;
 
   const sinDatos = !sets.length && !cuerpo.length;
-  if (sinDatos) return <p style={{ fontSize: 13, color: 'var(--os-muted)' }}>Aún no hay datos de entrenamiento ni de peso. Registra sesiones y mediciones para ver tu progreso.</p>;
+  if (sinDatos) {
+    return (
+      <EmptyState
+        icon="trending_up"
+        title="Aún no hay datos"
+        text="Registra sesiones de entrenamiento y mediciones corporales para ver tu progreso."
+        action={<Button size="sm" onClick={() => { window.location.href = '/os/salud/entrenamiento'; }}>Ir a Entrenamiento</Button>}
+      />
+    );
+  }
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
       {/* Alertas de balance */}
       {analytics.alertas.length > 0 && (
-        <div style={{ ...card, borderColor: 'rgba(255,180,171,0.25)', background: 'linear-gradient(180deg,rgba(147,0,10,0.08),var(--os-surface-2))' }}>
+        <div style={{ ...card, borderColor: 'color-mix(in srgb, var(--os-warn) 30%, transparent)', background: 'color-mix(in srgb, var(--os-warn) 8%, var(--os-surface-2))' }}>
           <p style={{ ...titulo, color: 'var(--os-warn)', margin: '0 0 8px' }}>Balance muscular</p>
           <ul style={{ margin: 0, paddingLeft: 18 }}>
-            {analytics.alertas.map((a, i) => <li key={i} style={{ fontSize: 12, color: 'var(--os-text-2)', marginBottom: 3 }}>{a}</li>)}
+            {analytics.alertas.map((a, i) => <li key={i} style={{ fontSize: 'var(--os-text-xs)', color: 'var(--os-text-2)', marginBottom: 3 }}>{a}</li>)}
           </ul>
         </div>
       )}
@@ -166,7 +176,7 @@ export default function OSSaludProgreso() {
         <LineChart series={e1rmSeries.map((e) => ({ nombre: e.nombre, puntos: e.puntos }))} colores={COLORES} />
         <div style={{ display: 'flex', flexWrap: 'wrap', gap: 10, marginTop: 10 }}>
           {e1rmSeries.map((e, i) => (
-            <span key={e.nombre} style={{ display: 'inline-flex', alignItems: 'center', gap: 5, fontSize: 11, color: 'var(--os-text-2)' }}>
+            <span key={e.nombre} style={{ display: 'inline-flex', alignItems: 'center', gap: 5, fontSize: 'var(--os-text-xs)', color: 'var(--os-text-2)' }}>
               <span style={{ width: 10, height: 3, background: COLORES[i % COLORES.length], borderRadius: 2 }} />{e.nombre}
             </span>
           ))}
@@ -182,7 +192,7 @@ export default function OSSaludProgreso() {
       {/* Balance por grupo */}
       <div style={card}>
         <p style={titulo}>Volumen por grupo muscular</p>
-        <BarChart datos={grupos} color="#6B7AE8" />
+        <BarChart datos={grupos} color="var(--os-accent-light)" />
       </div>
 
       {/* Peso corporal */}
@@ -191,7 +201,7 @@ export default function OSSaludProgreso() {
         <LineChart series={[
           { nombre: 'Peso', puntos: pesoSeries.crudo },
           { nombre: 'Media 7d', puntos: pesoSeries.media },
-        ]} colores={['rgba(107,122,232,0.4)', '#B5985A']} />
+        ]} colores={['rgba(107,122,232,0.4)', 'var(--os-champagne)']} />
       </div>
     </div>
   );

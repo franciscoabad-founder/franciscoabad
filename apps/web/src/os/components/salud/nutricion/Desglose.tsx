@@ -19,8 +19,8 @@ export default function Desglose({ comidas }: { comidas: Comida[] }) {
       <button
         onClick={() => setAbierto((v) => !v)}
         style={{
-          background: 'none', border: 'none', color: 'var(--os-accent-light)', fontSize: 11.5,
-          fontFamily: 'var(--os-font-display)', fontWeight: 700, cursor: 'pointer', padding: '4px 0',
+          background: 'none', border: 'none', color: 'var(--os-accent-light)', fontSize: 'var(--os-text-xs)',
+          fontFamily: 'var(--os-font-display)', fontWeight: 700, cursor: 'pointer', padding: '4px 0', minHeight: 36,
           display: 'flex', alignItems: 'center', gap: 3,
         }}
       >
@@ -29,14 +29,14 @@ export default function Desglose({ comidas }: { comidas: Comida[] }) {
       </button>
       {abierto && (
         filas.length === 0 ? (
-          <p style={{ fontSize: 12, color: 'var(--os-muted)', margin: '4px 0 0' }}>Sin micronutrientes registrados.</p>
+          <p style={{ fontSize: 'var(--os-text-xs)', color: 'var(--os-muted)', margin: '4px 0 0' }}>Sin micronutrientes registrados.</p>
         ) : (
           <table style={{ width: '100%', borderCollapse: 'collapse', marginTop: 4 }}>
             <tbody>
               {filas.map((f) => (
                 <tr key={f.col as string} style={{ borderBottom: '1px solid var(--os-line-soft)' }}>
-                  <td style={{ padding: '5px 0', fontSize: 12, color: 'var(--os-text-2)' }}>{f.label}</td>
-                  <td style={{ padding: '5px 0', fontSize: 12, fontFamily: 'var(--os-font-mono)', color: 'var(--os-text)', textAlign: 'right' }}>
+                  <td style={{ padding: '5px 0', fontSize: 'var(--os-text-xs)', color: 'var(--os-text-2)' }}>{f.label}</td>
+                  <td style={{ padding: '5px 0', fontSize: 'var(--os-text-xs)', fontFamily: 'var(--os-font-mono)', color: 'var(--os-text)', textAlign: 'right' }}>
                     {f.valor}{f.unidad}
                   </td>
                 </tr>

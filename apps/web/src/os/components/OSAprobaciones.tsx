@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { EmptyState, Spinner } from './ui';
 
 interface Aprobacion {
   id: string;
@@ -80,17 +81,25 @@ export default function OSAprobaciones() {
         <div className="os-kpi">
           <p className="os-kpi-label">Pendientes</p>
           <p className="os-kpi-value">{pendientes}</p>
-          <span style={{ fontSize: 10, color: 'var(--os-muted)' }}>Requieren decision</span>
+          <span style={{ fontSize: 11, color: 'var(--os-muted)' }}>Requieren decision</span>
         </div>
         <div className="os-kpi">
           <p className="os-kpi-label">Total</p>
           <p className="os-kpi-value">{items.length}</p>
-          <span style={{ fontSize: 10, color: 'var(--os-muted)' }}>En bandeja</span>
+          <span style={{ fontSize: 11, color: 'var(--os-muted)' }}>En bandeja</span>
         </div>
       </div>
 
       {loading ? (
-        <p style={{ color: 'var(--os-muted)', fontSize: 13, margin: 0 }}>Cargando...</p>
+        <Spinner label="Cargando aprobaciones..." />
+      ) : items.length === 0 ? (
+        <div className="os-card-2">
+          <EmptyState
+            icon="approval_delegation"
+            title="Nada por aprobar"
+            text="Cuando Hermes o n8n necesiten una decision tuya, aparecera aqui."
+          />
+        </div>
       ) : (
         <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
           {items.map((item) => (

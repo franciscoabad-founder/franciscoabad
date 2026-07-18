@@ -43,7 +43,7 @@ export default function TargetsEditor({ valores, onGuardado, onCerrar }: Props) 
   return (
     <div style={{ ...card2, display: 'flex', flexDirection: 'column', gap: 10 }}>
       <p style={eyebrow}>Tus metas diarias</p>
-      {error && <div style={{ color: 'var(--os-error)', fontSize: 12.5 }}>{error}</div>}
+      {error && <div style={{ color: 'var(--os-error)', fontSize: 'var(--os-text-sm)' }}>{error}</div>}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 8 }}>
         <label style={{ display: 'flex', flexDirection: 'column', gap: 4, fontSize: 11, color: 'var(--os-muted)' }}>
           Calorias (kcal)

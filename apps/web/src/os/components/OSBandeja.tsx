@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { Button, EmptyState, Spinner, ToastProvider, useToast } from './ui';
 
 // Vista Bandeja ("por revisar"): fetch en vivo desde /api/os/bandeja.
 
@@ -29,13 +30,16 @@ const inputStyle: React.CSSProperties = {
   border: '1px solid var(--os-line)',
   borderRadius: 6,
   padding: '6px 10px',
-  fontSize: 12,
+  minHeight: 36,
+  fontSize: 'var(--os-text-sm)',
   color: 'var(--os-text)',
   fontFamily: 'var(--os-font-body)',
   outline: 'none',
+  boxSizing: 'border-box',
 };
 
-export default function OSBandeja() {
+function OSBandejaInner() {
+  const toast = useToast();
   const [items, setItems] = useState<ItemBandeja[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -74,7 +78,7 @@ export default function OSBandeja() {
       if (!res.ok) throw new Error(data.error || String(res.status));
       await load();
     } catch (err) {
-      window.alert('Error: ' + (err instanceof Error ? err.message : String(err)));
+      toast.show('Error: ' + (err instanceof Error ? err.message : String(err)), 'error');
     }
   }
 
@@ -85,7 +89,7 @@ export default function OSBandeja() {
       if (!res.ok) throw new Error(String(res.status));
       await load();
     } catch (err) {
-      window.alert('Error: ' + (err instanceof Error ? err.message : String(err)));
+      toast.show('Error: ' + (err instanceof Error ? err.message : String(err)), 'error');
     }
   }
 
@@ -109,20 +113,21 @@ export default function OSBandeja() {
       setNTitulo(''); setNUrl(''); setNDescripcion('');
       setCreando(false);
       await load();
+      toast.show('Guardado en la bandeja.', 'ok');
     } catch (err) {
-      window.alert('Error: ' + (err instanceof Error ? err.message : String(err)));
+      toast.show('Error: ' + (err instanceof Error ? err.message : String(err)), 'error');
     } finally {
       setBusy(false);
     }
   }
 
   if (loading) {
-    return <div className="os-card-2" style={{ padding: '1rem', color: 'var(--os-muted)', fontSize: 13 }}>Cargando bandeja...</div>;
+    return <Spinner label="Cargando bandeja..." />;
   }
   if (error && items.length === 0) {
     return (
       <div className="os-card-2" style={{ padding: '1rem' }}>
-        <p style={{ color: 'var(--os-error)', fontSize: 13, margin: 0 }}>No se pudo cargar la bandeja: {error}</p>
+        <p style={{ color: 'var(--os-error)', fontSize: 'var(--os-text-sm)', margin: 0 }}>No se pudo cargar la bandeja: {error}</p>
       </div>
     );
   }
@@ -132,19 +137,19 @@ export default function OSBandeja() {
 
   return (
     <div>
-      {error && <p style={{ color: 'var(--os-error)', fontSize: 12, marginBottom: 10 }}>{error}</p>}
+      {error && <p style={{ color: 'var(--os-error)', fontSize: 'var(--os-text-xs)', marginBottom: 10 }}>{error}</p>}
 
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1rem', flexWrap: 'wrap', gap: 8 }}>
-        <span className="os-num" style={{ fontSize: 13 }}>
+        <span className="os-num" style={{ fontSize: 'var(--os-text-sm)' }}>
           {pendientes} pendiente{pendientes !== 1 ? 's' : ''}
         </span>
         <div style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
-          <button onClick={() => setShowLeidos((v) => !v)} className="os-btn-ghost" style={{ borderRadius: 6, padding: '4px 10px', fontSize: 11, fontFamily: 'var(--os-font-display)', fontWeight: 700, cursor: 'pointer' }}>
+          <Button size="sm" variant="ghost" onClick={() => setShowLeidos((v) => !v)}>
             {showLeidos ? 'Ocultar leidos' : 'Ver todos'}
-          </button>
-          <button onClick={() => setCreando((v) => !v)} className="os-btn" style={{ padding: '5px 12px', fontSize: 11 }}>
+          </Button>
+          <Button size="sm" variant={creando ? 'ghost' : 'primary'} onClick={() => setCreando((v) => !v)}>
             {creando ? 'Cancelar' : '+ Agregar'}
-          </button>
+          </Button>
         </div>
       </div>
 
@@ -152,18 +157,23 @@ export default function OSBandeja() {
         <form onSubmit={agregar} className="os-card-2" style={{ display: 'flex', gap: 8, flexWrap: 'wrap', alignItems: 'center', marginBottom: '1rem' }}>
           <input value={nTitulo} onChange={(e) => setNTitulo(e.target.value)} placeholder="Titulo *" required style={{ ...inputStyle, flex: 2, minWidth: 160 }} />
           <input value={nUrl} onChange={(e) => setNUrl(e.target.value)} placeholder="URL (opcional)" style={{ ...inputStyle, flex: 1, minWidth: 140 }} />
-          <select value={nCategoria} onChange={(e) => setNCategoria(e.target.value)} style={{ ...inputStyle, width: 130 }}>
+          <select value={nCategoria} onChange={(e) => setNCategoria(e.target.value)} style={{ ...inputStyle, width: 130, cursor: 'pointer' }}>
             {CATEGORIAS.map((c) => <option key={c} value={c}>{CAT_LABEL[c]}</option>)}
           </select>
           <input value={nDescripcion} onChange={(e) => setNDescripcion(e.target.value)} placeholder="Descripcion" style={{ ...inputStyle, flexBasis: '100%' }} />
-          <button type="submit" className="os-btn" disabled={busy}>{busy ? '...' : 'Guardar'}</button>
+          <Button type="submit" size="sm" disabled={busy}>{busy ? '...' : 'Guardar'}</Button>
         </form>
       )}
 
       <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
         {visibles.length === 0 && (
-          <div className="os-card-2" style={{ padding: '1.75rem', textAlign: 'center', color: 'var(--os-muted)', fontSize: 12 }}>
-            Sin pendientes.
+          <div className="os-card-2">
+            <EmptyState
+              icon="inbox"
+              title="Nada por revisar"
+              text={showLeidos ? 'La bandeja esta vacia. Captura articulos, links y decisiones para despues.' : 'Sin pendientes. Todo lo capturado ya esta leido.'}
+              action={!creando ? <Button size="sm" onClick={() => setCreando(true)}>Capturar algo</Button> : undefined}
+            />
           </div>
         )}
         {visibles.map((item) => (
@@ -175,7 +185,7 @@ export default function OSBandeja() {
                     {CAT_LABEL[item.categoria] ?? item.categoria}
                   </span>
                 </div>
-                <p style={{ margin: '0 0 3px', fontSize: 14, color: 'var(--os-text)', fontWeight: 500 }}>
+                <p style={{ margin: '0 0 3px', fontSize: 'var(--os-text-base)', color: 'var(--os-text)', fontWeight: 500 }}>
                   {item.url ? (
                     <a href={item.url} target="_blank" rel="noopener noreferrer" style={{ color: 'var(--os-text)', textDecoration: 'none' }}>
                       {item.titulo}
@@ -183,7 +193,7 @@ export default function OSBandeja() {
                   ) : item.titulo}
                 </p>
                 {item.descripcion && (
-                  <p style={{ margin: 0, fontSize: 13, color: 'var(--os-muted)', lineHeight: 1.4 }}>{item.descripcion}</p>
+                  <p style={{ margin: 0, fontSize: 'var(--os-text-sm)', color: 'var(--os-muted)', lineHeight: 1.4 }}>{item.descripcion}</p>
                 )}
               </div>
               <div style={{ display: 'flex', gap: 6, flexShrink: 0 }}>
@@ -191,23 +201,23 @@ export default function OSBandeja() {
                   onClick={() => toggleLeido(item)}
                   title={item.leido ? 'Marcar pendiente' : 'Marcar leido'}
                   style={{
-                    width: 28, height: 28, borderRadius: 6,
-                    background: item.leido ? 'rgba(59,78,217,0.15)' : 'var(--os-fill-subtle)',
+                    width: 36, height: 36, borderRadius: 6,
+                    background: item.leido ? 'rgba(181,152,90,0.14)' : 'var(--os-fill-subtle)',
                     border: '1px solid var(--os-line)',
                     cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center',
-                    color: item.leido ? 'var(--os-accent-light)' : 'var(--os-muted)',
+                    color: item.leido ? 'var(--os-champagne)' : 'var(--os-muted)',
                   }}
                 >
-                  <span className="material-symbols-outlined" style={{ fontSize: 15 }}>
+                  <span className="material-symbols-outlined" style={{ fontSize: 16 }}>
                     {item.leido ? 'check' : 'radio_button_unchecked'}
                   </span>
                 </button>
                 <button
                   onClick={() => eliminar(item.id)}
                   title="Eliminar"
-                  style={{ width: 28, height: 28, borderRadius: 6, background: 'none', border: '1px solid var(--os-line)', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--os-muted)' }}
+                  style={{ width: 36, height: 36, borderRadius: 6, background: 'none', border: '1px solid var(--os-line)', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--os-muted)' }}
                 >
-                  <span className="material-symbols-outlined" style={{ fontSize: 15 }}>close</span>
+                  <span className="material-symbols-outlined" style={{ fontSize: 16 }}>close</span>
                 </button>
               </div>
             </div>
@@ -215,5 +225,13 @@ export default function OSBandeja() {
         ))}
       </div>
     </div>
+  );
+}
+
+export default function OSBandeja() {
+  return (
+    <ToastProvider>
+      <OSBandejaInner />
+    </ToastProvider>
   );
 }
