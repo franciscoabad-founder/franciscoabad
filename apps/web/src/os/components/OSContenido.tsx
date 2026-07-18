@@ -12,6 +12,8 @@ interface Idea {
   status: string;
   plataformas: string[];
   fecha_target: string | null;
+  url_referencia?: string | null;
+  transcript?: string | null;
 }
 
 const STATUS_ORDEN = ['idea', 'en-produccion', 'publicado', 'archivado'];
@@ -67,7 +69,18 @@ function OSContenidoInner() {
   const [nIdeaMadre, setNIdeaMadre] = useState('');
   const [nPlataformas, setNPlataformas] = useState('');
   const [nFecha, setNFecha] = useState('');
+  const [nUrl, setNUrl] = useState('');
   const [busy, setBusy] = useState(false);
+  const [filtroStatus, setFiltroStatus] = useState('todos');
+  const [transcriptsAbiertos, setTranscriptsAbiertos] = useState<Set<string>>(new Set());
+
+  function toggleTranscript(id: string) {
+    setTranscriptsAbiertos((prev) => {
+      const s = new Set(prev);
+      if (s.has(id)) s.delete(id); else s.add(id);
+      return s;
+    });
+  }
 
   async function load() {
     try {
@@ -138,11 +151,12 @@ function OSContenidoInner() {
           status: 'idea',
           plataformas: listaDesdeTexto(nPlataformas),
           fecha_target: nFecha || null,
+          url_referencia: nUrl.trim() || undefined,
         }),
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || String(res.status));
-      setNTitulo(''); setNIdeaMadre(''); setNPlataformas(''); setNFecha('');
+      setNTitulo(''); setNIdeaMadre(''); setNPlataformas(''); setNFecha(''); setNUrl('');
       setCreando(false);
       await load();
     } catch (err) {
@@ -154,8 +168,10 @@ function OSContenidoInner() {
 
   const enProduccion = useMemo(() => ideas.filter((i) => i.status === 'en-produccion').length, [ideas]);
   const ordenadas = useMemo(
-    () => [...ideas].sort((a, b) => STATUS_ORDEN.indexOf(a.status) - STATUS_ORDEN.indexOf(b.status)),
-    [ideas],
+    () => [...ideas]
+      .filter((i) => filtroStatus === 'todos' || i.status === filtroStatus)
+      .sort((a, b) => STATUS_ORDEN.indexOf(a.status) - STATUS_ORDEN.indexOf(b.status)),
+    [ideas, filtroStatus],
   );
 
   if (loading) {
@@ -173,7 +189,19 @@ function OSContenidoInner() {
     <div>
       {error && <p style={{ color: 'var(--os-error)', fontSize: 12, marginBottom: 10 }}>{error}</p>}
 
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: 10, marginBottom: '1rem', flexWrap: 'wrap' }}>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 10, marginBottom: '1rem', flexWrap: 'wrap' }}>
+        <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
+          {['todos', ...STATUS_ORDEN].map((s) => (
+            <button
+              key={s}
+              onClick={() => setFiltroStatus(s)}
+              className={filtroStatus === s ? 'os-pill os-pill-accent' : 'os-pill'}
+              style={{ cursor: 'pointer', border: filtroStatus === s ? 'none' : '1px solid var(--os-line)', background: filtroStatus === s ? undefined : 'transparent', color: filtroStatus === s ? undefined : 'var(--os-muted)', minHeight: 30 }}
+            >
+              {s === 'todos' ? 'Todos' : STATUS_LABEL[s]}
+            </button>
+          ))}
+        </div>
         <span className="os-pill os-pill-accent">
           <span className="material-symbols-outlined" style={{ fontSize: 13 }}>edit_note</span>
           <span className="os-num" style={{ color: 'inherit' }}>{enProduccion}</span> en produccion
@@ -191,6 +219,7 @@ function OSContenidoInner() {
           </select>
           <input type="date" value={nFecha} onChange={(e) => setNFecha(e.target.value)} style={inputStyle} />
           <input value={nPlataformas} onChange={(e) => setNPlataformas(e.target.value)} placeholder="Plataformas (LinkedIn, Blog...)" style={{ ...inputStyle, flex: 1, minWidth: 160 }} />
+          <input value={nUrl} onChange={(e) => setNUrl(e.target.value)} placeholder="Link del video de referencia (opcional)" type="url" style={{ ...inputStyle, flexBasis: '100%' }} />
           <textarea value={nIdeaMadre} onChange={(e) => setNIdeaMadre(e.target.value)} placeholder="Idea madre" rows={2} style={{ ...inputStyle, flexBasis: '100%', resize: 'vertical', fontFamily: 'var(--os-font-body)' }} />
           <Button type="submit" size="sm" disabled={busy}>{busy ? '...' : 'Guardar'}</Button>
         </form>
@@ -233,6 +262,30 @@ function OSContenidoInner() {
             <h3 style={{ fontFamily: 'var(--os-font-display)', fontSize: 14, fontWeight: 700, color: 'var(--os-text)', margin: '0 0 0.5rem', lineHeight: 1.3 }}>{idea.titulo}</h3>
             {idea.idea_madre && (
               <p style={{ fontSize: 13, color: 'var(--os-text-2)', margin: '0 0 0.875rem', lineHeight: 1.45 }}>{idea.idea_madre}</p>
+            )}
+
+            {idea.url_referencia && (
+              <a href={idea.url_referencia} target="_blank" rel="noopener noreferrer"
+                style={{ display: 'inline-flex', alignItems: 'center', gap: 5, fontSize: 12, color: 'var(--os-accent-light)', textDecoration: 'none', marginBottom: '0.625rem', minHeight: 30 }}>
+                <span className="material-symbols-outlined" style={{ fontSize: 14 }}>open_in_new</span>
+                Ver video original
+              </a>
+            )}
+            {idea.transcript && (
+              <div style={{ marginBottom: '0.75rem' }}>
+                <button onClick={() => toggleTranscript(idea.id)}
+                  style={{ display: 'inline-flex', alignItems: 'center', gap: 5, background: 'none', border: 'none', cursor: 'pointer', padding: 0, color: 'var(--os-muted)', fontSize: 12, fontFamily: 'var(--os-font-display)', fontWeight: 600, minHeight: 30 }}>
+                  <span className="material-symbols-outlined" style={{ fontSize: 15 }}>
+                    {transcriptsAbiertos.has(idea.id) ? 'expand_less' : 'expand_more'}
+                  </span>
+                  {transcriptsAbiertos.has(idea.id) ? 'Ocultar guion' : 'Ver guion transcrito'}
+                </button>
+                {transcriptsAbiertos.has(idea.id) && (
+                  <div style={{ marginTop: 6, padding: '0.75rem 0.875rem', background: 'var(--os-fill-subtle)', border: '1px solid var(--os-line-soft)', borderRadius: 8, maxHeight: 260, overflowY: 'auto' }}>
+                    <p style={{ fontSize: 13, color: 'var(--os-text-2)', margin: 0, lineHeight: 1.55, whiteSpace: 'pre-wrap' }}>{idea.transcript}</p>
+                  </div>
+                )}
+              </div>
             )}
 
             <button onClick={() => editarRepurposing(idea)} title="Editar repurposing" style={{ display: 'block', width: '100%', textAlign: 'left', background: 'none', border: 'none', cursor: 'pointer', padding: 0 }}>
