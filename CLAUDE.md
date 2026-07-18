@@ -83,6 +83,18 @@ Tipos: `feat`, `fix`, `docs`, `refactor`, `chore`
 - `RESEND_API_KEY` — API key de Resend
 - `KIT_DOWNLOAD_URL` — URL pública del ZIP en Supabase Storage
 
+## OS interno: librería UI (jul 2026, rediseño)
+
+- Componentes compartidos en `apps/web/src/os/components/ui/` (PageHeader, Button, Card,
+  EmptyState, Spinner, Field*, Tabs, Sheet, ToastProvider/useToast, useResource). Ver su README.
+  Toda pantalla nueva del OS los usa; no reinventar headers, sheets ni toasts.
+- Tokens: pisos tipográficos `--os-text-xs` 12px / `--os-text-sm` 13px (nada bajo 11px en labels,
+  cuerpo mínimo 13px) y táctil `--os-tap-min`/`--os-tap-coarse` (36px desktop, 44px móvil).
+- Hecho/completado/leído = Champagne SIEMPRE. Teal `--m-ok` SOLO día perfecto/racha cumplida
+  (canon conductual). Danger `#D4537E`. Cero verde en todo lo demás.
+- Navegación: bottom-nav móvil deriva de navGroups (Hoy, Sistema, Tareas, Agenda, Salud);
+  ids `#os-pregunta`/`#os-capture` reemplazados por `#os-quick`.
+
 ## Logos y brand — Ultramarine v5
 
 Archivos en `apps/web/public/`:

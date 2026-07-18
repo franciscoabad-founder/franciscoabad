@@ -64,6 +64,19 @@ CRM, Redes, Journeys.
   Danger suave `#D4537E`. `--os-ok` está mapeado a champagne, no a verde.
 - Fuente redondeada para titulares del OS: Nunito (`var(--os-font-rounded)`).
 
+### Librería UI del OS (jul 2026, rediseño)
+
+- Componentes compartidos en `apps/web/src/os/components/ui/` (PageHeader, Button, Card,
+  EmptyState, Spinner, Field*, Tabs, Sheet, ToastProvider/useToast, useResource). Ver su README.
+  Toda pantalla nueva del OS los usa; no reinventar headers, sheets ni toasts.
+- Tokens: pisos tipográficos `--os-text-xs` 12px / `--os-text-sm` 13px (nada bajo 11px en labels,
+  cuerpo mínimo 13px) y táctil `--os-tap-min`/`--os-tap-coarse` (36px desktop, 44px móvil).
+- Hecho/completado/leído = Champagne SIEMPRE. Teal `--m-ok` SOLO día perfecto/racha cumplida
+  (canon conductual). Danger `#D4537E`. Cero verde en todo lo demás.
+- finanzas/crm/agenda siguen siendo vanilla JS pero ya tokenizadas (funcionan en claro y oscuro).
+- Navegación: el bottom-nav móvil deriva de navGroups (primarios: Hoy, Sistema, Tareas, Agenda,
+  Salud); los ids `#os-pregunta` y `#os-capture` fueron reemplazados por `#os-quick`.
+
 ### Molde A (patrón de datos y endpoints del OS)
 
 - Endpoints en `apps/web/src/pages/api/os/**` con `prerender = false`, autorización por
