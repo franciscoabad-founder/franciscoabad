@@ -161,7 +161,7 @@
 }
 [data-modulo="habitos"] .m-banda-alerta p {
   font-family: var(--m-font-rounded);
-  font-size: 12px;
+  font-size: 13px;
   font-weight: 600;
   letter-spacing: normal;
   color: var(--m-warn-fg);
@@ -267,7 +267,7 @@
 /* ── Feedback de registro ── */
 [data-modulo="habitos"] .m-terminal-line {
   font-family: var(--m-font-rounded);
-  font-size: 12px;
+  font-size: 13px;
   font-weight: 600;
   letter-spacing: normal;
   color: var(--m-champagne);

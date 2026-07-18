@@ -40,7 +40,7 @@ const PRIORIDAD_HINT: Record<number, string> = {
   4: 'Cero atencion a proposito.',
 };
 const PRIORIDAD_COLOR: Record<number, string> = {
-  0: 'var(--os-danger, #D4537E)',
+  0: 'var(--os-error)',
   1: 'var(--os-champagne)',
   2: 'var(--os-accent-light)',
   3: 'var(--os-text-2)',
@@ -308,7 +308,7 @@ function OSProyectosInner() {
             )}
 
             {!modalLoading && modalError && (
-              <p style={{ color: 'var(--os-danger, #D4537E)', fontSize: 13 }}>Error: {modalError}</p>
+              <p style={{ color: 'var(--os-error)', fontSize: 13 }}>Error: {modalError}</p>
             )}
 
             {!modalLoading && !modalError && modalPaginas.length === 0 && (

@@ -112,10 +112,10 @@ export default function OSSemana() {
           {data.avisos.map((a, i) => (
             <div key={i} style={{
               ...card2,
-              borderLeft: `3px solid ${a.nivel === 'alerta' ? 'var(--os-danger, #D4537E)' : 'var(--os-muted)'}`,
+              borderLeft: `3px solid ${a.nivel === 'alerta' ? 'var(--os-error)' : 'var(--os-muted)'}`,
               display: 'flex', gap: 10, alignItems: 'flex-start',
             }}>
-              <span className="material-symbols-outlined" style={{ fontSize: 18, color: a.nivel === 'alerta' ? 'var(--os-danger, #D4537E)' : 'var(--os-muted)', flexShrink: 0 }}>
+              <span className="material-symbols-outlined" style={{ fontSize: 18, color: a.nivel === 'alerta' ? 'var(--os-error)' : 'var(--os-muted)', flexShrink: 0 }}>
                 {a.nivel === 'alerta' ? 'priority_high' : 'info'}
               </span>
               <p style={{ margin: 0, fontSize: 12.5, color: 'var(--os-text-2)', lineHeight: 1.5 }}>{a.mensaje}</p>

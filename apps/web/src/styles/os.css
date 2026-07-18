@@ -31,7 +31,8 @@
   --os-bronze:       #8A6F3D;
   --os-ok:           #8A6F3D;   /* champagne = hecho/positivo (sin verde) */
   --os-warn:         #B45309;
-  --os-error:        #B3261E;
+  /* Danger suave canonico (alineado con os-conductual y Cortex) */
+  --os-error:        #D4537E;
 
   /* ── Texto ── */
   --os-text:         #2D3748;
@@ -95,12 +96,14 @@
   --os-champagne:    #B5985A;
   --os-bronze:       #8A6F3D;
   --os-ok:           #B5985A;
-  --os-warn:         #ffb4ab;
-  --os-error:        #F87171;
+  /* Warn se queda en familia ambar tambien en dark; rosados solo para error */
+  --os-warn:         #F0C070;
+  --os-error:        #E06C93;
 
   --os-text:         #E8EAF0;
   --os-text-2:       #C5C5D7;
-  --os-muted:        #6B7280;
+  /* AA sobre cards Royal #1A2B6B (el #6B7280 del light da 2.7:1 aqui) */
+  --os-muted:        #9AA3B8;
 
   --os-hover:        rgba(232, 234, 240, 0.09);
   --os-fill-subtle:  rgba(232, 234, 240, 0.05);
