@@ -310,3 +310,17 @@ Repo: `C:\DEV\franciscoabad`
 - `/apps/web/docs/` - contratos y planes (foto-comida, insights-coach, integraciones)
 - `/_design-system/` - design system Ultramarine v5 (no deployar, solo referencia local)
 - `/supabase/migrations/` - migraciones SQL
+
+
+## Reglas de escritura al brain (obligatorias, sin excepciones)
+
+1. Tags: SOLO de esta lista cerrada: braintech, cortex, taskr, rafik, arazza, codeis,
+   kronek, fonquito, flow, os, panchoatlas, gbrain, hermes, n8n, vps, marca, personal,
+   familia, salud, finanzas, contenido, gtm. En minusculas. PROHIBIDO crear un tag
+   nuevo; si un concepto lo amerita, es un wikilink a una pagina hub, no un tag.
+2. Toda pagina nueva lleva al menos un wikilink [[slug]] a una pagina existente
+   (el canon del proyecto o un hub). Cierra con "Relacionado: [[a]] [[b]]".
+3. Antes de crear: busca si ya existe una pagina del tema y actualizala. No dupliques.
+4. Slug kebab-case estable; notas con fecha llevan sufijo -YYYY-MM-DD; fechas absolutas
+   en el cuerpo; espanol sin em dashes.
+5. Si dudas del tag, usa solo el del proyecto. Menos tags es mejor que un tag inventado.
