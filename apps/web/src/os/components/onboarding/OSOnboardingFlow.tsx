@@ -548,34 +548,28 @@ export default function OSOnboardingFlow({ modulo, pasos, onFinish, onCompletar,
         </div>
       )}
 
-      <div style={{ flex: 1, overflowY: 'auto', padding: esConstruyendo ? 0 : '10px 20px 100px' }}>
+      {/* El CTA vive DENTRO del contenido, justo despues del paso: siempre visible
+          al final de lo que se muestra, nunca tapado por bottom-nav ni barra del navegador. */}
+      <div style={{ flex: 1, overflowY: 'auto', padding: esConstruyendo ? 0 : '10px 20px calc(32px + env(safe-area-inset-bottom, 0px))' }}>
         <div style={{ maxWidth: 440, width: '100%', margin: '0 auto', display: 'flex', flexDirection: 'column', gap: 16 }}>
           {renderPaso()}
           {error && <p style={{ color: 'var(--os-error)', fontSize: 12, margin: 0 }}>{error}</p>}
-        </div>
-      </div>
-
-      {!esConstruyendo && (
-        <div style={{
-          flexShrink: 0, padding: '14px 20px calc(16px + env(safe-area-inset-bottom, 0px))',
-          background: 'linear-gradient(to top, var(--os-bg) 65%, transparent)',
-        }}>
-          <div style={{ maxWidth: 440, margin: '0 auto' }}>
+          {!esConstruyendo && (
             <button
               type="button"
               className="os-btn"
               onClick={avanzar}
               disabled={!puedeAvanzar()}
               style={{
-                width: '100%', padding: '0.9rem 1rem', borderRadius: 999, fontSize: 14,
+                width: '100%', padding: '0.9rem 1rem', borderRadius: 999, fontSize: 14, marginTop: 8,
                 opacity: puedeAvanzar() ? 1 : 0.5, cursor: puedeAvanzar() ? 'pointer' : 'not-allowed',
               }}
             >
               {enviando ? 'Guardando…' : ctaLabel}
             </button>
-          </div>
+          )}
         </div>
-      )}
+      </div>
     </div>
   );
 }
