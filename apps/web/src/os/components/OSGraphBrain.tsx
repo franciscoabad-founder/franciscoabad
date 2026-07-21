@@ -32,13 +32,15 @@ interface RawData {
   };
 }
 
+// Paleta categorica por proyecto, derivada de la marca (ultra-light, champagne,
+// bronce y neutros). Sin morados ni verdes: fuera del canon Ultramarine v5.
 const GROUP_COLORS: Record<string, string> = {
   braintech: '#6B7AE8',
   codeis:    '#EF9F27',
   taskr:     '#FB923C',
   arazza:    '#B5985A',
   rafik:     '#FBBF24',
-  marca:     '#C084FC',
+  marca:     '#E8EAF0',
   sistema:   '#94A3B8',
   personal:  '#F87171',
   otros:     '#6B7280',

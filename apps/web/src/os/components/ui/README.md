@@ -55,5 +55,16 @@ toast.show('Fallo al guardar', 'error');
 ```
 
 ```tsx
+// Reemplaza window.confirm(). const { confirm, sheet } = useConfirm(); en el componente,
+// {sheet} una vez en el JSX (no requiere estar en la raiz de la isla).
+const { confirm, sheet } = useConfirm();
+async function eliminar(id: string) {
+  if (!(await confirm({ title: 'Eliminar tarea', text: 'Esta accion no se puede deshacer.', confirmLabel: 'Eliminar', danger: true }))) return;
+  // ...fetch DELETE...
+}
+// en el JSX: {sheet}
+```
+
+```tsx
 const { data, loading, error, reload, mutate } = useResource<Tarea[]>('/api/os/tareas');
 ```

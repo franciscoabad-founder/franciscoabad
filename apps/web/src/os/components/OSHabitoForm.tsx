@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import type { Habito } from './OSHabitos';
+import { useConfirm } from './ui';
 
 interface Props {
   habito?: Habito | null;
@@ -49,6 +50,7 @@ function Toggle({ checked, onChange, titulo, hint }: { checked: boolean; onChang
 }
 
 export default function OSHabitoForm({ habito, onCerrar, onGuardado }: Props) {
+  const { confirm, sheet } = useConfirm();
   const [nombre, setNombre] = useState(habito?.nombre ?? '');
   const [tipo, setTipo] = useState<'diaria' | 'habito'>(habito?.tipo ?? 'diaria');
   const [permiteMas, setPermiteMas] = useState(habito?.permite_mas ?? true);
@@ -92,7 +94,13 @@ export default function OSHabitoForm({ habito, onCerrar, onGuardado }: Props) {
   }
 
   async function archivar() {
-    if (!habito || !confirm('¿Archivar este hábito? Puedes verlo luego en pausados/archivados.')) return;
+    if (!habito) return;
+    if (!(await confirm({
+      title: 'Archivar habito',
+      text: 'Puedes verlo luego en pausados o archivados.',
+      confirmLabel: 'Archivar',
+      danger: true,
+    }))) return;
     try {
       await fetch(`/api/os/habitos?id=${habito.id}`, { method: 'DELETE' });
       onGuardado();
@@ -172,6 +180,7 @@ export default function OSHabitoForm({ habito, onCerrar, onGuardado }: Props) {
           <button className="m-btn-ghost is-danger" onClick={archivar}>Archivar</button>
         )}
       </div>
+      {sheet}
     </div>
   );
 }

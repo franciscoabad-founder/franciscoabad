@@ -105,7 +105,7 @@ export default function OSJugadorBar() {
       style={{
         display: 'flex', alignItems: 'center', gap: 10,
         height: 28, padding: '0 10px',
-        fontFamily: 'var(--os-font-mono)', fontSize: 10.5, fontWeight: 700,
+        fontFamily: 'var(--os-font-mono)', fontSize: 11, fontWeight: 700,
         letterSpacing: '0.06em', textTransform: 'uppercase',
         color: 'var(--os-text-2)', background: 'transparent',
         borderBottom: '1px solid var(--os-line)', whiteSpace: 'nowrap',

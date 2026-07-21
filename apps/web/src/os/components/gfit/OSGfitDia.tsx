@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import type { Dia, DiaEjercicio, Ejercicio, UnidadPeso } from './tipos';
 import { chipsGrupo, nombreEjercicio, resumenSeries } from './tipos';
 import { card, card2, input, btnGhost, btnIcon, thumb, chip } from './estilos';
-import { Spinner, EmptyState } from '../ui';
+import { Spinner, EmptyState, useConfirm } from '../ui';
 import OSGfitBodyMap from './OSGfitBodyMap';
 import OSGfitSerieEditor from './OSGfitSerieEditor';
 import OSGfitSwapSheet from './OSGfitSwapSheet';
@@ -15,6 +15,7 @@ interface Props {
 }
 
 export default function OSGfitDia({ dia, unidad, onDia, onVolver }: Props) {
+  const { confirm, sheet } = useConfirm();
   const [expandidoId, setExpandidoId] = useState<string | null>(null);
   const [menuId, setMenuId] = useState<string | null>(null);
   const [swapId, setSwapId] = useState<string | null>(null);
@@ -79,7 +80,12 @@ export default function OSGfitDia({ dia, unidad, onDia, onVolver }: Props) {
 
   async function eliminar(id: string) {
     setMenuId(null);
-    if (!confirm('¿Quitar este ejercicio del día?')) return;
+    if (!(await confirm({
+      title: 'Quitar ejercicio',
+      text: 'Se quita este ejercicio del dia.',
+      confirmLabel: 'Quitar',
+      danger: true,
+    }))) return;
     onDia({ ...dia, gfit_dia_ejercicios: dia.gfit_dia_ejercicios.filter((it) => it.id !== id) });
     await fetch(`/api/os/gfit/dia-ejercicios?id=${id}`, { method: 'DELETE' });
   }
@@ -192,6 +198,7 @@ export default function OSGfitDia({ dia, unidad, onDia, onVolver }: Props) {
           onElegir={(nuevo) => confirmarSwap(swapId, nuevo)}
         />
       )}
+      {sheet}
     </div>
   );
 }

@@ -24,6 +24,9 @@ export type { TabsProps, TabItem } from './Tabs';
 export { default as Sheet } from './Sheet';
 export type { SheetProps } from './Sheet';
 
+export { default as ConfirmSheet, useConfirm } from './ConfirmSheet';
+export type { ConfirmSheetProps, ConfirmOptions } from './ConfirmSheet';
+
 export { ToastProvider, useToast } from './Toast';
 export type { ToastKind } from './Toast';
 

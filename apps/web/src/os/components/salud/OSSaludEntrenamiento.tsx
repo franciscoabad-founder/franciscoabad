@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { Button, Spinner, EmptyState } from '../ui';
+import { Button, Spinner, EmptyState, useConfirm } from '../ui';
 import { sugerenciaOverload, ajusteRecuperacion, type SetHist } from '../../../lib/salud/progresion';
 
 // ── Tipos ──────────────────────────────────────────────────────────────────
@@ -285,6 +285,7 @@ function SesionRapida({ onCreada }: { onCreada: () => void }) {
 
 // Constructor de rutinas: agrega ejercicios, ordena, define sets tipados.
 function ConstructorRutina({ rutina, onCerrar }: { rutina: Rutina | null; onCerrar: () => void }) {
+  const { confirm, sheet } = useConfirm();
   const [nombre, setNombre] = useState(rutina?.nombre ?? '');
   const [descripcion, setDescripcion] = useState(rutina?.descripcion ?? '');
   const [items, setItems] = useState<RutinaEjercicio[]>(rutina ? [...rutina.rutina_ejercicios].sort((a, b) => a.orden - b.orden) : []);
@@ -333,7 +334,13 @@ function ConstructorRutina({ rutina, onCerrar }: { rutina: Rutina | null; onCerr
   }
 
   async function borrarRutina() {
-    if (!rutina || !confirm('¿Borrar esta rutina?')) return;
+    if (!rutina) return;
+    if (!(await confirm({
+      title: 'Borrar rutina',
+      text: 'Esta accion no se puede deshacer.',
+      confirmLabel: 'Borrar',
+      danger: true,
+    }))) return;
     await fetch(`/api/os/salud/rutinas?id=${rutina.id}`, { method: 'DELETE' });
     onCerrar();
   }
@@ -391,6 +398,7 @@ function ConstructorRutina({ rutina, onCerrar }: { rutina: Rutina | null; onCerr
         <button style={btn} disabled={guardando} onClick={guardar}>{guardando ? 'Guardando...' : 'Guardar rutina'}</button>
         {rutina && <Button variant="danger" onClick={borrarRutina}>Borrar</Button>}
       </div>
+      {sheet}
     </div>
   );
 }
@@ -402,6 +410,7 @@ function ModoSesion({ sets, setSets, meta, onSalir }: {
   sets: SetVivo[]; setSets: (s: SetVivo[]) => void;
   meta: { rutinaId: string | null; nombre: string; inicio: number }; onSalir: () => void;
 }) {
+  const { confirm, sheet } = useConfirm();
   const [idx, setIdx] = useState(0);
   const [descanso, setDescanso] = useState(0); // segundos restantes
   const [terminar, setTerminar] = useState(false);
@@ -519,7 +528,14 @@ function ModoSesion({ sets, setSets, meta, onSalir }: {
     <div style={{ display: 'flex', flexDirection: 'column', gap: 14, maxWidth: 480, margin: '0 auto' }}>
       {/* Barra de progreso */}
       <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-        <button style={btnGhost} onClick={() => { if (confirm('¿Salir sin guardar la sesión?')) onSalir(); }}>✕</button>
+        <button style={btnGhost} onClick={async () => {
+          if (await confirm({
+            title: 'Salir sin guardar',
+            text: 'Se pierde el progreso de esta sesion.',
+            confirmLabel: 'Salir',
+            danger: true,
+          })) onSalir();
+        }}>✕</button>
         <div style={{ flex: 1, height: 6, background: 'var(--os-fill-subtle)', borderRadius: 3, overflow: 'hidden' }}>
           <div style={{ height: '100%', width: `${pct}%`, background: 'var(--os-accent)', borderRadius: 3, transition: 'width .3s' }} />
         </div>
@@ -585,6 +601,7 @@ function ModoSesion({ sets, setSets, meta, onSalir }: {
         <button style={btnGhost} onClick={() => setTerminar(true)}>Terminar sesión</button>
         <button style={btnGhost} disabled={idx >= sets.length - 1} onClick={() => setIdx(idx + 1)}>Saltar →</button>
       </div>
+      {sheet}
     </div>
   );
 }

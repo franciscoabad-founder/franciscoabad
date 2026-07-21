@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Button, EmptyState, Spinner } from './ui';
+import { Button, EmptyState, Spinner, useConfirm } from './ui';
 
 interface Recordatorio {
   id: string;
@@ -43,6 +43,7 @@ const accionStyle: React.CSSProperties = {
 };
 
 export default function OSRecordatorios() {
+  const { confirm, sheet } = useConfirm();
   const [items, setItems] = useState<Recordatorio[]>([]);
   const [mensaje, setMensaje] = useState('');
   const [cuando, setCuando] = useState('');
@@ -104,7 +105,12 @@ export default function OSRecordatorios() {
   }
 
   async function eliminar(id: string) {
-    if (!window.confirm('Eliminar este recordatorio?')) return;
+    if (!(await confirm({
+      title: 'Eliminar recordatorio',
+      text: 'Esta accion no se puede deshacer.',
+      confirmLabel: 'Eliminar',
+      danger: true,
+    }))) return;
     try {
       const res = await fetch(`/api/os/recordatorios?id=${encodeURIComponent(id)}`, { method: 'DELETE' });
       if (!res.ok) throw new Error(String(res.status));
@@ -208,6 +214,7 @@ export default function OSRecordatorios() {
           </div>
         )
       ))}
+      {sheet}
     </div>
   );
 }

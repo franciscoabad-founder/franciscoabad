@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import OSHabitoForm from './OSHabitoForm';
-import { EmptyState, Spinner } from './ui';
+import { EmptyState, Spinner, useConfirm } from './ui';
 
 // ── Tipos (contrato del API construido en paralelo) ─────────────────────────
 export interface Racha { actual: number; mejor: number }
@@ -54,6 +54,7 @@ function AnilloEma({ valor, size = 30 }: { valor: number | null; size?: number }
 }
 
 export default function OSHabitos() {
+  const { confirm, sheet } = useConfirm();
   const [habitos, setHabitos] = useState<Habito[]>([]);
   const [perfil, setPerfil] = useState<Perfil | null>(null);
   const [loading, setLoading] = useState(true);
@@ -131,7 +132,12 @@ export default function OSHabitos() {
   async function toggleDiaria(h: Habito) {
     if (enviando.has(h.id)) return;
     if (h.hecho_hoy) {
-      if (!confirm('¿Deshacer este check de hoy?')) return;
+      if (!(await confirm({
+        title: 'Deshacer check',
+        text: 'Se quita el registro de hoy para este habito (XP y racha incluidos).',
+        confirmLabel: 'Deshacer',
+        danger: true,
+      }))) return;
       setEnviando((cur) => new Set(cur).add(h.id));
       try {
         const res = await fetch(`/api/os/habitos/checks?habito_id=${h.id}&fecha=${hoyISO()}`, { method: 'DELETE' });
@@ -409,6 +415,7 @@ export default function OSHabitos() {
         }
         .habito-levelup { animation: habito-levelup-pop 2.4s ease-out forwards; }
       `}</style>
+      {sheet}
     </div>
   );
 }

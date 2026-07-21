@@ -45,7 +45,7 @@ export default function Tabs({ tabs, active, onChange, style }: TabsProps) {
           >
             {t.label}
             {t.count != null && (
-              <span style={{ fontFamily: 'var(--os-font-mono)', fontSize: 10.5, opacity: 0.85 }}>{t.count}</span>
+              <span style={{ fontFamily: 'var(--os-font-mono)', fontSize: 11, opacity: 0.85 }}>{t.count}</span>
             )}
           </button>
         );

@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
-import { Button, EmptyState, Spinner, ToastProvider, useToast } from './ui';
+import { Button, EmptyState, Spinner, ToastProvider, useConfirm, useToast } from './ui';
 
 interface Tarea {
   id: string;
@@ -88,6 +88,7 @@ const inputStyle: React.CSSProperties = {
 
 function OSTareasInner() {
   const toast = useToast();
+  const { confirm, sheet } = useConfirm();
   const [tareas, setTareas] = useState<Tarea[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -137,7 +138,12 @@ function OSTareasInner() {
   }
 
   async function eliminar(id: string) {
-    if (!window.confirm('Eliminar esta tarea (y sus subtareas)?')) return;
+    if (!(await confirm({
+      title: 'Eliminar tarea',
+      text: 'Esta accion no se puede deshacer. Se eliminan tambien sus subtareas.',
+      confirmLabel: 'Eliminar',
+      danger: true,
+    }))) return;
     try {
       const res = await fetch(`/api/os/tareas?id=${encodeURIComponent(id)}`, { method: 'DELETE' });
       if (!res.ok) throw new Error(String(res.status));
@@ -484,6 +490,7 @@ function OSTareasInner() {
           </div>
         );
       })}
+      {sheet}
     </div>
   );
 }

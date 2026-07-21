@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
-import { Button, EmptyState, Spinner, ToastProvider, useToast } from './ui';
+import { Button, EmptyState, Spinner, ToastProvider, useConfirm, useToast } from './ui';
 
 // Vista Contenido: pipeline editorial en vivo desde /api/os/contenido.
 
@@ -59,6 +59,7 @@ const listaDesdeTexto = (s: string) => s.split(',').map((x) => x.trim()).filter(
 
 function OSContenidoInner() {
   const toast = useToast();
+  const { confirm, sheet } = useConfirm();
   const [ideas, setIdeas] = useState<Idea[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -113,7 +114,12 @@ function OSContenidoInner() {
   }
 
   async function eliminar(id: string) {
-    if (!window.confirm('Eliminar esta idea de contenido?')) return;
+    if (!(await confirm({
+      title: 'Eliminar idea',
+      text: 'Esta accion no se puede deshacer.',
+      confirmLabel: 'Eliminar',
+      danger: true,
+    }))) return;
     try {
       const res = await fetch(`/api/os/contenido?id=${encodeURIComponent(id)}`, { method: 'DELETE' });
       if (!res.ok) throw new Error(String(res.status));
@@ -314,6 +320,7 @@ function OSContenidoInner() {
           </div>
         ))}
       </div>
+      {sheet}
     </div>
   );
 }

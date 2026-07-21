@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { useConfirm } from './ui';
 
 // Checklist de diarias (habitos) en el HOME del OS. Trae data real desde
 // /api/os/habitos, a diferencia de OSChecklist (estatico por props, daily.astro).
@@ -29,6 +30,7 @@ function hoyISO(): string {
 }
 
 export default function OSChecklistHoy({ title }: Props) {
+  const { confirm, sheet } = useConfirm();
   const [habitos, setHabitos] = useState<HabitoDiaria[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -62,7 +64,12 @@ export default function OSChecklistHoy({ title }: Props) {
     setEnviando((cur) => new Set(cur).add(h.id));
     try {
       if (h.hecho_hoy) {
-        if (!confirm('¿Deshacer?')) return;
+        if (!(await confirm({
+          title: 'Deshacer check',
+          text: 'Se quita el registro de hoy para este habito.',
+          confirmLabel: 'Deshacer',
+          danger: true,
+        }))) return;
         try {
           const res = await fetch(`/api/os/habitos/checks?habito_id=${h.id}&fecha=${hoyISO()}`, {
             method: 'DELETE',
@@ -241,6 +248,7 @@ export default function OSChecklistHoy({ title }: Props) {
           50% { opacity: 0.7; }
         }
       `}</style>
+      {sheet}
     </div>
   );
 }

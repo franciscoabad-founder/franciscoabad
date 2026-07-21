@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
-import { Spinner } from './ui';
+import { Spinner, useConfirm } from './ui';
 
 // ── Tipos (contrato de los endpoints api/os/juego/*, construidos en paralelo) ──
 interface Nivel { nivel: number; xpEnNivel: number; xpSiguiente: number; progreso: number }
@@ -59,6 +59,7 @@ function Switch({ on, disabled, onToggle }: { on: boolean; disabled?: boolean; o
 }
 
 export default function OSJuego() {
+  const { confirm, sheet } = useConfirm();
   const [jugador, setJugador] = useState<Jugador | null>(null);
   const [eventosHoy, setEventosHoy] = useState<EventosHoy | null>(null);
   const [quests, setQuests] = useState<Quest[]>([]);
@@ -233,7 +234,12 @@ export default function OSJuego() {
 
   async function cancelarQuest(id: string) {
     if (cancelando) return;
-    if (!confirm('¿Cancelar esta quest? Si tenías apuesta, se pierde igual que un fallo.')) return;
+    if (!(await confirm({
+      title: 'Cancelar quest',
+      text: 'Si tenias apuesta de oro, se pierde igual que un fallo.',
+      confirmLabel: 'Cancelar quest',
+      danger: true,
+    }))) return;
     setCancelando(id);
     setError('');
     try {
@@ -565,6 +571,7 @@ export default function OSJuego() {
           </div>
         </div>
       </div>
+      {sheet}
     </div>
   );
 }

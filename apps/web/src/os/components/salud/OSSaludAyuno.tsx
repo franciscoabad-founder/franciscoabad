@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { Button, Spinner, EmptyState } from '../ui';
+import { Button, Spinner, EmptyState, useConfirm } from '../ui';
 import { FASES_AYUNO, faseActual, duracionHoras, formatearDuracion } from '../../../lib/salud/ayuno';
 
 interface Ayuno {
@@ -41,6 +41,7 @@ const pillActivo: React.CSSProperties = {
 };
 
 export default function OSSaludAyuno() {
+  const { confirm, sheet } = useConfirm();
   const [activo, setActivo] = useState<Ayuno | null>(null);
   const [finPrevisto, setFinPrevisto] = useState<string | null>(null);
   const [sugerencia, setSugerencia] = useState<string | null>(null);
@@ -147,7 +148,12 @@ export default function OSSaludAyuno() {
   }
 
   async function borrar(id: string) {
-    if (!confirm('¿Borrar este ayuno?')) return;
+    if (!(await confirm({
+      title: 'Borrar ayuno',
+      text: 'Esta accion no se puede deshacer.',
+      confirmLabel: 'Borrar',
+      danger: true,
+    }))) return;
     await fetch(`/api/os/salud/ayunos?id=${id}`, { method: 'DELETE' });
     cargar();
   }
@@ -356,6 +362,7 @@ export default function OSSaludAyuno() {
           </div>
         )}
       </div>
+      {sheet}
     </div>
   );
 }

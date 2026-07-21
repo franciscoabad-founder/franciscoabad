@@ -5,6 +5,7 @@ import { useState } from 'react';
 import type { Comida, Momento } from './tipos';
 import { MOMENTOS, MOMENTO_LABEL } from './tipos';
 import { input, sel, btn, btnGhost, btnIcon } from './estilos';
+import { useConfirm } from '../../ui';
 
 interface Props {
   comida: Comida;
@@ -12,6 +13,7 @@ interface Props {
 }
 
 export default function FilaComida({ comida, onCambio }: Props) {
+  const { confirm, sheet } = useConfirm();
   const [editando, setEditando] = useState(false);
   const [guardando, setGuardando] = useState(false);
   const [error, setError] = useState('');
@@ -54,7 +56,12 @@ export default function FilaComida({ comida, onCambio }: Props) {
   }
 
   async function borrar() {
-    if (!confirm('¿Borrar esta entrada?')) return;
+    if (!(await confirm({
+      title: 'Borrar entrada',
+      text: 'Esta accion no se puede deshacer.',
+      confirmLabel: 'Borrar',
+      danger: true,
+    }))) return;
     await fetch(`/api/os/salud/comidas-log?id=${comida.id}`, { method: 'DELETE' });
     onCambio();
   }
@@ -103,6 +110,7 @@ export default function FilaComida({ comida, onCambio }: Props) {
       <button style={btnIcon} onClick={borrar} title="Borrar">
         <span className="material-symbols-outlined" style={{ fontSize: 18 }}>delete</span>
       </button>
+      {sheet}
     </div>
   );
 }

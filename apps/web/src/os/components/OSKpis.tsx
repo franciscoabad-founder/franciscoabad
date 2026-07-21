@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Button, EmptyState, Spinner, ToastProvider, useToast } from './ui';
+import { Button, EmptyState, Spinner, ToastProvider, useConfirm, useToast } from './ui';
 
 // Vista KPIs: tablero en vivo desde /api/os/kpis.
 // La tabla arranca vacia; el vacio invita a crear el primer KPI en vez de fingir datos.
@@ -64,6 +64,7 @@ function TrendArrow({ t }: { t: KPI['tendencia'] }) {
 
 function OSKpisInner() {
   const toast = useToast();
+  const { confirm, sheet } = useConfirm();
   const [kpis, setKpis] = useState<KPI[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -145,7 +146,12 @@ function OSKpisInner() {
   }
 
   async function eliminar(id: string) {
-    if (!window.confirm('Eliminar este KPI y su historial?')) return;
+    if (!(await confirm({
+      title: 'Eliminar KPI',
+      text: 'Se elimina el KPI y todo su historial. Esta accion no se puede deshacer.',
+      confirmLabel: 'Eliminar',
+      danger: true,
+    }))) return;
     try {
       const res = await fetch(`/api/os/kpis?id=${encodeURIComponent(id)}`, { method: 'DELETE' });
       if (!res.ok) throw new Error(String(res.status));
@@ -266,6 +272,7 @@ function OSKpisInner() {
           </div>
         </div>
       )}
+      {sheet}
     </div>
   );
 }

@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
-import { Button, Spinner, EmptyState } from '../ui';
+import { Button, Spinner, EmptyState, useConfirm } from '../ui';
 import { promedioMovil } from '../../../lib/salud/progresion';
 
 interface Medicion {
@@ -41,6 +41,7 @@ function LineChart({ crudo, media, height = 150 }: { crudo: { x: string; y: numb
 }
 
 export default function OSSaludCuerpo() {
+  const { confirm, sheet } = useConfirm();
   const [mediciones, setMediciones] = useState<Medicion[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -77,7 +78,12 @@ export default function OSSaludCuerpo() {
   }
 
   async function borrar(id: string) {
-    if (!confirm('¿Borrar esta medición?')) return;
+    if (!(await confirm({
+      title: 'Borrar medicion',
+      text: 'Esta accion no se puede deshacer.',
+      confirmLabel: 'Borrar',
+      danger: true,
+    }))) return;
     await fetch(`/api/os/salud/cuerpo?id=${id}`, { method: 'DELETE' });
     cargar();
   }
@@ -154,6 +160,7 @@ export default function OSSaludCuerpo() {
           </div>
         }
       </div>
+      {sheet}
     </div>
   );
 }

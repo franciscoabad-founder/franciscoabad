@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { Button, Spinner, EmptyState } from '../ui';
+import { Button, Spinner, EmptyState, useConfirm } from '../ui';
 
 interface Paso { nombre: string; detalle: string; duracion_seg: number; por_lado: boolean }
 interface RutinaEstiramiento { id: string; nombre: string; descripcion: string | null; pasos: Paso[] }
@@ -69,6 +69,7 @@ export default function OSSaludEstiramiento() {
 }
 
 function Reproductor({ rutina, onSalir }: { rutina: RutinaEstiramiento; onSalir: () => void }) {
+  const { confirm, sheet } = useConfirm();
   const pasos = expandirPasos(rutina.pasos ?? []);
   const [idx, setIdx] = useState(0);
   const [restante, setRestante] = useState(pasos[0]?.duracion_seg ?? 0);
@@ -130,7 +131,14 @@ function Reproductor({ rutina, onSalir }: { rutina: RutinaEstiramiento; onSalir:
     <div style={{ display: 'flex', flexDirection: 'column', gap: 18, alignItems: 'center', maxWidth: 480, margin: '0 auto' }}>
       {/* Progreso total */}
       <div style={{ display: 'flex', alignItems: 'center', gap: 10, width: '100%' }}>
-        <Button variant="ghost" onClick={() => { if (confirm('¿Salir de la rutina?')) onSalir(); }} aria-label="Salir">✕</Button>
+        <Button variant="ghost" onClick={async () => {
+          if (await confirm({
+            title: 'Salir de la rutina',
+            text: 'Se pierde el progreso de esta sesion de estiramiento.',
+            confirmLabel: 'Salir',
+            danger: true,
+          })) onSalir();
+        }} aria-label="Salir">✕</Button>
         <div style={{ flex: 1, height: 6, background: 'var(--os-fill-subtle)', borderRadius: 3, overflow: 'hidden' }}>
           <div style={{ height: '100%', width: `${pctTotal}%`, background: 'var(--os-accent)', borderRadius: 3, transition: 'width .3s' }} />
         </div>
@@ -167,6 +175,7 @@ function Reproductor({ rutina, onSalir }: { rutina: RutinaEstiramiento; onSalir:
       {idx < pasos.length - 1 && (
         <p style={{ fontSize: 'var(--os-text-xs)', color: 'var(--os-muted)' }}>Sigue: {pasos[idx + 1]?.nombre}</p>
       )}
+      {sheet}
     </div>
   );
 }

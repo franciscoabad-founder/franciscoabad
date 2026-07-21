@@ -5,7 +5,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import type { Comida, Momento, Totales, Targets } from './nutricion/tipos';
 import { MOMENTOS, hoyISO, addDias } from './nutricion/tipos';
-import { Spinner } from '../ui';
+import { Spinner, useConfirm } from '../ui';
 import HeaderDia from './nutricion/HeaderDia';
 import SeccionMomento from './nutricion/SeccionMomento';
 import AddSheet from './nutricion/AddSheet';
@@ -14,6 +14,7 @@ const TOTALES_VACIOS: Totales = { kcal: 0, proteina_g: 0, carbos_g: 0, grasa_g: 
 const TARGETS_VACIOS: Targets = { kcal: null, proteina_g: null, carbos_g: null, grasa_g: null };
 
 export default function OSSaludNutricion() {
+  const { confirm, sheet } = useConfirm();
   const [dia, setDia] = useState(hoyISO());
   const [comidas, setComidas] = useState<Comida[]>([]);
   const [totales, setTotales] = useState<Totales>(TOTALES_VACIOS);
@@ -62,7 +63,11 @@ export default function OSSaludNutricion() {
       const data = await res.json();
       const ayuno = data.ayuno;
       if (ayuno && ayuno.id) {
-        if (confirm('Tienes un ayuno abierto. ¿Cerrarlo ahora con esta comida?')) {
+        if (await confirm({
+          title: 'Cerrar ayuno',
+          text: 'Tienes un ayuno abierto. ¿Lo cerramos ahora con esta comida?',
+          confirmLabel: 'Cerrar ayuno',
+        })) {
           await fetch(`/api/os/salud/ayunos?id=${ayuno.id}`, {
             method: 'PATCH', headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ fin: new Date().toISOString() }),
@@ -154,6 +159,7 @@ export default function OSSaludNutricion() {
           onAgregado={refrescarTrasAgregar}
         />
       )}
+      {sheet}
     </div>
   );
 }

@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import type { Dia, Rutina, TipoDia, UnidadPeso } from './tipos';
 import { OBJETIVOS, WEEKDAY_CORTO, badgeDia, estimarMinutos } from './tipos';
 import { card, card2, input, sel, btn, btnGhost, btnIcon, pill, thumb } from './estilos';
-import { Spinner, EmptyState } from '../ui';
+import { Spinner, EmptyState, useConfirm } from '../ui';
 import OSGfitDia from './OSGfitDia';
 
 interface Props {
@@ -13,6 +13,7 @@ interface Props {
 type Vista = { tipo: 'lista' } | { tipo: 'rutina'; rutina: Rutina } | { tipo: 'dia'; rutina: Rutina; dia: Dia };
 
 export default function OSGfitRutinas({ unidad, onUnidad }: Props) {
+  const { confirm, sheet } = useConfirm();
   const [rutinas, setRutinas] = useState<Rutina[]>([]);
   const [loading, setLoading] = useState(true);
   const [vista, setVista] = useState<Vista>({ tipo: 'lista' });
@@ -35,7 +36,12 @@ export default function OSGfitRutinas({ unidad, onUnidad }: Props) {
 
   async function archivar(id: string) {
     setMenuId(null);
-    if (!confirm('¿Archivar esta rutina?')) return;
+    if (!(await confirm({
+      title: 'Archivar rutina',
+      text: 'Puedes verla luego en el historial de rutinas archivadas.',
+      confirmLabel: 'Archivar',
+      danger: true,
+    }))) return;
     await fetch(`/api/os/gfit/rutinas?id=${id}`, { method: 'DELETE' });
     cargarRutinas();
   }
@@ -120,6 +126,7 @@ export default function OSGfitRutinas({ unidad, onUnidad }: Props) {
           </div>
         ))
       }
+      {sheet}
     </div>
   );
 }
@@ -159,6 +166,7 @@ function FormRutina({ rutina, onCancelar, onGuardado }: { rutina?: Rutina; onCan
 // Lista de días de una rutina
 // ═══════════════════════════════════════════════════════════════════════════
 function VistaDias({ rutina, onVolver, onAbrirDia }: { rutina: Rutina; onVolver: () => void; onAbrirDia: (dia: Dia) => void }) {
+  const { confirm, sheet } = useConfirm();
   const [dias, setDias] = useState<Dia[]>([]);
   const [loading, setLoading] = useState(true);
   const [nuevoAbierto, setNuevoAbierto] = useState(false);
@@ -180,7 +188,12 @@ function VistaDias({ rutina, onVolver, onAbrirDia }: { rutina: Rutina; onVolver:
   }
   async function eliminarDia(id: string) {
     setMenuId(null);
-    if (!confirm('¿Eliminar este día y sus ejercicios?')) return;
+    if (!(await confirm({
+      title: 'Eliminar dia',
+      text: 'Se elimina este dia y todos sus ejercicios. Esta accion no se puede deshacer.',
+      confirmLabel: 'Eliminar',
+      danger: true,
+    }))) return;
     await fetch(`/api/os/gfit/dias?id=${id}`, { method: 'DELETE' });
     cargar();
   }
@@ -250,6 +263,7 @@ function VistaDias({ rutina, onVolver, onAbrirDia }: { rutina: Rutina; onVolver:
           );
         })
       }
+      {sheet}
     </div>
   );
 }

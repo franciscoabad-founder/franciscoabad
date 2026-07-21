@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Button, EmptyState, Spinner, ToastProvider, useToast } from './ui';
+import { Button, EmptyState, Spinner, ToastProvider, useConfirm, useToast } from './ui';
 
 // Vista Bandeja ("por revisar"): fetch en vivo desde /api/os/bandeja.
 
@@ -40,6 +40,7 @@ const inputStyle: React.CSSProperties = {
 
 function OSBandejaInner() {
   const toast = useToast();
+  const { confirm, sheet } = useConfirm();
   const [items, setItems] = useState<ItemBandeja[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -83,7 +84,12 @@ function OSBandejaInner() {
   }
 
   async function eliminar(id: string) {
-    if (!window.confirm('Eliminar este item de la bandeja?')) return;
+    if (!(await confirm({
+      title: 'Eliminar item',
+      text: 'Esta accion no se puede deshacer.',
+      confirmLabel: 'Eliminar',
+      danger: true,
+    }))) return;
     try {
       const res = await fetch(`/api/os/bandeja?id=${encodeURIComponent(id)}`, { method: 'DELETE' });
       if (!res.ok) throw new Error(String(res.status));
@@ -224,6 +230,7 @@ function OSBandejaInner() {
           </div>
         ))}
       </div>
+      {sheet}
     </div>
   );
 }
