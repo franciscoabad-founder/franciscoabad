@@ -153,7 +153,7 @@ export const MODOS_BUSQUEDA = [
 
 export type ModoBusqueda = typeof MODOS_BUSQUEDA[number]['key'];
 
-export type TabAgregar = 'buscar' | 'recetas' | 'meals' | 'mas';
+export type TabAgregar = 'buscar' | 'recetas' | 'meals' | 'foto' | 'mas';
 
 // ── Fecha (zona Guayaquil, consistente con el backend) ─────────────────────
 const TZ = 'America/Guayaquil';

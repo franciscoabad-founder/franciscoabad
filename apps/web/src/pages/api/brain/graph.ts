@@ -12,23 +12,67 @@ const CACHE_TTL = 5 * 60 * 1000;
 const TRUNCATE_ABOVE = 300;
 const TOP_N = 180;
 
-const KNOWN_GROUPS: Array<[string, RegExp]> = [
-  ['arazza', /arazza|meal.prep/i],
-  ['braintech', /braintech|brain.tech/i],
-  ['codeis', /codeis/i],
-  ['taskr', /taskr/i],
-  ['rafik', /rafik|gustavo/i],
-  ['marca', /\bmarca\b|linkedin|instagram|contenido|blog/i],
-  ['sistema', /sistema|os.brief|os.personal|\bos\b|cerebro|gbrain|n8n|vps|infra|playbook|metodolog|hermes|modelos/i],
-  ['personal', /personal|vida|contexto|finanzas|salud|familia|fellows|fellows|pendientes|recordatorio|limite/i],
+// Slugs que nunca se dibujan: la pagina hub "canon" y el canon deprecado.
+const EXCLUDED_SLUGS = new Set(['canon', 'growth-os-canon']);
+
+// Mapeo tag -> grupo por prioridad. Una pagina toma el PRIMER tag de esta
+// lista que tenga (no el orden de sus propios tags). Proyectos primero,
+// luego areas, luego tags de sistema (que colapsan todos en "sistema").
+const TAG_TO_GROUP: Array<[string, string]> = [
+  // Proyectos
+  ['braintech', 'braintech'],
+  ['rafik', 'rafik'],
+  ['cortex', 'cortex'],
+  ['taskr', 'taskr'],
+  ['arazza', 'arazza'],
+  ['codeis', 'codeis'],
+  ['fonquito', 'fonquito'],
+  ['flow', 'flow'],
+  ['kronek', 'kronek'],
+  // Areas
+  ['marca', 'marca'],
+  ['contenido', 'contenido'],
+  ['gtm', 'gtm'],
+  ['personal', 'personal'],
+  ['familia', 'familia'],
+  ['salud', 'salud'],
+  ['finanzas', 'finanzas'],
+  // Sistema (todos agrupan como "sistema")
+  ['os', 'sistema'],
+  ['panchoatlas', 'sistema'],
+  ['gbrain', 'sistema'],
+  ['hermes', 'sistema'],
+  ['n8n', 'sistema'],
+  ['vps', 'sistema'],
 ];
 
-function inferGroup(slug: string, title: string): string {
-  const text = `${slug} ${title}`;
-  for (const [group, pattern] of KNOWN_GROUPS) {
-    if (pattern.test(text)) return group;
+function groupFromTags(tags: string[]): string {
+  const set = new Set(tags);
+  for (const [tag, group] of TAG_TO_GROUP) {
+    if (set.has(tag)) return group;
   }
   return 'otros';
+}
+
+// Fallback si sources_list falla o viene vacio.
+const DEFAULT_SOURCES = ['Telegram', 'Reuniones', 'Repos de código', 'Chats IA', 'Manual'];
+
+// sources_list puede devolver strings, objetos o un wrapper { sources: [...] }.
+function normalizeSources(raw: unknown): string[] {
+  const arr = Array.isArray(raw)
+    ? raw
+    : Array.isArray((raw as any)?.sources)
+      ? (raw as any).sources
+      : [];
+  const names = arr
+    .map((s: any) => {
+      if (typeof s === 'string') return s;
+      if (s && typeof s === 'object') return s.name ?? s.label ?? s.id ?? s.type ?? null;
+      return null;
+    })
+    .filter((s: unknown): s is string => typeof s === 'string' && s.trim().length > 0)
+    .map((s: string) => s.trim());
+  return [...new Set(names)];
 }
 
 // Tags live in two places: the structured `tags` array (populated on some pages)
@@ -94,14 +138,19 @@ export const GET: APIRoute = async ({ cookies, url }) => {
   try {
     // Pull every live page (not just the last 100). 500 is comfortably above
     // the current corpus size (~240) and cheap for list_pages.
-    const pages = await brain.listPages({ limit: 500, sort: 'updated_desc' });
+    const allPages = await brain.listPages({ limit: 500, sort: 'updated_desc' });
+    const pages = allPages.filter((p) => !EXCLUDED_SLUGS.has(p.slug));
     const slugSet = new Set(pages.map((p) => p.slug));
 
-    // Fetch full pages (tags) and real wikilinks in parallel, capped concurrency.
-    const [fullResults, linksResults] = await Promise.all([
+    // Fetch full pages (tags), real wikilinks y fuentes en paralelo, capped concurrency.
+    const [fullResults, linksResults, sourcesRaw] = await Promise.all([
       mapLimit(pages, 15, (p) => brain.getPage(p.slug).catch(() => null)),
       mapLimit(pages, 15, (p) => brain.getLinks(p.slug).catch(() => [])),
+      brain.sourcesList().catch(() => null),
     ]);
+
+    const normalizedSources = normalizeSources(sourcesRaw);
+    const sources = normalizedSources.length > 0 ? normalizedSources : DEFAULT_SOURCES;
 
     const tagsByIndex = pages.map((_, i) =>
       extractTags(fullResults[i]?.tags, fullResults[i]?.compiled_truth)
@@ -133,7 +182,7 @@ export const GET: APIRoute = async ({ cookies, url }) => {
       id: p.slug,
       label: p.title,
       type: p.type,
-      group: inferGroup(p.slug, p.title),
+      group: groupFromTags(tagsByIndex[i]),
       tags: tagsByIndex[i],
       updated_at: p.updated_at,
       connections: connCount[p.slug] ?? 0,
@@ -148,6 +197,10 @@ export const GET: APIRoute = async ({ cookies, url }) => {
       const sortedByRecency = [...nodes].sort((a, b) => new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime());
       const seedNodes = sortedByRecency.slice(0, 100);
       const seedIds = new Set(seedNodes.map((n) => n.id));
+      // El esqueleto jerarquico (pancho + paginas canon) siempre sobrevive el truncado.
+      for (const n of nodes) {
+        if (n.id === 'pancho' || n.id.endsWith('-canon')) seedIds.add(n.id);
+      }
 
       // Keep edges connected to or from the seed nodes
       const activeEdges = edges.filter((e) => seedIds.has(e.source) || seedIds.has(e.target));
@@ -178,6 +231,7 @@ export const GET: APIRoute = async ({ cookies, url }) => {
       __key: cacheKey,
       nodes,
       edges: finalEdges,
+      sources,
       meta: {
         notes: pages.length,
         notes_shown: nodes.length,

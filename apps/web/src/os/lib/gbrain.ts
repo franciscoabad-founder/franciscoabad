@@ -72,5 +72,10 @@ export function createGbrainClient(token: string) {
 
     query: (query: string, limit = 8) =>
       callTool('query', { query, limit }, token) as Promise<BrainSearchResult[]>,
+
+    // Fuentes de ingesta registradas en gbrain (Telegram, repos, etc.).
+    // El shape exacto depende del server; el consumidor debe normalizar.
+    sourcesList: () =>
+      callTool('sources_list', {}, token) as Promise<unknown>,
   };
 }

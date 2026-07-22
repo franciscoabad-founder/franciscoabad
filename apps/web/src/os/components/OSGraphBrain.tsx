@@ -7,8 +7,12 @@ interface GraphNode extends d3.SimulationNodeDatum {
   label: string;
   type: string;
   group: string;
+  tags?: string[];
   connections: number;
   orphan?: boolean;
+  isCenter?: boolean;
+  isCanon?: boolean;
+  anchor?: { x: number; y: number };
 }
 
 interface RawEdge {
@@ -19,8 +23,9 @@ interface RawEdge {
 interface SimEdge extends d3.SimulationLinkDatum<GraphNode> {}
 
 interface RawData {
-  nodes: Array<{ id: string; label: string; type: string; group: string; connections?: number }>;
+  nodes: Array<{ id: string; label: string; type: string; group: string; tags?: string[]; connections?: number }>;
   edges: RawEdge[];
+  sources?: string[];
   meta?: {
     notes: number;
     notes_shown: number;
@@ -32,40 +37,99 @@ interface RawData {
   };
 }
 
-// Paleta categorica por proyecto, derivada de la marca (ultra-light, champagne,
-// bronce y neutros). Sin morados ni verdes: fuera del canon Ultramarine v5.
+// Paleta categorica por grupo real (tags), derivada de la marca: azules
+// ultramarine, ambares, bronces, corales y neutros. Sin verdes ni morados.
+// El dorado champagne (#B5985A) queda reservado para el nodo central "pancho".
 const GROUP_COLORS: Record<string, string> = {
+  // Proyectos
   braintech: '#6B7AE8',
-  codeis:    '#EF9F27',
-  taskr:     '#FB923C',
-  arazza:    '#B5985A',
   rafik:     '#FBBF24',
+  cortex:    '#5FB4D9',
+  taskr:     '#FB923C',
+  arazza:    '#E8837F',
+  codeis:    '#EF9F27',
+  fonquito:  '#D97798',
+  flow:      '#4C8DD9',
+  kronek:    '#8FA3C8',
+  // Areas
   marca:     '#E8EAF0',
-  sistema:   '#94A3B8',
+  contenido: '#DDA15E',
+  gtm:       '#E05C6E',
   personal:  '#F87171',
+  familia:   '#F0A8A8',
+  salud:     '#E76F51',
+  finanzas:  '#EAC54F',
+  // Sistema y resto
+  sistema:   '#94A3B8',
   otros:     '#6B7280',
 };
 
 const GROUP_LABELS: Record<string, string> = {
   braintech: 'BrainTech',
-  codeis:    'CODEIS',
+  rafik:     'Rafik',
+  cortex:    'Cortex',
   taskr:     'Taskr',
   arazza:    'Arazza',
-  rafik:     'Rafik',
+  codeis:    'CODEIS',
+  fonquito:  'Fonquito',
+  flow:      'Flow',
+  kronek:    'Kronek',
   marca:     'Marca',
-  sistema:   'Sistema',
+  contenido: 'Contenido',
+  gtm:       'GTM',
   personal:  'Personal',
+  familia:   'Familia',
+  salud:     'Salud',
+  finanzas:  'Finanzas',
+  sistema:   'Sistema',
   otros:     'Otros',
 };
+
+// Orden canonico para chips y leyenda: proyectos, areas, sistema, otros.
+const GROUP_ORDER = [
+  'braintech', 'rafik', 'cortex', 'taskr', 'arazza', 'codeis', 'fonquito', 'flow', 'kronek',
+  'marca', 'contenido', 'gtm', 'personal', 'familia', 'salud', 'finanzas',
+  'sistema', 'otros',
+];
+
+const CHAMPAGNE = '#B5985A';
+const CENTER_SLUG = 'pancho';
+const DEFAULT_SOURCES = ['Telegram', 'Reuniones', 'Repos de código', 'Chats IA', 'Manual'];
+
+// Enlaces cuyo extremo tiene grado alto se aflojan para evitar la "bola".
+const HUB_DEGREE = 15;
+const LINK_STRENGTH_NORMAL = 0.85;
+const LINK_STRENGTH_HUB = 0.15;
 
 function nodeR(connections: number) {
   return 5 + Math.min(connections, 10) * 1.6;
 }
 
+function radiusOf(d: GraphNode) {
+  if (d.isCenter) return 20;
+  if (d.isCanon) return Math.max(nodeR(d.connections), 9) + 2;
+  return nodeR(d.connections);
+}
+
+function edgeIsCross(e: SimEdge): boolean {
+  const s = e.source as GraphNode | string;
+  const t = e.target as GraphNode | string;
+  if (typeof s === 'string' || typeof t === 'string') return false;
+  return s.group !== t.group;
+}
+
+// Enlaces entre grupos distintos: lineas mas finas y tenues que las intra-grupo.
+const baseEdgeWidth = (e: SimEdge) => (edgeIsCross(e) ? 0.7 : 1.4);
+const baseEdgeOpacity = (e: SimEdge) => (edgeIsCross(e) ? 0.25 : 0.6);
+const baseEdgeStroke = (e: SimEdge) =>
+  edgeIsCross(e) ? 'rgba(107,122,232,0.4)' : 'rgba(107,122,232,0.6)';
+
 export default function OSGraphBrain() {
   const containerRef = useRef<HTMLDivElement>(null);
   const svgRef      = useRef<SVGSVGElement>(null);
   const simRef      = useRef<d3.Simulation<GraphNode, SimEdge> | null>(null);
+  const gRef        = useRef<SVGGElement | null>(null);
+  const dimsRef     = useRef({ W: 800, H: 520 });
 
   const [loading, setLoading]               = useState(true);
   const [error, setError]                   = useState<string | null>(null);
@@ -76,9 +140,10 @@ export default function OSGraphBrain() {
   const [availableGroups, setAvailableGroups] = useState<string[]>([]);
   const [activeGroup, setActiveGroup]       = useState<string | null>(null);
   const [panelSlug, setPanelSlug]           = useState<string | null>(null);
-  const [panelData, setPanelData]           = useState<{label:string;group:string;connections:number} | null>(null);
+  const [panelData, setPanelData]           = useState<{label:string;group:string;connections:number;tags?:string[]} | null>(null);
   const [onlyConnected, setOnlyConnected]   = useState(false);
   const [showAll, setShowAll]               = useState(false);
+  const [showSources, setShowSources]       = useState(false);
 
   // --- Effect 1: fetch data (no DOM access) ---
   useEffect(() => {
@@ -105,7 +170,7 @@ export default function OSGraphBrain() {
     const svg = d3.select(svgRef.current);
     if (activeGroup) {
       svg.selectAll<SVGGElement, GraphNode>('.node-g')
-        .attr('opacity', (d) => (d.group === activeGroup ? 1 : 0.1));
+        .attr('opacity', (d) => (d.group === activeGroup || d.isCenter ? 1 : 0.1));
       svg.selectAll<SVGLineElement, SimEdge>('.edge-line')
         .attr('opacity', (d) => {
           const s = d.source as GraphNode;
@@ -114,7 +179,7 @@ export default function OSGraphBrain() {
         });
     } else {
       svg.selectAll('.node-g').attr('opacity', 1);
-      svg.selectAll<SVGLineElement, SimEdge>('.edge-line').attr('opacity', 0.6);
+      svg.selectAll<SVGLineElement, SimEdge>('.edge-line').attr('opacity', baseEdgeOpacity);
     }
   }, [activeGroup]);
 
@@ -125,6 +190,9 @@ export default function OSGraphBrain() {
     const container = containerRef.current;
     const W = container.clientWidth  || 800;
     const H = container.clientHeight || 520;
+    dimsRef.current = { W, H };
+    const cx = W / 2;
+    const cy = H / 2;
 
     const connCount: Record<string, number> = {};
     for (const e of graphData.edges) {
@@ -136,39 +204,75 @@ export default function OSGraphBrain() {
       ...n,
       connections: n.connections ?? connCount[n.id] ?? 0,
       orphan: (n.connections ?? connCount[n.id] ?? 0) === 0,
+      isCenter: n.id === CENTER_SLUG,
+      isCanon: n.id !== CENTER_SLUG && n.id.endsWith('-canon'),
     }));
 
-    const nodes = onlyConnected ? allNodes.filter((n) => !n.orphan) : allNodes;
+    // El esqueleto (pancho + canones) se dibuja siempre, aun con "Solo conectados".
+    const nodes = onlyConnected
+      ? allNodes.filter((n) => !n.orphan || n.isCenter || n.isCanon)
+      : allNodes;
     const nodeIds = new Set(nodes.map((n) => n.id));
 
-    const groups = [...new Set(nodes.map((n) => n.group))].sort();
+    const groups = [...new Set(nodes.map((n) => n.group))].sort((a, b) => {
+      const ia = GROUP_ORDER.indexOf(a);
+      const ib = GROUP_ORDER.indexOf(b);
+      if (ia === -1 && ib === -1) return a.localeCompare(b);
+      if (ia === -1) return 1;
+      if (ib === -1) return -1;
+      return ia - ib;
+    });
     setAvailableGroups(groups);
     setNodeCount(graphData.meta?.notes_shown ?? nodes.length);
     setTotalNotes(graphData.meta?.notes ?? nodes.length);
     setEdgeCount(graphData.meta?.edges ?? graphData.edges.length);
 
-    // Group centroids — place connected clusters in a circle, orphans in a
-    // wider outer ring so they read as "unlinked" rather than floating randomly.
-    const groupCentroids: Record<string, { x: number; y: number }> = {};
-    groups.forEach((grp, i) => {
-      const angle = (i / groups.length) * 2 * Math.PI - Math.PI / 2;
-      const r = Math.min(W, H) * 0.28;
-      groupCentroids[grp] = { x: W / 2 + r * Math.cos(angle), y: H / 2 + r * Math.sin(angle) };
+    // --- Layout sistema solar ---
+    // pancho fijo al centro; canones anclados en un anillo alrededor; el resto
+    // orbita el canon (o centroide) de su grupo; huerfanos en anillo exterior.
+    const canonRing = Math.min(W, H) * 0.26;
+    const groupRing = Math.min(W, H) * 0.36;
+    const outerR    = Math.min(W, H) * 0.46;
+
+    const canonNodes = nodes.filter((n) => n.isCanon).sort((a, b) => a.id.localeCompare(b.id));
+    canonNodes.forEach((n, i) => {
+      const angle = (i / Math.max(canonNodes.length, 1)) * 2 * Math.PI - Math.PI / 2;
+      n.anchor = { x: cx + canonRing * Math.cos(angle), y: cy + canonRing * Math.sin(angle) };
     });
 
-    const outerR = Math.min(W, H) * 0.46;
+    // Centroide por grupo: el ancla de su canon si existe; si no, posicion en
+    // un anillo intermedio propio.
+    const groupCentroids: Record<string, { x: number; y: number }> = {};
+    for (const n of canonNodes) {
+      if (n.anchor && !(n.group in groupCentroids)) groupCentroids[n.group] = n.anchor;
+    }
+    const groupsWithoutCanon = groups.filter((grp) => !(grp in groupCentroids));
+    groupsWithoutCanon.forEach((grp, i) => {
+      const angle = (i / Math.max(groupsWithoutCanon.length, 1)) * 2 * Math.PI - Math.PI / 3;
+      groupCentroids[grp] = { x: cx + groupRing * Math.cos(angle), y: cy + groupRing * Math.sin(angle) };
+    });
 
     // Seed positions
     let orphanIdx = 0;
-    const orphanCount = nodes.filter((n) => n.orphan).length;
+    const orphanCount = nodes.filter((n) => n.orphan && !n.isCenter && !n.isCanon).length;
     nodes.forEach((n) => {
+      if (n.isCenter) {
+        n.x = cx; n.y = cy;
+        n.fx = cx; n.fy = cy;
+        return;
+      }
+      if (n.isCanon && n.anchor) {
+        n.x = n.anchor.x;
+        n.y = n.anchor.y;
+        return;
+      }
       if (n.orphan) {
         const angle = (orphanIdx / Math.max(orphanCount, 1)) * 2 * Math.PI;
         orphanIdx++;
-        n.x = W / 2 + outerR * Math.cos(angle);
-        n.y = H / 2 + outerR * Math.sin(angle);
+        n.x = cx + outerR * Math.cos(angle);
+        n.y = cy + outerR * Math.sin(angle);
       } else {
-        const c = groupCentroids[n.group] ?? { x: W / 2, y: H / 2 };
+        const c = groupCentroids[n.group] ?? { x: cx, y: cy };
         n.x = c.x + (Math.random() - 0.5) * 60;
         n.y = c.y + (Math.random() - 0.5) * 60;
       }
@@ -178,13 +282,24 @@ export default function OSGraphBrain() {
       .filter((e) => nodeIds.has(e.source) && nodeIds.has(e.target))
       .map((e) => ({ ...e }));
 
+    // Grado por nodo sobre las aristas visibles: los hubs (grado alto) usan
+    // strength reducida para no colapsar el grafo en una bola.
+    const degree: Record<string, number> = {};
+    for (const e of edges) {
+      const s = e.source as string;
+      const t = e.target as string;
+      degree[s] = (degree[s] || 0) + 1;
+      degree[t] = (degree[t] || 0) + 1;
+    }
+
     const svg = d3.select(svgRef.current)
       .attr('width', W)
       .attr('height', H);
     svg.selectAll('*').remove();
 
-    // Arrow marker for real edges
-    svg.append('defs').append('marker')
+    // Markers: flechas para aristas y para la capa de fuentes
+    const defs = svg.append('defs');
+    defs.append('marker')
       .attr('id', 'arrow')
       .attr('viewBox', '0 -4 8 8')
       .attr('refX', 14)
@@ -194,8 +309,19 @@ export default function OSGraphBrain() {
       .append('path')
       .attr('d', 'M0,-4L8,0L0,4')
       .attr('fill', 'rgba(107,122,232,0.5)');
+    defs.append('marker')
+      .attr('id', 'arrow-src')
+      .attr('viewBox', '0 -4 8 8')
+      .attr('refX', 8)
+      .attr('markerWidth', 7)
+      .attr('markerHeight', 7)
+      .attr('orient', 'auto')
+      .append('path')
+      .attr('d', 'M0,-4L8,0L0,4')
+      .attr('fill', 'rgba(148,163,184,0.7)');
 
     const g = svg.append('g');
+    gRef.current = g.node();
 
     // Zoom + pan
     const zoom = d3.zoom<SVGSVGElement, unknown>()
@@ -208,18 +334,31 @@ export default function OSGraphBrain() {
       .force('link', d3.forceLink<GraphNode, SimEdge>(edges)
         .id((d) => d.id)
         .distance(55)
-        .strength(0.85))
+        .strength((l) => {
+          const s = typeof l.source === 'object' ? (l.source as GraphNode).id : String(l.source);
+          const t = typeof l.target === 'object' ? (l.target as GraphNode).id : String(l.target);
+          return (degree[s] || 0) > HUB_DEGREE || (degree[t] || 0) > HUB_DEGREE
+            ? LINK_STRENGTH_HUB
+            : LINK_STRENGTH_NORMAL;
+        }))
       .force('charge', d3.forceManyBody<GraphNode>().strength(-320))
-      .force('collide', d3.forceCollide<GraphNode>().radius((d) => nodeR(d.connections) + 12))
+      .force('collide', d3.forceCollide<GraphNode>().radius((d) => radiusOf(d) + 12))
       .force('cluster', (() => {
         const cf = () => {
           const a = sim.alpha();
           for (const n of nodes) {
+            if (n.isCenter) continue; // fijado con fx/fy
+            if (n.isCanon && n.anchor) {
+              // Ancla fuerte al anillo canon.
+              n.vx = (n.vx ?? 0) + (n.anchor.x - (n.x ?? 0)) * 0.35 * a;
+              n.vy = (n.vy ?? 0) + (n.anchor.y - (n.y ?? 0)) * 0.35 * a;
+              continue;
+            }
             if (n.orphan) {
-              // Keep orphans drifting near the outer margin rather than the
-              // main topic clusters, so they read as visually unlinked.
-              const dx = (n.x ?? 0) - W / 2;
-              const dy = (n.y ?? 0) - H / 2;
+              // Huerfanos derivan cerca del margen exterior, leidos como
+              // "sin enlaces" en lugar de flotar al azar.
+              const dx = (n.x ?? 0) - cx;
+              const dy = (n.y ?? 0) - cy;
               const dist = Math.sqrt(dx * dx + dy * dy) || 1;
               const pull = (outerR - dist) * 0.02 * a;
               n.vx = (n.vx ?? 0) + (dx / dist) * pull;
@@ -228,8 +367,8 @@ export default function OSGraphBrain() {
             }
             const c = groupCentroids[n.group];
             if (!c) continue;
-            n.vx = (n.vx ?? 0) + (c.x - (n.x ?? 0)) * 0.045 * a;
-            n.vy = (n.vy ?? 0) + (c.y - (n.y ?? 0)) * 0.045 * a;
+            n.vx = (n.vx ?? 0) + (c.x - (n.x ?? 0)) * 0.05 * a;
+            n.vy = (n.vy ?? 0) + (c.y - (n.y ?? 0)) * 0.05 * a;
           }
         };
         return cf;
@@ -246,10 +385,10 @@ export default function OSGraphBrain() {
       .enter()
       .append('line')
       .attr('class', 'edge-line')
-      .attr('stroke', 'rgba(107,122,232,0.6)')
-      .attr('stroke-width', 1.4)
+      .attr('stroke', baseEdgeStroke)
+      .attr('stroke-width', baseEdgeWidth)
       .attr('stroke-dasharray', 'none')
-      .attr('opacity', 0.6);
+      .attr('opacity', baseEdgeOpacity);
 
     // Nodes
     const nodeSel = g.append('g')
@@ -260,35 +399,42 @@ export default function OSGraphBrain() {
       .attr('class', 'node-g')
       .style('cursor', 'pointer');
 
+    const colorOf = (d: GraphNode) => (d.isCenter ? CHAMPAGNE : GROUP_COLORS[d.group] ?? '#6B7280');
+
     nodeSel.append('circle')
       .attr('class', 'node-halo')
-      .attr('r', (d) => nodeR(d.connections) + 8)
-      .attr('fill', (d) => GROUP_COLORS[d.group] ?? '#6B7280')
-      .attr('opacity', 0);
+      .attr('r', (d) => radiusOf(d) + 8)
+      .attr('fill', colorOf)
+      .attr('opacity', (d) => (d.isCenter ? 0.12 : 0));
 
     nodeSel.append('circle')
       .attr('class', 'node-circle')
-      .attr('r', (d) => nodeR(d.connections))
-      .attr('fill', (d) => (GROUP_COLORS[d.group] ?? '#6B7280') + '44')
-      .attr('stroke', (d) => GROUP_COLORS[d.group] ?? '#6B7280')
-      .attr('stroke-width', 1.5);
+      .attr('r', (d) => radiusOf(d))
+      .attr('fill', (d) => (d.isCenter ? CHAMPAGNE : colorOf(d) + '44'))
+      .attr('stroke', (d) => (d.isCenter ? '#E8D5AC' : colorOf(d)))
+      .attr('stroke-width', (d) => (d.isCenter ? 2.5 : d.isCanon ? 2 : 1.5));
 
     nodeSel.append('text')
       .attr('class', 'node-label')
       .attr('text-anchor', 'middle')
-      .attr('dy', (d) => nodeR(d.connections) + 13)
-      .attr('fill', '#6B7280')
-      .attr('font-size', '9px')
+      .attr('dy', (d) => radiusOf(d) + 13)
+      .attr('fill', (d) => (d.isCenter ? CHAMPAGNE : d.isCanon ? '#9AA6C8' : '#6B7280'))
+      .attr('font-size', (d) => (d.isCenter ? '11px' : d.isCanon ? '10px' : '9px'))
+      .attr('font-weight', (d) => (d.isCenter || d.isCanon ? '700' : '400'))
       .attr('font-family', 'Montserrat, sans-serif')
       .attr('pointer-events', 'none')
-      .text((d) => (d.connections >= 4 ? d.label : ''));
+      .text((d) => (d.isCenter || d.isCanon || d.connections >= 4 ? d.label : ''));
 
-    // Drag
+    // Drag: pancho vuelve a su centro fijo al soltar; el resto queda libre.
     nodeSel.call(
       d3.drag<SVGGElement, GraphNode>()
         .on('start', (ev, d) => { if (!ev.active) sim.alphaTarget(0.3).restart(); d.fx = d.x; d.fy = d.y; })
         .on('drag',  (ev, d) => { d.fx = ev.x; d.fy = ev.y; })
-        .on('end',   (ev, d) => { if (!ev.active) sim.alphaTarget(0); d.fx = null; d.fy = null; })
+        .on('end',   (ev, d) => {
+          if (!ev.active) sim.alphaTarget(0);
+          if (d.isCenter) { d.fx = cx; d.fy = cy; }
+          else { d.fx = null; d.fy = null; }
+        })
     );
 
     // Hover
@@ -297,9 +443,9 @@ export default function OSGraphBrain() {
         d3.select(this).select('.node-halo').attr('opacity', 0.12);
         d3.select(this).select('.node-circle')
           .transition().duration(100)
-          .attr('fill', (GROUP_COLORS[d.group] ?? '#6B7280') + '88')
+          .attr('fill', d.isCenter ? CHAMPAGNE : colorOf(d) + '88')
           .attr('stroke-width', 2.5)
-          .attr('r', nodeR(d.connections) + 2);
+          .attr('r', radiusOf(d) + 2);
         d3.select(this).select('.node-label')
           .text(d.label).attr('fill', '#F4F6F8').attr('font-size', '10px').attr('font-weight', '700');
         edgeSel
@@ -315,22 +461,25 @@ export default function OSGraphBrain() {
           });
       })
       .on('mouseleave', function (_, d) {
-        d3.select(this).select('.node-halo').attr('opacity', 0);
+        d3.select(this).select('.node-halo').attr('opacity', d.isCenter ? 0.12 : 0);
         d3.select(this).select('.node-circle')
           .transition().duration(100)
-          .attr('fill', (GROUP_COLORS[d.group] ?? '#6B7280') + '44')
-          .attr('stroke-width', 1.5)
-          .attr('r', nodeR(d.connections));
+          .attr('fill', d.isCenter ? CHAMPAGNE : colorOf(d) + '44')
+          .attr('stroke-width', d.isCenter ? 2.5 : d.isCanon ? 2 : 1.5)
+          .attr('r', radiusOf(d));
         d3.select(this).select('.node-label')
-          .text(d.connections >= 4 ? d.label : '').attr('fill', '#6B7280').attr('font-size', '9px').attr('font-weight', '400');
+          .text(d.isCenter || d.isCanon || d.connections >= 4 ? d.label : '')
+          .attr('fill', d.isCenter ? CHAMPAGNE : d.isCanon ? '#9AA6C8' : '#6B7280')
+          .attr('font-size', d.isCenter ? '11px' : d.isCanon ? '10px' : '9px')
+          .attr('font-weight', d.isCenter || d.isCanon ? '700' : '400');
         edgeSel
-          .attr('stroke', 'rgba(107,122,232,0.6)')
-          .attr('stroke-width', 1.4);
+          .attr('stroke', baseEdgeStroke)
+          .attr('stroke-width', baseEdgeWidth);
       })
       .on('click', (ev, d) => {
         ev.stopPropagation();
         setPanelSlug(d.id);
-        setPanelData({ label: d.label, group: d.group, connections: d.connections });
+        setPanelData({ label: d.label, group: d.group, connections: d.connections, tags: d.tags });
       });
 
     svg.on('click', () => { setPanelSlug(null); setPanelData(null); });
@@ -360,6 +509,62 @@ export default function OSGraphBrain() {
 
     return () => { sim.stop(); };
   }, [graphData, onlyConnected]);
+
+  // --- Effect 4: capa de fuentes (toggle, sin reiniciar la simulacion) ---
+  useEffect(() => {
+    if (!gRef.current) return;
+    const g = d3.select(gRef.current);
+    g.select('.sources-layer').remove();
+    if (!showSources || !graphData) return;
+
+    const { W, H } = dimsRef.current;
+    const cx = W / 2;
+    const cy = H / 2;
+    const list = graphData.sources && graphData.sources.length > 0 ? graphData.sources : DEFAULT_SOURCES;
+
+    const layer = g.append('g').attr('class', 'sources-layer');
+    const x = cx - Math.min(W, H) * 0.62; // entran desde el borde izquierdo
+    const spacing = Math.min(64, (H - 80) / Math.max(list.length, 1));
+
+    list.forEach((name, i) => {
+      const y = cy + (i - (list.length - 1) / 2) * spacing;
+
+      // Flecha hacia el centro, detenida antes del nodo pancho.
+      const dx = cx - x;
+      const dy = cy - y;
+      const dist = Math.sqrt(dx * dx + dy * dy) || 1;
+      const stop = 34; // radio de pancho + margen
+      const ex = cx - (dx / dist) * stop;
+      const ey = cy - (dy / dist) * stop;
+
+      layer.append('line')
+        .attr('x1', x + 10).attr('y1', y)
+        .attr('x2', ex).attr('y2', ey)
+        .attr('stroke', 'rgba(148,163,184,0.4)')
+        .attr('stroke-width', 1)
+        .attr('stroke-dasharray', '4 4')
+        .attr('marker-end', 'url(#arrow-src)');
+
+      // Rombo: forma distinta a las notas para leerse como capa de entrada.
+      layer.append('rect')
+        .attr('x', x - 7).attr('y', y - 7)
+        .attr('width', 14).attr('height', 14)
+        .attr('transform', `rotate(45 ${x} ${y})`)
+        .attr('fill', 'rgba(148,163,184,0.18)')
+        .attr('stroke', '#94A3B8')
+        .attr('stroke-width', 1.5);
+
+      layer.append('text')
+        .attr('x', x).attr('y', y + 24)
+        .attr('text-anchor', 'middle')
+        .attr('fill', '#94A3B8')
+        .attr('font-size', '10px')
+        .attr('font-weight', '600')
+        .attr('font-family', 'Montserrat, sans-serif')
+        .attr('pointer-events', 'none')
+        .text(name);
+    });
+  }, [showSources, graphData, onlyConnected]);
 
   // Chrome HTML en tokens; los colores dentro del SVG quedan literales (canvas oscuro fijo).
   const MUTED  = 'var(--os-muted)';
@@ -404,6 +609,13 @@ export default function OSGraphBrain() {
             <span style={{ flex: 1 }} />
 
             <button
+              onClick={() => setShowSources((v) => !v)}
+              style={{ fontSize: '11px', padding: '4px 12px', minHeight: 36, borderRadius: '99px', border: `1px solid ${showSources ? '#94A3B8' : BORDER}`, background: showSources ? 'rgba(148,163,184,0.15)' : 'transparent', color: showSources ? '#94A3B8' : MUTED, cursor: 'pointer', fontFamily: 'var(--os-font-display)' }}
+            >
+              Ver fuentes
+            </button>
+
+            <button
               onClick={() => setOnlyConnected((v) => !v)}
               style={{ fontSize: '11px', padding: '4px 12px', minHeight: 36, borderRadius: '99px', border: `1px solid ${onlyConnected ? 'var(--os-accent)' : BORDER}`, background: onlyConnected ? 'var(--os-accent)' : 'transparent', color: onlyConnected ? '#fff' : MUTED, cursor: 'pointer', fontFamily: 'var(--os-font-display)' }}
             >
@@ -429,21 +641,32 @@ export default function OSGraphBrain() {
 
             {/* Node detail panel */}
             {panelSlug && panelData && (
-              <div style={{ position: 'absolute', top: '8px', right: '8px', width: '220px', background: PANEL, border: `1px solid ${(GROUP_COLORS[panelData.group] ?? '#3B4ED9') + '55'}`, borderLeft: `3px solid ${GROUP_COLORS[panelData.group] ?? '#3B4ED9'}`, borderRadius: '10px', padding: '14px', zIndex: 10 }}>
+              <div style={{ position: 'absolute', top: '8px', right: '8px', width: '220px', background: PANEL, border: `1px solid ${(GROUP_COLORS[panelData.group] ?? '#3B4ED9') + '55'}`, borderLeft: `3px solid ${panelSlug === CENTER_SLUG ? CHAMPAGNE : GROUP_COLORS[panelData.group] ?? '#3B4ED9'}`, borderRadius: '10px', padding: '14px', zIndex: 10 }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
-                  <span style={{ fontSize: '11px', letterSpacing: '0.1em', textTransform: 'uppercase', color: GROUP_COLORS[panelData.group] ?? '#6B7AE8', fontFamily: 'var(--os-font-display)', fontWeight: 600 }}>
-                    {GROUP_LABELS[panelData.group] ?? panelData.group}
+                  <span style={{ fontSize: '11px', letterSpacing: '0.1em', textTransform: 'uppercase', color: panelSlug === CENTER_SLUG ? CHAMPAGNE : GROUP_COLORS[panelData.group] ?? '#6B7AE8', fontFamily: 'var(--os-font-display)', fontWeight: 600 }}>
+                    {panelSlug === CENTER_SLUG ? 'Centro' : GROUP_LABELS[panelData.group] ?? panelData.group}
                   </span>
                   <button onClick={() => { setPanelSlug(null); setPanelData(null); }} style={{ background: 'none', border: 'none', color: MUTED, cursor: 'pointer', fontSize: '16px', lineHeight: 1, padding: 0 }}>x</button>
                 </div>
                 <h3 style={{ fontSize: 'var(--os-text-sm)', fontWeight: 700, color: 'var(--os-text)', margin: '0 0 8px', lineHeight: 1.35 }}>{panelData.label}</h3>
                 <span style={{ fontSize: '11px', color: '#6B7AE8', background: 'rgba(107,122,232,0.1)', padding: '2px 7px', borderRadius: '4px' }}>{panelData.connections} enlaces</span>
+                {panelData.tags && panelData.tags.length > 0 && (
+                  <div style={{ display: 'flex', gap: '4px', flexWrap: 'wrap', marginTop: '8px' }}>
+                    {panelData.tags.map((t) => (
+                      <span key={t} style={{ fontSize: '10px', color: MUTED, background: 'var(--os-fill-subtle)', padding: '1px 6px', borderRadius: '4px' }}>#{t}</span>
+                    ))}
+                  </div>
+                )}
               </div>
             )}
           </div>
 
           {/* Legend + stats */}
           <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap', marginTop: '10px', paddingTop: '10px', borderTop: `1px solid ${BORDER}`, alignItems: 'center' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+              <span style={{ width: '9px', height: '9px', borderRadius: '50%', background: CHAMPAGNE, display: 'block' }} />
+              <span style={{ fontSize: '11px', color: CHAMPAGNE, fontFamily: 'var(--os-font-display)', fontWeight: 600 }}>Pancho</span>
+            </div>
             {availableGroups.map((gr) => (
               <div key={gr} style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
                 <span style={{ width: '7px', height: '7px', borderRadius: '50%', background: GROUP_COLORS[gr] ?? MUTED, display: 'block' }} />

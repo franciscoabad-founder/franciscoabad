@@ -3,6 +3,7 @@ import '../styles/os.css';
 import { datosHoy } from '../os/data/hoy';
 import { datosDaily } from '../os/data/daily';
 import OSJugadorBar from '../os/components/OSJugadorBar';
+import TaskiBubble from '../os/components/TaskiBubble';
 
 interface Props {
   title: string;
@@ -34,6 +35,7 @@ const ms: Record<string, string> = {
   '/os/crm': 'contacts',
   '/os/tareas': 'checklist',
   '/os/agenda': 'calendar_today',
+  '/os/grabar': 'mic',
   '/os/bandeja': 'inbox',
   '/os/contenido': 'edit_note',
   '/os/redes': 'share',
@@ -68,6 +70,7 @@ const navGroups = [
     { href: '/os/pendientes', label: 'Pendientes' },
     { href: '/os/recordatorios', label: 'Recordatorios' },
     { href: '/os/agenda', label: 'Agenda' },
+    { href: '/os/grabar', label: 'Grabar' },
   ]},
   { label: 'Captura', items: [
     { href: '/os/bandeja', label: 'Por revisar' },
@@ -491,6 +494,9 @@ const anyBottomActive = bottomNav.some(i => isActive(i.href));
         </div>
       </main>
     </div>
+
+    <!-- Taski: burbuja de chat directo con Hermes (visible en todo el OS) -->
+    <TaskiBubble client:load />
 
     <!-- Bottom nav (movil) -->
     <nav class="os-bottomnav">

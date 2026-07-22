@@ -1,5 +1,5 @@
-// Sheet de captura estilo Yazio: tiles de icono (Buscar/Recetas/Meals/Mas,
-// Foto y Barcode deshabilitados con chip "proximamente") + el contenido del tab activo.
+// Sheet de captura estilo Yazio: tiles de icono (Buscar/Recetas/Meals/Foto/Mas,
+// Barcode deshabilitado con chip "pronto") + el contenido del tab activo.
 // Overlay/bottom-sheet delegado al componente Sheet de ui/.
 import { useState } from 'react';
 import type { Comida, Momento, TabAgregar } from './tipos';
@@ -9,6 +9,7 @@ import { Sheet } from '../../ui';
 import TabBuscar from './TabBuscar';
 import TabRecetas from './TabRecetas';
 import TabMeals from './TabMeals';
+import TabFoto from './TabFoto';
 import TabMas from './TabMas';
 
 interface Props {
@@ -24,6 +25,7 @@ const TILES: { key: TabAgregar; icon: string; label: string }[] = [
   { key: 'buscar', icon: 'search', label: 'Buscar' },
   { key: 'recetas', icon: 'menu_book', label: 'Recetas' },
   { key: 'meals', icon: 'dining', label: 'Meals' },
+  { key: 'foto', icon: 'photo_camera', label: 'Foto' },
   { key: 'mas', icon: 'more_horiz', label: 'Mas' },
 ];
 
@@ -52,11 +54,6 @@ export default function AddSheet({ momentoInicial, dia, tipoDia, comidasHoy, onC
           </button>
         ))}
         <div style={tile(true)}>
-          <span className="material-symbols-outlined" style={{ fontSize: 20, color: 'var(--os-muted)' }}>photo_camera</span>
-          <span style={{ fontSize: 11, color: 'var(--os-muted)', fontWeight: 700 }}>Foto</span>
-          <span style={{ ...chipMuted, position: 'absolute', top: -6, right: -6, fontSize: 11, padding: '1px 5px' }}>pronto</span>
-        </div>
-        <div style={tile(true)}>
           <span className="material-symbols-outlined" style={{ fontSize: 20, color: 'var(--os-muted)' }}>qr_code_scanner</span>
           <span style={{ fontSize: 11, color: 'var(--os-muted)', fontWeight: 700 }}>Codigo</span>
           <span style={{ ...chipMuted, position: 'absolute', top: -6, right: -6, fontSize: 11, padding: '1px 5px' }}>pronto</span>
@@ -66,6 +63,7 @@ export default function AddSheet({ momentoInicial, dia, tipoDia, comidasHoy, onC
       {tab === 'buscar' && <TabBuscar momento={momento} dia={dia} tipoDia={tipoDia} onAgregado={agregado} />}
       {tab === 'recetas' && <TabRecetas momento={momento} dia={dia} tipoDia={tipoDia} onAgregado={agregado} />}
       {tab === 'meals' && <TabMeals momento={momento} dia={dia} onAgregado={agregado} />}
+      {tab === 'foto' && <TabFoto momento={momento} dia={dia} tipoDia={tipoDia} onAgregado={agregado} />}
       {tab === 'mas' && <TabMas momento={momento} dia={dia} tipoDia={tipoDia} comidasHoy={comidasHoy} onAgregado={agregado} />}
     </Sheet>
   );
