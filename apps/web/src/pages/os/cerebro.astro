@@ -45,12 +45,15 @@ import OSGraphBrain from '../../os/components/OSGraphBrain';
     <div style="display:flex;align-items:center;gap:8px;margin-bottom:0.875rem;">
       <span class="material-symbols-outlined" style="font-size:18px;color:var(--os-accent-light);">psychology</span>
       <p class="os-section-title" style="margin:0;">Notas indexadas</p>
+      <span id="notes-meta" style="font-size:11px;color:var(--os-muted);margin-left:auto;"></span>
     </div>
+    <div id="notes-tags" style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:0.875rem;"></div>
     <div id="notes-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px;">
       <div class="os-card" style="color:var(--os-muted);font-size:13px;">
         Cargando notas...
       </div>
     </div>
+    <nav id="notes-pager" aria-label="Paginacion de notas" style="display:none;justify-content:center;align-items:center;gap:4px;flex-wrap:wrap;margin-top:1.25rem;"></nav>
   </div>
 
   <!-- Note modal -->
@@ -127,10 +130,77 @@ import OSGraphBrain from '../../os/components/OSGraphBrain';
   if (modal) modal.addEventListener('click', function(e) { if (e.target === modal) modal.style.display = 'none'; });
   document.addEventListener('keydown', function(e) { if (e.key === 'Escape' && modal) modal.style.display = 'none'; });
 
-  // ---- notes grid ----
+  // ---- notes grid (paginado + filtro por tag) ----
+  var TAGS = ['braintech','cortex','taskr','rafik','arazza','codeis','kronek','fonquito','flow','os','panchoatlas','gbrain','hermes','n8n','vps','marca','personal','familia','salud','finanzas','contenido','gtm'];
+  var notesState = { page: 1, tag: '' };
+
+  function renderTagChips() {
+    var wrap = document.getElementById('notes-tags');
+    if (!wrap) return;
+    var chips = [{ v: '', label: 'Todas' }].concat(TAGS.map(function(t) { return { v: t, label: '#' + t }; }));
+    wrap.innerHTML = chips.map(function(c) {
+      var active = notesState.tag === c.v;
+      return '<button data-tag="' + c.v + '" class="tag-chip" style="font-size:11px;padding:4px 12px;min-height:32px;border-radius:99px;cursor:pointer;font-family:var(--os-font-display);'
+        + 'border:1px solid ' + (active ? 'var(--os-accent)' : 'var(--os-line)') + ';'
+        + 'background:' + (active ? 'var(--os-accent)' : 'transparent') + ';'
+        + 'color:' + (active ? '#fff' : 'var(--os-muted)') + ';">'
+        + c.label + '</button>';
+    }).join('');
+    wrap.querySelectorAll('.tag-chip').forEach(function(btn) {
+      btn.addEventListener('click', function() {
+        var t = this.dataset.tag || '';
+        notesState.tag = (notesState.tag === t) ? '' : t;
+        notesState.page = 1;
+        renderTagChips();
+        loadNotes();
+      });
+    });
+  }
+
+  function renderPager(page, pages) {
+    var pager = document.getElementById('notes-pager');
+    if (!pager) return;
+    if (pages <= 1) { pager.style.display = 'none'; pager.innerHTML = ''; return; }
+    pager.style.display = 'flex';
+
+    // Ventana de numeros estilo Google: hasta 10 paginas visibles centradas en la actual.
+    var start = Math.max(1, Math.min(page - 4, pages - 9));
+    var end = Math.min(pages, start + 9);
+
+    var btn = function(label, target, opts) {
+      opts = opts || {};
+      var current = opts.current;
+      var disabled = opts.disabled;
+      return '<button data-page="' + target + '" ' + (disabled ? 'disabled' : '')
+        + ' style="min-width:36px;min-height:36px;padding:4px 10px;border-radius:8px;font-size:13px;font-family:var(--os-font-display);cursor:' + (disabled ? 'default' : 'pointer') + ';'
+        + 'border:1px solid ' + (current ? 'var(--os-accent)' : 'transparent') + ';'
+        + 'background:' + (current ? 'var(--os-accent)' : 'transparent') + ';'
+        + 'color:' + (current ? '#fff' : (disabled ? 'var(--os-line)' : 'var(--os-accent-light)')) + ';">'
+        + label + '</button>';
+    };
+
+    var html = btn('&lsaquo;', page - 1, { disabled: page <= 1 });
+    for (var p = start; p <= end; p++) html += btn(String(p), p, { current: p === page });
+    html += btn('&rsaquo;', page + 1, { disabled: page >= pages });
+    pager.innerHTML = html;
+
+    pager.querySelectorAll('button[data-page]').forEach(function(b) {
+      if (b.disabled) return;
+      b.addEventListener('click', function() {
+        notesState.page = Number(this.dataset.page);
+        loadNotes();
+        var grid = document.getElementById('notes-grid');
+        if (grid) grid.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      });
+    });
+  }
+
   async function loadNotes() {
+    var grid = document.getElementById('notes-grid');
+    if (grid) grid.style.opacity = '0.5';
     try {
-      var res = await fetch('/api/brain/notes?limit=12');
+      var params = 'limit=12&page=' + notesState.page + (notesState.tag ? '&tag=' + encodeURIComponent(notesState.tag) : '');
+      var res = await fetch('/api/brain/notes?' + params);
       if (!res.ok) throw new Error(String(res.status));
       var data = await res.json();
       var notes = data.notes;
@@ -138,8 +208,19 @@ import OSGraphBrain from '../../os/components/OSGraphBrain';
       var countEl = document.getElementById('nota-count');
       if (countEl) countEl.textContent = (data.total || notes.length) + ' notas indexadas';
 
-      var grid = document.getElementById('notes-grid');
-      if (!grid || !notes.length) return;
+      var metaEl = document.getElementById('notes-meta');
+      if (metaEl) {
+        metaEl.textContent = data.total + ' notas' + (notesState.tag ? ' con #' + notesState.tag : '') + ' · página ' + data.page + ' de ' + data.pages;
+      }
+
+      renderPager(data.page, data.pages);
+
+      if (!grid) return;
+      grid.style.opacity = '1';
+      if (!notes.length) {
+        grid.innerHTML = '<div class="os-card" style="color:var(--os-muted);font-size:13px;">Sin notas' + (notesState.tag ? ' con #' + esc(notesState.tag) : '') + '.</div>';
+        return;
+      }
 
       grid.innerHTML = notes.map(function(n) {
         var tagsHtml = (n.tags || []).map(function(t) {
@@ -158,8 +239,10 @@ import OSGraphBrain from '../../os/components/OSGraphBrain';
         card.addEventListener('click', function() { openNote(this.dataset.slug); });
       });
     } catch (e) {
-      var grid = document.getElementById('notes-grid');
-      if (grid) grid.innerHTML = '<div style="color:var(--os-error);font-size:12px;padding:1rem;">Error cargando notas.</div>';
+      if (grid) {
+        grid.style.opacity = '1';
+        grid.innerHTML = '<div style="color:var(--os-error);font-size:12px;padding:1rem;">Error cargando notas.</div>';
+      }
     }
   }
 
@@ -223,6 +306,7 @@ import OSGraphBrain from '../../os/components/OSGraphBrain';
     });
   }
 
+  renderTagChips();
   loadNotes();
 </script>
 </OSLayout>
