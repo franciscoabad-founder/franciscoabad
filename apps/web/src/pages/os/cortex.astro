@@ -1,0 +1,220 @@
+---
+export const prerender = false;
+
+import OSLayout from '../../layouts/OSLayout.astro';
+---
+
+<OSLayout title="Cortex">
+  <div class="os-fade-up">
+    <div style="display:flex;align-items:flex-end;justify-content:space-between;flex-wrap:wrap;gap:0.75rem;margin-bottom:1.5rem;">
+      <div>
+        <p class="os-eyebrow" style="margin-bottom:6px;">BrainTech · Cortex</p>
+        <h1 class="os-h1">Alta de testers</h1>
+      </div>
+      <a class="os-btn os-btn-ghost" href="https://app-cortex.franciscoabad.com/os/admin" target="_blank" rel="noopener" style="text-decoration:none;">
+        <span class="material-symbols-outlined" style="font-size:16px;">open_in_new</span>
+        Admin completo
+      </a>
+    </div>
+
+    <div class="os-card" style="max-width:560px;">
+      <p class="os-section-title">Nuevo tester</p>
+
+      <form id="cortex-form" novalidate style="display:flex;flex-direction:column;gap:1rem;">
+        <div>
+          <label for="ci-nombre" class="cortex-field-label">Nombre *</label>
+          <input id="ci-nombre" name="nombre" type="text" required placeholder="Nombre completo" class="os-input" style="width:100%;" />
+        </div>
+
+        <div>
+          <label for="ci-email" class="cortex-field-label">Email *</label>
+          <input id="ci-email" name="email" type="email" required placeholder="tester@correo.com" class="os-input" style="width:100%;" />
+        </div>
+
+        <div style="display:flex;gap:0.75rem;flex-wrap:wrap;">
+          <div style="flex:1;min-width:180px;">
+            <label for="ci-empresa" class="cortex-field-label">Empresa</label>
+            <input id="ci-empresa" name="empresa" type="text" placeholder="Empresa" class="os-input" style="width:100%;" />
+          </div>
+          <div style="flex:1;min-width:180px;">
+            <label for="ci-rol" class="cortex-field-label">Rol</label>
+            <input id="ci-rol" name="rol" type="text" placeholder="Rol / cargo" class="os-input" style="width:100%;" />
+          </div>
+        </div>
+
+        <div style="display:flex;gap:0.75rem;flex-wrap:wrap;">
+          <div style="flex:1;min-width:180px;">
+            <label for="ci-telefono" class="cortex-field-label">Telefono</label>
+            <input id="ci-telefono" name="telefono" type="text" placeholder="+593 9..." class="os-input" style="width:100%;" />
+          </div>
+          <div style="flex:1;min-width:180px;">
+            <label for="ci-tz" class="cortex-field-label">Zona horaria</label>
+            <select id="ci-tz" name="tz" class="os-input" style="width:100%;">
+              <option value="America/Guayaquil" selected>America/Guayaquil</option>
+              <option value="America/Mexico_City">America/Mexico_City</option>
+              <option value="America/Bogota">America/Bogota</option>
+              <option value="America/Lima">America/Lima</option>
+              <option value="America/Santiago">America/Santiago</option>
+              <option value="America/Argentina/Buenos_Aires">America/Argentina/Buenos_Aires</option>
+              <option value="US/Eastern">US/Eastern</option>
+              <option value="Europe/Madrid">Europe/Madrid</option>
+            </select>
+          </div>
+        </div>
+
+        <div>
+          <label for="ci-objetivo" class="cortex-field-label">Hipotesis de uso</label>
+          <textarea id="ci-objetivo" name="objetivo" rows="3" placeholder="Que va a probar este tester y para que" class="os-input" style="width:100%;resize:vertical;"></textarea>
+        </div>
+
+        <div style="display:flex;gap:10px;align-items:flex-start;">
+          <input id="ci-consentimiento" name="consentimiento_datos" type="checkbox" required style="margin-top:3px;width:16px;height:16px;flex-shrink:0;accent-color:var(--os-accent);" />
+          <label for="ci-consentimiento" style="font-size:var(--os-text-sm);color:var(--os-text-2);line-height:1.5;">
+            El tester consiente el registro de metricas de uso, errores y feedback durante el beta.
+          </label>
+        </div>
+
+        <p id="cortex-error" style="display:none;font-size:var(--os-text-sm);color:var(--os-error);margin:0;"></p>
+
+        <button id="cortex-submit" type="submit" class="os-btn" style="align-self:flex-start;">
+          <span class="material-symbols-outlined" style="font-size:16px;">rocket_launch</span>
+          Dar de alta
+        </button>
+      </form>
+    </div>
+
+    <div id="cortex-result" class="os-card os-card-accent" style="display:none;max-width:560px;margin-top:1rem;">
+      <p class="os-section-title">Tester creado</p>
+      <div id="cortex-result-body" style="display:flex;flex-direction:column;gap:8px;font-size:var(--os-text-sm);color:var(--os-text-2);"></div>
+      <div style="display:flex;align-items:center;gap:10px;margin-top:1rem;flex-wrap:wrap;">
+        <button id="cortex-copy" type="button" class="os-btn os-btn-ghost">
+          <span class="material-symbols-outlined" style="font-size:16px;">content_copy</span>
+          Copiar credenciales
+        </button>
+        <span id="cortex-copy-ok" style="display:none;font-size:var(--os-text-xs);color:var(--os-ok);">Copiado.</span>
+      </div>
+    </div>
+  </div>
+
+  <style>
+    .cortex-field-label {
+      display: block;
+      font-family: var(--os-font-display);
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--os-muted);
+      margin-bottom: 5px;
+    }
+  </style>
+
+  <script is:inline>
+    (function () {
+      const form = document.getElementById('cortex-form');
+      const btn = document.getElementById('cortex-submit');
+      const errorEl = document.getElementById('cortex-error');
+      const resultCard = document.getElementById('cortex-result');
+      const resultBody = document.getElementById('cortex-result-body');
+      const copyBtn = document.getElementById('cortex-copy');
+      const copyOk = document.getElementById('cortex-copy-ok');
+
+      const esc = (s) => String(s ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+
+      let credenciales = '';
+
+      form.addEventListener('submit', async function (e) {
+        e.preventDefault();
+        errorEl.style.display = 'none';
+        resultCard.style.display = 'none';
+
+        const nombre = document.getElementById('ci-nombre').value.trim();
+        const email = document.getElementById('ci-email').value.trim();
+        const consentimiento = document.getElementById('ci-consentimiento').checked;
+
+        if (!nombre || !email) {
+          errorEl.textContent = 'Completa nombre y email.';
+          errorEl.style.display = 'block';
+          return;
+        }
+        if (!consentimiento) {
+          errorEl.textContent = 'El consentimiento de datos es obligatorio.';
+          errorEl.style.display = 'block';
+          return;
+        }
+
+        const payload = {
+          nombre,
+          email,
+          empresa: document.getElementById('ci-empresa').value.trim() || undefined,
+          rol: document.getElementById('ci-rol').value.trim() || undefined,
+          telefono: document.getElementById('ci-telefono').value.trim() || undefined,
+          tz: document.getElementById('ci-tz').value || undefined,
+          objetivo: document.getElementById('ci-objetivo').value.trim() || undefined,
+          consentimiento_datos: true,
+        };
+
+        btn.disabled = true;
+        const originalHtml = btn.innerHTML;
+        btn.innerHTML = 'Provisionando... (puede tardar 1-2 minutos)';
+
+        try {
+          const res = await fetch('/api/os/cortex-invitar', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload),
+          });
+          const data = await res.json();
+
+          if (!res.ok || data.error) {
+            errorEl.textContent = data.error || 'Algo salio mal. Intenta de nuevo.';
+            errorEl.style.display = 'block';
+            btn.disabled = false;
+            btn.innerHTML = originalHtml;
+            return;
+          }
+
+          let html = '';
+          html += '<p><strong style="color:var(--os-text);">Login:</strong> <a href="' + esc(data.login_url) + '" target="_blank" rel="noopener" style="color:var(--os-accent-light);">' + esc(data.login_url) + '</a></p>';
+          html += '<p><strong style="color:var(--os-text);">Email:</strong> ' + esc(data.email) + '</p>';
+
+          credenciales = 'URL: ' + (data.login_url || '') + ' / Email: ' + (data.email || '');
+
+          if (data.temporary_password) {
+            html += '<p><strong style="color:var(--os-text);">Password temporal:</strong> <span class="os-mono">' + esc(data.temporary_password) + '</span></p>';
+            html += '<p style="color:var(--os-error);font-size:var(--os-text-xs);margin-top:2px;">La contrasena se muestra UNA sola vez; compartela por canal seguro.</p>';
+            credenciales += ' / Password: ' + data.temporary_password;
+          }
+
+          if (data.email_sent) {
+            html += '<p style="color:var(--os-ok);">El tester ya recibio el correo de bienvenida.</p>';
+          }
+
+          if (typeof data.restantes === 'number') {
+            html += '<p style="color:var(--os-muted);font-size:var(--os-text-xs);">Cupos restantes: ' + esc(data.restantes) + '</p>';
+          }
+
+          resultBody.innerHTML = html;
+          resultCard.style.display = 'block';
+          copyOk.style.display = 'none';
+          form.reset();
+          document.getElementById('ci-tz').value = 'America/Guayaquil';
+        } catch (err) {
+          errorEl.textContent = 'Error de conexion. Intenta de nuevo.';
+          errorEl.style.display = 'block';
+        }
+
+        btn.disabled = false;
+        btn.innerHTML = originalHtml;
+      });
+
+      copyBtn.addEventListener('click', function () {
+        if (!credenciales) return;
+        navigator.clipboard.writeText(credenciales).then(function () {
+          copyOk.style.display = 'inline';
+          setTimeout(function () { copyOk.style.display = 'none'; }, 2000);
+        });
+      });
+    })();
+  </script>
+</OSLayout>
