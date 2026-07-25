@@ -158,18 +158,24 @@ export const GET: APIRoute = async ({ cookies, url }) => {
 
     // Real edges only: actual wikilinks resolved by gbrain, source -> target.
     // Drop anything pointing at a slug we don't have as a node (dangling link).
-    const edgeSet = new Set<string>();
-    const edges: { source: string; target: string }[] = [];
+    // Una sola arista por par, pero conservando la direccion del wikilink:
+    // `both: true` cuando las dos paginas se enlazan entre si.
+    const edgeMap = new Map<string, { source: string; target: string; both: boolean }>();
     pages.forEach((p, i) => {
       for (const link of linksResults[i] ?? []) {
         const target = (link as any).target_slug ?? (link as any).to_slug;
         if (!target || target === p.slug || !slugSet.has(target)) continue;
         const key = [p.slug, target].sort().join('|');
-        if (edgeSet.has(key)) continue;
-        edgeSet.add(key);
-        edges.push({ source: p.slug, target });
+        const existing = edgeMap.get(key);
+        if (!existing) {
+          edgeMap.set(key, { source: p.slug, target, both: false });
+          continue;
+        }
+        // Ya existe el par: si el sentido es el contrario, es reciproco.
+        if (existing.source !== p.slug) existing.both = true;
       }
     });
+    const edges = [...edgeMap.values()];
 
     // Connection count (backlinks + forward links) per node — drives node size.
     const connCount: Record<string, number> = {};
@@ -238,6 +244,7 @@ export const GET: APIRoute = async ({ cookies, url }) => {
         edges: finalEdges.length,
         connected: nodes.filter((n) => n.connections > 0).length,
         orphans: nodes.filter((n) => n.connections === 0).length,
+        bidirectional: finalEdges.filter((e) => e.both).length,
         truncated,
         top_n: TOP_N,
       },
