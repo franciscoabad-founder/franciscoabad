@@ -168,11 +168,7 @@ async function loadAgenda() {
     var data = await res.json();
     if (!res.ok) throw new Error(data.error || String(res.status));
     agendaEventos = Array.isArray(data.eventos) ? data.eventos : [];
-    if (agendaEventos.length) {
-      renderAgenda(agendaEventos, false);
-    } else {
-      renderAgenda(fallbackAgenda, true);
-    }
+    renderAgenda([...fallbackAgenda, ...agendaEventos], false);
   } catch(e) {
     renderAgenda(fallbackAgenda, true);
   }
