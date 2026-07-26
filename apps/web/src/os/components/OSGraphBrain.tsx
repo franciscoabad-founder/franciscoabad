@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import * as d3 from 'd3';
 import { Spinner } from './ui';
 
@@ -18,9 +18,21 @@ interface GraphNode extends d3.SimulationNodeDatum {
 interface RawEdge {
   source: string;
   target: string;
+  // true = las dos paginas se enlazan entre si (wikilink reciproco).
+  both?: boolean;
 }
 
-interface SimEdge extends d3.SimulationLinkDatum<GraphNode> {}
+interface SimEdge extends d3.SimulationLinkDatum<GraphNode> {
+  both?: boolean;
+}
+
+// Vecino de una nota segun sus wikilinks reales.
+interface Neighbor {
+  slug: string;
+  label: string;
+  group: string;
+  dir: 'out' | 'in' | 'both';
+}
 
 interface RawData {
   nodes: Array<{ id: string; label: string; type: string; group: string; tags?: string[]; connections?: number }>;
@@ -34,6 +46,7 @@ interface RawData {
     orphans: number;
     truncated: boolean;
     top_n: number;
+    bidirectional?: number;
   };
 }
 
@@ -92,6 +105,14 @@ const GROUP_ORDER = [
   'sistema', 'otros',
 ];
 
+// Direccion del wikilink en la lista del panel.
+const DIR_GLYPH: Record<Neighbor['dir'], string> = { out: '→', in: '←', both: '⇄' };
+const DIR_LABEL: Record<Neighbor['dir'], string> = {
+  out: 'Esta nota enlaza a',
+  in: 'Enlaza a esta nota',
+  both: 'Se enlazan mutuamente',
+};
+
 const CHAMPAGNE = '#B5985A';
 const CENTER_SLUG = 'pancho';
 const DEFAULT_SOURCES = ['Telegram', 'Reuniones', 'Repos de código', 'Chats IA', 'Manual'];
@@ -124,6 +145,19 @@ const baseEdgeOpacity = (e: SimEdge) => (edgeIsCross(e) ? 0.25 : 0.6);
 const baseEdgeStroke = (e: SimEdge) =>
   edgeIsCross(e) ? 'rgba(107,122,232,0.4)' : 'rgba(107,122,232,0.6)';
 
+// Modo foco: el wikilink activo se lee brillante y el resto casi desaparece.
+const FOCUS_EDGE = 'rgba(139,152,240,0.95)';
+const DIM_EDGE   = 'rgba(107,122,232,0.05)';
+
+function edgeId(e: SimEdge): { s: string; t: string } {
+  const s = e.source as GraphNode | string;
+  const t = e.target as GraphNode | string;
+  return {
+    s: typeof s === 'string' ? s : s.id,
+    t: typeof t === 'string' ? t : t.id,
+  };
+}
+
 export default function OSGraphBrain() {
   const containerRef = useRef<HTMLDivElement>(null);
   const svgRef      = useRef<SVGSVGElement>(null);
@@ -140,10 +174,84 @@ export default function OSGraphBrain() {
   const [availableGroups, setAvailableGroups] = useState<string[]>([]);
   const [activeGroup, setActiveGroup]       = useState<string | null>(null);
   const [panelSlug, setPanelSlug]           = useState<string | null>(null);
-  const [panelData, setPanelData]           = useState<{label:string;group:string;connections:number;tags?:string[]} | null>(null);
+  const [panelData, setPanelData]           = useState<{label:string;group:string;tags?:string[]} | null>(null);
   const [onlyConnected, setOnlyConnected]   = useState(false);
   const [showAll, setShowAll]               = useState(false);
   const [showSources, setShowSources]       = useState(false);
+  const [showArrows, setShowArrows]         = useState(false);
+
+  // Estado de resaltado leido desde los handlers de D3 (que cierran sobre el
+  // render en que se crearon): los refs evitan closures obsoletas.
+  const hlRef = useRef<{ group: string | null; focus: string | null; near: Set<string> | null; arrows: boolean }>({
+    group: null, focus: null, near: null, arrows: false,
+  });
+  const applyHlRef  = useRef<(() => void) | null>(null);
+  const centerOnRef = useRef<((slug: string) => void) | null>(null);
+
+  // --- Indice de wikilinks: por slug, a quien enlaza y quien lo enlaza ---
+  const linkIndex = useMemo(() => {
+    const out: Record<string, Set<string>> = {};
+    const inc: Record<string, Set<string>> = {};
+    const push = (map: Record<string, Set<string>>, k: string, v: string) => {
+      (map[k] ??= new Set()).add(v);
+    };
+    for (const e of graphData?.edges ?? []) {
+      push(out, e.source, e.target);
+      push(inc, e.target, e.source);
+      if (e.both) {
+        push(out, e.target, e.source);
+        push(inc, e.source, e.target);
+      }
+    }
+    return { out, inc };
+  }, [graphData]);
+
+  const nodeIndex = useMemo(() => {
+    const map: Record<string, { label: string; group: string; tags?: string[] }> = {};
+    for (const n of graphData?.nodes ?? []) {
+      map[n.id] = { label: n.label, group: n.group, tags: n.tags };
+    }
+    return map;
+  }, [graphData]);
+
+  // Vecinos de la nota enfocada, ordenados: reciprocos primero, luego salientes.
+  const neighbors = useMemo<Neighbor[]>(() => {
+    if (!panelSlug) return [];
+    const outs = linkIndex.out[panelSlug] ?? new Set<string>();
+    const ins  = linkIndex.inc[panelSlug] ?? new Set<string>();
+    const all  = new Set([...outs, ...ins]);
+    const rank = { both: 0, out: 1, in: 2 };
+    return [...all]
+      .map((slug): Neighbor => ({
+        slug,
+        label: nodeIndex[slug]?.label ?? slug,
+        group: nodeIndex[slug]?.group ?? 'otros',
+        dir: outs.has(slug) && ins.has(slug) ? 'both' : outs.has(slug) ? 'out' : 'in',
+      }))
+      .sort((a, b) => rank[a.dir] - rank[b.dir] || a.label.localeCompare(b.label));
+  }, [panelSlug, linkIndex, nodeIndex]);
+
+  function focusNode(slug: string) {
+    const n = nodeIndex[slug];
+    if (!n) return;
+    setPanelSlug(slug);
+    setPanelData({ label: n.label, group: n.group, tags: n.tags });
+    centerOnRef.current?.(slug);
+  }
+
+  function clearFocus() {
+    setPanelSlug(null);
+    setPanelData(null);
+  }
+
+  // El modal de nota vive en cerebro.astro como funcion global.
+  function openNote(slug: string) {
+    const fn = (window as unknown as { openNote?: (s: string) => void }).openNote;
+    if (typeof fn === 'function') fn(slug);
+  }
+
+  const outCount = neighbors.filter((n) => n.dir !== 'in').length;
+  const inCount  = neighbors.filter((n) => n.dir !== 'out').length;
 
   // --- Effect 1: fetch data (no DOM access) ---
   useEffect(() => {
@@ -164,24 +272,27 @@ export default function OSGraphBrain() {
     return () => { cancelled = true; };
   }, [showAll]);
 
-  // --- Effect 2: filter opacity (no restart) ---
+  // --- Effect 2: resaltado (grupo activo, foco de wikilinks, flechas) ---
+  // No reinicia la simulacion: solo reescribe atributos sobre el SVG vivo.
   useEffect(() => {
-    if (!svgRef.current) return;
-    const svg = d3.select(svgRef.current);
-    if (activeGroup) {
-      svg.selectAll<SVGGElement, GraphNode>('.node-g')
-        .attr('opacity', (d) => (d.group === activeGroup || d.isCenter ? 1 : 0.1));
-      svg.selectAll<SVGLineElement, SimEdge>('.edge-line')
-        .attr('opacity', (d) => {
-          const s = d.source as GraphNode;
-          const t = d.target as GraphNode;
-          return s.group === activeGroup || t.group === activeGroup ? 0.5 : 0.03;
-        });
-    } else {
-      svg.selectAll('.node-g').attr('opacity', 1);
-      svg.selectAll<SVGLineElement, SimEdge>('.edge-line').attr('opacity', baseEdgeOpacity);
-    }
-  }, [activeGroup]);
+    const near = panelSlug
+      ? new Set<string>([
+          panelSlug,
+          ...(linkIndex.out[panelSlug] ?? []),
+          ...(linkIndex.inc[panelSlug] ?? []),
+        ])
+      : null;
+    hlRef.current = { group: activeGroup, focus: panelSlug, near, arrows: showArrows };
+    applyHlRef.current?.();
+  }, [activeGroup, panelSlug, showArrows, linkIndex, graphData, onlyConnected]);
+
+  // Escape sale del modo foco.
+  useEffect(() => {
+    if (!panelSlug) return;
+    const onKey = (ev: KeyboardEvent) => { if (ev.key === 'Escape') clearFocus(); };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [panelSlug]);
 
   // --- Effect 3: D3 init — runs only AFTER graphData is set and DOM is painted ---
   useEffect(() => {
@@ -297,18 +408,26 @@ export default function OSGraphBrain() {
       .attr('height', H);
     svg.selectAll('*').remove();
 
-    // Markers: flechas para aristas y para la capa de fuentes
+    // Markers: flechas de wikilink (normal, resaltada, y la inversa de los
+    // enlaces reciprocos) mas la de la capa de fuentes. Las lineas se recortan
+    // en el tick al borde del nodo, asi que refX = 0.
     const defs = svg.append('defs');
-    defs.append('marker')
-      .attr('id', 'arrow')
-      .attr('viewBox', '0 -4 8 8')
-      .attr('refX', 14)
-      .attr('markerWidth', 6)
-      .attr('markerHeight', 6)
-      .attr('orient', 'auto')
-      .append('path')
-      .attr('d', 'M0,-4L8,0L0,4')
-      .attr('fill', 'rgba(107,122,232,0.5)');
+    const arrowHead = (id: string, fill: string, reverse = false) => {
+      defs.append('marker')
+        .attr('id', id)
+        .attr('viewBox', '0 -4 8 8')
+        .attr('refX', 0)
+        .attr('markerWidth', 6)
+        .attr('markerHeight', 6)
+        .attr('orient', reverse ? 'auto-start-reverse' : 'auto')
+        .append('path')
+        .attr('d', 'M0,-4L8,0L0,4')
+        .attr('fill', fill);
+    };
+    arrowHead('arrow', 'rgba(107,122,232,0.55)');
+    arrowHead('arrow-back', 'rgba(107,122,232,0.55)', true);
+    arrowHead('arrow-focus', FOCUS_EDGE);
+    arrowHead('arrow-focus-back', FOCUS_EDGE, true);
     defs.append('marker')
       .attr('id', 'arrow-src')
       .attr('viewBox', '0 -4 8 8')
@@ -323,11 +442,28 @@ export default function OSGraphBrain() {
     const g = svg.append('g');
     gRef.current = g.node();
 
-    // Zoom + pan
+    // Zoom + pan. Si el usuario ya movio la vista (o navego wikilinks), el
+    // zoom-fit automatico del final de la simulacion no le pisa el encuadre.
+    let viewLocked = false;
     const zoom = d3.zoom<SVGSVGElement, unknown>()
       .scaleExtent([0.1, 6])
-      .on('zoom', (ev) => g.attr('transform', ev.transform));
+      .on('zoom', (ev) => {
+        if (ev.sourceEvent) viewLocked = true;
+        g.attr('transform', ev.transform);
+      });
     svg.call(zoom).on('dblclick.zoom', null);
+
+    // Centrar la vista en una nota concreta (navegacion desde el panel).
+    centerOnRef.current = (slug: string) => {
+      const n = nodes.find((x) => x.id === slug);
+      if (!n) return;
+      viewLocked = true;
+      const k = 1.1;
+      svg.transition().duration(500).call(
+        zoom.transform,
+        d3.zoomIdentity.translate(W / 2, H / 2).scale(k).translate(-(n.x ?? 0), -(n.y ?? 0)),
+      );
+    };
 
     // Simulation
     const sim = d3.forceSimulation<GraphNode>(nodes)
@@ -425,6 +561,85 @@ export default function OSGraphBrain() {
       .attr('pointer-events', 'none')
       .text((d) => (d.isCenter || d.isCanon || d.connections >= 4 ? d.label : ''));
 
+    // --- Resaltado de wikilinks -------------------------------------------
+    // Una sola funcion reescribe nodos y aristas segun hlRef (grupo activo,
+    // nota enfocada, flechas de direccion). La llaman el efecto de resaltado
+    // y el mouseleave, asi nunca se pisan entre si.
+    const touchesFocus = (e: SimEdge) => {
+      const f = hlRef.current.focus;
+      if (!f) return false;
+      const { s, t } = edgeId(e);
+      return s === f || t === f;
+    };
+
+    const nodeOpacity = (d: GraphNode) => {
+      const { near, group } = hlRef.current;
+      if (near) return near.has(d.id) ? 1 : 0.06;
+      if (group) return d.group === group || d.isCenter ? 1 : 0.1;
+      return 1;
+    };
+
+    const edgeOpacity = (e: SimEdge) => {
+      const { focus, group } = hlRef.current;
+      if (focus) return touchesFocus(e) ? 0.95 : 0.03;
+      if (group) {
+        const s = e.source as GraphNode;
+        const t = e.target as GraphNode;
+        return s.group === group || t.group === group ? 0.5 : 0.03;
+      }
+      return baseEdgeOpacity(e);
+    };
+
+    const edgeStroke = (e: SimEdge) =>
+      hlRef.current.focus ? (touchesFocus(e) ? FOCUS_EDGE : DIM_EDGE) : baseEdgeStroke(e);
+
+    const edgeWidth = (e: SimEdge) =>
+      hlRef.current.focus && touchesFocus(e) ? 2.4 : baseEdgeWidth(e);
+
+    // Las flechas salen siempre en el nodo enfocado; en el resto solo con el
+    // chip "Direccion" activo, para no saturar el lienzo completo.
+    const arrowsOn = (e: SimEdge) => (hlRef.current.focus ? touchesFocus(e) : hlRef.current.arrows);
+    const isHot    = (e: SimEdge) => Boolean(hlRef.current.focus) && touchesFocus(e);
+    const markerEnd = (e: SimEdge) =>
+      arrowsOn(e) ? (isHot(e) ? 'url(#arrow-focus)' : 'url(#arrow)') : null;
+    const markerStart = (e: SimEdge) =>
+      e.both && arrowsOn(e) ? (isHot(e) ? 'url(#arrow-focus-back)' : 'url(#arrow-back)') : null;
+
+    const labelText = (d: GraphNode) => {
+      const near = hlRef.current.near;
+      if (near) return near.has(d.id) ? d.label : '';
+      return d.isCenter || d.isCanon || d.connections >= 4 ? d.label : '';
+    };
+    const labelFill = (d: GraphNode) =>
+      d.isCenter ? CHAMPAGNE
+      : hlRef.current.near?.has(d.id) ? '#E6EAF5'
+      : d.isCanon ? '#9AA6C8'
+      : '#6B7280';
+    const labelSize   = (d: GraphNode) => (d.isCenter ? '11px' : d.isCanon ? '10px' : '9px');
+    const labelWeight = (d: GraphNode) =>
+      d.isCenter || d.isCanon || d.id === hlRef.current.focus ? '700' : '400';
+    const circleStroke = (d: GraphNode) =>
+      d.id === hlRef.current.focus ? 3 : d.isCenter ? 2.5 : d.isCanon ? 2 : 1.5;
+
+    function applyHighlight() {
+      nodeSel.attr('opacity', nodeOpacity);
+      nodeSel.select<SVGCircleElement>('.node-circle').attr('stroke-width', circleStroke);
+      nodeSel.select<SVGCircleElement>('.node-halo')
+        .attr('opacity', (d) => (d.id === hlRef.current.focus ? 0.2 : d.isCenter ? 0.12 : 0));
+      nodeSel.select<SVGTextElement>('.node-label')
+        .text(labelText)
+        .attr('fill', labelFill)
+        .attr('font-size', labelSize)
+        .attr('font-weight', labelWeight);
+      edgeSel
+        .attr('opacity', edgeOpacity)
+        .attr('stroke', edgeStroke)
+        .attr('stroke-width', edgeWidth)
+        .attr('marker-end', markerEnd)
+        .attr('marker-start', markerStart);
+    }
+    applyHlRef.current = applyHighlight;
+
     // Drag: pancho vuelve a su centro fijo al soltar; el resto queda libre.
     nodeSel.call(
       d3.drag<SVGGElement, GraphNode>()
@@ -437,65 +652,77 @@ export default function OSGraphBrain() {
         })
     );
 
-    // Hover
+    // Hover: previsualiza los wikilinks del nodo bajo el cursor. En modo foco
+    // no toca las aristas, para no romper el resaltado ya aplicado.
     nodeSel
       .on('mouseenter', function (_, d) {
-        d3.select(this).select('.node-halo').attr('opacity', 0.12);
+        d3.select(this).select('.node-halo').attr('opacity', 0.16);
         d3.select(this).select('.node-circle')
           .transition().duration(100)
           .attr('fill', d.isCenter ? CHAMPAGNE : colorOf(d) + '88')
-          .attr('stroke-width', 2.5)
           .attr('r', radiusOf(d) + 2);
         d3.select(this).select('.node-label')
           .text(d.label).attr('fill', '#F4F6F8').attr('font-size', '10px').attr('font-weight', '700');
+        if (hlRef.current.focus) return;
+        const touches = (e: SimEdge) => {
+          const { s, t } = edgeId(e);
+          return s === d.id || t === d.id;
+        };
         edgeSel
-          .attr('stroke', (e) => {
-            const s = e.source as GraphNode;
-            const t = e.target as GraphNode;
-            return s.id === d.id || t.id === d.id ? 'rgba(107,122,232,0.85)' : 'rgba(107,122,232,0.06)';
-          })
-          .attr('stroke-width', (e) => {
-            const s = e.source as GraphNode;
-            const t = e.target as GraphNode;
-            return s.id === d.id || t.id === d.id ? 2 : 0.6;
-          });
+          .attr('stroke', (e) => (touches(e) ? 'rgba(107,122,232,0.85)' : 'rgba(107,122,232,0.06)'))
+          .attr('stroke-width', (e) => (touches(e) ? 2 : 0.6))
+          .attr('marker-end', (e) => (touches(e) ? 'url(#arrow)' : markerEnd(e)))
+          .attr('marker-start', (e) => (touches(e) && e.both ? 'url(#arrow-back)' : markerStart(e)));
       })
       .on('mouseleave', function (_, d) {
-        d3.select(this).select('.node-halo').attr('opacity', d.isCenter ? 0.12 : 0);
         d3.select(this).select('.node-circle')
           .transition().duration(100)
           .attr('fill', d.isCenter ? CHAMPAGNE : colorOf(d) + '44')
-          .attr('stroke-width', d.isCenter ? 2.5 : d.isCanon ? 2 : 1.5)
           .attr('r', radiusOf(d));
-        d3.select(this).select('.node-label')
-          .text(d.isCenter || d.isCanon || d.connections >= 4 ? d.label : '')
-          .attr('fill', d.isCenter ? CHAMPAGNE : d.isCanon ? '#9AA6C8' : '#6B7280')
-          .attr('font-size', d.isCenter ? '11px' : d.isCanon ? '10px' : '9px')
-          .attr('font-weight', d.isCenter || d.isCanon ? '700' : '400');
-        edgeSel
-          .attr('stroke', baseEdgeStroke)
-          .attr('stroke-width', baseEdgeWidth);
+        applyHighlight();
       })
       .on('click', (ev, d) => {
         ev.stopPropagation();
+        if (d.id === hlRef.current.focus) { clearFocus(); return; }
         setPanelSlug(d.id);
-        setPanelData({ label: d.label, group: d.group, connections: d.connections, tags: d.tags });
+        setPanelData({ label: d.label, group: d.group, tags: d.tags });
       });
 
-    svg.on('click', () => { setPanelSlug(null); setPanelData(null); });
+    svg.on('click', () => { clearFocus(); });
 
-    // Tick
+    // Tick. La linea se recorta al borde de cada nodo para que la punta de
+    // flecha caiga sobre el circulo y no dentro de el.
     sim.on('tick', () => {
-      edgeSel
-        .attr('x1', (d) => (d.source as GraphNode).x ?? 0)
-        .attr('y1', (d) => (d.source as GraphNode).y ?? 0)
-        .attr('x2', (d) => (d.target as GraphNode).x ?? 0)
-        .attr('y2', (d) => (d.target as GraphNode).y ?? 0);
+      edgeSel.each(function (e) {
+        const s = e.source as GraphNode;
+        const t = e.target as GraphNode;
+        const sx = s.x ?? 0, sy = s.y ?? 0, tx = t.x ?? 0, ty = t.y ?? 0;
+        const dx = tx - sx, dy = ty - sy;
+        const dist = Math.sqrt(dx * dx + dy * dy) || 1;
+        const ux = dx / dist, uy = dy / dist;
+        let sr = radiusOf(s) + (e.both ? 7 : 1);
+        let tr = radiusOf(t) + 7;
+        // Nodos solapados: se reparte el espacio disponible en vez de invertir.
+        const room = Math.max(dist - 4, 0);
+        if (sr + tr > room) {
+          const k = room / (sr + tr);
+          sr *= k; tr *= k;
+        }
+        const line = this as SVGLineElement;
+        line.setAttribute('x1', String(sx + ux * sr));
+        line.setAttribute('y1', String(sy + uy * sr));
+        line.setAttribute('x2', String(tx - ux * tr));
+        line.setAttribute('y2', String(ty - uy * tr));
+      });
       nodeSel.attr('transform', (d) => `translate(${d.x ?? 0},${d.y ?? 0})`);
     });
 
+    // Estado inicial de resaltado (conserva filtro/foco tras un re-render).
+    applyHighlight();
+
     // Auto zoom-fit when settled
     sim.on('end', () => {
+      if (viewLocked) return;
       const xs = nodes.map((n) => n.x ?? 0);
       const ys = nodes.map((n) => n.y ?? 0);
       if (!xs.length) return;
@@ -507,7 +734,12 @@ export default function OSGraphBrain() {
       svg.transition().duration(600).call(zoom.transform, d3.zoomIdentity.translate(tx, ty).scale(sc));
     });
 
-    return () => { sim.stop(); };
+    return () => {
+      sim.stop();
+      // El SVG se reconstruye: las funciones que cierran sobre el se invalidan.
+      applyHlRef.current = null;
+      centerOnRef.current = null;
+    };
   }, [graphData, onlyConnected]);
 
   // --- Effect 4: capa de fuentes (toggle, sin reiniciar la simulacion) ---
@@ -609,6 +841,14 @@ export default function OSGraphBrain() {
             <span style={{ flex: 1 }} />
 
             <button
+              onClick={() => setShowArrows((v) => !v)}
+              title="Muestra la direccion de cada wikilink"
+              style={{ fontSize: '11px', padding: '4px 12px', minHeight: 36, borderRadius: '99px', border: `1px solid ${showArrows ? '#6B7AE8' : BORDER}`, background: showArrows ? 'rgba(107,122,232,0.15)' : 'transparent', color: showArrows ? '#6B7AE8' : MUTED, cursor: 'pointer', fontFamily: 'var(--os-font-display)' }}
+            >
+              Dirección
+            </button>
+
+            <button
               onClick={() => setShowSources((v) => !v)}
               style={{ fontSize: '11px', padding: '4px 12px', minHeight: 36, borderRadius: '99px', border: `1px solid ${showSources ? '#94A3B8' : BORDER}`, background: showSources ? 'rgba(148,163,184,0.15)' : 'transparent', color: showSources ? '#94A3B8' : MUTED, cursor: 'pointer', fontFamily: 'var(--os-font-display)' }}
             >
@@ -639,17 +879,26 @@ export default function OSGraphBrain() {
               style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', borderRadius: '8px', background: '#0a1020' }}
             />
 
-            {/* Node detail panel */}
+            {/* Node detail panel: wikilinks de la nota enfocada */}
             {panelSlug && panelData && (
-              <div style={{ position: 'absolute', top: '8px', right: '8px', width: '220px', background: PANEL, border: `1px solid ${(GROUP_COLORS[panelData.group] ?? '#3B4ED9') + '55'}`, borderLeft: `3px solid ${panelSlug === CENTER_SLUG ? CHAMPAGNE : GROUP_COLORS[panelData.group] ?? '#3B4ED9'}`, borderRadius: '10px', padding: '14px', zIndex: 10 }}>
+              <div style={{ position: 'absolute', top: '8px', right: '8px', width: '252px', maxHeight: 'calc(100% - 16px)', overflowY: 'auto', background: PANEL, border: `1px solid ${(GROUP_COLORS[panelData.group] ?? '#3B4ED9') + '55'}`, borderLeft: `3px solid ${panelSlug === CENTER_SLUG ? CHAMPAGNE : GROUP_COLORS[panelData.group] ?? '#3B4ED9'}`, borderRadius: '10px', padding: '14px', zIndex: 10 }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
                   <span style={{ fontSize: '11px', letterSpacing: '0.1em', textTransform: 'uppercase', color: panelSlug === CENTER_SLUG ? CHAMPAGNE : GROUP_COLORS[panelData.group] ?? '#6B7AE8', fontFamily: 'var(--os-font-display)', fontWeight: 600 }}>
                     {panelSlug === CENTER_SLUG ? 'Centro' : GROUP_LABELS[panelData.group] ?? panelData.group}
                   </span>
-                  <button onClick={() => { setPanelSlug(null); setPanelData(null); }} style={{ background: 'none', border: 'none', color: MUTED, cursor: 'pointer', fontSize: '16px', lineHeight: 1, padding: 0 }}>x</button>
+                  <button onClick={clearFocus} aria-label="Cerrar" style={{ background: 'none', border: 'none', color: MUTED, cursor: 'pointer', fontSize: '16px', lineHeight: 1, padding: 0 }}>x</button>
                 </div>
                 <h3 style={{ fontSize: 'var(--os-text-sm)', fontWeight: 700, color: 'var(--os-text)', margin: '0 0 8px', lineHeight: 1.35 }}>{panelData.label}</h3>
-                <span style={{ fontSize: '11px', color: '#6B7AE8', background: 'rgba(107,122,232,0.1)', padding: '2px 7px', borderRadius: '4px' }}>{panelData.connections} enlaces</span>
+
+                <div style={{ display: 'flex', gap: '4px', flexWrap: 'wrap' }}>
+                  <span style={{ fontSize: '11px', color: '#6B7AE8', background: 'rgba(107,122,232,0.1)', padding: '2px 7px', borderRadius: '4px' }}>
+                    {outCount} salen
+                  </span>
+                  <span style={{ fontSize: '11px', color: '#6B7AE8', background: 'rgba(107,122,232,0.1)', padding: '2px 7px', borderRadius: '4px' }}>
+                    {inCount} entran
+                  </span>
+                </div>
+
                 {panelData.tags && panelData.tags.length > 0 && (
                   <div style={{ display: 'flex', gap: '4px', flexWrap: 'wrap', marginTop: '8px' }}>
                     {panelData.tags.map((t) => (
@@ -657,6 +906,42 @@ export default function OSGraphBrain() {
                     ))}
                   </div>
                 )}
+
+                {/* Wikilinks: clic para saltar a la nota vecina */}
+                <div style={{ marginTop: '12px', paddingTop: '10px', borderTop: `1px solid ${BORDER}` }}>
+                  <p style={{ fontSize: '11px', letterSpacing: '0.08em', textTransform: 'uppercase', color: MUTED, fontFamily: 'var(--os-font-display)', fontWeight: 600, margin: '0 0 8px' }}>
+                    Wikilinks
+                  </p>
+                  {neighbors.length === 0 ? (
+                    <p style={{ fontSize: 'var(--os-text-xs)', color: MUTED, margin: 0, lineHeight: 1.5 }}>
+                      Esta nota no enlaza ni es enlazada por ninguna otra.
+                    </p>
+                  ) : (
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
+                      {neighbors.map((nb) => (
+                        <button
+                          key={nb.slug}
+                          onClick={() => focusNode(nb.slug)}
+                          title={`${DIR_LABEL[nb.dir]}: ${nb.label}`}
+                          style={{ display: 'flex', alignItems: 'center', gap: '7px', width: '100%', textAlign: 'left', background: 'none', border: 'none', borderRadius: '6px', padding: '5px 6px', minHeight: 'var(--os-tap-min)', cursor: 'pointer', color: 'var(--os-text-2)', fontSize: 'var(--os-text-xs)', fontFamily: 'var(--os-font-body)', lineHeight: 1.3 }}
+                          onMouseEnter={(ev) => { ev.currentTarget.style.background = 'var(--os-fill-subtle)'; }}
+                          onMouseLeave={(ev) => { ev.currentTarget.style.background = 'none'; }}
+                        >
+                          <span style={{ color: '#6B7AE8', fontSize: '12px', width: '12px', flexShrink: 0 }}>{DIR_GLYPH[nb.dir]}</span>
+                          <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: GROUP_COLORS[nb.group] ?? MUTED, flexShrink: 0 }} />
+                          <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{nb.label}</span>
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                </div>
+
+                <button
+                  onClick={() => openNote(panelSlug)}
+                  style={{ marginTop: '10px', width: '100%', minHeight: 'var(--os-tap-min)', borderRadius: '8px', border: `1px solid ${BORDER}`, background: 'transparent', color: '#6B7AE8', fontSize: 'var(--os-text-xs)', fontFamily: 'var(--os-font-display)', fontWeight: 600, cursor: 'pointer' }}
+                >
+                  Abrir nota
+                </button>
               </div>
             )}
           </div>
@@ -674,7 +959,12 @@ export default function OSGraphBrain() {
               </div>
             ))}
             <span style={{ fontSize: '11px', color: MUTED, marginLeft: 'auto' }}>
-              {totalNotes} notas · {nodeCount} mostradas · {edgeCount} enlaces reales
+              {panelSlug
+                ? 'Esc o clic fuera para salir del foco'
+                : 'Toca una nota para ver sus wikilinks'}
+              {' · '}
+              {totalNotes} notas · {nodeCount} mostradas · {edgeCount} wikilinks
+              {graphData?.meta?.bidirectional ? ` (${graphData.meta.bidirectional} recíprocos)` : ''}
               {graphData?.meta?.orphans ? ` · ${graphData.meta.orphans} sin enlaces` : ''}
             </span>
           </div>
