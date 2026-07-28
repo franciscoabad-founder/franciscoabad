@@ -52,12 +52,11 @@ const Resources = () => (
           <p className="font-inter text-[hsl(var(--text-secondary))] text-[14px] leading-relaxed mb-6 flex-1">
             El sistema operativo de 90 días. Excel, manual, brief y prompts de IA incluidos.
           </p>
-          {/* TODO: cuando exista la página /growth-os, restaurar `to="/growth-os"` y texto "Ver el Growth OS →" */}
           <Link
-            to="/contacto"
+            to="/growth-os"
             className="w-full text-center bg-[hsl(var(--ember))] text-white font-inter font-medium text-[13px] px-4 py-2.5 rounded-md hover:bg-[hsl(14,45%,46%)] transition-colors"
           >
-            Próximamente
+            Ver el Growth OS →
           </Link>
         </div>
 

@@ -11,9 +11,8 @@ const services = [
       'Brief de onboarding',
       '3 Prompts de IA',
     ],
-    // TODO: cuando exista la página /growth-os, restaurar cta "Ver el Growth OS →" y href "/growth-os".
-    cta: 'Próximamente',
-    href: '/contacto',
+    cta: 'Ver el Growth OS →',
+    href: '/growth-os',
     external: false,
   },
   {
