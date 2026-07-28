@@ -4,6 +4,8 @@ import { Linkedin, Instagram, Youtube, Mail, Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/sections/Footer';
+import { supabase } from '@/lib/supabase';
+import { useToast } from '@/hooks/use-toast';
 
 const socials = [
   { label: 'LinkedIn', icon: Linkedin, href: 'https://www.linkedin.com/in/franciscoabadec/' },
