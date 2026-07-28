@@ -34,5 +34,3 @@ _design-system/uploads/Gotham*
 *.sln
 *.sw?
 .vercel
-coverage
-coverage/

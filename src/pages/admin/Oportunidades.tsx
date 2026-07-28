@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { format, isToday, isPast, parseISO } from 'date-fns';
 import { Pencil, CreditCard, Plus } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
@@ -191,16 +191,16 @@ export default function Oportunidades() {
 
   // ── Derived data ───────────────────────────────────────────────────────────
 
-  const pipelineStats = useMemo(() => PIPELINE_STAGES.map(stage => {
+  const pipelineStats = PIPELINE_STAGES.map(stage => {
     const opps = opportunities.filter(o => o.status === stage.value);
     return {
       ...stage,
       count: opps.length,
       total: opps.reduce((sum, o) => sum + (o.value ?? 0), 0),
     };
-  }), [opportunities]);
+  });
 
-  const activeOpps = useMemo(() => opportunities.filter(o => ACTIVE_STATUSES.includes(o.status)), [opportunities]);
+  const activeOpps = opportunities.filter(o => ACTIVE_STATUSES.includes(o.status));
 
   // ── Handlers ───────────────────────────────────────────────────────────────
 

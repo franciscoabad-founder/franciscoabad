@@ -52,7 +52,7 @@ const Blog = () => {
   useEffect(() => {
     supabase
       .from('blog_posts')
-      .select('slug, pillar, title, created_at, read_time, excerpt, cover_image_url')
+      .select('*')
       .eq('published', true)
       .order('created_at', { ascending: false })
       .then(({ data, error }) => {
