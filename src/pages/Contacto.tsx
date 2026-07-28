@@ -51,6 +51,7 @@ const Contacto = () => {
     } finally {
       setIsSubmitting(false);
     }
+    // TODO: connect to backend
   };
 
   const inputClass =
