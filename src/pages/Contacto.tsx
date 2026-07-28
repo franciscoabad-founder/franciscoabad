@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Helmet } from 'react-helmet-async';
-import { Linkedin, Instagram, Youtube, Mail } from 'lucide-react';
+import { Linkedin, Instagram, Youtube, Mail, Loader2 } from 'lucide-react';
+import { toast } from 'sonner';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/sections/Footer';
 import { supabase } from '@/lib/supabase';
@@ -22,41 +23,37 @@ const Contacto = () => {
     message: '',
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const { toast } = useToast();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (isSubmitting) return;
+
     setIsSubmitting(true);
-
-    const { error } = await supabase.from('contact_messages').insert({
-      name: formData.name.trim(),
-      email: formData.email.trim(),
-      subject: formData.subject,
-      message: formData.message.trim(),
-    });
-
-    setIsSubmitting(false);
-
-    if (error) {
-      toast({
-        title: "Error",
-        description: "Hubo un problema al enviar tu mensaje. Por favor, intenta nuevamente.",
-        variant: "destructive",
+    try {
+      const res = await fetch('/api/contacto', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formData),
       });
-      return;
+
+      const data = await res.json();
+      if (!res.ok || !data.ok) {
+        throw new Error(data.error || 'Ocurrió un error al enviar el formulario.');
+      }
+
+      toast.success('¡Mensaje enviado con éxito!', {
+        description: 'Me pondré en contacto contigo pronto.',
+      });
+
+      setFormData({ name: '', email: '', subject: '', message: '' });
+    } catch (error) {
+      toast.error('No se pudo enviar el mensaje', {
+        description: error instanceof Error ? error.message : 'Inténtalo de nuevo más tarde.',
+      });
+    } finally {
+      setIsSubmitting(false);
     }
-
-    toast({
-      title: "Mensaje enviado",
-      description: "He recibido tu mensaje. Te responderé pronto.",
-    });
-
-    setFormData({
-      name: '',
-      email: '',
-      subject: '',
-      message: '',
-    });
+    // TODO: connect to backend
   };
 
   const inputClass =
@@ -178,9 +175,16 @@ const Contacto = () => {
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className="w-full bg-[hsl(var(--ember))] text-white font-montserrat font-semibold text-[13px] uppercase tracking-[1.5px] py-4 rounded-md hover:opacity-90 transition-opacity duration-300 disabled:opacity-50"
+                  className="w-full flex justify-center items-center gap-2 bg-[hsl(var(--ember))] text-white font-montserrat font-semibold text-[13px] uppercase tracking-[1.5px] py-4 rounded-md hover:opacity-90 transition-opacity duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  {isSubmitting ? 'Enviando...' : 'Enviar'}
+                  {isSubmitting ? (
+                    <>
+                      <Loader2 size={16} className="animate-spin" />
+                      Enviando...
+                    </>
+                  ) : (
+                    'Enviar'
+                  )}
                 </button>
               </form>
             </div>

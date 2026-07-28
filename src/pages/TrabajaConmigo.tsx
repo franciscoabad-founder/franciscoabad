@@ -134,12 +134,11 @@ const TrabajaConmigo = () => (
               $47
             </span>
           </div>
-          {/* TODO: cuando exista la página /growth-os, restaurar `to="/growth-os"` y texto "Ver el Growth OS →" */}
           <Link
-            to="/contacto"
+            to="/growth-os"
             className="inline-block font-montserrat font-semibold text-[13px] uppercase tracking-[1.5px] text-white bg-[hsl(var(--ember))] px-7 py-3.5 rounded-md hover:opacity-90 transition-opacity duration-300"
           >
-            Próximamente
+            Ver el Growth OS →
           </Link>
         </div>
       </div>
