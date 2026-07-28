@@ -3,6 +3,8 @@ import { Helmet } from 'react-helmet-async';
 import { Linkedin, Instagram, Youtube, Mail } from 'lucide-react';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/sections/Footer';
+import { supabase } from '@/lib/supabase';
+import { useToast } from '@/hooks/use-toast';
 
 const socials = [
   { label: 'LinkedIn', icon: Linkedin, href: 'https://www.linkedin.com/in/franciscoabadec/' },
@@ -19,11 +21,42 @@ const Contacto = () => {
     subject: '',
     message: '',
   });
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const { toast } = useToast();
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // TODO: connect to backend
-    console.log(formData);
+    setIsSubmitting(true);
+
+    const { error } = await supabase.from('contact_messages').insert({
+      name: formData.name.trim(),
+      email: formData.email.trim(),
+      subject: formData.subject,
+      message: formData.message.trim(),
+    });
+
+    setIsSubmitting(false);
+
+    if (error) {
+      toast({
+        title: "Error",
+        description: "Hubo un problema al enviar tu mensaje. Por favor, intenta nuevamente.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    toast({
+      title: "Mensaje enviado",
+      description: "He recibido tu mensaje. Te responderé pronto.",
+    });
+
+    setFormData({
+      name: '',
+      email: '',
+      subject: '',
+      message: '',
+    });
   };
 
   const inputClass =
@@ -144,9 +177,10 @@ const Contacto = () => {
 
                 <button
                   type="submit"
-                  className="w-full bg-[hsl(var(--ember))] text-white font-montserrat font-semibold text-[13px] uppercase tracking-[1.5px] py-4 rounded-md hover:opacity-90 transition-opacity duration-300"
+                  disabled={isSubmitting}
+                  className="w-full bg-[hsl(var(--ember))] text-white font-montserrat font-semibold text-[13px] uppercase tracking-[1.5px] py-4 rounded-md hover:opacity-90 transition-opacity duration-300 disabled:opacity-50"
                 >
-                  Enviar
+                  {isSubmitting ? 'Enviando...' : 'Enviar'}
                 </button>
               </form>
             </div>
