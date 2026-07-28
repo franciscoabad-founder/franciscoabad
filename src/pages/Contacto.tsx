@@ -23,7 +23,6 @@ const Contacto = () => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     // TODO: connect to backend
-    console.log(formData);
   };
 
   const inputClass =
