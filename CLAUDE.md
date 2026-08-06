@@ -95,6 +95,21 @@ Tipos: `feat`, `fix`, `docs`, `refactor`, `chore`
 - Navegación: bottom-nav móvil deriva de navGroups (Hoy, Sistema, Tareas, Agenda, Salud);
   ids `#os-pregunta`/`#os-capture` reemplazados por `#os-quick`.
 
+## Módulo Sueño del OS (ago 2026)
+
+`/os/salud/sueno`. Modelo de dos procesos (Borbély 1982): Proceso S (deuda homeostática)
++ Proceso C (ritmo circadiano) para producir deuda, ventanas del día y **plan de pago**.
+
+- Motor puro en `apps/web/src/lib/sueno/` (modelo, deuda, ventanas, cafeina, plan, estado)
+  con tests: `npm run test:sueno`. Los endpoints no llevan reglas del modelo.
+- Endpoints: `/api/os/salud/sueno` (sesiones), `/sueno/config`, `/sueno/cafeina`,
+  `/sueno/hoy` (corre el modelo completo, acepta `X-OS-Token` para el brief de n8n).
+- Tablas: `sueno_config`, `sueno_sesiones`, `cafeina_log`. `biometricas_dia.sueno_min`
+  queda como respaldo (da duración, no horarios).
+- Regla del módulo: la deuda existe para producir un plan. Nunca mostrar deuda sin
+  acciones con hora concreta. Objetivo por defecto 2 h, no cero.
+- Documentación: `apps/web/docs/sueno-dos-procesos.md`.
+
 ## Logos y brand — Ultramarine v5
 
 Archivos en `apps/web/public/`:

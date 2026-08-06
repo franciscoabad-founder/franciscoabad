@@ -1,7 +1,7 @@
 ---
 // Navegación horizontal entre submódulos de Salud. Mobile-first (scroll horizontal).
 interface Props {
-  activo: 'dashboard' | 'nutricion' | 'ayuno' | 'entrenamiento' | 'progreso' | 'cuerpo' | 'estiramiento';
+  activo: 'dashboard' | 'nutricion' | 'ayuno' | 'entrenamiento' | 'progreso' | 'cuerpo' | 'sueno' | 'estiramiento';
 }
 const { activo } = Astro.props;
 
@@ -12,6 +12,7 @@ const items = [
   { key: 'entrenamiento',href: '/os/salud/entrenamiento',  label: 'Entreno',      icon: 'fitness_center' },
   { key: 'progreso',     href: '/os/salud/progreso',       label: 'Progreso',     icon: 'trending_up' },
   { key: 'cuerpo',       href: '/os/salud/cuerpo',         label: 'Cuerpo',       icon: 'monitor_weight' },
+  { key: 'sueno',        href: '/os/salud/sueno',          label: 'Sueño',        icon: 'bedtime' },
   { key: 'estiramiento', href: '/os/salud/estiramiento',   label: 'Estiramiento', icon: 'self_improvement' },
 ];
 ---

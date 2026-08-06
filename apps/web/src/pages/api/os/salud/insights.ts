@@ -6,6 +6,7 @@ import { isOsAuthorized, json } from '../../../../os/lib/osAuth';
 import { errMsg, hoyGuayaquil, isExternalTokenAuthorized } from '../../../../lib/salud/apiHelpers';
 import { addDias } from '../../../../lib/habitos/fechas';
 import { falloAyer } from '../../../../lib/habitos/racha';
+import { calcularDeuda, formatearHoras, type NocheSueno } from '../../../../lib/sueno/deuda';
 
 type SB = ReturnType<typeof getSupabaseServer>;
 type Severidad = 'info' | 'nudge' | 'alerta';
@@ -246,6 +247,59 @@ async function insightsTargets(sb: SB, hoy: string): Promise<Insight[]> {
   }];
 }
 
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Sueno: deuda acumulada (modelo de dos procesos) y falta de registro. La deuda
+// se calcula con la misma logica que /api/os/salud/sueno/hoy, para que el coach
+// y el modulo nunca digan cosas distintas.
+// ─────────────────────────────────────────────────────────────────────────────
+async function insightsSueno(sb: SB, hoy: string): Promise<Insight[]> {
+  const desde14 = addDias(hoy, -13);
+  const [resSesiones, resBio, resConfig] = await Promise.all([
+    sb.from('sueno_sesiones').select('fecha, minutos').gte('fecha', desde14).lte('fecha', hoy),
+    sb.from('biometricas_dia').select('fecha, sueno_min').gte('fecha', desde14).lte('fecha', hoy),
+    sb.from('sueno_config').select('necesidad_h, deuda_objetivo_h').eq('id', 1).maybeSingle(),
+  ]);
+  if (resSesiones.error) throw resSesiones.error;
+
+  const sesiones = resSesiones.data ?? [];
+  const conSesion = new Set(sesiones.map((s) => s.fecha as string));
+  const noches: NocheSueno[] = [
+    ...sesiones.map((s) => ({ fecha: s.fecha as string, minutos: s.minutos as number })),
+    ...(resBio.data ?? [])
+      .filter((b) => b.sueno_min != null && !conSesion.has(b.fecha as string))
+      .map((b) => ({ fecha: b.fecha as string, minutos: b.sueno_min as number })),
+  ];
+
+  if (!noches.length) return [];  // sin ningun dato el modulo aun no arranco
+
+  const necesidad = Number(resConfig.data?.necesidad_h) || 8;
+  const objetivo = Number(resConfig.data?.deuda_objetivo_h) || 2;
+  const deuda = calcularDeuda(noches, necesidad, hoy);
+  const out: Insight[] = [];
+
+  if (deuda.horas > objetivo) {
+    const severidad: Severidad = deuda.nivel === 'alta' ? 'alerta' : 'nudge';
+    out.push({
+      tipo: 'sueno_deuda',
+      severidad,
+      mensaje: `Deuda de sueno de ${formatearHoras(deuda.horas)}. El plan de hoy esta en /os/salud/sueno: se paga con 45 min mas temprano a la cama, no con una noche heroica el fin de semana.`,
+      data: { deuda_h: deuda.horas, nivel: deuda.nivel, objetivo_h: objetivo, necesidad_h: necesidad },
+    });
+  }
+
+  if (deuda.diasSinDato >= 5) {
+    out.push({
+      tipo: 'sueno_registro',
+      severidad: 'nudge',
+      mensaje: `${deuda.diasSinDato} de los ultimos 14 dias sin registro de sueno. Los dias sin dato cuentan como neutros, asi que la deuda real es mayor que la que ves.`,
+      data: { dias_sin_dato: deuda.diasSinDato },
+    });
+  }
+
+  return out;
+}
+
 // GET → { generado_at, insights: [{tipo, severidad, mensaje, data}] } (maximo 6,
 // alerta > nudge > info). Autorizado por cookie de sesion o X-OS-Token (n8n/cron),
 // mismo patron que api/os/habitos/brief.ts. Ver docs/contrato-insights-coach.md.
@@ -257,7 +311,7 @@ export const GET: APIRoute = async (context) => {
     const sb = getSupabaseServer();
     const hoy = hoyGuayaquil();
 
-    const generadores = [insightsComidas, insightsAyuno, insightsEntreno, insightsHabitos, insightsTargets];
+    const generadores = [insightsComidas, insightsAyuno, insightsEntreno, insightsHabitos, insightsTargets, insightsSueno];
     const resultados = await Promise.all(
       generadores.map((fn) => fn(sb, hoy).catch(() => [] as Insight[])),
     );
