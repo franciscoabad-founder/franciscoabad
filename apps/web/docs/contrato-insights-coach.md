@@ -1,7 +1,7 @@
 # Contrato: insights de coaching de Salud (`/api/os/salud/insights`)
 
 Endpoint de solo lectura que computa observaciones tipo "coach" sobre el estado real de
-Salud (nutrición, ayuno, entrenamiento, hábitos, targets). Pensado para dos consumidores:
+Salud (nutrición, ayuno, entrenamiento, hábitos, targets, sueño). Pensado para dos consumidores:
 el propio OS (tarjeta de insights en el dashboard de Salud) y el cron diario de
 n8n/Hermes que arma el brief de Telegram.
 
@@ -69,6 +69,8 @@ Sin parámetros ni body.
 | `entreno` (volumen) | Hubo al menos una sesión de gym en los últimos 14 días, pero algún grupo muscular (de `gfit_taxonomia` tipo `grupo_muscular`, excluyendo `cardio`) no aparece en ningún `musculos_primarios` de los ejercicios entrenados en esa ventana (via `gfit_sesion_series`). | `info` |
 | `habitos` | Alguna diaria activa que existía ayer y estaba programada ayer (`dias_semana`) no tiene check `+` para ayer. Mismo cálculo que `en_riesgo` en `api/os/habitos/brief.ts`, reimplementado aquí sin importar UI. | `nudge` |
 | `targets` | `salud_config.kcal_objetivo` está configurado y el promedio de kcal de los días con al menos un registro en los últimos 7 días es menor al 60% del objetivo. Lectura: subregistro, no déficit real. | `alerta` |
+| `sueno_deuda` | Hay al menos un dato de sueño en los últimos 14 días (de `sueno_sesiones` o, en su defecto, de `biometricas_dia.sueno_min`) y la deuda calculada supera `sueno_config.deuda_objetivo_h`. Misma función `calcularDeuda` que usa `/api/os/salud/sueno/hoy`, para que el coach y el módulo nunca digan cosas distintas. | `alerta` si el nivel es alto, si no `nudge` |
+| `sueno_registro` | 5 o más de los últimos 14 días sin ningún registro de sueño. Los días sin dato cuentan como neutros, así que la deuda mostrada va corta. | `nudge` |
 
 Todas las consultas son defensivas: si una tabla o columna todavía no existe en la base
 contra la que corre el endpoint (por ejemplo las tablas de GFIT en el insight de
