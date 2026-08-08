@@ -539,7 +539,7 @@ export default function OSOnboardingFlow({ modulo, pasos, onFinish, onCompletar,
             <button
               type="button"
               onClick={onFinish}
-              aria-label="Cerrar"
+              aria-label="Hacer después"
               style={{ background: 'none', border: 'none', padding: 4, cursor: 'pointer', color: 'var(--os-muted)', display: 'flex' }}
             >
               <span className="material-symbols-outlined" style={{ fontSize: 20 }}>close</span>
@@ -555,6 +555,7 @@ export default function OSOnboardingFlow({ modulo, pasos, onFinish, onCompletar,
           {renderPaso()}
           {error && <p style={{ color: 'var(--os-error)', fontSize: 12, margin: 0 }}>{error}</p>}
           {!esConstruyendo && (
+            <>
             <button
               type="button"
               className="os-btn"
@@ -567,6 +568,17 @@ export default function OSOnboardingFlow({ modulo, pasos, onFinish, onCompletar,
             >
               {enviando ? 'Guardando…' : ctaLabel}
             </button>
+            <button
+              type="button"
+              onClick={onFinish}
+              style={{
+                width: '100%', background: 'none', border: 'none', padding: '0.25rem 1rem 0.5rem',
+                color: 'var(--os-muted)', fontSize: 13, cursor: 'pointer',
+              }}
+            >
+              Hacer después
+            </button>
+            </>
           )}
         </div>
       </div>
