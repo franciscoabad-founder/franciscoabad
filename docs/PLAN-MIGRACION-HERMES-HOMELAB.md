@@ -197,12 +197,88 @@ resuelva, la migración compra RAM, no ahorro de API.
 | Latencia por sincronización de homes | Sincronización incremental, homes pequeños, solo aplica a runs, no a peticiones del OS |
 | Crecimiento supera al HomeLab | Servidor propio tras el levantamiento de capital, migración limpia porque el despachador ya abstrae el destino |
 
-## 8. Primer paso concreto
+## 8. Estado de ejecución (12 de agosto de 2026)
 
-Fase 0, en este orden: entender la caída de hoy, pasar el arranque del HomeLab de ONLOGON a
-ONSTART, y montar la alerta de nodo caído. En paralelo se puede hacer la fase 1, que no
-depende del HomeLab y devuelve memoria al VPS de inmediato.
+### Ejecutado y verificado
 
-Nada de tenants hasta tener 14 días limpios.
+**Fase 1 completa, con un hallazgo mejor que el previsto.** La hipótesis inicial era liberar
+memoria apagando el backend del Desktop y el gateway de Arazza. Al medir el árbol de procesos
+resultó falsa en los dos casos, y apareció algo mejor:
 
-Relacionado: [[panchoatlas-canon]] [[cortex-canon]] [[hermes-a2a-malla-3-nodos-2026-08-11]]
+- El backend del Desktop (`hermes-remote-backend`) pesa 104 MB con sus hijos, no 451 MB.
+  Apagarlo cuesta tu Desktop y devuelve poco. **No se tocó.**
+- El gateway de Arazza corre bajo `hermes-gateway-arazza.service` y su perfil tiene 70 skills
+  y sesiones activas. No es vestigial, atiende a un cliente. **No se tocó.**
+- Los 457 MB que se veían como backend del Desktop eran en realidad **dos procesos huérfanos**
+  (`serve --isolated --ssh-session-token-file`) dejados por sesiones SSH del 10 de agosto,
+  en `session-9246.scope` y `session-9432.scope`, escuchando en puertos de loopback aleatorios
+  sin una sola conexión establecida. Basura pura de dos días atrás.
+
+Resultado tras matarlos: **394 MB liberados**. Memoria usada de 2475 MB a 2081 MB, disponible
+de 1339 MB a 1733 MB, swap de 1.6 GB a 1.27 GB. Todos los servicios verificados activos
+después: `hermes-gateway`, `hermes-approval`, `hermes-remote-backend`, `cortex-bridge`,
+`cortex-os`, `arahermes-bridge`, `arahermes-telegram`, `gbrain`. A2A responde 200, el bridge
+responde 200, Cortex OS responde 302.
+
+**Prevención instalada.** Cada sesión SSH que corre Hermes puede dejar uno de estos huérfanos,
+así que sin limpieza vuelven a acumularse. Script `/root/cortex/bin/limpiar-hermes-huerfanos.sh`,
+cron cada 2 horas, log en `/var/log/hermes-huerfanos.log`. Mata solo procesos que cumplan las
+tres condiciones a la vez: `ppid == 1`, argumentos con `serve --isolated` y
+`--ssh-session-token-file`, y más de 2 horas de vida. Probado en seco antes de activarlo.
+
+**Alerta de nodo caído (Fase 0, punto 3).** Script `/root/cortex/bin/monitor-homelab.sh`,
+cron cada 10 minutos, estado en `/var/lib/homelab-monitor/estado`, log en
+`/var/log/homelab-monitor.log`. Avisa a Telegram solo en el cambio de estado, nunca repite.
+Camino de entrega probado con un mensaje real.
+
+### Bloqueado por el HomeLab caído
+
+El HomeLab lleva más de dos horas fuera de Tailscale. No se puede ejecutar en remoto lo que
+exige la máquina encendida:
+
+- El resto de la Fase 0 (pasar el arranque de ONLOGON a ONSTART, entender la causa de la caída).
+- Toda la Fase 2, porque además falta un prerrequisito que no estaba en el plan original:
+  **el VPS no tiene acceso SSH al HomeLab.** Hoy solo existe laptop a HomeLab. Sin esa llave
+  no hay despacho determinista posible.
+
+Corrección de diseño respecto a la sección 3: A2A sirve para que un agente le pida cosas a otro,
+pero no para ejecutar el `HERMES_HOME` de un tenant específico en la otra máquina. Los runs de
+tenant necesitan ejecución determinista, o sea SSH del VPS al HomeLab, no A2A.
+
+## 9. Runbook para cuando el HomeLab vuelva
+
+Ejecutar en este orden. Los tres primeros pasos cierran la Fase 0.
+
+1. **Diagnosticar la caída.** Desde la laptop: `ssh homelab` y revisar eventos de apagado
+   inesperado y de actualizaciones de Windows. La causa decide la mitigación.
+2. **Arranque sin sesión.** Las tareas `PanchoAtlas-HermesA2A` y `PanchoAtlas-HermesServe` son
+   ONLOGON, así que no vuelven solas tras un reinicio sin que alguien inicie sesión. Cambiarlas
+   a ONSTART con la opción de correr aunque el usuario no esté conectado. Verificar reiniciando
+   la máquina y confirmando que vuelve sola a Tailscale y a los puertos 9900 y 9120.
+3. **Confirmar la alerta.** Con el monitor ya instalado, la vuelta debe producir un mensaje de
+   Telegram automático. Si no llega, revisar `/var/log/homelab-monitor.log`.
+4. **Dar SSH del VPS al HomeLab.** Copiar la clave pública del VPS a
+   `C:\ProgramData\ssh\administrators_authorized_keys` del HomeLab, **no** a `~/.ssh/authorized_keys`,
+   porque `Francisco` es administrador y `sshd` aplica `Match Group administrators`. Los permisos
+   se dan por SID en un Windows en español: `*S-1-5-32-544` y `*S-1-5-18`. Requiere PowerShell
+   elevada en el propio HomeLab. Las tres trampas están documentadas en [[acceso-homelab-ssh-rdp]].
+5. **Probar ejecución remota de un tenant** con `pancho-test`, a mano y sin tocar código:
+   sincronizar su home al HomeLab, correr `hermes -z` allá con `HERMES_HOME` apuntando a la copia,
+   y sincronizar de vuelta. Recién cuando eso funcione a mano tiene sentido escribirlo en código.
+6. **Escribir el despachador** con el resultado real del paso 5, no antes. Un solo módulo usado
+   por `cortex-bridge/bridge.py` y por `briefing-tick.ts`, con chequeo de salud de pocos segundos
+   y caída automática a ejecución local. Se despliega apagado por variable de entorno, se prende
+   primero solo para `pancho-test`.
+7. **Escalonar el tick de briefings** antes de sumar tenants externos.
+
+Nada de tenants de clientes hasta tener 14 días de HomeLab en línea sin caídas.
+
+## 10. Nota sobre el modelo local
+
+Queda como intención volver al modelo local del HomeLab cuando se estabilice, que era el
+objetivo original del nodo. Hoy razona con DeepSeek por OpenRouter porque el modelo local
+crasheaba por contexto y se bajó el techo a 32768 tokens. Mientras eso siga así, esta
+migración compra RAM, no ahorro de API. Conviene reintentarlo recién después de la Fase 0,
+con la máquina estable, y midiendo antes y después.
+
+Relacionado: [[panchoatlas-canon]] [[cortex-canon]] [[hermes-a2a-malla-3-nodos-2026-08-11]] [[acceso-homelab-ssh-rdp]]
