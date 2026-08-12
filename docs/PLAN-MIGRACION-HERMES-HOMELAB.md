@@ -231,15 +231,62 @@ cron cada 10 minutos, estado en `/var/lib/homelab-monitor/estado`, log en
 `/var/log/homelab-monitor.log`. Avisa a Telegram solo en el cambio de estado, nunca repite.
 Camino de entrega probado con un mensaje real.
 
-### Bloqueado por el HomeLab caído
+### Causa raíz de la caída y cierre de la Fase 0
 
-El HomeLab lleva más de dos horas fuera de Tailscale. No se puede ejecutar en remoto lo que
-exige la máquina encendida:
+Investigado el 12 de agosto de 2026 con el HomeLab ya en línea. Reconstrucción por eventos
+de Windows (hora local, UTC-5):
 
-- El resto de la Fase 0 (pasar el arranque de ONLOGON a ONSTART, entender la causa de la caída).
-- Toda la Fase 2, porque además falta un prerrequisito que no estaba en el plan original:
-  **el VPS no tiene acceso SSH al HomeLab.** Hoy solo existe laptop a HomeLab. Sin esa llave
-  no hay despacho determinista posible.
+| Momento | Qué pasó |
+|---|---|
+| 11 ago 23:50:01 | `MoUsoCoreWorker.exe` pide reinicio, motivo "service pack (planeado)", 0x80020010 |
+| 11 ago 23:54:39 | `TrustedInstaller.exe` ejecuta el reinicio como `NT AUTHORITY\SYSTEM`, motivo "actualización (planeada)", 0x80020003 |
+| 11 ago 23:55:02 | La máquina arranca de nuevo |
+| 11 ago 23:55:14 | Arrancan `tailscaled` (servicio, tipo Automático) y `PanchoAtlas-Ollama` (disparador de arranque) |
+| 12 ago 10:54 | Pancho inicia sesión en la consola |
+| 12 ago 10:54:33 | Recién ahí corren `PanchoAtlas-HermesA2A` y `PanchoAtlas-HermesServe` |
+| 12 ago 10:56:13 | Arranca `tailscale-ipn` y el nodo vuelve a la tailnet |
+
+**El reinicio fue Windows Update, planificado y limpio.** No fue apagón, ni suspensión, ni
+cuelgue: no hay eventos 41 ni 6008 en esa ventana.
+
+Lo importante es lo otro: **la máquina estuvo encendida y sana 11 horas siendo invisible.**
+Dos fallas distintas produjeron el mismo síntoma:
+
+1. **Tailscale**: `tailscaled` arrancó bien como servicio a las 23:55:14, pero en Windows la
+   conexión a la tailnet la sostiene el agente de usuario `tailscale-ipn`. Sin sesión iniciada
+   el nodo no aparece, aunque el servicio corra. Faltaba el modo desatendido.
+2. **Hermes**: las dos tareas eran `LogonTrigger` con `LogonType: Interactive` y usuario
+   `Francisco`, así que por diseño no podían correr sin que alguien iniciara sesión. La propia
+   máquina ya tenía el patrón correcto en `PanchoAtlas-Ollama` (arranque + SYSTEM), solo que
+   no se había aplicado a Hermes.
+
+**Arreglos aplicados y verificados el 12 de agosto:**
+
+- `tailscale set --unattended=true`. Verificado: `ForceDaemon: true` en las preferencias.
+- Las dos tareas de Hermes pasaron a disparador de arranque con `LogonType S4U` y retraso de
+  1 minuto. S4U en vez de SYSTEM a propósito: conserva el perfil e identidad de `Francisco`,
+  que es donde viven `HERMES_HOME` y su configuración. Copiar el patrón SYSTEM de Ollama
+  habría cambiado el perfil y roto las rutas.
+- Respaldo previo del XML original de ambas tareas en `C:\PanchoAtlas\backups\*.bak-20260812.xml`.
+- Verificado después del cambio: ambas tareas siguen en `Running`, con los puertos 9900 (A2A)
+  y 9120 (serve) escuchando.
+
+La prueba definitiva es el próximo reinicio. Con el monitor ya instalado, la vuelta debe
+avisar sola por Telegram.
+
+### Patrón aparte que conviene vigilar
+
+Tres apagados sucios (eventos 41 y 6008) en tres días seguidos: 8 de agosto (venía del 5 a las
+21:17), 9 de agosto a las 00:13 y 10 de agosto a las 00:45. Todos de madrugada. El del 11 fue
+limpio, así que la causa es distinta a la de esta caída. Si se repite, lo más probable es
+corte eléctrico, y un UPS lo descarta de una vez. Un HomeLab que sostiene tenants no puede
+depender de que no se vaya la luz.
+
+### Todavía bloqueado
+
+La Fase 2 sigue esperando un prerrequisito que no estaba en el plan original: **el VPS no
+tiene acceso SSH al HomeLab.** Hoy solo existe laptop a HomeLab. Sin esa llave no hay
+despacho determinista posible.
 
 Corrección de diseño respecto a la sección 3: A2A sirve para que un agente le pida cosas a otro,
 pero no para ejecutar el `HERMES_HOME` de un tenant específico en la otra máquina. Los runs de
