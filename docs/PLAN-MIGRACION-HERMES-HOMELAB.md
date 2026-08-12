@@ -282,11 +282,68 @@ limpio, así que la causa es distinta a la de esta caída. Si se repite, lo más
 corte eléctrico, y un UPS lo descarta de una vez. Un HomeLab que sostiene tenants no puede
 depender de que no se vaya la luz.
 
-### Todavía bloqueado
+### Fase 2: mecanismo probado y despachador desplegado
 
-La Fase 2 sigue esperando un prerrequisito que no estaba en el plan original: **el VPS no
-tiene acceso SSH al HomeLab.** Hoy solo existe laptop a HomeLab. Sin esa llave no hay
-despacho determinista posible.
+**Acceso del VPS al HomeLab, resuelto.** Se generó una llave dedicada en el VPS
+(`/root/.ssh/id_homelab_dispatch`, etiqueta `cortex-dispatch-vps-to-homelab`), separada de la
+de la laptop para poder revocarla sola. Se agregó a
+`C:\ProgramData\ssh\administrators_authorized_keys` del HomeLab **sin pisar** la que ya
+estaba (`claude-vps`), con respaldo previo y escritura sin BOM. Los permisos del archivo ya
+eran correctos (solo `BUILTIN\Administradores` y `NT AUTHORITY\SYSTEM`) y se preservaron:
+reescribir el contenido no altera la lista de control de acceso, así que no hizo falta
+`icacls`. Alias `homelab` configurado en `/root/.ssh/config` del VPS. Conexión verificada.
+
+**El home de un tenant es portable a Windows.** Se auditó `pancho-test` antes de mover nada:
+no tiene una sola ruta absoluta de Linux, su único MCP es el brain por HTTPS, el modelo va por
+OpenRouter y su `.env` solo lleva credenciales. Nada atado al sistema operativo.
+
+**Prueba real ejecutada.** Se transfirió el home (804 archivos, 33 skills, estado y sesiones)
+a `C:\PanchoAtlas\cortex-tenants\pancho-test` y se corrió el agente del tenant en el HomeLab
+con `HERMES_HOME` apuntando a esa copia. Respondió en 24 segundos con su propia configuración
+(`qwen/qwen3-235b-a22b` por OpenRouter). El mecanismo funciona.
+
+**Despachador desplegado**: `/root/cortex/bin/cortex-hermes-dispatch <slug> <prompt>`,
+log en `/var/log/cortex-dispatch.log`. Reemplaza la invocación directa de `hermes -z`.
+
+Contrato de seguridad, que es lo que lo vuelve desplegable sin riesgo:
+
+- **Por defecto no despacha a nadie.** Se habilita tenant por tenant con
+  `CORTEX_DISPATCH_TENANTS` (lista separada por comas, o `all`). Sin esa variable el
+  comportamiento es idéntico al de hoy.
+- Si el HomeLab no responde en 4 segundos, o falla la subida del home, cae a ejecución local.
+- **Si el run remoto ya arrancó y falla, NO reintenta local.** Reintentar después de arrancar
+  duplicaría efectos, por ejemplo dos briefings enviados al mismo cliente.
+- El home se baja de vuelta al VPS siempre, incluso si el run falló, porque las sesiones y la
+  memoria ya cambiaron. El VPS sigue siendo la fuente de verdad.
+- El prompt viaja como comando de PowerShell codificado en base64 UTF-16LE, que es la única
+  forma confiable de cruzar bash, ssh, cmd.exe y PowerShell sin que las comillas se corrompan.
+
+Los tres caminos fueron probados de punta a punta: sin habilitar corre local (15 s), habilitado
+corre en el HomeLab (35 s), y con el HomeLab simulado como inalcanzable cae a local (16 s).
+El log registra cuál camino tomó cada corrida.
+
+Dos defectos encontrados y corregidos durante las pruebas, ambos visibles para el cliente:
+el `stderr` del cliente SSH se mezclaba con la respuesta (ahora va al log, no a la salida), y
+los retornos de carro de Windows ensuciaban el texto (ahora se eliminan).
+
+La diferencia de 15 a 35 segundos es la sincronización del home en las dos direcciones. Pesa
+así porque `pancho-test` es de los grandes (42 MB); cinco de los siete tenants pesan cerca de
+300 KB y el sobrecosto ahí es despreciable.
+
+### Lo que falta para prender la Fase 2 en producción
+
+Son dos cambios de una línea, deliberadamente no aplicados todavía:
+
+1. `cortex-bridge/bridge.py` línea 269: cambiar
+   `subprocess.run([HERMES_BIN, "-z", prompt], cwd=tdir, env=env)` por una llamada a
+   `/root/cortex/bin/cortex-hermes-dispatch <slug> <prompt>`. Requiere reiniciar
+   `cortex-bridge`, que es barato y reversible.
+2. `cortex-os/src/pages/api/tools/briefing-tick.ts` línea 41: apuntar el `execFile` al
+   despachador. **Este obliga a recompilar Cortex OS en el VPS, que consume cerca de 1 GB de
+   RAM y degrada producción mientras corre**, según [[cortex-plan-escala-10-30-usuarios]].
+   Conviene hacerlo en una ventana tranquila, o compilar fuera del VPS y subir `dist/`.
+3. Recién ahí poner `CORTEX_DISPATCH_TENANTS=pancho-test` y observar una semana.
+4. Escalonar el tick de briefings antes de sumar tenants externos.
 
 Corrección de diseño respecto a la sección 3: A2A sirve para que un agente le pida cosas a otro,
 pero no para ejecutar el `HERMES_HOME` de un tenant específico en la otra máquina. Los runs de
