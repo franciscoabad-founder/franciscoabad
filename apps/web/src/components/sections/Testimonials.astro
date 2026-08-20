@@ -47,16 +47,6 @@ const testimonials = [
       "Trabajamos juntos desde el sector público en la activación del ecosistema de innovación social de Quito, cuando lanzamos Hult Prize Ecuador y recibimos la primera Final Regional de Sudamérica. Francisco sabe cómo conectar el estado, la academia y los emprendedores en un sistema funcional. Lo que construimos entonces fue un movimiento, no un evento.",
   },
   {
-    photo: "/testimonials/sofia-fernandez.jpeg",
-    initials: "SF",
-    name: "Sofía Fernández",
-    role: "Project Coordinator",
-    company: "CODEIS",
-    linkedIn: "https://www.linkedin.com/in/sofiafernandez98/",
-    quote:
-      "Trabajé con Francisco en la expansión internacional de CODEIS durante la pandemia. Diseñamos programas virtuales que nos permitieron llegar a 15 países cuando otros cerraban. La capacidad de Francisco para rediseñar el sistema de entrega completo en semanas, sin perder calidad ni impacto, fue lo que hizo posible esa expansión. No fue suerte. Fue diseño.",
-  },
-  {
     photo: "/testimonials/carlos-cardenas.jpg.jpg",
     initials: "CC",
     name: "Carlos Cárdenas",
@@ -116,10 +106,10 @@ const testimonials = [
       </h2>
     </div>
 
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+    <div class="flex flex-wrap justify-center gap-6">
       {testimonials.map((tm) => (
         <div
-          class="rounded-lg p-6 flex flex-col gap-4"
+          class="w-full sm:w-[calc(50%-12px)] lg:w-[calc(33.333%-16px)] rounded-lg p-6 flex flex-col gap-4"
           data-reveal
           style="background-color: var(--bg-elevated); border: 1px solid rgba(107,114,128,0.15); border-left: 2px solid var(--ember);"
         >
