@@ -1,0 +1,120 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import Navbar from "../components/Navbar.astro";
+import Footer from "../components/Footer.astro";
+
+const projects = [
+  {
+    name: "Nerio",
+    tag: "Producto",
+    what: "Mi chief of staff con inteligencia artificial. Un agente que ve mi agenda, mis tareas y mis decisiones, propone acciones y las ejecuta solo cuando yo apruebo.",
+    process:
+      "Empezó como una herramienta interna para dirigir mis propias empresas sin perder el hilo entre proyectos. Lo probé en mí primero, todos los días, antes de convertirlo en producto. Hoy tiene landing pública, precios y usuarios reales.",
+    href: "https://nerio.lat",
+    cta: "Conoce Nerio →",
+  },
+  {
+    name: "PanchoAtlas",
+    tag: "Motor de contenido",
+    what: "El sistema que escucha señales (reuniones, notas de voz, mi propio archivo de conocimiento), las convierte en piezas de contenido y las distribuye a varios canales sin que yo publique a mano.",
+    process:
+      "Nació de un problema simple: no tenía tiempo de escribir y grabar todo lo que estaba aprendiendo mientras construía. En vez de forzarme a publicar más, diseñé un pipeline que captura, ordena y produce contenido a partir de lo que de verdad estoy haciendo cada semana.",
+    href: null,
+    cta: null,
+  },
+  {
+    name: "Flow",
+    tag: "Open source · MIT",
+    what: "Dictado por voz y notas de reunión con inteligencia artificial, 100% local. Corre en tu propia computadora (o en una API en la nube si lo prefieres), sin suscripción y sin que tu audio salga de tu máquina por defecto.",
+    process:
+      "Lo construí porque las herramientas de dictado que probé eran SaaS: mi audio salía de mi computadora por defecto y pagaba una mensualidad por algo que podía correr en mi propia GPU. Lo uso a diario en producción. Lo abrí como código libre (MIT) para que cualquiera pueda usarlo o construir sobre él.",
+    href: "https://github.com/franciscoabad-founder/flow",
+    cta: "Ver el repo en GitHub →",
+  },
+  {
+    name: "Pancho OS",
+    tag: "Sistema personal",
+    what: "El sistema operativo con el que dirijo mi vida y mis empresas: agenda, tareas, CRM, finanzas, un cerebro con todo lo que sé y agentes que ejecutan con mi aprobación.",
+    process:
+      "La misma regla de siempre: pruébalo en ti primero. Antes de vender transformación AI-native a nadie, construí el sistema que yo mismo uso todos los días para operar. Es privado (vive detrás de login), pero es la base real de todo lo demás en este portafolio.",
+    href: null,
+    cta: null,
+  },
+];
+---
+
+<BaseLayout
+  title="Portafolio · Francisco Abad"
+  description="Lo que estoy construyendo ahora: Nerio, PanchoAtlas, Flow y Pancho OS. Sistemas con IA que pruebo en mí primero antes de instalarlos en cualquier empresa."
+>
+  <Navbar />
+
+  <div class="bg-bg-primary min-h-screen">
+    <section class="pt-32 pb-12 md:pt-40 md:pb-20">
+      <div class="max-w-[760px] mx-auto px-6 lg:px-8">
+        <p class="font-montserrat text-[11px] uppercase tracking-[2px] text-ultra-light mb-4">
+          Pruébalo en ti primero
+        </p>
+        <h1 class="font-montserrat font-bold text-text-primary text-[40px] md:text-[56px] leading-tight mb-5">
+          Lo que estoy construyendo.
+        </h1>
+        <p class="font-inter text-text-secondary text-[17px] leading-relaxed">
+          No vendo transformación AI-native sin haberla instalado primero en mí mismo. Estos son los sistemas que uso a diario para dirigir mi vida, mi contenido y mis empresas.
+        </p>
+      </div>
+    </section>
+
+    <section class="py-8 md:py-12 border-t border-border-subtle">
+      <div class="max-w-[1000px] mx-auto px-6 lg:px-8 space-y-6">
+        {projects.map((p) => (
+          <div class="bg-bg-elevated border border-border-subtle rounded-lg p-8 md:p-10">
+            <div class="flex flex-wrap items-center gap-3 mb-4">
+              <p class="font-montserrat font-bold text-text-primary text-[24px] m-0">
+                {p.name}
+              </p>
+              <span class="font-montserrat text-[10px] uppercase tracking-[1.5px] text-champagne border border-champagne px-3 py-1 rounded-full">
+                {p.tag}
+              </span>
+            </div>
+            <p class="font-inter text-text-secondary text-[15px] leading-relaxed mb-4">
+              {p.what}
+            </p>
+            <p class="font-inter text-text-muted-brand text-[14px] leading-relaxed mb-6">
+              <strong class="text-text-primary font-montserrat font-semibold">Cómo lo construí: </strong>
+              {p.process}
+            </p>
+            {p.href && (
+              <a
+                href={p.href}
+                target="_blank"
+                rel="noopener noreferrer"
+                class="inline-block font-montserrat font-semibold text-[13px] uppercase tracking-[1.5px] text-ultra-light border border-ember px-7 py-3.5 rounded-md hover:bg-ember hover:text-white transition-all duration-300"
+              >
+                {p.cta}
+              </a>
+            )}
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <section class="bg-bg-elevated border-t border-border-subtle py-12 md:py-20">
+      <div class="max-w-[760px] mx-auto px-6 lg:px-8 text-center">
+        <h3 class="font-montserrat font-bold text-text-primary text-[28px] md:text-[34px] mb-4">
+          ¿Quieres instalar algo parecido en tu empresa?
+        </h3>
+        <p class="font-inter text-text-secondary text-[16px] leading-relaxed mb-8">
+          Hablemos de qué sistema necesitas y cómo lo construimos.
+        </p>
+        <a
+          href="/trabaja-conmigo"
+          class="inline-block font-montserrat font-semibold text-[13px] uppercase tracking-[1.5px] text-white bg-ember px-8 py-4 rounded-md hover:opacity-90 transition-opacity duration-300"
+        >
+          Trabajemos juntos →
+        </a>
+      </div>
+    </section>
+  </div>
+
+  <Footer lang="es" />
+</BaseLayout>
