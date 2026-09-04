@@ -2,6 +2,7 @@
   "nav.home": "HOME",
   "nav.sobre_mi": "SOBRE MÍ",
   "nav.trabaja_conmigo": "TRABAJA CONMIGO",
+  "nav.portafolio": "PORTAFOLIO",
   "nav.blog": "BLOG",
   "nav.contacto": "CONTACTO",
 
@@ -21,10 +22,10 @@
   "services.kit.item3": "Skills para Claude",
   "services.kit.item4": "Checklists de cierre semanal y mensual",
   "services.kit.cta": "Descarga gratis →",
-  "services.advisory.eyebrow": "Para founders y executives",
-  "services.advisory.title": "Advisory y Consultoría",
-  "services.advisory.desc": "Acompañamiento estratégico 1:1 para líderes que quieren operar con más claridad y mejores resultados.",
-  "services.advisory.item1": "Diagnóstico Estratégico",
+  "services.advisory.eyebrow": "Para founders y organizaciones",
+  "services.advisory.title": "Transformación AI-native y advisory",
+  "services.advisory.desc": "Instalo IA como motor operativo en tu empresa, o te acompaño 1:1 si buscas más claridad y mejores resultados como líder.",
+  "services.advisory.item1": "Diagnóstico estratégico y company brain",
   "services.advisory.item2": "Sesiones de advisory ejecutivo",
   "services.advisory.item3": "Growth Partner trimestral",
   "services.advisory.cta": "Aplicar a una sesión →",
@@ -40,7 +41,7 @@
   "testimonials.heading": "Lo que dicen quienes han trabajado conmigo",
 
   "footer.tagline": "Construyo desde adentro, codo a codo.",
-  "footer.bio": "Francisco Abad es emprendedor, innovador y builder-strategist ecuatoriano. Diseña y opera sistemas para volver alcanzable lo imposible en personas, empresas e instituciones. Fundador de CODEIS, donde ha fortalecido a más de 18.000 emprendedores en más de 15 países, y ex Director General del IESS, donde elevó la eficiencia operativa del 36 al 78 por ciento en seis meses. Hoy lidera BrainTech, firma AI-native de transformación de negocios. Construye desde adentro, codo a codo, con resultados medibles.",
+  "footer.bio": "Francisco Abad es emprendedor, innovador y builder-strategist ecuatoriano. Diseña y opera sistemas para volver alcanzable lo imposible en personas, empresas e instituciones. Fundador de CODEIS, donde ha fortalecido a más de 18.000 emprendedores en más de 15 países, y ex Director General del IESS, donde elevó la eficiencia operativa del 36 al 78 por ciento en seis meses. Hoy lidera Nerio Consulting, su práctica de transformación AI-native de negocios. Construye desde adentro, codo a codo, con resultados medibles.",
   "footer.copyright": "© 2026 Francisco Abad. Todos los derechos reservados.",
 
   "page.index.title": "Francisco Abad · Vuelvo alcanzable lo imposible",

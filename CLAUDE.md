@@ -5,8 +5,12 @@
 Francisco Abad (Pancho), founder ecuatoriano. Marca personal centrada en
 "vuelvo alcanzable lo imposible". Sitio: franciscoabad.com
 
-Empresas activas públicamente: BrainTech (AI-native, lidera), CODEIS (ONG, board president).
-NO mencionar en material público: Kronek (disuelto), Fulcra (plegada en BrainTech).
+Empresas activas públicamente: Nerio Consulting (práctica de transformación AI-native,
+heredera de BrainTech), CODEIS (ONG, board president). BrainTech pasó a legacy/en pausa
+(ago 2026): no se opera como firma activa, no hay sociedad con Carlos Cárdenas. Nerio
+también es el chief of staff con IA (producto, nerio.lat), evolución de Cortex.
+NO mencionar en material público: Kronek (disuelto), Fulcra (nombre de marca descartado,
+solo sigue como vehículo legal Delaware/Ecuador sin uso público).
 
 ## Cómo trabajamos
 
