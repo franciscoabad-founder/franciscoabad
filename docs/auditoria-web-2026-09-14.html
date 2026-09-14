@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Auditoría franciscoabad.com · 14 sep 2026</title>
+<style>
+  :root{--ink:#0E1738;--royal:#1A2B6B;--ultra:#3B4ED9;--ultra-light:#6B7AE8;--champ:#B5985A;--linen:#FAFAF7;--slate-l:#E8EAF0;--slate-m:#6B7280;--slate-d:#2D3748;--danger:#D4537E}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--linen);color:var(--slate-d);font-family:Montserrat,"Segoe UI",Arial,sans-serif;font-size:15px;line-height:1.6}
+  header{background:var(--ink);color:#fff;padding:56px 24px 40px}
+  header .wrap,main{max-width:960px;margin:0 auto}
+  header h1{font-size:34px;line-height:1.15;margin:0 0 12px;font-weight:800}
+  header p{margin:0;color:#c7cbe6;max-width:720px}
+  header .meta{margin-top:18px;font-size:12px;letter-spacing:1.5px;text-transform:uppercase;color:var(--ultra-light)}
+  main{padding:32px 24px 80px}
+  h2{font-size:22px;margin:44px 0 12px;color:var(--ink);border-bottom:1px solid var(--slate-l);padding-bottom:8px}
+  h3{font-size:16px;margin:24px 0 8px;color:var(--royal)}
+  p{margin:0 0 12px}
+  ul,ol{margin:0 0 14px 20px;padding:0}
+  li{margin-bottom:6px}
+  table{width:100%;border-collapse:collapse;margin:12px 0 20px;font-size:14px}
+  th,td{text-align:left;padding:9px 10px;border-bottom:1px solid var(--slate-l);vertical-align:top}
+  th{font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:var(--slate-m)}
+  .verdict{background:#fff;border:1px solid var(--slate-l);border-radius:8px;padding:20px 22px;margin:24px 0}
+  .verdict strong{color:var(--ink)}
+  .num{color:var(--champ);font-weight:700}
+  .tag{display:inline-block;font-size:11px;letter-spacing:1.2px;text-transform:uppercase;padding:2px 8px;border-radius:4px;margin-right:6px}
+  .p0{background:var(--danger);color:#fff}.p1{background:var(--ultra);color:#fff}.p2{background:var(--slate-l);color:var(--slate-d)}
+  .ok{color:#2b6b4a;font-weight:600}.bad{color:var(--danger);font-weight:600}
+  code{font-family:Consolas,Menlo,monospace;font-size:13px;background:#eef0f6;padding:1px 5px;border-radius:3px}
+  .two{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+  @media(max-width:700px){.two{grid-template-columns:1fr}}
+  .card{background:#fff;border:1px solid var(--slate-l);border-radius:8px;padding:18px 20px}
+  .card h4{margin:0 0 8px;color:var(--ink);font-size:15px}
+  blockquote{margin:14px 0;padding:10px 16px;border-left:3px solid var(--champ);background:#fff;color:var(--slate-d)}
+  footer{text-align:center;color:var(--slate-m);font-size:12px;padding:20px}
+</style>
+</head>
+<body>
+<header><div class="wrap">
+  <div class="meta">Auditoría · sitio público Astro · brain · LinkedIn</div>
+  <h1>franciscoabad.com: qué dice, qué deberías estar diciendo y cómo rediseñarlo sin perder lo importante</h1>
+  <p>Cruce del código en <code>apps/web</code> (main al 14 sep 2026, incluye el PR #24 del 4 sep), el sitio en producción, el brain del último mes (14 ago a 14 sep) y el perfil de LinkedIn.</p>
+  <div class="meta">14 de septiembre de 2026</div>
+</div></header>
+<main>
+
+<div class="verdict">
+  <p><strong>Veredicto en tres líneas.</strong> El sitio ya no está desalineado en lo grueso: el PR del 4 de septiembre lo movió a Nerio Consulting y sumó el portafolio. Lo que sigue genérico no es el copy, es la <strong>estructura</strong>: es la plantilla estándar de consultor (hero, logos, tres dolores, cuatro cifras, tres servicios, testimonios, newsletter) y ninguna sección demuestra lo único que nadie más puede decir: que operas en vivo lo que vendes.</p>
+  <p>La tesis del brain del último mes es clara: <strong>"construyo y opero empresas AI-native desde adentro, y lo pruebo en mí primero"</strong>. LinkedIn ya lo dice en el titular. El sitio lo dice en una sección de cuatro tarjetas en séptima posición. El rediseño debe invertir esa proporción.</p>
+</div>
+
+<h2>1. Qué estás haciendo hoy según el brain (14 ago a 14 sep)</h2>
+<table>
+<tr><th>Frente</th><th>Estado real</th><th>Qué debería reflejar el sitio</th></tr>
+<tr><td><strong>Nerio</strong> (paraguas)</td><td>Producto v2 en producción en app.nerio.lat (Google, reuniones, cerebro, entitlements; 0 clientes pagos). Nerio Consulting con propuestas vivas: Progress/UpConta, Acertum (3.500 + 900/mes), Fudela. Nerio Company como plataforma futura. LLC Wyoming pendiente.</td><td>Nerio Consulting como oferta principal con el arco F0 a F4. Nerio producto como "lo uso yo". Nada de "Nerio Company" todavía.</td></tr>
+<tr><td><strong>Rafik</strong></td><td>COO y partner. Es "la prueba viva del método": capa AI-native en producción, outbound diario con Instantly (páginas del 8 al 14 sep). Es lo primero que dice tu titular de LinkedIn.</td><td class="bad">Cero menciones en el sitio. Es el hueco más grande.</td></tr>
+<tr><td><strong>Contenido</strong></td><td>Arquitectura de 13 temas validada el 9 sep. Canal de YouTube nuevo, sesiones de grabación, handle único @franciscoabadec. LinkedIn debe posicionar "operador que construye y opera sistemas AI-native", build in public, CTA único a la newsletter Desde Adentro.</td><td>YouTube en footer y JSON-LD, newsletter cableada, página /empieza como link de bio, blog como versión escrita de los largos.</td></tr>
+<tr><td><strong>CODEIS / IESS</strong></td><td>Enmienda de julio: IESS es foso y cantera de evidencia, no identidad presente. CODEIS aparece solo por evento real. Pesos de contenido 60/25/15.</td><td>Evidencia de escala en una línea, no protagonismo. Hoy ocupan hero, logos, problem statement, stats y testimonios.</td></tr>
+<tr><td><strong>BrainTech</strong></td><td>Retirada el 30 ago. Sin sociedad con Carlos Cárdenas.</td><td class="ok">Ya no aparece en el sitio ni en el JSON-LD. Tu CLAUDE.md local tiene cambios sin commit que hay que reconciliar con el de main.</td></tr>
+<tr><td><strong>taskr</strong></td><td>Canon dice "público desde sept 2026".</td><td>No aparece. Decidir si entra al portafolio o se espera.</td></tr>
+</table>
+
+<h2>2. LinkedIn: lo que ve un prospecto que te googlea</h2>
+<ul>
+  <li><strong>Titular</strong>: "COO &amp; Partner de Rafik · Presidente de Codeis · Construyendo Nerio · Ex Director General del IESS (32.000 personas, $10B+) · Vuelvo alcanzable lo imposible: IA y sistemas que rinden, con números que lo prueban". <span class="ok">Alineado con el canon.</span> Rafik va primero: el sitio ni lo nombra.</li>
+  <li><strong>Portada</strong>: banner de Rafik ("El departamento legal nativo de IA de las empresas"). El perfil personal lleva marca ajena en la posición más visible. Debería ser tu marca con Rafik como caso.</li>
+  <li><strong>Actividad</strong>: <span class="num">4.674</span> seguidores. De los últimos 10 ítems, 3 son tuyos (costo real de un departamento legal, hace 3 semanas, 1.603 impresiones; el kit de finanzas, hace 2 meses, 868; el taller CCQ, 739). El resto son reposts de Rafik, CODEIS y terceros. Los posts viejos aún muestran "Construyendo Cortex" en el titular de la época.</li>
+  <li><strong>Lectura</strong>: el titular dice "operador AI-native"; el feed dice "presidente de ONG que repostea". El brain pide voz de operador que construye en público. Ni LinkedIn ni el sitio la ejecutan todavía. El canal de YouTube y PanchoAtlas son la fuente para arreglar eso; el sitio debe ser el destino.</li>
+</ul>
+
+<h2>3. Auditoría del sitio (código en main + producción)</h2>
+
+<h3>3.1 Alineación de mensaje</h3>
+<table>
+<tr><th>Pieza</th><th>Hoy</th><th>Diagnóstico</th></tr>
+<tr><td>Hero</td><td>"Vuelvo alcanzable lo imposible." Sub: "Diseño y opero sistemas que hacen rendir a personas, empresas e instituciones..." Credencial: Founder, Nerio Consulting · <span class="num">+18.000</span> emprendedores formados.</td><td>Frase firma se queda. El subtítulo es abstracto y la credencial elige CODEIS cuando la tesis es AI-native. Propuesta del 5 sep en Drive: "Construyo y opero empresas AI-native desde adentro, con lo que sí se puede medir. Aquí muestro el proceso."</td></tr>
+<tr><td>Logos "Trayectoria"</td><td>14 logos (LSE, Georgetown, UPenn, Hult, CODEIS, IESS, BID Lab, PNUD, GIZ, OYW, Startup Grind, UDLA, USFQ, Yachay).</td><td>Sección de currículum. Bajar a 6 y moverla debajo de la prueba, no encima.</td></tr>
+<tr><td>"El crecimiento trabado raramente es un problema de esfuerzo" + 3 tarjetas</td><td>Dolores de founder: sin tracción, dependen de ti, ejecución fragmentada.</td><td>Es el posicionamiento BrainTech de growth de junio. No habla de AI-native ni de operación. Reemplazar por la tesis: "el cuello de botella de la IA es el diagnóstico operativo, no la tecnología".</td></tr>
+<tr><td>Stats (4 cifras)</td><td>$10B+, 32.000, 15 países, 18.000+.</td><td>Todas institucionales. Faltan las cifras del operador (IESS 36% a 78% en 6 meses; lo que Rafik mide). Además el tile de "gran número + label" es el patrón que impeccable marca como plantilla.</td></tr>
+<tr><td>"Quiero ayudarte a crecer" (3 servicios)</td><td>Kit gratis, Transformación AI-native y advisory, Speaking.</td><td>Copy ya actualizado, pero el título y el formato siguen siendo de coach. La oferta real (canon Nerio Consulting) es un arco con pasos y un caso: eso no cabe en una tarjeta.</td></tr>
+<tr><td>"Lo que estoy construyendo ahora" + /portafolio</td><td>Nerio, PanchoAtlas, Flow, Pancho OS. Texto bueno, "pruébalo en ti primero".</td><td class="ok">Es la mejor sección del sitio y la más escondida (séptima posición). Falta Rafik como caso verificable.</td></tr>
+<tr><td>Testimonios (8)</td><td>AWANA, PNUD, CODEIS, IFI, Grupo CAVE (Carlos Cárdenas), NoTrace, Yami Dog, Innovaxion.</td><td>Ninguno habla de IA ni de operación. Carlos Cárdenas ya no es socio; revisar si conviene mantenerlo. Pedir dos de Rafik (Gustavo) y uno de Progress cuando cierre.</td></tr>
+<tr><td>Blog "Desde el campo"</td><td>1 post visible (kit de finanzas, jun 2026). El del IESS lleva 4 meses en draft.</td><td>Un grid de 3 columnas con una tarjeta. Publicar o archivar el del IESS; el blog debe ser la versión escrita de los largos de YouTube.</td></tr>
+<tr><td>Newsletter "Desde Adentro"</td><td>Formulario decorativo (<code>preventDefault</code>, sin backend).</td><td class="bad">Todo CTA profesional del brain termina aquí y hoy no guarda nada. P0.</td></tr>
+<tr><td>Contacto</td><td>Formulario también decorativo aunque existe <code>api/contacto.ts</code>.</td><td class="bad">Silencio total para quien escribe. P0.</td></tr>
+<tr><td>Footer</td><td>LinkedIn, Instagram, <strong>Cortex</strong>, Email.</td><td class="bad">Cortex retirado. Falta YouTube. P0.</td></tr>
+<tr><td>Rafik / taskr</td><td>No existen en el sitio.</td><td class="bad">Rafik es la prueba del método y la primera credencial de LinkedIn.</td></tr>
+</table>
+
+<h3>3.2 Diseño: por qué se siente genérico</h3>
+<p>Los tokens están bien (Ultramarine v5, champagne solo en cifras, sin blobs ni gradientes). Lo genérico está en la composición:</p>
+<ul>
+  <li><strong>Misma sección repetida</strong>: título centrado + grid de 3 tarjetas (<code>bg-elevated</code>, borde sutil, hover ultramarine) aparece cuatro veces (dolores, servicios, áreas de trabaja-conmigo, blog). Mismo padding en todas (<code>py-12 md:py-20</code>). Sin ritmo.</li>
+  <li><strong>Tipografía</strong>: el sistema de marca manda Gotham; producción carga Montserrat + Inter desde Google Fonts (10 pesos, render-blocking). Impeccable marca Inter en <code>kit.astro:269</code>. Sin Gotham servido, el sitio se ve como cualquier plantilla con Montserrat.</li>
+  <li><strong>Señales de plantilla detectadas por impeccable</strong>: borde lateral de color en las tarjetas de dolores (<code>ProblemStatement.astro:42</code>, "side-tab", la marca más reconocible de UI generada), fuentes sobreusadas, tiles de métrica.</li>
+  <li><strong>Anti-slop del propio design system incumplido</strong>: cápsulas tipo pill ("Gratis", categoría del blog, "Producto"), eyebrows sobre cada título, botones sin <code>nowrap</code> en trabaja-conmigo, radios de tarjeta en 8px en vez de 12px, y la fórmula prohibida "no es X, es Y" en "Basadas en experiencia real, no en teoría".</li>
+  <li><strong>Animaciones de revelado frágiles</strong>: <code>[data-reveal]</code> arranca en <code>opacity:0</code> sin fallback para <code>prefers-reduced-motion</code> ni sin JS. En la captura de producción a 800px de ancho hubo pantallas enteras en blanco y los contadores mostraban 0 mientras el observer no disparaba. Un visitante con movimiento reducido o JS lento ve un sitio vacío.</li>
+  <li><strong>Contraste</strong>: <code>--text-muted #6B7280</code> sobre <code>#131F4A</code> ronda 3:1; falla AA en texto de cuerpo (líneas de empresa en testimonios, ítems de servicios).</li>
+  <li><strong>Nada mide</strong>: sin analytics de ningún tipo. No hay forma de saber si un CTA convierte.</li>
+</ul>
+
+<h3>3.3 Técnico e i18n</h3>
+<ul>
+  <li><code>&lt;html lang="es"&gt;</code> y <code>content-language es-EC</code> fijos incluso en /en. /en no tiene blog ni kit. Cuatro páginas ES tienen strings hardcodeados fuera de i18n.</li>
+  <li>Retratos y logos como <code>&lt;img&gt;</code> crudos fuera de <code>astro:assets</code>; el retrato del hero (LCP) se sirve en 1200x1600 sin srcset; 8 fotos de testimonios sin optimizar para 72px. React solo para dos islas que podrían ser vanilla.</li>
+  <li>Legacy React en la raíz del repo sigue confundiendo a cualquier agente.</li>
+</ul>
+
+<h2>4. ¿Va el sitio con lo que quieres mostrar?</h2>
+<p><strong>A medias.</strong> Copy: 70% alineado tras el PR del 4 sep. Estructura y jerarquía: 30%. La página cuenta primero el pasado institucional (logos, cifras del IESS y CODEIS) y al final, casi como nota al pie, lo que de verdad te diferencia hoy: que construyes y operas sistemas AI-native en tus propias empresas y en Rafik, con aprobación humana, y lo muestras mientras ocurre. Un prospecto de Nerio Consulting que llega desde LinkedIn no encuentra Rafik, no encuentra el método F0 a F4, y no puede suscribirse.</p>
+
+<h2>5. Propuesta: rediseño con impeccable sin perder lo importante</h2>
+
+<h3>5.1 Lo que se queda intacto</h3>
+<ul>
+  <li>"Vuelvo alcanzable lo imposible" como hero. Ultramarine v5, dark por defecto, champagne solo en cifras. Logo ABAD/FRANCISCO. Voz en primera persona, sin em dashes.</li>
+  <li>Banco de credenciales bloqueado (LSE, Georgetown, UPenn, IESS 36 a 78%, CODEIS 18.000 en 15 países, 250 a 400 mentores). Se usan exactos, se reordenan.</li>
+  <li>Portafolio, kit, blog, ES/EN, el OS bajo /os.</li>
+</ul>
+
+<h3>5.2 La idea memorable</h3>
+<blockquote>La única cosa que alguien debe recordar: <strong>"este tipo opera en vivo lo que vende, y te lo deja ver".</strong> El sitio deja de ser un folleto y se comporta como una cabina de operación con la puerta abierta.</blockquote>
+<p>Dirección estética: <strong>editorial de operación</strong>. Composición asimétrica, alineación izquierda, una columna de lectura ancha y una columna de evidencia estrecha; las cifras aparecen como libro mayor (filas con fecha y fuente), no como tiles. Cero tarjetas repetidas: cada sección tiene su propia forma. Tipografía: Gotham servida como webfont bajo licencia (o Montserrat afinada: 3 pesos, self-hosted, <code>font-display: swap</code>), display muy grande contra cuerpo pequeño, ratio mínimo 1.25 entre pasos. El contraste tipográfico y el ritmo de espacio hacen el trabajo que hoy intenta hacer la tarjeta.</p>
+
+<h3>5.3 Nueva estructura de la home (de arriba abajo)</h3>
+<ol>
+  <li><strong>Hero</strong>: frase firma + "Construyo y opero empresas AI-native desde adentro. Lo pruebo en mí primero y lo muestro mientras ocurre." + una línea de estado real de la semana (ej. "Semana 37 · Nerio v2 en producción · 3 propuestas vivas"), generada desde el OS o escrita en un JSON. Botones: "Ver el proceso" (/empieza) y "Trabaja conmigo".</li>
+  <li><strong>La prueba viva</strong>: Rafik como caso con nombre, rol (COO y partner), qué corre en producción y la matriz de tres niveles de autonomía. Un solo caso contado bien vale más que tres dolores.</li>
+  <li><strong>Lo que construyo y opero</strong>: el portafolio actual (Nerio, PanchoAtlas, Flow, Pancho OS) sube a la tercera posición, en lista editorial, no en grid.</li>
+  <li><strong>Cómo trabajo</strong>: Nerio Consulting como arco F0 a F4 en una sola fila horizontal con la regla "nadie paga por un diagnóstico suelto; pagan por el primer paso de algo que ya vieron completo". CTA: escribir. Speaking como línea corta debajo.</li>
+  <li><strong>Libro mayor de evidencia</strong>: IESS 36% a 78% en 6 meses, +32.000 personas, USD 10.000M, 18.000 emprendedores en 15 países, con fecha y contexto en cada fila. Champagne. Aquí, no en el hero.</li>
+  <li><strong>Formación y aliados</strong>: 6 logos en hairline, sin sección propia grande.</li>
+  <li><strong>Bitácora</strong> ("Desde el campo"): últimos videos y posts, alimentada por el blog y YouTube. Reemplaza el grid de blog vacío.</li>
+  <li><strong>Desde Adentro</strong>: newsletter cableada, una promesa concreta: "Cómo un operador vuelve AI-native una empresa de servicios, contado mientras ocurre. Viernes."</li>
+</ol>
+<p>Testimonios: se distribuyen como citas al margen dentro de las secciones que respaldan, no como bloque de 8 tarjetas.</p>
+
+<h3>5.4 Cómo ejecutarlo con impeccable (y qué skills entran)</h3>
+<table>
+<tr><th>Paso</th><th>Skill</th><th>Salida</th></tr>
+<tr><td>0</td><td><code>/impeccable teach</code></td><td><code>.impeccable.md</code> con audiencia (founders de servicios mid-market LATAM y quien te googlea), jobs, tono y la idea memorable. Sin esto impeccable produce genérico.</td></tr>
+<tr><td>1</td><td><code>/critique</code> sobre la home actual</td><td>Puntuación de heurísticas y carga cognitiva como línea base para comparar el después.</td></tr>
+<tr><td>2</td><td><code>design-shotgun</code> o <code>/design-consultation</code></td><td>3 variantes de la home nueva en HTML estático local para elegir dirección (editorial, cabina, híbrida). Se guardan en <code>docs/design/</code>, nunca como artifacts.</td></tr>
+<tr><td>3</td><td><code>/impeccable craft</code> + <code>frontend-design</code> + <code>astro</code></td><td>Implementación en rama <code>redesign-sep-2026</code>: nuevos componentes, tokens en OKLCH, Gotham o Montserrat self-hosted.</td></tr>
+<tr><td>4</td><td><code>/polish</code>, <code>/typeset</code>, <code>accessibility</code></td><td>Estados, contraste AA, reduced motion, foco, botones sin wrap.</td></tr>
+<tr><td>5</td><td><code>/design-review</code> + <code>/qa</code> en navegador embebido</td><td>Capturas móvil y escritorio, ES y EN, antes de merge.</td></tr>
+<tr><td>6</td><td><code>seo-audit</code>, <code>ecc:production-audit</code></td><td>OG por página, Article schema, sitemap, analytics, llms.txt actualizado.</td></tr>
+</table>
+
+<h2>6. SEO técnico (agente ECC seo-specialist)</h2>
+<table>
+<tr><th>Prioridad</th><th>Hallazgo</th><th>Dónde</th><th>Arreglo</th></tr>
+<tr><td><span class="tag p0">P0</span></td><td>Sin hreflang entre ES y EN. Google trata / y /en como páginas sin relación o duplicadas.</td><td><code>BaseLayout.astro</code> head</td><td>Emitir <code>rel="alternate" hreflang="es|en|x-default"</code> con un mapa de slugs.</td></tr>
+<tr><td><span class="tag p0">P0</span></td><td><code>html lang="es"</code> y <code>content-language es-EC</code> fijos en todas las páginas EN.</td><td><code>BaseLayout.astro:59,83</code></td><td>Prop <code>lang</code> en el layout, pasada desde /en/*.</td></tr>
+<tr><td><span class="tag p0">P0</span></td><td>/kit y las tres páginas /en/* no están en el sitemap.</td><td><code>sitemap-0.xml.ts:9-15</code></td><td>Agregarlas a <code>staticPages</code>.</td></tr>
+<tr><td><span class="tag p1">P1</span></td><td>Retrato del hero (LCP) en 1200x1600 sin srcset ni AVIF/WebP.</td><td><code>Hero.astro:81-90</code></td><td>Usar <code>&lt;Picture&gt;</code> de astro:assets con widths y formats.</td></tr>
+<tr><td><span class="tag p1">P1</span></td><td>Google Fonts render-blocking con 10 variantes de Montserrat más Inter.</td><td><code>BaseLayout.astro:128-133</code></td><td>Self-host 3 pesos con <code>font-display: swap</code>.</td></tr>
+<tr><td><span class="tag p1">P1</span></td><td>Solo schema Person. Sin WebSite ni BreadcrumbList; <code>dateModified</code> del blog igual a <code>pubDate</code>.</td><td><code>BaseLayout.astro:28-55</code>, <code>blog/[slug].astro:52,66</code></td><td>Agregar WebSite y BreadcrumbList; campo <code>updatedDate</code> en el schema de contenido.</td></tr>
+<tr><td><span class="tag p2">P2</span></td><td>robots.txt no bloquea /os/ (40+ páginas privadas indexables como cascarón) y bloquea /admin/ que no existe.</td><td><code>public/robots.txt:6-7</code></td><td><code>Disallow: /os/</code> y <code>noindex</code> en <code>OSLayout.astro</code>.</td></tr>
+<tr><td><span class="tag p2">P2</span></td><td>OG image fallback del blog es un SVG (LinkedIn y Facebook no lo renderizan). Separadores de título inconsistentes (" | " vs " · ").</td><td><code>blog/[slug].astro:35,72</code></td><td>Raster de fallback y un solo separador.</td></tr>
+</table>
+<p>Verificado limpio: canonicals autorreferentes, meta robots index/follow, un H1 por página, JSON-LD sin BrainTech ni Cortex.</p>
+
+<h2>7. Plan en dos velocidades</h2>
+<div class="two">
+  <div class="card">
+    <h4><span class="tag p0">Ahora</span> Arreglos antes del primer video (medio día)</h4>
+    <ul>
+      <li>Cablear newsletter y contacto (endpoint + Supabase; Beehiiv después).</li>
+      <li>Quitar Cortex del footer; agregar YouTube a footer y <code>sameAs</code>.</li>
+      <li>Crear <code>/empieza</code> como link de bio único con UTM.</li>
+      <li>Rafik en el portafolio y en "construyendo ahora".</li>
+      <li>Fallback de <code>data-reveal</code> para reduced motion y sin JS.</li>
+      <li>hreflang, <code>lang</code> por página, sitemap completo, <code>Disallow: /os/</code>.</li>
+      <li>Analytics (Vercel Analytics o Plausible).</li>
+      <li>Reconciliar el CLAUDE.md local con el de main y hacer commit.</li>
+    </ul>
+  </div>
+  <div class="card">
+    <h4><span class="tag p1">Después</span> Rediseño estructural (una semana de trabajo con Claude)</h4>
+    <ul>
+      <li>Pasos 0 a 6 de la sección 5.4.</li>
+      <li>Home nueva con la estructura 5.3; sobre-mí reordenado (hoy primero, IESS y CODEIS como evidencia); trabaja-conmigo como arco F0 a F4.</li>
+      <li>Blog como versión escrita de cada largo de YouTube; publicar o archivar el post del IESS.</li>
+      <li>Mover el legacy React a <code>_archive/</code>.</li>
+      <li>Pedir 2 testimonios de operación AI-native (Gustavo de Rafik, Progress cuando cierre).</li>
+    </ul>
+  </div>
+</div>
+
+<h2>8. Fuentes consultadas</h2>
+<ul>
+  <li>Repo <code>C:\DEV\franciscoabad</code> en main (fc2d10a), incluido el PR #24 "update site to Nerio Consulting positioning and add portfolio".</li>
+  <li>Producción https://franciscoabad.com (capturas del 14 sep 2026 a 800px).</li>
+  <li>Brain: contenido-verdad-alineada-2026-09-09, contenido-arquitectura-maestra-decidida-2026-08-30, contenido-handle-franciscoabadec-y-sesion-grabacion-2026-09-05, nerio-canon, nerio-consulting-canon, marcapersonal-canon, marcapersonal-enmienda-jul2026, marcapersonal-audiencia-y-pruebas, y el listado de 100 páginas actualizadas desde el 14 ago.</li>
+  <li>Drive: <code>H:\My Drive\Creación de Contenidos\30_Setup_Perfiles\09-Web-franciscoabad-Cambios.md</code> (propuesta P0/P1/P2 del 5 sep, ejecutada solo en la parte que cubrió el PR #24).</li>
+  <li>LinkedIn /in/franciscoabadec desde el navegador interno con sesión.</li>
+  <li>Detector automático de impeccable (<code>npx impeccable --json --fast</code>) y agentes ECC de exploración y SEO.</li>
+</ul>
+</main>
+<footer>Auditoría generada el 14 de septiembre de 2026 · uso interno</footer>
+</body>
+</html>
