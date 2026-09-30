@@ -1,0 +1,164 @@
+{
+  "name": "Biometricas Sync Diario",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": { "interval": [{ "triggerAtHour": 6, "triggerAtMinute": 30 }] }
+      },
+      "id": "trigger",
+      "name": "Cron 06:30 EC",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [-560, 300]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Dia a sincronizar: ayer en America/Guayaquil (UTC-05:00 fijo, sin horario de verano).\n// Se puede forzar otro dia o un rango pasando { fecha } o { desde, hasta } al ejecutar\n// manualmente, que es como se hace el backfill.\nconst entrada = $input.first()?.json ?? {};\nconst OFFSET_MS = 5 * 60 * 60 * 1000;\n\nfunction fechaGye(d) {\n  return new Date(d.getTime() - OFFSET_MS).toISOString().slice(0, 10);\n}\n\nlet fechas = [];\nif (entrada.desde && entrada.hasta) {\n  for (let d = new Date(entrada.desde + 'T12:00:00Z'); fechaGye(d) <= entrada.hasta; d.setUTCDate(d.getUTCDate() + 1)) {\n    fechas.push(fechaGye(d));\n  }\n} else if (entrada.fecha) {\n  fechas = [entrada.fecha];\n} else {\n  const ayer = new Date(Date.now() - 24 * 60 * 60 * 1000);\n  fechas = [fechaGye(ayer)];\n}\n\n// Ventana UTC del dia calendario de Guayaquil.\nreturn fechas.map((fecha) => {\n  const iniUtc = new Date(`${fecha}T00:00:00-05:00`).toISOString();\n  const finUtc = new Date(new Date(`${fecha}T00:00:00-05:00`).getTime() + 86400000).toISOString();\n  return { json: { fecha, iniUtc, finUtc } };\n});"
+      },
+      "id": "rango",
+      "name": "Calcular dia",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [-340, 300]
+    },
+    {
+      "parameters": {
+        "url": "=https://health.googleapis.com/v4/users/me/dataTypes/steps/dataPoints",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "googleOAuth2Api",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            { "name": "filter", "value": "=steps.interval.civil_start_time >= \"{{ $json.fecha }}\" AND steps.interval.civil_start_time < \"{{ new Date(new Date($json.fecha + 'T12:00:00Z').getTime() + 86400000).toISOString().slice(0,10) }}\"" },
+            { "name": "pageSize", "value": "1000" }
+          ]
+        },
+        "options": { "response": { "response": { "neverError": true } } }
+      },
+      "id": "pasos",
+      "name": "GH steps",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [-120, 140]
+    },
+    {
+      "parameters": {
+        "url": "=https://health.googleapis.com/v4/users/me/dataTypes/sleep/dataPoints",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "googleOAuth2Api",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            { "name": "filter", "value": "=sleep.interval.civil_end_time >= \"{{ $('Calcular dia').item.json.fecha }}\" AND sleep.interval.civil_end_time < \"{{ new Date(new Date($('Calcular dia').item.json.fecha + 'T12:00:00Z').getTime() + 86400000).toISOString().slice(0,10) }}\"" },
+            { "name": "pageSize", "value": "50" }
+          ]
+        },
+        "options": { "response": { "response": { "neverError": true } } }
+      },
+      "id": "sueno",
+      "name": "GH sleep",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [-120, 300]
+    },
+    {
+      "parameters": {
+        "url": "=https://health.googleapis.com/v4/users/me/dataTypes/daily-resting-heart-rate/dataPoints",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "googleOAuth2Api",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            { "name": "filter", "value": "=daily_resting_heart_rate.date >= \"{{ $('Calcular dia').item.json.fecha }}\" AND daily_resting_heart_rate.date < \"{{ new Date(new Date($('Calcular dia').item.json.fecha + 'T12:00:00Z').getTime() + 86400000).toISOString().slice(0,10) }}\"" },
+            { "name": "pageSize", "value": "10" }
+          ]
+        },
+        "options": { "response": { "response": { "neverError": true } } }
+      },
+      "id": "fc",
+      "name": "GH resting HR",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [-120, 460]
+    },
+    {
+      "parameters": {
+        "url": "=https://health.googleapis.com/v4/users/me/dataTypes/weight/dataPoints",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "googleOAuth2Api",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            { "name": "filter", "value": "=weight.sample_time.civil_time >= \"{{ $('Calcular dia').item.json.fecha }}\" AND weight.sample_time.civil_time < \"{{ new Date(new Date($('Calcular dia').item.json.fecha + 'T12:00:00Z').getTime() + 86400000).toISOString().slice(0,10) }}\"" },
+            { "name": "pageSize", "value": "50" }
+          ]
+        },
+        "options": { "response": { "response": { "neverError": true } } }
+      },
+      "id": "peso",
+      "name": "GH weight",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [-120, 620]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Normaliza las cuatro respuestas de Google Health al contrato de\n// /api/os/biometricas (ver apps/web/docs/contrato-biometricas.md).\n// Se manda SOLO lo que vino de verdad: el endpoint mergea por fecha y un null\n// explicito borraria un dato ya guardado.\nconst fecha = $('Calcular dia').first().json.fecha;\nconst dp = (nodo) => $(nodo).first().json?.dataPoints ?? [];\n\n// Pasos: la API devuelve tramos intradiarios; el dia es la suma.\nconst pasos = dp('GH steps').reduce((acc, p) => acc + Number(p?.steps?.count ?? 0), 0);\n\n// Sueno: minutos dormidos de las sesiones que TERMINAN en este dia.\nconst suenoMin = dp('GH sleep').reduce((acc, p) => acc + Number(p?.sleep?.summary?.minutesAsleep ?? 0), 0);\n\n// FC en reposo: resumen diario, hay como mucho uno.\nconst fcRaw = dp('GH resting HR')[0]?.dailyRestingHeartRate?.beatsPerMinute;\n\n// Peso: la API lo da en gramos, el OS lo guarda en kg. Si hubo varias\n// mediciones, se toma la ultima.\nconst pesos = dp('GH weight');\nconst pesoG = pesos.length ? pesos[0]?.weight?.weightGrams : null;\n\nconst body = { fecha, fuente: 'google_health' };\nif (pasos > 0) body.pasos = Math.round(pasos);\nif (suenoMin > 0) body.sueno_min = Math.round(suenoMin);\nif (fcRaw) body.fc_reposo = Math.round(Number(fcRaw));\nif (pesoG) body.peso_kg = Math.round((Number(pesoG) / 1000) * 100) / 100;\n\n// Payload crudo para auditoria: la API v4 esta evolucionando y el crudo permite\n// reprocesar sin haber perdido nada.\nbody.raw = {\n  steps: $('GH steps').first().json,\n  sleep: $('GH sleep').first().json,\n  restingHeartRate: $('GH resting HR').first().json,\n  weight: $('GH weight').first().json,\n};\n\n// Sin ninguna metrica el endpoint responde 400. No es un error: es un dia sin datos.\nconst tieneMetrica = ['pasos', 'sueno_min', 'fc_reposo', 'peso_kg'].some((k) => k in body);\nreturn [{ json: { body, tieneMetrica } }];"
+      },
+      "id": "normalizar",
+      "name": "Normalizar",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [180, 380]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": { "caseSensitive": true, "version": 2 },
+          "conditions": [
+            {
+              "leftValue": "={{ $json.tieneMetrica }}",
+              "rightValue": true,
+              "operator": { "type": "boolean", "operation": "true", "singleValue": true }
+            }
+          ],
+          "combinator": "and"
+        }
+      },
+      "id": "hay-datos",
+      "name": "Hay datos?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [400, 380]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://franciscoabad.com/api/os/biometricas",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify($json.body) }}",
+        "options": {}
+      },
+      "id": "post-os",
+      "name": "POST /api/os/biometricas",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [620, 300]
+    }
+  ],
+  "connections": {
+    "Cron 06:30 EC": { "main": [[{ "node": "Calcular dia", "type": "main", "index": 0 }]] },
+    "Calcular dia": { "main": [[{ "node": "GH steps", "type": "main", "index": 0 }]] },
+    "GH steps": { "main": [[{ "node": "GH sleep", "type": "main", "index": 0 }]] },
+    "GH sleep": { "main": [[{ "node": "GH resting HR", "type": "main", "index": 0 }]] },
+    "GH resting HR": { "main": [[{ "node": "GH weight", "type": "main", "index": 0 }]] },
+    "GH weight": { "main": [[{ "node": "Normalizar", "type": "main", "index": 0 }]] },
+    "Normalizar": { "main": [[{ "node": "Hay datos?", "type": "main", "index": 0 }]] },
+    "Hay datos?": { "main": [[{ "node": "POST /api/os/biometricas", "type": "main", "index": 0 }], []] }
+  },
+  "settings": { "executionOrder": "v1" },
+  "pinData": {}
+}
