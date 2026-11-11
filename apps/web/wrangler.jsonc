@@ -5,5 +5,9 @@
   "compatibility_flags": ["nodejs_compat"],
   "main": "@astrojs/cloudflare/entrypoints/server",
   "assets": { "binding": "ASSETS", "directory": "./dist" },
-  "observability": { "enabled": true }
+  "observability": { "enabled": true },
+  "routes": [
+    { "pattern": "franciscoabad.com", "custom_domain": true },
+    { "pattern": "www.franciscoabad.com", "custom_domain": true }
+  ]
 }
