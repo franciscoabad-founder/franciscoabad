@@ -13,7 +13,8 @@
     "test:salud": "node --experimental-strip-types --test src/lib/salud/*.test.ts",
     "test:habitos": "node --experimental-strip-types --test src/lib/habitos/*.test.ts src/lib/juego/*.test.ts",
     "test:gfit": "node --experimental-strip-types --test src/lib/gfit/*.test.ts",
-    "test:sueno": "node --experimental-strip-types --test src/lib/sueno/*.test.ts"
+    "test:sueno": "node --experimental-strip-types --test src/lib/sueno/*.test.ts",
+    "deploy:cf": "node scripts/deploy-cloudflare.mjs"
   },
   "dependencies": {
     "@astrojs/cloudflare": "^13.7.0",
