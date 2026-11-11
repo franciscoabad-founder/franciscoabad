@@ -1,9 +1,8 @@
-name: Deploy to Vercel
+name: Deploy to Vercel (disabled, site moved to Cloudflare on 2026-11-11)
 
+# The site now deploys to Cloudflare with: cd apps/web && npm run deploy:cf
 on:
-  push:
-    branches:
-      - main
+  workflow_dispatch:
 
 env:
   VERCEL_ORG_ID: team_xZRFvgdaFnSuMaAoI3IMNbw3
