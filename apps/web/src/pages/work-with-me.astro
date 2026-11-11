@@ -1,0 +1,70 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import Navbar from "../components/Navbar.astro";
+import Footer from "../components/Footer.astro";
+
+const lang = "en";
+
+const ways = [
+  {
+    h: "Advisory for founders and leaders",
+    p: "One-on-one sessions on strategy, how your team operates and how to use AI agents, from someone who has run institutions and is building a company now.",
+    cta: "Apply for a session",
+    href: "mailto:francisco@rafik.tech?subject=Advisory%20session",
+  },
+  {
+    h: "Speaking and workshops",
+    p: "Keynotes and workshops for conferences and leadership teams, on building with AI agents, building in public and running systems at scale.",
+    cta: "See speaking",
+    href: "/talks",
+  },
+  {
+    h: "Collaborations",
+    p: "Open source work, podcasts, research and projects where building together makes sense. Tell me what you have in mind.",
+    cta: "Write to me",
+    href: "mailto:francisco@rafik.tech?subject=Collaboration",
+  },
+];
+---
+
+<BaseLayout
+  title="Work with me · Francisco Abad"
+  description="Advisory sessions, speaking and collaborations with Francisco Abad, co-founder at Rafik."
+>
+  <Navbar />
+
+  <div class="bg-bg-primary min-h-screen">
+    <section class="pt-32 pb-12 md:pt-40 md:pb-16">
+      <div class="max-w-[860px] mx-auto px-6 lg:px-8">
+        <p class="font-montserrat text-[11px] uppercase tracking-[2px] text-ultra-light mb-4">Work with me</p>
+        <h1 class="font-montserrat font-bold text-text-primary text-[40px] md:text-[56px] leading-tight mb-5">Three ways to work together.</h1>
+        <p class="font-inter text-text-secondary text-[17px] leading-relaxed max-w-[640px]">
+          Most of my time goes to Rafik. I keep a small number of advisory sessions, talks and collaborations open each month.
+        </p>
+      </div>
+    </section>
+
+    <section class="pb-24">
+      <div class="max-w-[1200px] mx-auto px-6 lg:px-8 grid grid-cols-1 md:grid-cols-3 gap-6">
+        {ways.map((w, i) => (
+          <div class="bg-bg-elevated rounded-lg border border-border-subtle hover:border-ember transition-colors duration-300 p-8 flex flex-col" data-reveal data-reveal-delay={String(i + 1)}>
+            <h2 class="font-montserrat font-semibold text-text-primary text-[22px] mb-4">{w.h}</h2>
+            <p class="font-inter text-text-secondary text-[15px] leading-relaxed mb-8 flex-1">{w.p}</p>
+            <a href={w.href} class="font-montserrat font-semibold text-[13px] uppercase tracking-[1.5px] text-ultra-light border border-ember px-5 py-3 rounded-md text-center hover:bg-ember hover:text-white transition-colors duration-300">{w.cta} →</a>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <section class="bg-bg-elevated border-t border-border-subtle py-16">
+      <div class="max-w-[860px] mx-auto px-6 lg:px-8">
+        <p class="font-montserrat text-[11px] uppercase tracking-[2px] text-ultra-light mb-3">Also</p>
+        <p class="font-inter text-text-secondary text-[16px] leading-relaxed m-0">
+          I also run Nerio, an AI chief of staff for founders. See it in the <a href="/portfolio" class="text-ember">portfolio</a> or at <a href="https://nerio.lat" class="text-ember" target="_blank" rel="noopener noreferrer">nerio.lat</a>.
+        </p>
+      </div>
+    </section>
+  </div>
+
+  <Footer lang={lang} />
+</BaseLayout>

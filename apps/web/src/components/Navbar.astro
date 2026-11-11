@@ -2,18 +2,19 @@
 import NavbarIsland from "./NavbarIsland.tsx";
 import ThemeToggle from "./ThemeToggle.astro";
 import LanguageToggle from "./LanguageToggle.astro";
-import { useTranslations } from "../i18n/utils";
+import { useTranslations, route } from "../i18n/utils";
 
-const locale = Astro.currentLocale ?? "es";
+const locale = Astro.currentLocale ?? "en";
 const t = useTranslations(locale);
 
 const links = [
-  { href: locale === "en" ? "/en/" : "/",                    label: t("nav.home") },
-  { href: locale === "en" ? "/en/sobre-mi" : "/sobre-mi",    label: t("nav.sobre_mi") },
-  { href: locale === "en" ? "/en/trabaja-conmigo" : "/trabaja-conmigo", label: t("nav.trabaja_conmigo") },
-  ...(locale === "es" ? [{ href: "/portafolio", label: t("nav.portafolio") }] : []),
-  ...(locale === "es" ? [{ href: "/blog", label: t("nav.blog") }] : []),
-  { href: locale === "en" ? "/en/contacto" : "/contacto",    label: t("nav.contacto") },
+  { href: route("home", locale),      label: t("nav.home") },
+  { href: route("about", locale),     label: t("nav.sobre_mi") },
+  { href: route("portfolio", locale), label: t("nav.portafolio") },
+  ...(locale === "en" ? [{ href: route("speaking", locale), label: t("nav.speaking") }] : []),
+  { href: route("work", locale),      label: t("nav.trabaja_conmigo") },
+  { href: route("blog", locale),      label: t("nav.blog") },
+  { href: route("contact", locale),   label: t("nav.contacto") },
 ];
 ---
 
@@ -22,7 +23,7 @@ const links = [
   class="fixed top-0 left-0 right-0 z-50 transition-all duration-300 bg-transparent [&.is-scrolled]:bg-bg-elevated [&.is-scrolled]:backdrop-blur-md [&.is-scrolled]:shadow-lg"
 >
   <div class="max-w-[1200px] mx-auto px-6 lg:px-8 flex items-center justify-between h-16 lg:h-20">
-    <a href={locale === "en" ? "/en/" : "/"} class="flex items-center select-none">
+    <a href={route("home", locale)} class="flex items-center select-none">
       <img
         src="/fa_logo_whitemono.svg"
         alt="Francisco Abad"

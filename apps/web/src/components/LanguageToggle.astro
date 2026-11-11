@@ -1,14 +1,12 @@
 ---
 import { getLocalePath } from "../i18n/utils";
 
-const locale = Astro.currentLocale ?? "es";
+const locale = Astro.currentLocale ?? "en";
 const targetLocale = locale === "en" ? "es" : "en";
 const targetPath = getLocalePath(Astro.url.pathname, targetLocale);
 const label = locale === "en" ? "ES" : "EN";
 
-const path = Astro.url.pathname;
-const isBlogRoute = path.startsWith("/blog") || path.startsWith("/en/blog");
-const noEquivalent = isBlogRoute && targetLocale === "en";
+const noEquivalent = false;
 ---
 
 {!noEquivalent && (

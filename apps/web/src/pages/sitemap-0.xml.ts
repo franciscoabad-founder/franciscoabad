@@ -9,9 +9,17 @@ export const GET: APIRoute = async () => {
   const staticPages = [
     { url: `${baseUrl}/`,                   priority: '1.0', changefreq: 'weekly',  lastmod: buildDate },
     { url: `${baseUrl}/blog/`,              priority: '0.9', changefreq: 'weekly',  lastmod: buildDate },
-    { url: `${baseUrl}/sobre-mi/`,          priority: '0.7', changefreq: 'monthly', lastmod: buildDate },
-    { url: `${baseUrl}/trabaja-conmigo/`,   priority: '0.7', changefreq: 'monthly', lastmod: buildDate },
-    { url: `${baseUrl}/contacto/`,          priority: '0.7', changefreq: 'monthly', lastmod: buildDate },
+    { url: `${baseUrl}/about/`, priority: '0.8', changefreq: 'monthly', lastmod: buildDate },
+    { url: `${baseUrl}/portfolio/`, priority: '0.8', changefreq: 'monthly', lastmod: buildDate },
+    { url: `${baseUrl}/talks/`, priority: '0.7', changefreq: 'monthly', lastmod: buildDate },
+    { url: `${baseUrl}/work-with-me/`, priority: '0.7', changefreq: 'monthly', lastmod: buildDate },
+    { url: `${baseUrl}/contact/`, priority: '0.7', changefreq: 'monthly', lastmod: buildDate },
+    { url: `${baseUrl}/es/`, priority: '0.6', changefreq: 'monthly', lastmod: buildDate },
+    { url: `${baseUrl}/es/sobre-mi/`, priority: '0.5', changefreq: 'monthly', lastmod: buildDate },
+    { url: `${baseUrl}/es/trabaja-conmigo/`, priority: '0.5', changefreq: 'monthly', lastmod: buildDate },
+    { url: `${baseUrl}/es/portafolio/`, priority: '0.5', changefreq: 'monthly', lastmod: buildDate },
+    { url: `${baseUrl}/es/blog/`, priority: '0.5', changefreq: 'monthly', lastmod: buildDate },
+    { url: `${baseUrl}/es/contacto/`, priority: '0.5', changefreq: 'monthly', lastmod: buildDate },
   ];
 
   const blogPages = posts

@@ -1,8 +1,8 @@
 ---
-import BaseLayout from "../../layouts/BaseLayout.astro";
-import Navbar from "../../components/Navbar.astro";
-import Footer from "../../components/Footer.astro";
-import { useTranslations } from "../../i18n/utils";
+import BaseLayout from "../layouts/BaseLayout.astro";
+import Navbar from "../components/Navbar.astro";
+import Footer from "../components/Footer.astro";
+import { useTranslations } from "../i18n/utils";
 
 const lang = "en";
 const t = useTranslations(lang);
@@ -33,10 +33,17 @@ const values = [
 const timeline = [
   {
     period: "2026 · Present",
-    event: "Founder, Nerio Consulting",
+    event: "Co-founder, Rafik",
     detail:
-      "Leading Nerio Consulting, my AI-native business transformation practice. Chairing the board of CODEIS/ELAB, a social innovation organization and entrepreneurship school present in more than 15 countries.",
+      "Building the legal hub for the future. Agents take the repetitive work of a law firm so lawyers grow, connect and practice law, and an attorney reviews and signs everything that goes out. I work on go-to-market, content and the agents, starting in the United States.",
   },
+  {
+    period: "Apr 2025 · Present",
+    event: "Chairman of the Board, CODEIS",
+    detail:
+      "Chairing the board of the social innovation organization and entrepreneurship school I founded, present in more than 15 countries.",
+  },
+
   {
     period: "Jun 2025 · Dec 2025",
     event: "Director General, IESS",
@@ -99,8 +106,8 @@ const timeline = [
       <div class="max-w-[1200px] mx-auto px-6 lg:px-8">
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-16 items-start">
           <img
-            src="/francisco-abad-about.jpg"
-            alt="Francisco Abad, Founder, Operator, Strategist"
+            src="/francisco-abad-studio.webp"
+            alt="Francisco Abad, Co-founder at Rafik"
             width="720"
             height="960"
             loading="eager"
@@ -123,10 +130,13 @@ const timeline = [
                 <strong class="text-text-primary">36 to 78 percent in six months</strong>.
               </p>
               <p>
-                Today I lead{" "}
-                <strong class="text-text-primary">Nerio Consulting</strong>, my AI-native business transformation practice, and chair the board of{" "}
-                <strong class="text-text-primary">CODEIS/ELAB</strong>. I also build{" "}
-                <strong class="text-text-primary">Nerio</strong>, my AI chief of staff, and the content engine I use to run my own brand.
+                Today I'm a co-founder at{" "}
+                <strong class="text-text-primary">Rafik</strong>, the legal hub for the future. Agents take the repetitive work of a law firm so lawyers can grow, connect and practice law. I'm not a lawyer: my co-founder is a corporate attorney with more than 16 years of practice, and he reviews every workflow. I build it in public, starting in the United States.
+              </p>
+              <p>
+                Outside Rafik I chair the board of{" "}
+                <strong class="text-text-primary">CODEIS</strong>, and I build my own tools, from{" "}
+                <strong class="text-text-primary">Flow</strong> (open source) to a personal AI chief of staff. You can see them in the <a href="/portfolio" class="text-ember">portfolio</a>.
               </p>
               <p>
                 Building from the inside, side by side, with measurable results.

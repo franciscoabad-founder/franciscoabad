@@ -1,8 +1,8 @@
 ---
-import { useTranslations } from "../../i18n/utils";
+import { useTranslations, route } from "../../i18n/utils";
 
 interface Props { lang?: string; }
-const { lang = "es" } = Astro.props;
+const { lang = "en" } = Astro.props;
 const t = useTranslations(lang);
 
 const services = [
@@ -12,7 +12,7 @@ const services = [
     descKey:    "services.kit.desc" as const,
     itemKeys:   ["services.kit.item1", "services.kit.item2", "services.kit.item3", "services.kit.item4"] as const,
     ctaKey:     "services.kit.cta" as const,
-    href: "/kit",
+    href: route("kit", lang),
   },
   {
     eyebrowKey: "services.advisory.eyebrow" as const,
@@ -20,7 +20,7 @@ const services = [
     descKey:    "services.advisory.desc" as const,
     itemKeys:   ["services.advisory.item1", "services.advisory.item2", "services.advisory.item3"] as const,
     ctaKey:     "services.advisory.cta" as const,
-    href: "/trabaja-conmigo",
+    href: route("work", lang),
   },
   {
     eyebrowKey: "services.speaking.eyebrow" as const,
@@ -28,7 +28,7 @@ const services = [
     descKey:    "services.speaking.desc" as const,
     itemKeys:   ["services.speaking.item1", "services.speaking.item2", "services.speaking.item3"] as const,
     ctaKey:     "services.speaking.cta" as const,
-    href: "/trabaja-conmigo",
+    href: route("speaking", lang),
   },
 ];
 ---

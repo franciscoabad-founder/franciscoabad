@@ -1,23 +1,27 @@
-# Francisco Abad — Sistemas para crecimiento
+# Francisco Abad, co-founder of Rafik
 
-Francisco Abad es founder, partner y advisor con experiencia operando
-instituciones de gran escala (32,000 colaboradores en el IESS,
-Ecuador) y construyendo organizaciones desde cero (CODEIS en 15
-países). Escribe sobre sistemas de ejecución, liderazgo institucional,
-y la diferencia entre modernización cosmética y modernización
-estructural en organizaciones complejas.
+Francisco Abad is a co-founder of Rafik (https://rafik.tech), the legal hub for the future:
+agents take the repetitive work of a law firm so lawyers grow, connect and practice law.
+Before Rafik he was Director General of Ecuador's Social Security Institute (32,000 people)
+and founder of CODEIS (social innovation, 15+ countries). He builds in public from the United States.
+He also speaks and advises. English is the default language of this site; Spanish lives under /es/.
 
-Posicionamiento: "Desde Adentro / From the Inside". Su contenido
-combina datos verificables con observación operativa de primera mano
-en cargos donde tomó decisiones reales.
-
-## Páginas principales
+## Main pages (English)
 
 - Home: https://franciscoabad.com/
-- Sobre mí: https://franciscoabad.com/sobre-mi/
-- Trabaja conmigo: https://franciscoabad.com/trabaja-conmigo/
-- Blog — Dentro del Sistema: https://franciscoabad.com/blog/
-- Contacto: https://franciscoabad.com/contacto/
+- About: https://franciscoabad.com/about/
+- Portfolio: https://franciscoabad.com/portfolio/
+- Speaking: https://franciscoabad.com/talks/
+- Work with me: https://franciscoabad.com/work-with-me/
+- Blog: https://franciscoabad.com/blog/
+- Contact: https://franciscoabad.com/contact/
+
+## Espanol
+
+- Home: https://franciscoabad.com/es/
+- Sobre mi: https://franciscoabad.com/es/sobre-mi/
+- Trabaja conmigo: https://franciscoabad.com/es/trabaja-conmigo/
+- Blog: https://franciscoabad.com/es/blog/
 
 ## Artículos del blog
 

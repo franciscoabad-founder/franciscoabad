@@ -4,14 +4,11 @@
   "nav.trabaja_conmigo": "WORK WITH ME",
   "nav.blog": "BLOG",
   "nav.contacto": "CONTACT",
-
   "hero.tagline": "I make the impossible achievable.",
   "hero.h1": "With results that are measured.",
   "hero.pills": "Founder · Strategist · Innovator",
   "hero.cta_primary": "Let's work together",
   "hero.cta_secondary": "Explore resources",
-
-
   "services.heading": "I want to help you grow",
   "services.kit.eyebrow": "Free resource",
   "services.kit.title": "AI Kit for your finances",
@@ -22,9 +19,9 @@
   "services.kit.item4": "Weekly and monthly close checklists",
   "services.kit.cta": "Download free →",
   "services.advisory.eyebrow": "For founders & executives",
-  "services.advisory.title": "Advisory & Consulting",
-  "services.advisory.desc": "Strategic 1:1 accompaniment for leaders who want to operate with more clarity and better results.",
-  "services.advisory.item1": "Strategic Diagnosis",
+  "services.advisory.title": "Advisory for founders and leaders",
+  "services.advisory.desc": "One-on-one sessions on strategy, how your team operates and how to use AI agents.",
+  "services.advisory.item1": "Strategic diagnosis",
   "services.advisory.item2": "Executive advisory sessions",
   "services.advisory.item3": "Quarterly Growth Partner",
   "services.advisory.cta": "Apply for a session →",
@@ -35,22 +32,20 @@
   "services.speaking.item2": "Workshops for executive teams",
   "services.speaking.item3": "Corporate programs",
   "services.speaking.cta": "Get a quote →",
-
   "testimonials.eyebrow": "TESTIMONIALS",
   "testimonials.heading": "What those who've worked with me say",
-
-  "footer.tagline": "Building from the inside, side by side.",
-  "footer.bio": "Francisco Abad is an Ecuadorian entrepreneur, innovator and builder-strategist. He designs and operates systems to make the impossible achievable in people, companies and institutions. Founder of CODEIS, where he has strengthened over 18,000 entrepreneurs in more than 15 countries, and former Director General of the IESS, where he raised operational efficiency from 36 to 78 percent in six months. Today he leads Nerio Consulting, his AI-native business transformation practice. He builds from the inside, side by side, with measurable results.",
+  "footer.tagline": "Building in public.",
+  "footer.bio": "Francisco Abad is a co-founder of Rafik, the legal hub for the future. He previously led Ecuador's Social Security Institute and founded CODEIS, a social innovation organization present in more than 15 countries. He builds in public from the United States.",
   "footer.copyright": "© 2026 Francisco Abad. All rights reserved.",
-
-  "page.index.title": "Francisco Abad · Making the impossible achievable",
-  "page.index.desc": "I design and operate systems to make the impossible achievable in people, companies and institutions. Building from the inside, side by side.",
+  "page.index.title": "Francisco Abad · Co-founder, Rafik",
+  "page.index.desc": "Co-founder at Rafik, the legal hub for the future. Agents take the repetitive work of a law firm so lawyers practice law. Building in public.",
   "page.sobre_mi.title": "About · Francisco Abad",
-  "page.sobre_mi.desc": "Entrepreneur, innovator and builder-strategist. I design and operate systems to make the impossible achievable, with measurable results.",
+  "page.sobre_mi.desc": "Co-founder at Rafik. Former Director General of Ecuador's Social Security Institute. Founder of CODEIS. Building in public.",
   "page.trabaja.title": "Work with me · Francisco Abad",
-  "page.trabaja.desc": "Strategic advisory, growth consulting and speaking for founders and executives.",
+  "page.trabaja.desc": "Advisory sessions, speaking and collaborations with Francisco Abad, co-founder at Rafik.",
   "page.contacto.title": "Contact · Francisco Abad",
-  "page.contacto.desc": "Write to me for advisory, one-on-one sessions, talks or any conversation about systems and growth.",
-
-  "lang.switch": "ES"
+  "page.contacto.desc": "Write to Francisco Abad about Rafik, speaking invitations, advisory sessions or collaborations.",
+  "lang.switch": "ES",
+  "nav.portafolio": "PORTFOLIO",
+  "nav.speaking": "SPEAKING"
 }

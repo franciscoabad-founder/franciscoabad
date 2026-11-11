@@ -5,14 +5,11 @@
   "nav.portafolio": "PORTAFOLIO",
   "nav.blog": "BLOG",
   "nav.contacto": "CONTACTO",
-
   "hero.tagline": "Vuelvo alcanzable lo imposible.",
   "hero.h1": "Con resultados que se miden.",
   "hero.pills": "Founder · Strategist · Innovator",
   "hero.cta_primary": "Trabajemos juntos",
   "hero.cta_secondary": "Explora recursos",
-
-
   "services.heading": "Quiero ayudarte a crecer",
   "services.kit.eyebrow": "Recurso gratuito",
   "services.kit.title": "Kit IA para tus finanzas",
@@ -23,9 +20,9 @@
   "services.kit.item4": "Checklists de cierre semanal y mensual",
   "services.kit.cta": "Descarga gratis →",
   "services.advisory.eyebrow": "Para founders y organizaciones",
-  "services.advisory.title": "Transformación AI-native y advisory",
-  "services.advisory.desc": "Instalo IA como motor operativo en tu empresa, o te acompaño 1:1 si buscas más claridad y mejores resultados como líder.",
-  "services.advisory.item1": "Diagnóstico estratégico y company brain",
+  "services.advisory.title": "Advisory para founders y líderes",
+  "services.advisory.desc": "Sesiones uno a uno sobre estrategia, sistemas operativos y cómo usar agentes de IA en tu equipo.",
+  "services.advisory.item1": "Diagnóstico estratégico",
   "services.advisory.item2": "Sesiones de advisory ejecutivo",
   "services.advisory.item3": "Growth Partner trimestral",
   "services.advisory.cta": "Aplicar a una sesión →",
@@ -36,22 +33,19 @@
   "services.speaking.item2": "Workshops para equipos directivos",
   "services.speaking.item3": "Programas corporativos",
   "services.speaking.cta": "Cotizar una charla →",
-
   "testimonials.eyebrow": "TESTIMONIOS",
   "testimonials.heading": "Lo que dicen quienes han trabajado conmigo",
-
-  "footer.tagline": "Construyo desde adentro, codo a codo.",
-  "footer.bio": "Francisco Abad es emprendedor, innovador y builder-strategist ecuatoriano. Diseña y opera sistemas para volver alcanzable lo imposible en personas, empresas e instituciones. Fundador de CODEIS, donde ha fortalecido a más de 18.000 emprendedores en más de 15 países, y ex Director General del IESS, donde elevó la eficiencia operativa del 36 al 78 por ciento en seis meses. Hoy lidera Nerio Consulting, su práctica de transformación AI-native de negocios. Construye desde adentro, codo a codo, con resultados medibles.",
+  "footer.tagline": "Construyendo en público.",
+  "footer.bio": "Francisco Abad es cofundador de Rafik, el hub legal del futuro. Antes dirigió el IESS, la seguridad social del Ecuador, y fundó CODEIS, organización de innovación social presente en más de 15 países. Construye en público desde Estados Unidos.",
   "footer.copyright": "© 2026 Francisco Abad. Todos los derechos reservados.",
-
-  "page.index.title": "Francisco Abad · Vuelvo alcanzable lo imposible",
-  "page.index.desc": "Diseño y opero sistemas que vuelven alcanzable lo imposible en personas, empresas e instituciones. Construyo desde adentro, codo a codo.",
+  "page.index.title": "Francisco Abad · Cofundador, Rafik",
+  "page.index.desc": "Cofundador de Rafik, el hub legal del futuro. Los agentes toman el trabajo repetitivo de un despacho para que los abogados ejerzan el derecho. Construyo en público.",
   "page.sobre_mi.title": "Sobre mí · Francisco Abad",
   "page.sobre_mi.desc": "Emprendedor, innovador y builder-strategist. Diseño y opero sistemas que vuelven alcanzable lo imposible, con resultados medibles.",
   "page.trabaja.title": "Trabaja conmigo · Francisco Abad",
   "page.trabaja.desc": "Advisory estratégico, consulting de crecimiento y speaking para founders y ejecutivos.",
   "page.contacto.title": "Contacto · Francisco Abad",
   "page.contacto.desc": "Escríbeme para advisory, sesiones uno a uno, charlas o cualquier conversación sobre sistemas y crecimiento.",
-
-  "lang.switch": "EN"
+  "lang.switch": "EN",
+  "nav.speaking": "SPEAKING"
 }

@@ -7,10 +7,18 @@ export const GET: APIRoute = async () => {
 
   const staticPages = [
     `${baseUrl}/`,
-    `${baseUrl}/sobre-mi/`,
-    `${baseUrl}/trabaja-conmigo/`,
-    `${baseUrl}/contacto/`,
+    `${baseUrl}/about/`,
+    `${baseUrl}/portfolio/`,
+    `${baseUrl}/talks/`,
+    `${baseUrl}/work-with-me/`,
+    `${baseUrl}/contact/`,
     `${baseUrl}/blog/`,
+    `${baseUrl}/es/`,
+    `${baseUrl}/es/sobre-mi/`,
+    `${baseUrl}/es/trabaja-conmigo/`,
+    `${baseUrl}/es/portafolio/`,
+    `${baseUrl}/es/blog/`,
+    `${baseUrl}/es/contacto/`,
   ];
 
   const blogPages = posts

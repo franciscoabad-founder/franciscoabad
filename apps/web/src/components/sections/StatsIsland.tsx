@@ -18,7 +18,9 @@ interface StatItemProps {
 
 function StatItem({ value, suffix, prefix, label, start }: StatItemProps) {
   const count = useCountUp(value, 2000, start);
-  const display = count >= 1000 ? count.toLocaleString() : count;
+  // Server HTML and visitors without JS see the real figure, never "0".
+  const shown = start ? count : value;
+  const display = shown >= 1000 ? shown.toLocaleString("es") : shown;
 
   return (
     <div className="text-center space-y-2">

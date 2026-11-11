@@ -1,0 +1,73 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import Navbar from "../components/Navbar.astro";
+import Footer from "../components/Footer.astro";
+import { portfolio } from "../data/portfolio";
+
+const lang = "en";
+const statusClass: Record<string, string> = {
+  "Live": "text-champagne",
+  "In progress": "text-ember",
+  "Open source": "text-ultra-light",
+  "Private": "text-text-muted-brand",
+};
+---
+
+<BaseLayout
+  title="Portfolio · Francisco Abad"
+  description="What I have built: Rafik, Flow (open source), Pancho OS, Nerio, PanchoAtlas and the Finance AI Kit. Systems I test on myself first."
+>
+  <Navbar />
+
+  <div class="bg-bg-primary min-h-screen">
+    <section class="pt-32 pb-12 md:pt-40 md:pb-16">
+      <div class="max-w-[860px] mx-auto px-6 lg:px-8">
+        <p class="font-montserrat text-[11px] uppercase tracking-[2px] text-ultra-light mb-4">Test it on yourself first</p>
+        <h1 class="font-montserrat font-bold text-text-primary text-[40px] md:text-[56px] leading-tight mb-5">What I've built.</h1>
+        <p class="font-inter text-text-secondary text-[17px] leading-relaxed max-w-[640px]">
+          The systems I design, run and use every day: what each one is, what my part was and what it is made of.
+        </p>
+      </div>
+    </section>
+
+    <section class="pb-24">
+      <div class="max-w-[1200px] mx-auto px-6 lg:px-8 grid grid-cols-1 md:grid-cols-2 gap-6">
+        {portfolio.map((p, i) => (
+          <article class={`bg-bg-elevated rounded-lg border border-border-subtle p-8 md:p-10 flex flex-col ${i === 0 ? "md:col-span-2 md:grid md:grid-cols-[1fr_1.2fr] md:gap-10" : ""}`} data-reveal data-reveal-delay={String((i % 2) + 1)}>
+            {i === 0 && <img src="/rafik-demo.webp" alt="Rafik product screen with fictional demo data" loading="lazy" class="w-full h-auto rounded-md border border-border-subtle mb-6 md:mb-0 md:order-2 self-center" />}
+            <div class="flex flex-col">
+            <div class="flex items-center justify-between gap-4 mb-5">
+              <span class="font-montserrat text-[11px] uppercase tracking-[1.5px] text-text-muted-brand">{p.tag}</span>
+              <span class={`font-montserrat text-[11px] uppercase tracking-[1.5px] font-semibold ${statusClass[p.status]}`}>{p.status}</span>
+            </div>
+            <h2 class="font-montserrat font-bold text-text-primary text-[28px] mb-3">{p.name}</h2>
+            <p class="font-inter text-text-secondary text-[15px] leading-relaxed mb-5">{p.what}</p>
+            <p class="font-montserrat text-[11px] uppercase tracking-[1.5px] text-ultra-light mb-2">My part</p>
+            <p class="font-inter text-text-secondary text-[15px] leading-relaxed mb-6 flex-1">{p.mine}</p>
+            <ul class="flex flex-wrap gap-2 mb-6">
+              {p.stack.map((s) => (
+                <li class="font-inter text-[12px] text-text-secondary border border-border-subtle rounded-full px-3 py-1">{s}</li>
+              ))}
+            </ul>
+            {p.href && p.cta && (
+              <a href={p.href} class="font-montserrat font-semibold text-[13px] uppercase tracking-[1.5px] text-ultra-light hover:text-ember transition-colors duration-300" target={p.href.startsWith("http") ? "_blank" : undefined} rel={p.href.startsWith("http") ? "noopener noreferrer" : undefined}>
+                {p.cta} →
+              </a>
+            )}
+            </div>
+          </article>
+        ))}
+      </div>
+    </section>
+
+    <section class="bg-bg-elevated border-t border-border-subtle py-16">
+      <div class="max-w-[760px] mx-auto px-6 lg:px-8 text-center">
+        <h2 class="font-montserrat font-bold text-text-primary text-[28px] md:text-[34px] mb-4">Building something and want a second pair of eyes?</h2>
+        <p class="font-inter text-text-secondary text-[16px] leading-relaxed mb-8">Write to me with what you are working on.</p>
+        <a href="/contact" class="inline-block font-montserrat font-semibold text-[13px] uppercase tracking-[1.5px] text-white bg-ember px-8 py-4 rounded-md hover:opacity-90 transition-opacity duration-300">Get in touch →</a>
+      </div>
+    </section>
+  </div>
+
+  <Footer lang={lang} />
+</BaseLayout>

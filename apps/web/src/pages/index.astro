@@ -1,39 +1,138 @@
 ---
+// English home (US audience). Positioning as of Nov 2026: co-founder of Rafik, building in public.
+// Copy rules: no em dashes, no "AI-native", no client or investor names, no fundraising talk.
 import BaseLayout from "../layouts/BaseLayout.astro";
 import Navbar from "../components/Navbar.astro";
 import Footer from "../components/Footer.astro";
-import Hero from "../components/sections/Hero.astro";
-import LogosInstitucionales from "../components/sections/LogosInstitucionales.astro";
-import ProblemStatement from "../components/sections/ProblemStatement.astro";
-import Stats from "../components/sections/Stats.astro";
-import BuildingNow from "../components/sections/BuildingNow.astro";
-import Services from "../components/sections/Services.astro";
 import Testimonials from "../components/sections/Testimonials.astro";
-import Resources from "../components/sections/Resources.astro";
-import BlogPreview from "../components/sections/BlogPreview.astro";
-import NewsletterCTA from "../components/sections/NewsletterCTA.astro";
-import { useTranslations } from "../i18n/utils";
+import LogosInstitucionales from "../components/sections/LogosInstitucionales.astro";
+import { portfolio } from "../data/portfolio";
 
-const lang = Astro.currentLocale ?? "es";
-const t = useTranslations(lang);
+const lang = "en";
+const featured = portfolio.slice(0, 4);
+const speakingTopics = ["Building with AI agents in professional work", "Building in public as a founder", "Running systems at institutional scale"];
+const track = [
+  { k: "2025", h: "Director General, Ecuador Social Security (IESS)", p: "Led the country's main social security institution: 32,000 people and more than $10B in funds under management." },
+  { k: "2016 to 2025", h: "Founder, CODEIS", p: "Built a social innovation organization across 15 countries. More than 18,000 entrepreneurs trained, with support from the IDB Lab, UNDP and GIZ." },
+  { k: "2016 to 2018", h: "National Director, Hult Prize Ecuador", p: "Ran the national program: 70 campuses and 12,000 students. Quito became the first Regional Finals host in South America." },
+  { k: "2017 to 2022", h: "Professor of Entrepreneurship", p: "Taught in the Master of Entrepreneurship at Universidad de Las Americas and at Universidad San Francisco de Quito." },
+];
+const btn = "font-montserrat font-semibold text-[13px] uppercase tracking-[1.5px] px-8 py-3.5 rounded-[6px] transition-all duration-300 whitespace-nowrap";
 ---
 
 <BaseLayout
-  title={t("page.index.title")}
-  description={t("page.index.desc")}
+  title="Francisco Abad · Co-founder, Rafik"
+  description="Co-founder at Rafik, the legal hub for the future. Agents take the repetitive work of a law firm so lawyers grow, connect and practice law. Building in public."
 >
   <Navbar />
   <main>
-    <Hero lang={lang} />
-    <LogosInstitucionales />
-    <ProblemStatement lang={lang} />
-    <Stats />
-    <BuildingNow />
-    <Services lang={lang} />
-    <Testimonials lang={lang} />
-    <Resources />
-    <BlogPreview />
-    <NewsletterCTA />
+    <section id="home" class="min-h-screen bg-bg-primary flex items-center pt-20">
+      <div class="max-w-[1200px] mx-auto px-6 lg:px-8 py-20 lg:py-32 w-full">
+        <div class="grid grid-cols-1 lg:grid-cols-[1.4fr_1fr] gap-12 lg:gap-20 items-center">
+          <div class="flex flex-col gap-8" data-reveal>
+            <h1 class="font-montserrat text-text-primary m-0" style="font-weight: 900; font-size: clamp(2.5rem, 6.4vw, 4.6rem); line-height: 1.08; letter-spacing: -0.02em; text-wrap: balance;">
+              I'm building the legal hub for the future.
+            </h1>
+            <p class="font-inter text-text-secondary m-0" style="font-size: 1.125rem; line-height: 1.6; max-width: 48ch;">
+              Co-founder at Rafik. Agents take the repetitive work of a law firm, so lawyers grow, connect and practice law. I'm building it in public.
+            </p>
+            <div class="flex flex-wrap items-center gap-x-4 gap-y-2 font-montserrat text-text-secondary" style="font-size: 14px;">
+              <span><b class="text-champagne">32,000</b> people led at Ecuador's Social Security Institute</span><span aria-hidden="true" class="text-text-muted-brand">·</span>
+              <span><b class="text-champagne">15</b> countries with CODEIS</span><span aria-hidden="true" class="text-text-muted-brand">·</span>
+              <span>MPA, London School of Economics</span>
+            </div>
+            <div class="flex flex-wrap gap-4 mt-2">
+              <a href="https://rafik.tech" class={`${btn} text-white bg-ember hover:brightness-110`}>See Rafik</a>
+              <a href="https://x.com/FranciscoAbadEC" class={`${btn} text-ultra-light border border-ember hover:bg-ember hover:text-white`}>Follow the build</a>
+            </div>
+          </div>
+          <div class="flex justify-center lg:justify-end" data-reveal data-reveal-delay="3">
+            <img src="/francisco-abad-studio.webp" alt="Francisco Abad, co-founder of Rafik" width="960" height="1280" loading="eager" fetchpriority="high" class="w-full max-w-[360px] lg:max-w-[38vw]" style="aspect-ratio: 3/4; object-fit: cover; object-position: top; border-radius: 4px;" />
+          </div>
+        </div>
+      </div>
+    </section>
+
+
+    <section id="rafik" style="background-color: var(--ink, #0e1738);" class="py-20 lg:py-28">
+      <div class="max-w-[1200px] mx-auto px-6 lg:px-8 grid grid-cols-1 lg:grid-cols-[1fr_1.35fr] gap-12 items-center" data-reveal>
+        <div>
+          <p class="font-montserrat uppercase tracking-[2px] text-[12px] font-semibold m-0" style="color: var(--champagne);">What I'm building</p>
+          <h2 class="font-montserrat mt-4 mb-6" style="color: #fff; font-weight: 800; font-size: clamp(2rem, 4vw, 2.75rem); line-height: 1.1;">Rafik, the legal hub for the future.</h2>
+          <p class="font-inter m-0 mb-4" style="color: rgba(255,255,255,.78); font-size: 1.0625rem; line-height: 1.7;">Agents take intake, forms, deadlines, follow-up and billing off a law firm's desk, so lawyers get their hours back for clients and judgment.</p>
+          <p class="font-inter m-0 mb-8" style="color: rgba(255,255,255,.78); font-size: 1.0625rem; line-height: 1.7;">I'm not a lawyer. My co-founder is a corporate attorney with more than 16 years of practice and reviews every workflow. My part is go-to-market, content and the agents. Starting in the United States, built for every country.</p>
+          <a href="https://rafik.tech" class={`${btn} text-white bg-ember hover:brightness-110 inline-block`}>See Rafik</a>
+        </div>
+        <figure class="m-0">
+          <img src="/rafik-demo.webp" alt="Rafik product screen with fictional demo data" width="1600" height="1000" loading="lazy" class="w-full h-auto rounded-[10px]" style="box-shadow: 0 30px 80px rgba(0,0,0,.45); border: 1px solid rgba(255,255,255,.12);" />
+          <figcaption class="font-inter text-[12px] mt-3" style="color: rgba(255,255,255,.55);">Demo. Fictional data.</figcaption>
+        </figure>
+      </div>
+    </section>
+
+    <LogosInstitucionales lang={lang} />
+
+
+    <section id="track" class="bg-bg-primary py-20 lg:py-28">
+      <div class="max-w-[1200px] mx-auto px-6 lg:px-8" data-reveal>
+        <p class="font-montserrat text-champagne uppercase tracking-[2px] text-[12px] font-semibold m-0">Before Rafik</p>
+        <h2 class="font-montserrat text-text-primary mt-4 mb-10" style="font-weight: 800; font-size: clamp(2rem, 4vw, 3rem); line-height: 1.1;">Ten years building systems that serve people.</h2>
+        <ol class="list-none p-0 m-0 border-t border-border-subtle">
+          {track.map((t) => (
+            <li class="grid grid-cols-1 md:grid-cols-[180px_1fr_1.2fr] gap-2 md:gap-10 py-7 border-b border-border-subtle">
+              <p class="font-montserrat text-champagne text-[13px] font-semibold tracking-[1px] m-0 tabular-nums">{t.k}</p>
+              <h3 class="font-montserrat text-text-primary text-[20px] md:text-[22px] font-bold m-0 leading-snug">{t.h}</h3>
+              <p class="font-inter text-text-secondary m-0" style="line-height: 1.65;">{t.p}</p>
+            </li>
+          ))}
+        </ol>
+
+      </div>
+    </section>
+
+    <section id="built" class="bg-bg-primary py-20 lg:py-28">
+      <div class="max-w-[1200px] mx-auto px-6 lg:px-8" data-reveal>
+        <p class="font-montserrat text-champagne uppercase tracking-[2px] text-[12px] font-semibold m-0">What I've built</p>
+        <h2 class="font-montserrat text-text-primary mt-4 mb-10" style="font-weight: 800; font-size: clamp(2rem, 4vw, 3rem); line-height: 1.1;">I test every system on myself first.</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {featured.map((p) => (
+            <article class="rounded-[14px] border border-border-subtle p-7 flex flex-col">
+              <p class="font-montserrat text-champagne text-[12px] uppercase tracking-[1.5px] font-semibold m-0">{p.tag} · {p.status}</p>
+              <h3 class="font-montserrat text-text-primary text-[22px] font-bold mt-3 mb-2">{p.name}</h3>
+              <p class="font-inter text-text-secondary m-0" style="line-height: 1.6;">{p.what}</p>
+            </article>
+          ))}
+        </div>
+        <p class="mt-8"><a href="/portfolio" class={`${btn} text-ultra-light border border-ember hover:bg-ember hover:text-white inline-block`}>See the full portfolio</a></p>
+      </div>
+    </section>
+
+    <section id="speaking" class="bg-bg-elevated py-20 lg:py-28">
+      <div class="max-w-[1200px] mx-auto px-6 lg:px-8 grid grid-cols-1 lg:grid-cols-[1fr_1fr] gap-12 items-center" data-reveal>
+        <div>
+          <p class="font-montserrat text-champagne uppercase tracking-[2px] text-[12px] font-semibold m-0">Speaking</p>
+          <h2 class="font-montserrat text-text-primary mt-4 mb-6" style="font-weight: 800; font-size: clamp(2rem, 4vw, 3rem); line-height: 1.1;">Invite me to speak.</h2>
+          <a href="/talks" class={`${btn} text-white bg-ember hover:brightness-110 inline-block`}>See topics and formats</a>
+        </div>
+        <ul class="font-inter text-text-secondary list-none p-0 m-0 flex flex-col gap-4" style="font-size: 1.0625rem;">
+          {speakingTopics.map((tp) => <li class="flex gap-3"><span class="text-ember">·</span>{tp}</li>)}
+        </ul>
+      </div>
+    </section>
+
+    <Testimonials lang={lang} limit={3} />
+
+    <section id="follow" class="bg-bg-elevated py-20 lg:py-28">
+      <div class="max-w-[900px] mx-auto px-6 lg:px-8 text-center" data-reveal>
+        <h2 class="font-montserrat text-text-primary m-0" style="font-weight: 800; font-size: clamp(2rem, 4vw, 3rem); line-height: 1.1;">Follow the build.</h2>
+        <p class="font-inter text-text-secondary mt-5 mb-8" style="font-size: 1.0625rem; line-height: 1.7;">What we build, what breaks and what we learn from the firms we talk to. If you run a law firm, I'd like to hear where your week goes.</p>
+        <div class="flex flex-wrap justify-center gap-4">
+          <a href="https://x.com/FranciscoAbadEC" class={`${btn} text-white bg-ember hover:brightness-110`}>X</a>
+          <a href="https://www.linkedin.com/in/franciscoabadec/" class={`${btn} text-ultra-light border border-ember hover:bg-ember hover:text-white`}>LinkedIn</a>
+          <a href="mailto:francisco@rafik.tech" class={`${btn} text-ultra-light border border-ember hover:bg-ember hover:text-white`}>francisco@rafik.tech</a>
+        </div>
+      </div>
+    </section>
   </main>
   <Footer lang={lang} />
 </BaseLayout>

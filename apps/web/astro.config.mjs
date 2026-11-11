@@ -17,14 +17,23 @@ export default defineConfig({
     plugins: [tailwindcss()],
   },
   i18n: {
-    defaultLocale: "es",
-    locales: ["es", "en"],
+    defaultLocale: "en",
+    locales: ["en", "es"],
     routing: { prefixDefaultLocale: false },
   },
   redirects: {
-    "/en/about": "/en/sobre-mi",
+    // English moved to the root; Spanish moved under /es/. Old URLs keep working.
+    "/en": "/",
+    "/en/about": "/about",
+    "/en/sobre-mi": "/about",
+    "/en/trabaja-conmigo": "/work-with-me",
+    "/en/contacto": "/contact",
     "/en/kit/gracias": "/kit/gracias",
     "/en/kit": "/kit",
+    "/sobre-mi": "/es/sobre-mi",
+    "/trabaja-conmigo": "/es/trabaja-conmigo",
+    "/portafolio": "/es/portafolio",
+    "/contacto": "/es/contacto",
   },
   integrations: [
     react(),

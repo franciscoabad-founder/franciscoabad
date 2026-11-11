@@ -1,279 +1,71 @@
 ---
-const formacion = [
-  {
-    src: "/logos-institucionales/lse-logo.png",
-    alt: "London School of Economics",
-    name: "London School of Economics",
-    program: "MPA in International Development",
-    blend: false,
-    height: 52,
-    url: "https://www.lse.ac.uk",
-  },
-  {
-    src: "/logos-institucionales/georgetown-logo.png.png",
-    alt: "Georgetown University",
-    name: "Georgetown University",
-    program: "Global Competitiveness Leadership Program",
-    blend: false,
-    height: 52,
-    url: "https://www.georgetown.edu",
-  },
-  {
-    src: "/logos-institucionales/upenn-logo.png",
-    alt: "University of Pennsylvania",
-    name: "University of Pennsylvania",
-    program: "Global Social Impact House",
-    blend: false,
-    height: 40,
-    url: "https://www.upenn.edu",
-  },
-];
+// Institutional and academic proof. Bilingual. Same logos as before, laid out as
+// three labeled rows on a fixed grid so every logo sits on the same baseline.
+interface Props { lang?: string; }
+const { lang = "en" } = Astro.props;
+const en = lang !== "es";
 
-const aliadosRow1 = [
-  {
-    src: "/logos-institucionales/hult-prize-logo.webp",
-    alt: "Hult Prize",
-    name: "Hult Prize",
-    role: "Director Nacional Ecuador",
-    blend: true,
-    height: 44,
-    url: "https://www.hultprize.org",
-  },
-  {
-    src: "/logos-institucionales/codeis-logo.png",
-    alt: "CODEIS",
-    name: "CODEIS",
-    role: "Fundador · 10 años · 15 países",
-    blend: false,
-    height: 40,
-    url: "https://codeis.org",
-  },
-  {
-    src: "/logos-institucionales/iess-logo.png",
-    alt: "IESS",
-    name: "IESS",
-    role: "Director General, 2025",
-    blend: false,
-    height: 56,
-    url: "https://www.iess.gob.ec",
-  },
-];
+type Logo = { src: string; alt: string; name: string; note: string; blend?: boolean; url: string };
 
-const aliadosRow2 = [
+const groups: { label: string; items: Logo[] }[] = [
   {
-    src: "/logos-institucionales/bidlab-logo.png",
-    alt: "BID Lab",
-    name: "BID Lab",
-    role: "Grant · World Change Makers",
-    blend: false,
-    height: 44,
-    url: "https://bidlab.org",
+    label: en ? "Education" : "Formación",
+    items: [
+      { src: "/logos-institucionales/lse-logo.png", alt: "London School of Economics", name: "London School of Economics", note: en ? "MPA, International Development" : "MPA en Desarrollo Internacional", url: "https://www.lse.ac.uk" },
+      { src: "/logos-institucionales/georgetown-logo.png.png", alt: "Georgetown University", name: "Georgetown University", note: "Global Competitiveness Leadership Program", url: "https://www.georgetown.edu" },
+      { src: "/logos-institucionales/upenn-logo.png", alt: "University of Pennsylvania", name: "University of Pennsylvania", note: "Global Social Impact House", url: "https://www.upenn.edu" },
+    ],
   },
   {
-    src: "/logos-institucionales/PNUD_logo.png",
-    alt: "PNUD",
-    name: "PNUD",
-    role: "Programa de Naciones Unidas",
-    blend: false,
-    height: 56,
-    url: "https://www.undp.org",
+    label: en ? "Track record" : "Trayectoria",
+    items: [
+      { src: "/logos-institucionales/iess-logo.png", alt: "IESS", name: "IESS", note: "Director General, 2025", url: "https://www.iess.gob.ec" },
+      { src: "/logos-institucionales/codeis-logo.png", alt: "CODEIS", name: "CODEIS", note: en ? "Founder · 10 years · 15 countries" : "Fundador · 10 años · 15 países", url: "https://codeis.org" },
+      { src: "/logos-institucionales/hult-prize-logo.webp", alt: "Hult Prize", name: "Hult Prize", note: en ? "National Director, Ecuador" : "Director Nacional, Ecuador", blend: true, url: "https://www.hultprize.org" },
+      { src: "/logos-institucionales/bidlab-logo.png", alt: en ? "IDB Lab" : "BID Lab", name: en ? "IDB Lab" : "BID Lab", note: en ? "Grant · World Change Makers" : "Fondos · World Change Makers", url: "https://bidlab.org" },
+      { src: "/logos-institucionales/PNUD_logo.png", alt: en ? "UNDP" : "PNUD", name: en ? "UNDP" : "PNUD", note: en ? "United Nations Development Programme" : "Programa de las Naciones Unidas para el Desarrollo", url: "https://www.undp.org" },
+      { src: "/logos-institucionales/giz-logo.png", alt: "GIZ", name: "GIZ", note: en ? "German Development Cooperation" : "Cooperación Alemana", url: "https://www.giz.de" },
+    ],
   },
   {
-    src: "/logos-institucionales/giz-logo.png",
-    alt: "GIZ",
-    name: "GIZ",
-    role: "Cooperación Alemana GIZ",
-    blend: false,
-    height: 36,
-    url: "https://www.giz.de",
+    label: en ? "Speaking and teaching" : "Conferencista y docente",
+    items: [
+      { src: "/logos-institucionales/oyw-logo.png", alt: "One Young World", name: "One Young World", note: "Delegate Speaker", url: "https://www.oneyoungworld.com" },
+      { src: "/logos-institucionales/sg-logo.avif", alt: "Startup Grind", name: "Startup Grind", note: "Speaker", url: "https://www.startupgrind.com" },
+      { src: "/logos-institucionales/udla-logo.png", alt: "UDLA", name: "UDLA", note: en ? "Master's lecturer" : "Profesor de maestría", blend: true, url: "https://www.udla.edu.ec" },
+      { src: "/logos-institucionales/usfq-logo.png", alt: "USFQ", name: "USFQ", note: en ? "Professor of Entrepreneurship" : "Profesor de emprendimiento", url: "https://www.usfq.edu.ec" },
+      { src: "/logos-institucionales/yachay-logo.png", alt: "Yachay Tech", name: "Yachay Tech", note: "Speaker", url: "https://www.yachaytech.edu.ec" },
+    ],
   },
-];
-
-const speaker = [
-  { src: "/logos-institucionales/oyw-logo.png",    alt: "One Young World", legend: "One Young World · Delegate Speaker", blend: false, height: 48, url: "https://www.oneyoungworld.com" },
-  { src: "/logos-institucionales/sg-logo.avif",    alt: "Startup Grind",   legend: "Startup Grind · Speaker",           blend: false, height: 36, url: "https://www.startupgrind.com" },
-  { src: "/logos-institucionales/udla-logo.png",   alt: "UDLA",            legend: "Profesor de Maestría",              blend: true,  height: 40, url: "https://www.udla.edu.ec" },
-  { src: "/logos-institucionales/usfq-logo.png",   alt: "USFQ",            legend: "Profesor de Emprendimiento",        blend: false, height: 44, url: "https://www.usfq.edu.ec" },
-  { src: "/logos-institucionales/yachay-logo.png", alt: "Yachay Tech",     legend: "Speaker",                           blend: false, height: 44, url: "https://www.yachaytech.edu.ec" },
 ];
 ---
 
-<section class="py-16 md:py-24" style="background-color: var(--white-pure);">
+<section id="credentials" class="py-16 md:py-24" style="background-color: var(--white-pure);">
   <div class="max-w-[1200px] mx-auto px-6 lg:px-8">
+    <p class="font-montserrat font-semibold uppercase tracking-[3px] mb-10 text-[1.25rem] md:text-[1.5rem]" style="color: var(--ember);" data-reveal>
+      {en ? "Credentials" : "Trayectoria"}
+    </p>
 
-    {/* Header */}
-    <div class="mb-10" data-reveal>
-      <p
-        class="font-montserrat font-semibold uppercase tracking-[3px] mb-4 text-[1.5rem]"
-        style="color: var(--ember);"
-      >
-        TRAYECTORIA
-      </p>
-    </div>
-
-    {/* FORMACIÓN */}
-    <div data-reveal>
-      <p
-        class="font-montserrat uppercase tracking-[0.12em] mb-8 text-[0.85rem]"
-        style="color: var(--royal);"
-      >
-        FORMACIÓN
-      </p>
-      <div class="flex flex-wrap justify-center items-end gap-10 md:gap-16">
-        {formacion.map((item) => (
-          <div class="flex flex-col items-center gap-3">
-            <a
-              href={item.url}
-              target="_blank"
-              rel="noopener noreferrer"
-              class="flex items-center justify-center"
-              style="height: 64px; width: 140px;"
-            >
-              <img
-                src={item.src}
-                alt={item.alt}
-                style={`max-height: 64px; max-width: 140px; width: auto; height: auto; object-fit: contain;`}
-                class={`opacity-[0.85] hover:opacity-100 transition-opacity duration-200 cursor-pointer ${item.blend ? "mix-blend-multiply" : ""}`}
-              />
-            </a>
-            <div class="flex flex-col items-center gap-0.5 text-center w-[140px]">
-              <span
-                class="font-montserrat font-semibold text-[12px] leading-[1.3]"
-                style="color: var(--slate-dark);"
-              >
-                {item.name}
-              </span>
-              <span
-                class="font-inter text-[11px] leading-[1.4]"
-                style="color: var(--slate-mid);"
-              >
-                {item.program}
-              </span>
-            </div>
-          </div>
-        ))}
+    {groups.map((g, gi) => (
+      <div class="grid grid-cols-1 lg:grid-cols-[200px_1fr] gap-6 lg:gap-10 items-start py-8" style={gi > 0 ? "border-top: 1px solid rgba(26,43,107,0.12);" : ""} data-reveal>
+        <p class="font-montserrat uppercase tracking-[0.14em] text-[0.8rem] m-0 lg:pt-6" style="color: var(--royal);">{g.label}</p>
+        <ul class="grid grid-cols-2 sm:grid-cols-3 gap-x-6 gap-y-8 list-none p-0 m-0">
+          {g.items.map((item) => (
+            <li class="flex flex-col items-center text-center gap-3">
+              <a href={item.url} target="_blank" rel="noopener noreferrer" class="flex items-center justify-center h-16 w-[150px]" aria-label={item.name}>
+                <img
+                  src={item.src}
+                  alt={item.alt}
+                  loading="lazy"
+                  class={`max-h-14 max-w-[150px] w-auto h-auto object-contain opacity-[0.88] hover:opacity-100 transition-opacity duration-200 ${item.blend ? "mix-blend-multiply" : ""}`}
+                />
+              </a>
+              <span class="font-montserrat font-semibold text-[12px] leading-[1.3]" style="color: var(--slate-dark);">{item.name}</span>
+              <span class="font-inter text-[11px] leading-[1.4] -mt-2 max-w-[170px]" style="color: var(--slate-mid);">{item.note}</span>
+            </li>
+          ))}
+        </ul>
       </div>
-    </div>
-
-    {/* ALIADOS Y PROGRAMAS */}
-    <div data-reveal>
-      <div class="my-8" style="border-top: 1px solid rgba(26,43,107,0.12);" />
-      <p
-        class="font-montserrat uppercase tracking-[0.12em] mb-8 text-[0.85rem]"
-        style="color: var(--royal);"
-      >
-        ALIADOS Y PROGRAMAS
-      </p>
-
-      {/* Row 1: Hult Prize · CODEIS · IESS */}
-      <div class="flex flex-wrap justify-center items-end gap-10 md:gap-20 mb-10">
-        {aliadosRow1.map((item) => (
-          <div class="flex flex-col items-center gap-3">
-            <a
-              href={item.url}
-              target="_blank"
-              rel="noopener noreferrer"
-              class="flex items-center justify-center"
-              style="height: 64px; width: 140px;"
-            >
-              <img
-                src={item.src}
-                alt={item.alt}
-                style={`max-height: 64px; max-width: 140px; width: auto; height: auto; object-fit: contain;`}
-                class={`opacity-[0.85] hover:opacity-100 transition-opacity duration-200 cursor-pointer ${item.blend ? "mix-blend-multiply" : ""}`}
-              />
-            </a>
-            <div class="flex flex-col items-center gap-0.5 text-center w-[140px]">
-              <span
-                class="font-montserrat font-semibold text-[12px] leading-[1.3]"
-                style="color: var(--slate-dark);"
-              >
-                {item.name}
-              </span>
-              <span
-                class="font-inter text-[11px] leading-[1.4]"
-                style="color: var(--slate-mid);"
-              >
-                {item.role}
-              </span>
-            </div>
-          </div>
-        ))}
-      </div>
-
-      {/* Row 2: BID Lab · PNUD · GIZ */}
-      <div class="flex flex-wrap justify-center items-end gap-10 md:gap-16">
-        {aliadosRow2.map((item) => (
-          <div class="flex flex-col items-center gap-3">
-            <a
-              href={item.url}
-              target="_blank"
-              rel="noopener noreferrer"
-              class="flex items-center justify-center"
-              style="height: 64px; width: 140px;"
-            >
-              <img
-                src={item.src}
-                alt={item.alt}
-                style={`max-height: 64px; max-width: 140px; width: auto; height: auto; object-fit: contain;`}
-                class={`opacity-[0.85] hover:opacity-100 transition-opacity duration-200 cursor-pointer ${item.blend ? "mix-blend-multiply" : ""}`}
-              />
-            </a>
-            <div class="flex flex-col items-center gap-0.5 text-center w-[140px]">
-              <span
-                class="font-montserrat font-semibold text-[12px] leading-[1.3]"
-                style="color: var(--slate-dark);"
-              >
-                {item.name}
-              </span>
-              <span
-                class="font-inter text-[11px] leading-[1.4]"
-                style="color: var(--slate-mid);"
-              >
-                {item.role}
-              </span>
-            </div>
-          </div>
-        ))}
-      </div>
-    </div>
-
-    {/* SPEAKER Y DOCENTE */}
-    <div data-reveal>
-      <div class="my-8" style="border-top: 1px solid rgba(26,43,107,0.12);" />
-      <p
-        class="font-montserrat uppercase tracking-[0.12em] mb-8 text-[0.85rem]"
-        style="color: var(--royal);"
-      >
-        SPEAKER Y DOCENTE
-      </p>
-      <div class="flex flex-wrap justify-center items-end gap-10">
-        {speaker.map((item) => (
-          <div class="flex flex-col items-center gap-2">
-            <a
-              href={item.url}
-              target="_blank"
-              rel="noopener noreferrer"
-              class="flex items-center justify-center"
-              style="height: 56px; width: 120px;"
-            >
-              <img
-                src={item.src}
-                alt={item.alt}
-                style={`max-height: 56px; max-width: 120px; width: auto; height: auto; object-fit: contain;`}
-                class={`opacity-[0.85] hover:opacity-100 transition-opacity duration-200 cursor-pointer ${item.blend ? "mix-blend-multiply" : ""}`}
-              />
-            </a>
-            <span
-              class="font-inter text-[11px] text-center w-[120px] leading-[1.4]"
-              style="color: var(--slate-dark);"
-            >
-              {item.legend}
-            </span>
-          </div>
-        ))}
-      </div>
-    </div>
-
+    ))}
   </div>
 </section>

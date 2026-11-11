@@ -2,14 +2,14 @@
 import { useTranslations } from "../i18n/utils";
 
 interface Props { lang?: string; }
-const { lang = "es" } = Astro.props;
+const { lang = "en" } = Astro.props;
 const t = useTranslations(lang);
 
 const socials = [
   { label: "LinkedIn",  href: "https://www.linkedin.com/in/franciscoabadec/" },
   { label: "Instagram", href: "https://www.instagram.com/franciscoabadec/" },
-  { label: "Cortex",    href: "https://cortex.franciscoabad.com" },
-  { label: "Email",     href: "mailto:francisco@franciscoabad.com" },
+  { label: "X",         href: "https://x.com/FranciscoAbadEC" },
+  { label: "Email",     href: "mailto:francisco@rafik.tech" },
 ];
 ---
 

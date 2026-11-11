@@ -1,0 +1,73 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import Navbar from "../components/Navbar.astro";
+import Footer from "../components/Footer.astro";
+
+const lang = "en";
+
+const topics = [
+  { h: "Building with AI agents in professional work", p: "What agents can take off a team's desk today, where a person still has to decide, and how to start without a big project." },
+  { h: "Building in public as a founder", p: "Why I share what works, what breaks and what is still in progress, and how it changes the way you build." },
+  { h: "Running systems at institutional scale", p: "Lessons from leading an institution of 32,000 people: fix the process first, then automate it." },
+  { h: "Turning a community into a network", p: "How local communities of professionals learn, refer work and grow together." },
+  { h: "Execution under pressure", p: "Leadership and decision making when the stakes are public and the time is short." },
+];
+
+const formats = ["Conference keynotes", "Workshops for leadership teams", "Fireside chats and panels", "Podcasts and interviews"];
+---
+
+<BaseLayout
+  title="Speaking · Francisco Abad"
+  description="Keynotes, workshops and conversations on building with AI agents, building in public, and running systems at scale. Invite Francisco Abad to speak."
+>
+  <Navbar />
+
+  <div class="bg-bg-primary min-h-screen">
+    <section class="pt-32 pb-12 md:pt-40 md:pb-16">
+      <div class="max-w-[860px] mx-auto px-6 lg:px-8">
+        <p class="font-montserrat text-[11px] uppercase tracking-[2px] text-ultra-light mb-4">Speaking</p>
+        <h1 class="font-montserrat font-bold text-text-primary text-[40px] md:text-[56px] leading-tight mb-5">Invite me to speak.</h1>
+        <p class="font-inter text-text-secondary text-[17px] leading-relaxed max-w-[640px]">
+          Co-founder at Rafik. Former Director General of Ecuador's Social Security Institute. Founder of CODEIS. I speak from what I have built and run, in English and Spanish.
+        </p>
+      </div>
+    </section>
+
+    <section class="pb-16">
+      <div class="max-w-[1200px] mx-auto px-6 lg:px-8 grid grid-cols-1 lg:grid-cols-[1.4fr_1fr] gap-12">
+        <div class="space-y-4">
+          <p class="font-montserrat font-semibold text-text-muted-brand text-[11px] uppercase tracking-[2px] mb-4">Topics</p>
+          {topics.map((tp, i) => (
+            <div class="bg-bg-elevated border border-border-subtle rounded-md px-6 py-5" data-reveal>
+              <p class="font-montserrat font-bold text-ember text-[12px] opacity-60 mb-2">{String(i + 1).padStart(2, "0")}</p>
+              <h2 class="font-montserrat font-semibold text-text-primary text-[18px] mb-2">{tp.h}</h2>
+              <p class="font-inter text-text-secondary text-[14px] leading-relaxed m-0">{tp.p}</p>
+            </div>
+          ))}
+        </div>
+        <div>
+          <p class="font-montserrat font-semibold text-text-muted-brand text-[11px] uppercase tracking-[2px] mb-4">Formats</p>
+          <ul class="font-inter text-text-secondary text-[15px] space-y-3 mb-10 pl-0 list-none">
+            {formats.map((f) => <li class="flex gap-3"><span class="text-ember">·</span>{f}</li>)}
+          </ul>
+          <a href="mailto:francisco@rafik.tech?subject=Speaking%20invitation" class="inline-block font-montserrat font-semibold text-[13px] uppercase tracking-[1.5px] text-white bg-ember px-8 py-4 rounded-md hover:opacity-90 transition-opacity duration-300">Invite me →</a>
+          <p class="font-inter text-text-muted-brand text-[13px] mt-4">Or write to <a href="mailto:francisco@rafik.tech" class="text-ultra-light hover:text-ember">francisco@rafik.tech</a></p>
+        </div>
+      </div>
+    </section>
+
+    <section class="border-t border-border-subtle py-16">
+      <div class="max-w-[1200px] mx-auto px-6 lg:px-8">
+        <p class="font-montserrat font-semibold text-text-muted-brand text-[11px] uppercase tracking-[2px] mb-6">Where I have spoken</p>
+        <ul class="font-inter text-text-secondary text-[15px] grid grid-cols-1 md:grid-cols-2 gap-3 pl-0 list-none">
+          <li class="flex gap-3"><span class="text-ember">·</span>One Young World, delegate speaker</li>
+          <li class="flex gap-3"><span class="text-ember">·</span>Startup Grind, speaker</li>
+          <li class="flex gap-3"><span class="text-ember">·</span>Master's and entrepreneurship programs, guest and lecturer</li>
+          <li class="flex gap-3"><span class="text-ember">·</span>Hult Prize, national director for Ecuador</li>
+        </ul>
+      </div>
+    </section>
+  </div>
+
+  <Footer lang={lang} />
+</BaseLayout>

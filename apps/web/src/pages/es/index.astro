@@ -6,14 +6,14 @@ import Hero from "../../components/sections/Hero.astro";
 import LogosInstitucionales from "../../components/sections/LogosInstitucionales.astro";
 import ProblemStatement from "../../components/sections/ProblemStatement.astro";
 import Stats from "../../components/sections/Stats.astro";
+import BuildingNow from "../../components/sections/BuildingNow.astro";
 import Services from "../../components/sections/Services.astro";
 import Testimonials from "../../components/sections/Testimonials.astro";
-import Resources from "../../components/sections/Resources.astro";
 import BlogPreview from "../../components/sections/BlogPreview.astro";
 import NewsletterCTA from "../../components/sections/NewsletterCTA.astro";
 import { useTranslations } from "../../i18n/utils";
 
-const lang = "en";
+const lang = Astro.currentLocale ?? "es";
 const t = useTranslations(lang);
 ---
 
@@ -24,12 +24,12 @@ const t = useTranslations(lang);
   <Navbar />
   <main>
     <Hero lang={lang} />
-    <LogosInstitucionales />
+    <LogosInstitucionales lang="es" />
     <ProblemStatement lang={lang} />
     <Stats />
+    <BuildingNow />
     <Services lang={lang} />
-    <Testimonials lang={lang} />
-    <Resources />
+    <Testimonials lang={lang} limit={6} />
     <BlogPreview />
     <NewsletterCTA />
   </main>

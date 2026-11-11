@@ -1,9 +1,22 @@
 ---
 import { useTranslations } from "../../i18n/utils";
 
-interface Props { lang?: string; }
-const { lang = "es" } = Astro.props;
+interface Props { lang?: string; limit?: number; }
+const { lang = "es", limit } = Astro.props;
 const t = useTranslations(lang);
+
+const enRole: Record<string, string> = {
+  "Directora Ejecutiva": "Executive Director",
+  "Actual Presidente de IFI Ecuador": "President, IFI Ecuador",
+  "Gerente General": "General Manager",
+  "Fundadora y CEO": "Founder and CEO",
+  "Fundador": "Founder",
+};
+const enCompany: Record<string, string> = {
+  "AWANA · Ex Viceministro de Inclusión Económica": "AWANA · Former Vice Minister of Economic Inclusion",
+  "PNUD - Programa de Naciones Unidas para el Desarrollo": "UNDP, United Nations Development Programme",
+  "Ex Secretario de Desarrollo Productivo, Quito": "Former Secretary of Productive Development, Quito",
+};
 
 const testimonials = [
   {
@@ -123,7 +136,7 @@ const testimonials = [
     </div>
 
     <div class="flex flex-wrap justify-center gap-6">
-      {testimonials.map((tm) => (
+      {(limit ? testimonials.slice(0, limit) : testimonials).map((tm) => (
         <div
           class="w-full sm:w-[calc(50%-12px)] lg:w-[calc(33.333%-16px)] rounded-lg p-6 flex flex-col gap-4"
           data-reveal
@@ -156,13 +169,13 @@ const testimonials = [
                 class="font-inter text-[12px] my-[3px] leading-[1.4]"
                 style="color: var(--ember);"
               >
-                {tm.role}
+                {lang === "en" ? (enRole[tm.role] ?? tm.role) : tm.role}
               </p>
               <p
                 class="font-inter text-[12px] m-0 leading-[1.4]"
                 style="color: var(--text-muted);"
               >
-                {tm.company}
+                {lang === "en" ? (enCompany[tm.company] ?? tm.company) : tm.company}
               </p>
             </div>
           </a>
