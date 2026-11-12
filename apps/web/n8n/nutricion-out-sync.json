@@ -1,0 +1,92 @@
+{
+  "name": "Nutricion Out Sync",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": { "interval": [{ "field": "minutes", "minutesInterval": 30 }] }
+      },
+      "id": "trigger",
+      "name": "Cada 30 min",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [-560, 300]
+    },
+    {
+      "parameters": {
+        "url": "https://franciscoabad.com/api/os/salud/nutricion-out?destino=google_health&limite=25",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "options": {}
+      },
+      "id": "cola",
+      "name": "GET cola pendiente",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [-340, 300]
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "pendientes",
+        "options": {}
+      },
+      "id": "split",
+      "name": "Una comida por item",
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [-120, 300]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://health.googleapis.com/v4/users/me/dataTypes/nutrition-log/dataPoints",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "googleOAuth2Api",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify($json.payload) }}",
+        "options": { "response": { "response": { "neverError": true, "fullResponse": true } } }
+      },
+      "id": "empujar",
+      "name": "POST nutrition-log",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [100, 300]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Arma el acuse para el OS. Un 409 ALREADY_EXISTS cuenta como enviado, no como\n// error: el id del data point lo provee el OS (es el uuid de comidas_log), asi\n// que \"ya existe\" significa que la comida ya esta arriba. Eso es lo que hace que\n// correr el flujo dos veces no duplique.\nconst acuses = [];\nfor (const item of $input.all()) {\n  const res = item.json;\n  const pendiente = $('Una comida por item').all()[item.pairedItem?.item ?? 0]?.json ?? {};\n  const status = res.statusCode ?? 0;\n  const cuerpo = res.body ?? res;\n  const yaExistia = status === 409 || cuerpo?.error?.status === 'ALREADY_EXISTS';\n  const ok = (status >= 200 && status < 300) || yaExistia;\n\n  acuses.push({\n    id: pendiente.id,\n    destino: 'google_health',\n    estado: ok ? 'enviado' : 'error',\n    external_id: ok ? (cuerpo?.name ?? pendiente.payload?.name) : undefined,\n    error: ok ? undefined : `HTTP ${status} ${JSON.stringify(cuerpo).slice(0, 500)}`,\n    raw: cuerpo,\n  });\n}\nreturn [{ json: { acuses } }];"
+      },
+      "id": "acuse",
+      "name": "Armar acuse",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [320, 300]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://franciscoabad.com/api/os/salud/nutricion-out",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify($json) }}",
+        "options": {}
+      },
+      "id": "post-acuse",
+      "name": "POST acuse al OS",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [540, 300]
+    }
+  ],
+  "connections": {
+    "Cada 30 min": { "main": [[{ "node": "GET cola pendiente", "type": "main", "index": 0 }]] },
+    "GET cola pendiente": { "main": [[{ "node": "Una comida por item", "type": "main", "index": 0 }]] },
+    "Una comida por item": { "main": [[{ "node": "POST nutrition-log", "type": "main", "index": 0 }]] },
+    "POST nutrition-log": { "main": [[{ "node": "Armar acuse", "type": "main", "index": 0 }]] },
+    "Armar acuse": { "main": [[{ "node": "POST acuse al OS", "type": "main", "index": 0 }]] }
+  },
+  "settings": { "executionOrder": "v1" },
+  "pinData": {}
+}
